@@ -1,6 +1,12 @@
 # htmldoc-dating
 
-*htmldoc-dating* provides ways to date HTML documents. Starting from the header of the page, it uses common patterns to identify date fields. If this is not successful, it then scans the whole document. If no date cue could be found, it finally run a series of heuristics on the content.
+## Description
+
+*htmldoc-dating* provides ways to date HTML documents:
+
+1. Starting from the header of the page, it uses common patterns to identify date fields.
+1. If this is not successful, it then scans the whole document.
+1. If no date cue could be found, it finally run a series of heuristics on the content.
 
 Documentation and packaging should come soon.
 
@@ -16,9 +22,11 @@ This module is part of methods to derive metadata from web documents in order to
 * Barbaresi, Adrien. "[Efficient construction of metadata-enhanced web corpora](https://hal.archives-ouvertes.fr/hal-01348706/document)." 10th Web as Corpus Workshop. 2016.
 
 
-### Usage
+## Usage
 
-The module is programmed with python3 in mind. It returns a date when a valid
+The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
+
+[requests](http://docs.python-requests.org/) is an external python module, all the functions are currently bundled in *core*.
 
 ```python3
 >>> import requests
@@ -44,6 +52,8 @@ There are however pages for which no date can be found, ever:
 >>>
 ```
 
+
+## Additional information
 
 ### Kudos to...
 
