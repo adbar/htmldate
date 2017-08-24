@@ -1,9 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""
+Module bundling all needed functions.
+"""
 
-## This code is available from https://github.com/adbar/htmldoc-dating
+## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
-
 
 
 # Noteworthy sources
@@ -12,28 +13,22 @@
 # https://github.com/codelucas/newspaper/blob/master/newspaper/extractors.py
 
 
-
-
+# compatibility
 from __future__ import print_function, unicode_literals
-
 
 # standard
 import datetime
 import re
-import time
 
 from collections import defaultdict
 from io import StringIO # python3
 
 # third-party
 import dateparser
-
 from lxml import etree, html
 
 # own
 # import settings
-
-
 
 
 
@@ -42,19 +37,35 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 OUTPUTFORMAT = '%Y-%m-%d'
 
 
+def date_validator(datestring):
+    """Validate a string with respect to the chosen outputformat and basic heuristics"""
+    # try if date can be parsed using chosen outputformat
+    try:
+        dateobject = datetime.datetime.strptime(datestring, OUTPUTFORMAT)
+    except ValueError:
+        return False
+    # basic year validation
+    year = int(datetime.date.strftime(dateobject, '%Y'))
+    if 1995 < year < 2020:
+        return True
+    return False
+
+
+
 
 def try_date(string):
+    """Use dateparser to parse the assumed date expression"""
     target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
     if target is not None:
-        # test year for conformity
-        year = int(datetime.date.strftime(target, '%Y'))
-        if 1995 < year < 2020:
-            return datetime.date.strftime(target, OUTPUTFORMAT)
+        datestring = datetime.date.strftime(target, OUTPUTFORMAT)
+        if date_validator(datestring) is True:
+            return datestring
     return None
 
 
 
 def examine_date_elements(tree, expression):
+    """Check HTML elements one by one for date expressions"""
     elements = tree.xpath(expression)
     if elements is not None:
         for elem in elements:
@@ -64,12 +75,14 @@ def examine_date_elements(tree, expression):
                 attempt = try_date(elem.text_content().strip())
                 if attempt is not None:
                     print('# DEBUG result:', attempt)
-                    return attempt
+                    if date_validator(attempt) is True:
+                        return attempt
     return None
 
 
 
 def examine_header(tree):
+    """Parse header elements to find date cues"""
     headerdate = None
     # meta elements in header
     try:
@@ -119,76 +132,67 @@ def examine_header(tree):
         print('# ERROR: XPath', err)
         return None
 
-    return headerdate
+    if headerdate is not None and date_validator(headerdate) is True:
+        return headerdate
+    return None
 
 
 
+
+def search_pattern(htmlstring, pattern):
+    """Search the given regex pattern throughout the document and return the most frequent match"""
+    dic = defaultdict(int)
+    try:
+        for expression in re.findall(r'%s' % pattern, htmlstring):
+            dic[expression] += 1
+        vals = list(dic.values())
+        k = list(dic.keys())
+        if len(vals) > 0:
+            return k[vals.index(max(vals))]
+    except UnboundLocalError:
+        pass
+    return None
 
 
 def search_page(htmlstring):
+    """Search the page for common patterns (can be dangerous!)"""
     # init
     pagedate = None
 
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
-    ## TODO: refactor
 
     # 1
-    dic = defaultdict(int)
-    try:
-        for expression in re.findall(r'/([0-9]{4}/[0-9]{2})/', htmlstring):
-            dic[expression] += 1
-        vals = list(dic.values())
-        k = list(dic.keys())
-        try:
-            match = re.match(r'([0-9]{4})/([0-9]{2})', k[vals.index(max(vals))])
-            if match:
-                pagedate = '-'.join([match.group(1), match.group(2), '01'])
+    mostfrequent = search_pattern(htmlstring, '/([0-9]{4}/[0-9]{2})/')
+    if mostfrequent is not None:
+        match = re.match(r'([0-9]{4})/([0-9]{2})', mostfrequent)
+        if match:
+            pagedate = '-'.join([match.group(1), match.group(2), '01'])
+            if date_validator(pagedate) is True:
                 return pagedate
-        except ValueError:
-            pass
-    except UnboundLocalError:
-        pass
 
     # 2
-    dic = defaultdict(int)
-    try:
-        for expression in re.findall(r'\D([0-9]{2}[/.][0-9]{4})\D', htmlstring):
-            dic[expression] += 1
-        vals = list(dic.values())
-        k = list(dic.keys())
-        try:
-            match = re.match(r'([0-9]{2})[/.]([0-9]{4})', k[vals.index(max(vals))])
-            if match:
-                pagedate = '-'.join([match.group(2), match.group(1), '01'])
+    mostfrequent = search_pattern(htmlstring, '\D([0-9]{2}[/.][0-9]{4})\D')
+    if mostfrequent is not None:
+        match = re.match(r'([0-9]{2})[/.]([0-9]{4})', mostfrequent)
+        if match:
+            pagedate = '-'.join([match.group(2), match.group(1), '01'])
+            if date_validator(pagedate) is True:
                 return pagedate
-        except ValueError:
-            pass
-    except UnboundLocalError:
-        pass
 
     # last try
-    dic = defaultdict(int)
-    try:
-        for expression in re.findall(r'\D(2[01][0-9]{2})\D', htmlstring):
-            dic[expression] += 1
-        vals = list(dic.values())
-        k = list(dic.keys())
-        if 1995 < int(k[vals.index(max(vals))]) < 2020:
-            pagedate = '-'.join([k[vals.index(max(vals))], '07', '01'])
-        else:
-            for expression in re.findall(r'\D(2[01][0-9]{2})\D', htmlstring):
-                if 1995 < int(expression) < 2020:
-                    pagedate = '-'.join([expression, '07', '01'])
-                    return pagedate
-    except (UnboundLocalError, ValueError):
-        pass
+    mostfrequent = search_pattern(htmlstring, '\D(2[01][0-9]{2})\D')
+    if mostfrequent is not None:
+        pagedate = '-'.join([mostfrequent, '07', '01'])
+        if date_validator(pagedate) is True:
+            return pagedate
 
     return None
 
 
 
 def find_date(htmlstring):
+    """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     pagedate = None
 
@@ -204,7 +208,7 @@ def find_date(htmlstring):
 
     # first, try header
     pagedate = examine_header(tree)
-    if pagedate is not None:
+    if pagedate is not None and date_validator(pagedate) is True:
         return pagedate
 
     # <time>
@@ -213,20 +217,18 @@ def find_date(htmlstring):
         for elem in elements:
             if 'datetime' in elem.attrib:
                 attempt = try_date(elem.get('datetime'))
-                if attempt is not None:
-                    pagedate = attempt
-                    return pagedate # break
+                if attempt is not None and date_validator(attempt) is True:
+                    return attempt # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
         dateresult = examine_date_elements(tree, expr)
-        if dateresult is not None:
-            pagedate = dateresult
-            return pagedate # break
+        if dateresult is not None and date_validator(dateresult) is True:
+            return dateresult # break
 
     # date regex timestamp rescue
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
-    if match:
+    if match and date_validator(match.group(1)) is True:
         pagedate = match.group(1)
 
     # last resort

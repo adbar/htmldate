@@ -1,8 +1,8 @@
-# htmldoc-dating
+# htmldate
 
 ## Description
 
-*htmldoc-dating* provides ways to date HTML documents:
+*htmldate* provides ways to date HTML documents:
 
 1. Starting from the header of the page, it uses common patterns to identify date fields.
 1. If this is not successful, it then scans the whole document.
@@ -26,17 +26,23 @@ This module is part of methods to derive metadata from web documents in order to
 
 The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
 
-[requests](http://docs.python-requests.org/) is an external python module, all the functions are currently bundled in *core*.
+Direct installation over pip is possible (but not thoroughly tested): `pip3 install -e git+https://github.com/adbar/htmldate.git`
 
+All the functions of the module are currently bundled in *htmldate*, the examples below use the external module [requests](http://docs.python-requests.org/).
+
+In case the web page features clear metadata, the extraction is straightforward:
 ```python3
 >>> import requests
->>> import core
+>>> import htmldate
 
 >>> r = requests.get('r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
 ')
->>> core.find_date(r.text)
+>>> htmldate.find_date(r.text)
 '2016-02-17'
+```
 
+A more advanced analysis is sometimes needed:
+```python3
 >>> r = requests.get('http://blog.python.org/2016/12/python-360-is-now-available.html')
 >>> core.find_date(r.text)
 # DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>
@@ -44,11 +50,17 @@ The module is programmed with python3 in mind. It takes the HTML document as inp
 '2016-12-23'
 ```
 
-There are however pages for which no date can be found, ever:
+In the worst case, the module resorts to adventurous guessing:
+```python3
+>>> r = requests.get('https://github.com/scrapinghub/dateparser')
+>>> htmldate.find_date(r.text)
+'2017-07-01'
+```
 
+There are however pages for which no date can be found, ever:
 ```python3
 >>> r = requests.get('https://example.com')
->>> core.find_date(r.text)
+>>> htmldate.find_date(r.text)
 >>>
 ```
 
