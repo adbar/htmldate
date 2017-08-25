@@ -12,6 +12,11 @@ Module bundling all needed functions.
 # https://github.com/grangier/python-goose/blob/develop/goose/extractors/publishdate.py
 # https://github.com/codelucas/newspaper/blob/master/newspaper/extractors.py
 
+## TODO:
+# logging
+# refine expressions
+# speed benchmark
+
 
 # compatibility
 from __future__ import print_function, unicode_literals
@@ -33,6 +38,8 @@ from lxml import etree, html
 
 
 DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]"]
+# , "//*[starts-with(@itemprop='datemodified')" # github
+
 
 OUTPUTFORMAT = '%Y-%m-%d'
 

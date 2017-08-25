@@ -26,7 +26,11 @@ This module is part of methods to derive metadata from web documents in order to
 
 The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
 
-Direct installation over pip is possible (but not thoroughly tested): `pip3 install -e git+https://github.com/adbar/htmldate.git`
+Install from package repository:
+`pip3 install htmldate`
+
+Direct installation of the latest version over pip is possible (but not thoroughly tested):
+`pip3 install git+https://github.com/adbar/htmldate.git`
 
 
 ### Within Python
