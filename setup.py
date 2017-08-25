@@ -38,7 +38,7 @@ setup(
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
         'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: GNU GPL License',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Operating System :: POSIX',
         'Operating System :: MacOS',
         'Operating System :: Unix',
@@ -54,7 +54,7 @@ setup(
     url='http://github.com/adbar/htmldate',
     author='Adrien Barbaresi',
     author_email='adrien.barbaresi@oeaw.ac.at',
-    license='GNU GPL',
+    license='GPLv3+',
     packages=find_packages(exclude=['tests']), #['htmldate'],
     install_requires=[
         'dateparser >= 0.6.0',
