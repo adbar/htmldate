@@ -205,6 +205,9 @@ def find_date(htmlstring):
     except UnboundLocalError as err:
         print('ERROR: parsed string', err)
         return None
+    except UnicodeDecodeError as err:
+        print('ERROR: unicode', err)
+        return None
 
     # first, try header
     pagedate = examine_header(tree)

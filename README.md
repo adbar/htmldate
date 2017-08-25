@@ -2,7 +2,7 @@
 
 ## Description
 
-*htmldate* provides ways to date HTML documents:
+Seamless extraction/scraping of dates in web pages. *htmldate* provides following ways to date documents, based on HTML parsing:
 
 1. Starting from the header of the page, it uses common patterns to identify date fields.
 1. If this is not successful, it then scans the whole document.
@@ -10,7 +10,7 @@
 
 Documentation and packaging should come soon.
 
-There is still a lot to be done, pull requests are welcome!
+Pull requests are welcome.
 
 
 ### Context
@@ -27,6 +27,9 @@ This module is part of methods to derive metadata from web documents in order to
 The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
 
 Direct installation over pip is possible (but not thoroughly tested): `pip3 install -e git+https://github.com/adbar/htmldate.git`
+
+
+### Within Python
 
 All the functions of the module are currently bundled in *htmldate*, the examples below use the external module [requests](http://docs.python-requests.org/).
 
@@ -50,7 +53,7 @@ A more advanced analysis is sometimes needed:
 '2016-12-23'
 ```
 
-In the worst case, the module resorts to adventurous guessing:
+In the worst case, the module resorts to a wild guess:
 ```python3
 >>> r = requests.get('https://github.com/scrapinghub/dateparser')
 >>> htmldate.find_date(r.text)
@@ -62,6 +65,14 @@ There are however pages for which no date can be found, ever:
 >>> r = requests.get('https://example.com')
 >>> htmldate.find_date(r.text)
 >>>
+```
+
+### Command-line
+
+A basic command-line interface is included:
+```bash
+$ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
+2016-12-23
 ```
 
 

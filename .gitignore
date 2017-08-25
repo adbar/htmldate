@@ -1,2 +1,15 @@
 # Compiled python modules.
-*.py[cod]
+*.pyc
+
+# logs
+*.log
+
+# packaging
+dist/
+build/
+*.egg-info/
+
+# tests
+.tox/
+.coverage
+*.ini

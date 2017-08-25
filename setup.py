@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 """
+Seamlessly extract the date of web pages based on header or body.
 http://github.com/adbar/htmldate
 """
 
-
-from distutils.core import setup
-# from setuptools import setup
+# from distutils.core import setup
+from setuptools import find_packages, setup
 
 
 def readme():
     with open('README.md') as readmefile:
         return readmefile.read()
 
-setup(name='htmldate',
-      version='0.1',
-      description='Extract the date of web pages',
-      long_description=readme(),
-      classifiers=[
+setup(
+    name='htmldate',
+    version='0.1.0',
+    description='Seamlessly extract/scrape the date of web pages based on a parse of the HTML code.',
+    long_description=readme(),
+    classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         #'Development Status :: 1 - Planning',
         'Development Status :: 2 - Pre-Alpha',
@@ -34,32 +35,29 @@ setup(name='htmldate',
         'Operating System :: MacOS',
         'Operating System :: Unix',
         'Programming Language :: Python',
-        #'Programming Language :: Python :: 2',
-        #'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
-        #'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        #'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Scientific/Engineering',
         'Topic :: Text Processing :: Linguistic',
 
-      ],
-      #keywords='metadata-extraction',
-      url='http://github.com/adbar/htmldate',
-      author='Adrien Barbaresi',
-      author_email='adrien.barbaresi@oeaw.ac.at',
-      license='GNU GPL',
-      packages=['htmldate'],
-      # packages=find_packages(exclude=['tests']),
-      install_requires=[
-          'dateparser',
-          'lxml',
-      ],
-      # install_requires=get_dependencies(),
-      #test_suite='nose.collector',
-      #tests_require=['nose'],
-      include_package_data=True,
-      zip_safe=False,
+    ],
+    keywords=['metadata-extraction', 'date-parser', 'html-parsing', 'webarchives'],
+    url='http://github.com/adbar/htmldate',
+    author='Adrien Barbaresi',
+    author_email='adrien.barbaresi@oeaw.ac.at',
+    license='GNU GPL',
+    packages=find_packages(exclude=['tests']), #['htmldate'],
+    install_requires=[
+        'dateparser',
+        'lxml',
+    ],
+    entry_points = {
+        'console_scripts': ['htmldate=htmldate.cli:main'],
+    },
+    platforms='any',
+    #test_suite='nose.collector',
+    #tests_require=['nose'],
+    include_package_data=True,
+    zip_safe=False,
 )
