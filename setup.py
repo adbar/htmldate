@@ -5,11 +5,19 @@ http://github.com/adbar/htmldate
 """
 
 # from distutils.core import setup
+import os
 from setuptools import find_packages, setup
+
+#try:
+#    from setuptools import setup
+#except ImportError:
+#    from distutils.core import setup
+
 
 
 def readme():
-    with open('README.md') as readmefile:
+    here = os.path.abspath('.')
+    with open(os.path.join(here, 'README.md'), encoding='utf-8') as readmefile:
         return readmefile.read()
 
 setup(
@@ -34,8 +42,8 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: MacOS',
         'Operating System :: Unix',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
+        # 'Programming Language :: Python',
+        # 'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Scientific/Engineering',
@@ -49,15 +57,15 @@ setup(
     license='GNU GPL',
     packages=find_packages(exclude=['tests']), #['htmldate'],
     install_requires=[
-        'dateparser',
-        'lxml',
+        'dateparser >= 0.6.0',
+        'lxml >= 3.7.0',
     ],
     entry_points = {
         'console_scripts': ['htmldate=htmldate.cli:main'],
     },
     platforms='any',
     #test_suite='nose.collector',
-    #tests_require=['nose'],
+    #tests_require=['dateparser', 'lxml'],
     include_package_data=True,
     zip_safe=False,
 )
