@@ -65,7 +65,7 @@ setup(
     },
     platforms='any',
     #test_suite='nose.collector',
-    #tests_require=['dateparser', 'lxml'],
+    tests_require=['pytest', 'tox'],
     include_package_data=True,
     zip_safe=False,
 )
