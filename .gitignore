@@ -14,4 +14,3 @@ build/
 .tox/
 .cache/
 .coverage
-*.ini
