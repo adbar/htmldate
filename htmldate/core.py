@@ -166,17 +166,11 @@ def examine_header(tree):
 
 def search_pattern(htmlstring, pattern):
     """Search the given regex pattern throughout the document and return the most frequent match"""
-    dic = defaultdict(int)
-    try:
-        for expression in re.findall(r'%s' % pattern, htmlstring):
-            dic[expression] += 1
-        vals = list(dic.values())
-        k = list(dic.keys())
-        if len(vals) > 0:
-            return k[vals.index(max(vals))]
-    except UnboundLocalError:
-        pass
-    return None
+    occurrences = re.findall(r'%s' % pattern, htmlstring)
+    if occurrences:
+        return max(occurrences, key=occurrences.count)
+    else:
+        return None
 
 
 def search_page(htmlstring):
