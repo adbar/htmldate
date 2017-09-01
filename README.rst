@@ -1,6 +1,21 @@
-# htmldate
+htmldate: extract creation date of HTML page
+============================================
 
-## Description
+.. image:: https://img.shields.io/pypi/v/htmldate.svg
+    :target: https://pypi.python.org/pypi/htmldate
+
+.. image:: https://img.shields.io/pypi/l/htmldate.svg
+    :target: https://pypi.python.org/pypi/htmldate
+
+.. image:: https://img.shields.io/pypi/pyversions/htmldate.svg
+    :target: https://pypi.python.org/pypi/htmldate
+
+.. image:: https://img.shields.io/pypi/status/htmldate.svg
+    :target: https://pypi.python.org/pypi/htmldate
+
+
+Description
+-----------
 
 Seamless extraction/scraping of dates in web pages. *htmldate* provides following ways to date documents, based on HTML parsing:
 
@@ -10,17 +25,17 @@ Seamless extraction/scraping of dates in web pages. *htmldate* provides followin
 
 Pull requests are welcome.
 
-## Usage
 
-The module is programmed with python3 in mind. It takes the HTML
-document as input (string format) and returns a date when a valid cue
-could be found in the document. The output string defaults to [ISO 8601
-YMD format](\ https://en.wikipedia.org/wiki/ISO_8601).
+Usage
+-----
 
-Install from package repository: `pip3 install htmldate`
+The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
+
+Install from package repository: ``pip3 install htmldate``
 
 Direct installation of the latest version over pip is possible (but not thoroughly tested):
-`pip3 install git+https://github.com/adbar/htmldate.git`
+``pip3 install git+https://github.com/adbar/htmldate.git``
+
 
 ### Within Python
 
@@ -63,6 +78,7 @@ There are however pages for which no date can be found, ever:
     >>> htmldate.find_date(r.text)
     >>>
 
+
 ### Command-line
 
 A basic command-line interface is included:
@@ -72,7 +88,8 @@ A basic command-line interface is included:
     2016-12-23
 
 
-## Additional information
+Additional information
+----------------------
 
 ### Context
 
@@ -84,7 +101,7 @@ This module is part of methods to derive metadata from web documents in
 order to build text corpora for (computational) linguistic analysis. For
 more information:
 
--  Barbaresi, Adrien. "[Efficient construction of metadata-enhanced web corpora](https://hal.archives-ouvertes.fr/hal-01348706/document)." 10th Web as Corpus Workshop. 2016.
+-  Barbaresi, Adrien. "[Efficient construction of metadata-enhanced web corpora](https://hal.archives-ouvertes.fr/hal-01348706/document)", Proceedings of the [10th Web as Corpus Workshop (WAC-X)](https://www.sigwac.org.uk/wiki/WAC-X), 2016.
 
 ### Kudos to...
 
