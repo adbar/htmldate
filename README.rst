@@ -1,5 +1,5 @@
-htmldate: extract creation date of HTML page
-============================================
+htmldate: find the creation date of HTML pages
+==============================================
 
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
@@ -29,17 +29,19 @@ Pull requests are welcome.
 Usage
 -----
 
-The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to [ISO 8601 YMD format](https://en.wikipedia.org/wiki/ISO_8601).
+The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 Install from package repository: ``pip3 install htmldate``
 
 Direct installation of the latest version over pip is possible (but not thoroughly tested):
+
 ``pip3 install git+https://github.com/adbar/htmldate.git``
 
 
-### Within Python
+Within Python
+~~~~~~~~~~~~~
 
-All the functions of the module are currently bundled in *htmldate*, the examples below use the external module [requests](http://docs.python-requests.org/).
+All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
 
 In case the web page features clear metadata, the extraction is straightforward:
 
@@ -66,9 +68,9 @@ In the worst case, the module resorts to a wild guess:
 
 .. code-block:: python
 
-    >>> r = requests.get('https://github.com/scrapinghub/dateparser')
+    >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
-    '2017-07-01'
+    '2016-05-01'
 
 There are however pages for which no date can be found, ever:
 
@@ -79,7 +81,8 @@ There are however pages for which no date can be found, ever:
     >>>
 
 
-### Command-line
+Command-line
+~~~~~~~~~~~~
 
 A basic command-line interface is included:
 
@@ -91,7 +94,8 @@ A basic command-line interface is included:
 Additional information
 ----------------------
 
-### Context
+Context
+~~~~~~~
 
 There are webpages for which neither the URL nor the server response
 provide a reliable way to date the document, i.e. find when it was
@@ -101,17 +105,19 @@ This module is part of methods to derive metadata from web documents in
 order to build text corpora for (computational) linguistic analysis. For
 more information:
 
--  Barbaresi, Adrien. "[Efficient construction of metadata-enhanced web corpora](https://hal.archives-ouvertes.fr/hal-01348706/document)", Proceedings of the [10th Web as Corpus Workshop (WAC-X)](https://www.sigwac.org.uk/wiki/WAC-X), 2016.
+-  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01348706/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
-### Kudos to...
+Kudos to...
+~~~~~~~~~~~
 
--  [lxml](http://lxml.de/)
--  [dateparser](https://github.com/scrapinghub/dateparser) (although it's is still a bit slow)
+-  `lxml <http://lxml.de/>`_
+-  `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it's is still a bit slow)
 -  A few patterns are derived from
-   [python-goose](https://github.com/grangier/python-goose/),
-   [metascraper](https://github.com/ianstormtaylor/metascraper/) and
-   [newspaper](https://github.com/codelucas/newspaper/).
+   `python-goose <https://github.com/grangier/python-goose/>`_,
+   `metascraper <https://github.com/ianstormtaylor/metascraper/>`_ and
+   `newspaper <https://github.com/codelucas/newspaper/>`_.
 
-### Contact
+Contact
+~~~~~~~
 
-See my [contact page](http://adrien.barbaresi.eu/contact.html) for details.
+See my `contact page <http://adrien.barbaresi.eu/contact.html>` for details.

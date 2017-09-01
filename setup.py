@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Seamlessly extract the date of web pages based on header or body.
@@ -26,7 +27,7 @@ def readme():
 setup(
     name='htmldate',
     version='0.1.1',
-    description='Seamlessly extract/scrape the date of web pages based on a parse of the HTML code.',
+    description='Seamlessly extract the date of web pages based on a parse of the HTML code.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -66,6 +67,7 @@ setup(
         'dateparser >= 0.6.0',
         'lxml >= 3.7.0',
     ],
+    # python_requires='>=3',
     entry_points = {
         'console_scripts': ['htmldate=htmldate.cli:main'],
     },
