@@ -11,9 +11,12 @@ import htmldate
 
 
 MOCK_PAGES = { \
-                'http://blog.python.org/2016/12/python-360-is-now-available.html': 'samples/blog.python.org.html', \
-                'https://example.com': 'samples/example.com.html', \
-                'https://github.com/adbar/htmldate': 'samples/github.com.html', \
+                'http://blog.python.org/2016/12/python-360-is-now-available.html': 'cache/blog.python.org.html', \
+                'https://example.com': 'cache/example.com.html', \
+                'https://github.com/adbar/htmldate': 'cache/github.com.html', \
+                'https://creativecommons.org/about/': 'cache/creativecommons.org.html', \
+                'https://en.support.wordpress.com/': 'cache/support.wordpress.com.html', \
+                'https://en.blog.wordpress.com/': 'cache/blog.wordpress.com.html', \
 }
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -28,18 +31,24 @@ def load_mock_page(url):
 
 
 def test_no_date():
-    '''this page should return no date'''
+    '''this page should not return any date'''
     assert htmldate.find_date(load_mock_page('https://example.com')) == None
+    assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) == None
 
 
 def test_exact_date():
-    '''this page should return an exact date'''
+    '''these pages should return an exact date'''
+    # meta in header
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
+    # in document body
+    assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
 
 
 def test_approximate_date():
     '''this page should return an approximate date'''
-    assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2016-12-01'
+    assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2016-12-01' # '2017-08-25'
+    assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2016-05-01'
+
 
 
 def test_date_validator():
@@ -54,16 +63,22 @@ def test_date_validator():
 def test_search_pattern():
     '''test pattern search in strings'''
     # pattern 1
-    assert htmldate.search_pattern('http://www.url.net/index.html', '/([0-9]{4}/[0-9]{2})/') is None
-    assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', '/([0-9]{4}/[0-9]{2})/') is not None
+    pattern = '/([0-9]{4}/[0-9]{2})/'
+    assert htmldate.search_pattern('http://www.url.net/index.html', pattern) is None
+    assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', pattern) is not None
     # pattern 2
-    assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', '\D([0-9]{2}[/.][0-9]{4})\D') is None
-    assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', '\D([0-9]{2}[/.][0-9]{4})\D') is not None
+    pattern = '\D([0-9]{2}[/.][0-9]{4})\D'
+    assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern) is None
+    assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern) is not None
     # pattern 3
-    assert htmldate.search_pattern('It happened in the film 300.', '\D(2[01][0-9]{2})\D') is None
-    assert htmldate.search_pattern('It happened in 2002.', '\D(2[01][0-9]{2})\D') is not None
+    pattern = '\D(2[01][0-9]{2})\D'
+    assert htmldate.search_pattern('It happened in the film 300.', pattern) is None
+    assert htmldate.search_pattern('It happened in 2002.', pattern) is not None
 
 
+def test_cli():
+    '''test the command-line interface'''
+    pass
 
 
 if __name__ == '__main__':
@@ -75,3 +90,6 @@ if __name__ == '__main__':
     test_no_date()
     test_exact_date()
     test_approximate_date()
+
+    # cli
+    # test_cli() ## TODO

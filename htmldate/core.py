@@ -19,14 +19,24 @@ Module bundling all needed functions.
 
 
 # compatibility
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+# from future import standard_library
+# standard_library.install_aliases()
 
 # standard
 import datetime
 import re
 
+from codecs import open
 from collections import defaultdict
-from io import StringIO # python3
+
+try:
+    from cStringIO import StringIO # Python 2
+except ImportError:
+    from io import StringIO # Python 3
+
+# from six import text_type
 
 # third-party
 import dateparser
@@ -37,8 +47,8 @@ from lxml import etree, html
 
 
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]"]
-# , "//*[starts-with(@itemprop='datemodified')" # github
+DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'datemodified')]"]
+# time-ago datetime=
 
 
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -73,12 +83,15 @@ def try_date(string):
 
 def examine_date_elements(tree, expression):
     """Check HTML elements one by one for date expressions"""
-    elements = tree.xpath(expression)
+    try:
+        elements = tree.xpath(expression)
+    except lxml.etree.XPathEvalError as err:
+        print('# ERROR: lxml expression', expression, err)
     if elements is not None:
         for elem in elements:
             # simple length heuristics
             if 3 < len(elem.text_content().strip()) < 30:
-                print('# DEBUG analyzing:', html.tostring(elem, pretty_print=False, encoding='unicode'), elem.text_content().strip())
+                print('# DEBUG analyzing:', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 attempt = try_date(elem.text_content().strip())
                 if attempt is not None:
                     print('# DEBUG result:', attempt)
@@ -115,6 +128,11 @@ def examine_header(tree):
                             attempt = try_date(elem.get('content'))
                             if attempt is not None:
                                 headerdate = attempt
+                    # modified: override published_time
+                    elif elem.get('property') == 'article:modified_time':
+                        attempt = try_date(elem.get('content'))
+                        if attempt is not None:
+                            headerdate = attempt
             # name attribute
             elif 'name' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
