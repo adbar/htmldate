@@ -87,6 +87,7 @@ Command-line
 A basic command-line interface is included:
 
 .. code-block:: bash
+
     $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
     2016-12-23
 
@@ -120,4 +121,4 @@ Kudos to...
 Contact
 ~~~~~~~
 
-See my `contact page <http://adrien.barbaresi.eu/contact.html>` for details.
+See my `contact page <http://adrien.barbaresi.eu/contact.html>`_ for details.
