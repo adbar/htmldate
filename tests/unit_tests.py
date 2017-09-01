@@ -41,14 +41,13 @@ def test_exact_date():
     # meta in header
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     # in document body
+    assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2017-08-25'
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
 
 
 def test_approximate_date():
     '''this page should return an approximate date'''
-    assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2016-12-01' # '2017-08-25'
     assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2016-05-01'
-
 
 
 def test_date_validator():
@@ -58,6 +57,17 @@ def test_date_validator():
     assert htmldate.date_validator('1992-07-30') == False
     assert htmldate.date_validator('1901-13-98') == False
     assert htmldate.date_validator('202-01') == False
+
+
+def test_try_date():
+    '''test date extraction via external package'''
+    assert htmldate.try_date('Friday, September 01, 2017') == '2017-09-01'
+    assert htmldate.try_date('Fr, 1 Sep 2017 16:27:51 MESZ') == '2017-09-01'
+    assert htmldate.try_date('Freitag, 01. September 2017') == '2017-09-01'
+    # assert htmldate.try_date('Am 1. September 2017 um 15:36 Uhr schrieb') == '2017-09-01'
+    assert htmldate.try_date('1.9.2017') == '2017-09-01'
+    assert htmldate.try_date('1/9/2017') == '2017-09-01'
+    assert htmldate.try_date('201709011234') == '2017-09-01'
 
 
 def test_search_pattern():
@@ -85,6 +95,7 @@ if __name__ == '__main__':
     # function-level
     test_date_validator()
     test_search_pattern()
+    test_try_date()
 
     # module-level
     test_no_date()

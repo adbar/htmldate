@@ -6,17 +6,10 @@ Module bundling all needed functions.
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
-
-# Noteworthy sources
-# https://github.com/ianstormtaylor/metascraper/blob/master/lib/rules/date.js
-# https://github.com/grangier/python-goose/blob/develop/goose/extractors/publishdate.py
-# https://github.com/codelucas/newspaper/blob/master/newspaper/extractors.py
-
 ## TODO:
 # logging
-# refine expressions
 # speed benchmark
-
+# from og:image or <img>?
 
 # compatibility
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -26,9 +19,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # standard
 import datetime
+import logging
 import re
 
-from codecs import open
+# from codecs import open
 from collections import defaultdict
 
 try:
@@ -46,9 +40,12 @@ from lxml import etree, html
 # import settings
 
 
+logger = logging.getLogger()
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'datemodified')]"]
+DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]"]
 # time-ago datetime=
+# timestamp
+# ...
 
 
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -68,10 +65,26 @@ def date_validator(datestring):
     return False
 
 
-
-
 def try_date(string):
     """Use dateparser to parse the assumed date expression"""
+    if string is None or len(string) < 4:
+        return None
+
+    # faster than fire dateparser at once
+    if OUTPUTFORMAT == '%Y-%m-%d' and re.match(r'[0-9]{4}', string):
+        # simple case
+        result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=\D)', string)
+        if result is not None and date_validator(result.group(0)) is True:
+            return result.group(0)
+        # '201709011234' not covered by dateparser
+        result = re.match(r'[0-9]{8}', string)
+        if result is not None:
+            temp = result.group(0)
+            candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
+            if date_validator(candidate) is True:
+                return candidate
+
+    # send to dateparser
     target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
     if target is not None:
         datestring = datetime.date.strftime(target, OUTPUTFORMAT)
@@ -80,21 +93,20 @@ def try_date(string):
     return None
 
 
-
 def examine_date_elements(tree, expression):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
     except lxml.etree.XPathEvalError as err:
-        print('# ERROR: lxml expression', expression, err)
+        logger.error('lxml expression %s throws an error: %s', expression, err)
     if elements is not None:
         for elem in elements:
             # simple length heuristics
             if 3 < len(elem.text_content().strip()) < 30:
-                print('# DEBUG analyzing:', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 attempt = try_date(elem.text_content().strip())
                 if attempt is not None:
-                    print('# DEBUG result:', attempt)
+                    logger.debug('result: %s', attempt)
                     if date_validator(attempt) is True:
                         return attempt
     return None
@@ -123,7 +135,7 @@ def examine_header(tree):
                             headerdate = attempt
                 else:
                     # time
-                    if elem.get('property') in ('article:published_time', 'dc:created', 'dc:date', 'rnews:datePublished'):
+                    if elem.get('property') in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'rnews:datePublished'):
                         if headerdate is None:
                             attempt = try_date(elem.get('content'))
                             if attempt is not None:
@@ -139,22 +151,27 @@ def examine_header(tree):
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # date
-                elif elem.get('name') in ('article_date_original', 'date', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'publishdate', 'publication_date', 'sailthru.date'):
+                elif elem.get('name') in ('article.created', 'article_date_original', 'article.published', 'created', 'cXenseParse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     if headerdate is None:
                         attempt = try_date(elem.get('content'))
                         if attempt is not None:
                             headerdate = attempt
             # other types
-            else:
-                if elem.get('itemprop') in ('datepublished', 'pubyear') or elem.get('pubdate') == 'pubdate': # itemscope?
-                    if elem.get('datetime') is not None and len(elem.get('datetime')) > 1:
-                        if headerdate is None:
-                            attempt = try_date(elem.get('content'))
-                            if attempt is not None:
-                                headerdate = attempt
+            # itemscope?
+            elif elem.get('itemprop') in ('datecreated', 'datepublished', 'pubyear') or elem.get('pubdate') == 'pubdate':
+                if headerdate is None:
+                    attempt = try_date(elem.get('datetime'))
+                    if attempt is not None:
+                        headerdate = attempt
+            # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
+            elif elem.get('http-equiv') in ('date', 'last-modified'):
+                if headerdate is None:
+                    attempt = try_date(elem.get('content'))
+                    if attempt is not None:
+                        headerdate = attempt
 
     except etree.XPathEvalError as err:
-        print('# ERROR: XPath', err)
+        logger.error('XPath %s', err)
         return None
 
     if headerdate is not None and date_validator(headerdate) is True:
@@ -224,14 +241,14 @@ def find_date(htmlstring):
     # robust parsing
     try:
         tree = html.parse(StringIO(htmlstring), html.HTMLParser())
-    except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
-        print('ERROR: parser', err)
+    except UnicodeDecodeError as err:
+        logger.error('unicode %s', err)
         return None
     except UnboundLocalError as err:
-        print('ERROR: parsed string', err)
+        logger.error('parsed string %s', err)
         return None
-    except UnicodeDecodeError as err:
-        print('ERROR: unicode', err)
+    except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
+        logger.error('parser %s', err)
         return None
 
     # first, try header

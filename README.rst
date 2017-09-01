@@ -114,9 +114,11 @@ Kudos to...
 -  `lxml <http://lxml.de/>`_
 -  `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it's is still a bit slow)
 -  A few patterns are derived from
-   `python-goose <https://github.com/grangier/python-goose/>`_,
-   `metascraper <https://github.com/ianstormtaylor/metascraper/>`_ and
-   `newspaper <https://github.com/codelucas/newspaper/>`_.
+   `python-goose <https://github.com/grangier/python-goose>`_,
+   `metascraper <https://github.com/ianstormtaylor/metascraper>`_,
+   `newspaper <https://github.com/codelucas/newspaper>`_ and
+   `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_.
+   This module extends them significantly.
 
 Contact
 ~~~~~~~
