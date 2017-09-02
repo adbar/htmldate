@@ -13,6 +13,9 @@ htmldate: find the creation date of HTML pages
 .. image:: https://img.shields.io/pypi/status/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
 
+.. image:: https://img.shields.io/travis/adbar/htmldate.svg
+    :target: https://travis-ci.org/adbar/htmldate
+
 
 Description
 -----------
