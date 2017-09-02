@@ -169,8 +169,7 @@ def search_pattern(htmlstring, pattern):
     occurrences = re.findall(r'%s' % pattern, htmlstring)
     if occurrences:
         return max(occurrences, key=occurrences.count)
-    else:
-        return None
+    return None
 
 
 def search_page(htmlstring):
