@@ -26,8 +26,8 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.1.1',
-    description='Seamlessly extract the date of web pages based on a parse of the HTML code.',
+    version='0.1.2',
+    description='Seamlessly extract the date of web pages based on the HTML code in order to determine the creation or modification date.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers

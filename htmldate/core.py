@@ -7,7 +7,6 @@ Module bundling all needed functions.
 ## under GNU GPL v3 license
 
 ## TODO:
-# logging
 # speed benchmark
 # from og:image or <img>?
 
@@ -40,6 +39,7 @@ from lxml import etree, html
 # import settings
 
 
+## INIT
 logger = logging.getLogger()
 
 DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]"]
@@ -47,8 +47,15 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 # timestamp
 # ...
 
+EXTENSIVE_SEARCH_BOOL = True # adventurous mode
 
 OUTPUTFORMAT = '%Y-%m-%d'
+
+MIN_YEAR = 1995 # inclusive
+MAX_YEAR = 2020 # inclusive
+
+# MODIFIED vs CREATION date switch?
+
 
 
 def date_validator(datestring):
@@ -60,9 +67,19 @@ def date_validator(datestring):
         return False
     # basic year validation
     year = int(datetime.date.strftime(dateobject, '%Y'))
-    if 1995 < year < 2020:
+    if MIN_YEAR <= year <= MAX_YEAR:
         return True
     return False
+
+def output_format_validator():
+    """Validate the output format in the settings"""
+    dateobject = datetime.datetime(2017, 9, 1, 0, 0)
+    try:
+        datetime.datetime.strftime(dateobject, OUTPUTFORMAT)
+    except (NameError, ValueError) as err:
+        logging.error('wrong output format: %s %s', OUTPUTFORMAT, err)
+        return False
+    return True
 
 
 def try_date(string):
@@ -230,6 +247,8 @@ def find_date(htmlstring):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     pagedate = None
+    if output_format_validator() is False:
+        return
 
     # robust parsing
     try:
@@ -270,6 +289,7 @@ def find_date(htmlstring):
         pagedate = match.group(1)
 
     # last resort
-    pagedate = search_page(htmlstring)
+    if EXTENSIVE_SEARCH_BOOL is True:
+        pagedate = search_page(htmlstring)
 
     return pagedate

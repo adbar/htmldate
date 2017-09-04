@@ -20,7 +20,7 @@ htmldate: find the creation date of HTML pages
 Description
 -----------
 
-Seamless extraction/scraping of dates in web pages. *htmldate* provides following ways to date documents, based on HTML parsing:
+Seamless extraction of the creation or modification date of web pages. *htmldate* provides following ways to date documents, based on HTML parsing and scraping functions:
 
 1. Starting from the header of the page, it uses common patterns to identify date fields.
 2. If this is not successful, it then scans the whole document.
@@ -34,11 +34,11 @@ Usage
 
 The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
-Install from package repository: ``pip3 install htmldate``
+Install from package repository: ``pip install htmldate``
 
-Direct installation of the latest version over pip is possible (but not thoroughly tested):
+Direct installation of the latest version over pip is possible (see `build status <https://travis-ci.org/adbar/htmldate>`_):
 
-``pip3 install git+https://github.com/adbar/htmldate.git``
+``pip install git+https://github.com/adbar/htmldate.git``
 
 
 Within Python

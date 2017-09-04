@@ -3,8 +3,8 @@
 ### version 0.1.2
 - better extraction
 - logging
-- ..
-- ..
+- further tests
+- settings
 
 ### version 0.1.1
 - tests functions (tox and pytest)
