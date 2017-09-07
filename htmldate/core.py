@@ -203,19 +203,19 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
         else:
             ## TODO: refine
             firstselect = Counter(occurrences).most_common(4)
-            print(firstselect)
+            #print(firstselect)
             bestones = sorted(firstselect, reverse=True)[:2]
-            print(bestones)
             first_pattern = bestones[0][0]
             first_count = bestones[0][1]
             second_pattern = bestones[1][0]
             second_count = bestones[1][1]
-            # same number
+            #print(bestones)
+            # same number of occurrences: always take most recent
             if first_count == second_count:
                 match = re.match(r'%s' % catch, first_pattern)
             else:
                 year1 = int(re.search(r'%s' % yearpat, first_pattern).group(0))
-                year2 = int(re.search(r'%s' % yearpat, second_pattern).group(1))
+                year2 = int(re.search(r'%s' % yearpat, second_pattern).group(0))
                 # safety net: newer date but up to 50% less frequent
                 if year2 > year1 and second_count/first_count > 0.5:
                     match = re.match(r'%s' % catch, second_pattern)
@@ -257,9 +257,18 @@ def search_page(htmlstring):
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate) is True:
             return pagedate
+    # 
+    pattern = '\D([0-9]{2}[/.-][0-9]{2}[/.-][0-9]{4})\D'
+    catch = '([0-9]{2})[/.-]([0-9]{2})[/.-]([0-9]{4})'
+    yearpat = '(19[0-9]{2}|20[0-9]{2})$'
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(3), bestmatch.group(2), bestmatch.group(1)])
+        if date_validator(pagedate) is True:
+            return pagedate
 
     # valid dates strings
-    pattern = '\D([12][0-9]{3}[01][0-9][0-3][0-9])\D'
+    pattern = '\D(19[0-9]{2}[01][0-9][0-3][0-9])\D|\D(20[0-9]{2}[01][0-9][0-3][0-9])\D'
     catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
     yearpat = '^([12][0-9]{3})'
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -295,7 +304,7 @@ def search_page(htmlstring):
     yearpat = '^(2[01][0-9]{2})'
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
-        pagedate = '-'.join([str(bestmatch), '07', '01'])
+        pagedate = '-'.join([bestmatch.group(0), '07', '01'])
         if date_validator(pagedate) is True:
             return pagedate
 
