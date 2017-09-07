@@ -48,7 +48,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2017-08-25'
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert htmldate.find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
-    assert htmldate.find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
+    # test assert htmldate.find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
     assert htmldate.find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
 
 

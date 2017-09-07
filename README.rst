@@ -109,17 +109,14 @@ This module is part of methods to derive metadata from web documents in order to
 
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01348706/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
+
 Kudos to...
 ~~~~~~~~~~~
 
 -  `lxml <http://lxml.de/>`_
 -  `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it's is still a bit slow)
--  A few patterns are derived from
-   `python-goose <https://github.com/grangier/python-goose>`_,
-   `metascraper <https://github.com/ianstormtaylor/metascraper>`_,
-   `newspaper <https://github.com/codelucas/newspaper>`_ and
-   `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_.
-    This module extends their coverage and robustness significantly.
+-  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
+
 
 Further analyses
 ~~~~~~~~~~~~~~~~

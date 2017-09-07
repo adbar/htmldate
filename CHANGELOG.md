@@ -1,5 +1,10 @@
 ## Changelog
 
+### version 0.2.0 (first alpha)
+- refined targeting of HTML structure
+- better extraction logic for plain text cases
+- further tests
+
 ### version 0.1.2
 - better extraction
 - logging
