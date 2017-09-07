@@ -23,8 +23,8 @@ Description
 Seamless extraction of the creation or modification date of web pages. *htmldate* provides following ways to date documents, based on HTML parsing and scraping functions:
 
 1. Starting from the header of the page, it uses common patterns to identify date fields.
-2. If this is not successful, it then scans the whole document.
-3. If no date cue could be found, it finally run a series of heuristics on the content.
+2. If this is not successful, it scans the whole document looking for structural markers.
+3. If no date cue could be found, it finally runs a series of heuristics on the content.
 
 Pull requests are welcome.
 
@@ -32,7 +32,9 @@ Pull requests are welcome.
 Usage
 -----
 
-The module is programmed with python3 in mind. It takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+
+According to the tests it should be compatible with all common versions of Python (2 & 3).
 
 Install from package repository: ``pip install htmldate``
 
@@ -46,7 +48,7 @@ Within Python
 
 All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
 
-In case the web page features clear metadata, the extraction is straightforward:
+In case the web page features clear metadata in the header, the extraction is straightforward:
 
 .. code-block:: python
 
@@ -57,7 +59,7 @@ In case the web page features clear metadata, the extraction is straightforward:
     >>> htmldate.find_date(r.text)
     '2016-02-17'
 
-A more advanced analysis is sometimes needed:
+A more advanced analysis of the document structure is sometimes needed:
 
 .. code-block:: python
 
@@ -73,7 +75,7 @@ In the worst case, the module resorts to a wild guess:
 
     >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
-    '2016-05-01'
+    '2017-08-11'
 
 There are however pages for which no date can be found, ever:
 
@@ -101,13 +103,9 @@ Additional information
 Context
 ~~~~~~~
 
-There are webpages for which neither the URL nor the server response
-provide a reliable way to date the document, i.e. find when it was
-written.
+There are webpages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified.
 
-This module is part of methods to derive metadata from web documents in
-order to build text corpora for (computational) linguistic analysis. For
-more information:
+This module is part of methods to derive metadata from web documents in order to build text corpora for (computational) linguistic analysis. For more information:
 
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01348706/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
@@ -121,7 +119,13 @@ Kudos to...
    `metascraper <https://github.com/ianstormtaylor/metascraper>`_,
    `newspaper <https://github.com/codelucas/newspaper>`_ and
    `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_.
-   This module extends them significantly.
+    This module extends their coverage and robustness significantly.
+
+Further analyses
+~~~~~~~~~~~~~~~~
+
+If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
+
 
 Contact
 ~~~~~~~

@@ -26,13 +26,12 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.1.2',
-    description='Seamlessly extract the date of web pages based on the HTML code in order to determine the creation or modification date.',
+    version='0.2.0',
+    description='Seamlessly extract the creation or modification date of web pages by scraping the HTML code or performing content guesses.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 2 - Pre-Alpha',
-        #'Development Status :: 3 - Alpha',
+        'Development Status :: 3 - Alpha',
         #'Development Status :: 4 - Beta',
         #'Development Status :: 5 - Production/Stable',
         #'Development Status :: 6 - Mature',
