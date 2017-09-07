@@ -22,7 +22,7 @@ import logging
 import re
 
 # from codecs import open
-from collections import defaultdict
+from collections import Counter
 
 try:
     from cStringIO import StringIO # Python 2
@@ -42,7 +42,7 @@ from lxml import etree, html
 ## INIT
 logger = logging.getLogger()
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]"]
+DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//*[contains(@class, 'date')]"]
 # time-ago datetime=
 # timestamp
 # ...
@@ -114,18 +114,20 @@ def examine_date_elements(tree, expression):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
-    except lxml.etree.XPathEvalError as err:
+    except etree.XPathEvalError as err:
         logger.error('lxml expression %s throws an error: %s', expression, err)
-    if elements is not None:
-        for elem in elements:
-            # simple length heuristics
-            if 3 < len(elem.text_content().strip()) < 30:
-                logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                attempt = try_date(elem.text_content().strip())
-                if attempt is not None:
-                    logger.debug('result: %s', attempt)
-                    if date_validator(attempt) is True:
-                        return attempt
+    else:
+        if elements is not None:
+            for elem in elements:
+                # simple length heuristics
+                if 3 < len(elem.text_content().strip()) < 30:
+                    logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    attempt = try_date(elem.text_content().strip())
+                    if attempt is not None:
+                        logger.debug('result: %s', attempt)
+                        if date_validator(attempt) is True:
+                            return attempt
+    # catchall
     return None
 
 
@@ -145,30 +147,23 @@ def examine_header(tree):
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # "og:" for OpenGraph http://ogp.me/
-                if elem.get('property') == 'og:article:published_time':
+                if elem.get('property') in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datePublished'):
                     if headerdate is None:
                         attempt = try_date(elem.get('content'))
                         if attempt is not None:
                             headerdate = attempt
-                else:
-                    # time
-                    if elem.get('property') in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'rnews:datePublished'):
-                        if headerdate is None:
-                            attempt = try_date(elem.get('content'))
-                            if attempt is not None:
-                                headerdate = attempt
-                    # modified: override published_time
-                    elif elem.get('property') == 'article:modified_time':
-                        attempt = try_date(elem.get('content'))
-                        if attempt is not None:
-                            headerdate = attempt
+                # modified: override published_time
+                elif elem.get('property') in ('article:modified_time', 'og:updated_time'):
+                    attempt = try_date(elem.get('content'))
+                    if attempt is not None:
+                        headerdate = attempt
             # name attribute
             elif 'name' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # date
-                elif elem.get('name') in ('article.created', 'article_date_original', 'article.published', 'created', 'cXenseParse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                elif elem.get('name') in ('article.created', 'article_date_original', 'article.published', 'created', 'cXenseParse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     if headerdate is None:
                         attempt = try_date(elem.get('content'))
                         if attempt is not None:
@@ -197,12 +192,35 @@ def examine_header(tree):
 
 
 
-
-def search_pattern(htmlstring, pattern):
+def search_pattern(htmlstring, pattern, catch, yearpat):
     """Search the given regex pattern throughout the document and return the most frequent match"""
     occurrences = re.findall(r'%s' % pattern, htmlstring)
     if occurrences:
-        return max(occurrences, key=occurrences.count)
+        # determine return string
+        if catch is not None:
+            if len(occurrences) == 1:
+                match = re.match(r'%s' % catch, occurrences[0])
+                if match:
+                    return match
+            # check most frequent results
+            else:
+                bestones = Counter(occurrences).most_common(2)
+                first_pattern = bestones[0][0]
+                first_count = bestones[0][1]
+                second_pattern = bestones[1][0]
+                second_count = bestones[1][1]
+                year1 = int(re.search(r'%s' % yearpat, first_pattern).group(0))
+                year2 = int(re.search(r'%s' % yearpat, second_pattern).group(1))
+                # safety net: newer date but less frequent
+                if year2 > year1 and second_count/first_count > 0.5:
+                    match = re.match(r'%s' % catch, second_pattern)
+                else:
+                    match = re.match(r'%s' % catch, first_pattern)
+                if match:
+                    return match
+        else:
+            candidate = max(occurrences, key=occurrences.count)
+            return candidate
     return None
 
 
@@ -214,26 +232,64 @@ def search_page(htmlstring):
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
 
-    # 1
-    mostfrequent = search_pattern(htmlstring, '/([0-9]{4}/[0-9]{2})/')
-    if mostfrequent is not None:
-        match = re.match(r'([0-9]{4})/([0-9]{2})', mostfrequent)
-        if match:
-            pagedate = '-'.join([match.group(1), match.group(2), '01'])
-            if date_validator(pagedate) is True:
-                return pagedate
+    ## TODO: clean page?
 
-    # 2
-    mostfrequent = search_pattern(htmlstring, '\D([0-9]{2}[/.][0-9]{4})\D')
-    if mostfrequent is not None:
-        match = re.match(r'([0-9]{2})[/.]([0-9]{4})', mostfrequent)
-        if match:
-            pagedate = '-'.join([match.group(2), match.group(1), '01'])
-            if date_validator(pagedate) is True:
-                return pagedate
+    ## 3 components
+    # target URL characteristics
+    pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})/'
+    catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
+    yearpat = '^([12][0-9]{3})'
+    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if mostfrequentmatch is not None:
+        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+        if date_validator(pagedate) is True:
+            return pagedate
 
+    # more loosely structured data
+    pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
+    catch = '([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})'
+    yearpat = '^([12][0-9]{3})'
+    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if mostfrequentmatch is not None:
+        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+        if date_validator(pagedate) is True:
+            return pagedate
+
+    # valid dates strings
+    pattern = '\D([12][0-9]{3}[01][0-9][0-3][0-9])\D'
+    catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
+    yearpat = '^([12][0-9]{3})'
+    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if mostfrequentmatch is not None:
+        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+        if date_validator(pagedate) is True:
+            return pagedate
+
+    ## 2 components
+    #
+    pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
+    catch = '([0-9]{4})[/.-]([0-9]{2})'
+    yearpat = '^([12][0-9]{3})'
+    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if mostfrequentmatch is not None:
+        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), '01'])
+        if date_validator(pagedate) is True:
+            return pagedate
+    #
+    pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
+    catch = '([0-9]{2})[/.-]([0-9]{4})'
+    yearpat = '([12][0-9]{3})$'
+    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if mostfrequentmatch is not None:
+        pagedate = '-'.join([mostfrequentmatch.group(2), mostfrequentmatch.group(1), '01'])
+        if date_validator(pagedate) is True:
+            return pagedate
+
+    ## 1 component
     # last try
-    mostfrequent = search_pattern(htmlstring, '\D(2[01][0-9]{2})\D')
+    pattern = '\D(2[01][0-9]{2})\D'
+    ## TODO: yearpat
+    mostfrequent = search_pattern(htmlstring, pattern, None, None)
     if mostfrequent is not None:
         pagedate = '-'.join([mostfrequent, '07', '01'])
         if date_validator(pagedate) is True:
@@ -286,7 +342,7 @@ def find_date(htmlstring):
     # date regex timestamp rescue
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
     if match and date_validator(match.group(1)) is True:
-        pagedate = match.group(1)
+        return match.group(1)
 
     # last resort
     if EXTENSIVE_SEARCH_BOOL is True:

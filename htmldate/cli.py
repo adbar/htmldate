@@ -9,13 +9,26 @@ from htmldate import find_date
 
 
 def main():
-    htmlstring = sys.stdin.read()
+    """ Run as a command-line utility. """
+    # unicode check
+    try:
+        htmlstring = sys.stdin.read()
+    except UnicodeDecodeError as err:
+        sys.stderr.write('# ERROR: system/buffer encoding:' + str(err) + '\n')
+        sys.exit(1)
+
     # safety check
     if len(htmlstring) > 10000000:
-        print ('# ERROR: file too large')
+        sys.stderr.write('# ERROR: file too large\n')
     elif len(htmlstring) < 10:
-        print ('# ERROR: file too small')
+        sys.stderr.write('# ERROR: file too small\n')
     # proceed
     else:
         result = find_date(htmlstring)
-        print(result)
+        if result:
+            sys.stdout.write(result + '\n')
+
+
+
+if __name__ == '__main__':
+    main()
