@@ -17,6 +17,7 @@ MOCK_PAGES = { \
                 'https://creativecommons.org/about/': 'cache/creativecommons.org.html', \
                 'https://en.support.wordpress.com/': 'cache/support.wordpress.com.html', \
                 'https://en.blog.wordpress.com/': 'cache/blog.wordpress.com.html', \
+                'https://www.deutschland.de/en': 'cache/deutschland.de.en.html', \
 }
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -47,7 +48,8 @@ def test_exact_date():
 
 def test_approximate_date():
     '''this page should return an approximate date'''
-    assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2016-05-01'
+    assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11'
+    assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01'
 
 
 def test_date_validator():
@@ -73,17 +75,27 @@ def test_try_date():
 def test_search_pattern():
     '''test pattern search in strings'''
     # pattern 1
-    pattern = '/([0-9]{4}/[0-9]{2})/'
-    assert htmldate.search_pattern('http://www.url.net/index.html', pattern) is None
-    assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', pattern) is not None
+    pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
+    catch = '([0-9]{4})[/.-]([0-9]{2})'
+    yearpat = '^([12][0-9]{3})'
+    assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
+    assert htmldate.search_pattern('The date is 2002.02.15.', pattern, catch, yearpat) is not None
+    assert htmldate.search_pattern('http://www.url.net/index.html', pattern, catch, yearpat) is None
+    assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat) is not None
+
     # pattern 2
-    pattern = '\D([0-9]{2}[/.][0-9]{4})\D'
-    assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern) is None
-    assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern) is not None
+    pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
+    catch = '([0-9]{2})[/.-]([0-9]{4})'
+    yearpat = '([12][0-9]{3})$'
+    assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
+    assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat) is not None
+
     # pattern 3
     pattern = '\D(2[01][0-9]{2})\D'
-    assert htmldate.search_pattern('It happened in the film 300.', pattern) is None
-    assert htmldate.search_pattern('It happened in 2002.', pattern) is not None
+    catch = '(2[01][0-9]{2})'
+    yearpat = '^(2[01][0-9]{2})'
+    assert htmldate.search_pattern('It happened in the film 300.', pattern, catch, yearpat) is None
+    assert htmldate.search_pattern('It happened in 2002.', pattern, catch, yearpat) is not None
 
 
 def test_cli():
