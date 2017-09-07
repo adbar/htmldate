@@ -18,6 +18,9 @@ MOCK_PAGES = { \
                 'https://en.support.wordpress.com/': 'cache/support.wordpress.com.html', \
                 'https://en.blog.wordpress.com/': 'cache/blog.wordpress.com.html', \
                 'https://www.deutschland.de/en': 'cache/deutschland.de.en.html', \
+                'https://www.gnu.org/licenses/gpl-3.0.en.html': 'cache/gnu.org.gpl.html', \
+                'https://opensource.org/': 'cache/opensource.org.html', \
+                'https://www.austria.info/': 'cache/austria.info.html', \
 }
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -33,8 +36,8 @@ def load_mock_page(url):
 
 def test_no_date():
     '''this page should not return any date'''
-    assert htmldate.find_date(load_mock_page('https://example.com')) == None
-    assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) == None
+    assert htmldate.find_date(load_mock_page('https://example.com')) is None
+    assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) is None
 
 
 def test_exact_date():
@@ -44,21 +47,24 @@ def test_exact_date():
     # in document body
     assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2017-08-25'
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
+    assert htmldate.find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
+    assert htmldate.find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
+    assert htmldate.find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
 
 
 def test_approximate_date():
     '''this page should return an approximate date'''
-    assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11'
-    assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01'
+    assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11' # or '2017-08-03'
+    assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
 
 
 def test_date_validator():
     '''test internal date validation'''
-    assert htmldate.date_validator('2016-01-01') == True
-    assert htmldate.date_validator('1998-08-08') == True
-    assert htmldate.date_validator('1992-07-30') == False
-    assert htmldate.date_validator('1901-13-98') == False
-    assert htmldate.date_validator('202-01') == False
+    assert htmldate.date_validator('2016-01-01') is True
+    assert htmldate.date_validator('1998-08-08') is True
+    assert htmldate.date_validator('1992-07-30') is False
+    assert htmldate.date_validator('1901-13-98') is False
+    assert htmldate.date_validator('202-01') is False
 
 
 def test_try_date():
