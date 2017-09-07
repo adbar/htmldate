@@ -131,7 +131,6 @@ def examine_date_elements(tree, expression):
     return None
 
 
-
 def examine_header(tree):
     """Parse header elements to find date cues"""
     headerdate = None
@@ -196,31 +195,35 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
     """Search the given regex pattern throughout the document and return the most frequent match"""
     occurrences = re.findall(r'%s' % pattern, htmlstring)
     if occurrences:
-        # determine return string
-        if catch is not None:
-            if len(occurrences) == 1:
-                match = re.match(r'%s' % catch, occurrences[0])
-                if match:
-                    return match
-            # check most frequent results
+        if len(occurrences) == 1:
+            match = re.match(r'%s' % catch, occurrences[0])
+            if match:
+                return match
+        # check most frequent results
+        else:
+            ## TODO: refine
+            firstselect = Counter(occurrences).most_common(4)
+            print(firstselect)
+            bestones = sorted(firstselect, reverse=True)[:2]
+            print(bestones)
+            first_pattern = bestones[0][0]
+            first_count = bestones[0][1]
+            second_pattern = bestones[1][0]
+            second_count = bestones[1][1]
+            # same number
+            if first_count == second_count:
+                match = re.match(r'%s' % catch, first_pattern)
             else:
-                bestones = Counter(occurrences).most_common(2)
-                first_pattern = bestones[0][0]
-                first_count = bestones[0][1]
-                second_pattern = bestones[1][0]
-                second_count = bestones[1][1]
                 year1 = int(re.search(r'%s' % yearpat, first_pattern).group(0))
                 year2 = int(re.search(r'%s' % yearpat, second_pattern).group(1))
-                # safety net: newer date but less frequent
+                # safety net: newer date but up to 50% less frequent
                 if year2 > year1 and second_count/first_count > 0.5:
                     match = re.match(r'%s' % catch, second_pattern)
+                # not newer or hopefully not significant
                 else:
                     match = re.match(r'%s' % catch, first_pattern)
-                if match:
-                    return match
-        else:
-            candidate = max(occurrences, key=occurrences.count)
-            return candidate
+            if match:
+                return match
     return None
 
 
@@ -239,9 +242,9 @@ def search_page(htmlstring):
     pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})/'
     catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
     yearpat = '^([12][0-9]{3})'
-    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if mostfrequentmatch is not None:
-        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate) is True:
             return pagedate
 
@@ -249,9 +252,9 @@ def search_page(htmlstring):
     pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
     catch = '([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})'
     yearpat = '^([12][0-9]{3})'
-    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if mostfrequentmatch is not None:
-        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate) is True:
             return pagedate
 
@@ -259,9 +262,9 @@ def search_page(htmlstring):
     pattern = '\D([12][0-9]{3}[01][0-9][0-3][0-9])\D'
     catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
     yearpat = '^([12][0-9]{3})'
-    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if mostfrequentmatch is not None:
-        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), mostfrequentmatch.group(3)])
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate) is True:
             return pagedate
 
@@ -270,31 +273,33 @@ def search_page(htmlstring):
     pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
     catch = '([0-9]{4})[/.-]([0-9]{2})'
     yearpat = '^([12][0-9]{3})'
-    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if mostfrequentmatch is not None:
-        pagedate = '-'.join([mostfrequentmatch.group(1), mostfrequentmatch.group(2), '01'])
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate) is True:
             return pagedate
     #
     pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
     catch = '([0-9]{2})[/.-]([0-9]{4})'
     yearpat = '([12][0-9]{3})$'
-    mostfrequentmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if mostfrequentmatch is not None:
-        pagedate = '-'.join([mostfrequentmatch.group(2), mostfrequentmatch.group(1), '01'])
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(2), bestmatch.group(1), '01'])
         if date_validator(pagedate) is True:
             return pagedate
 
     ## 1 component
     # last try
     pattern = '\D(2[01][0-9]{2})\D'
-    ## TODO: yearpat
-    mostfrequent = search_pattern(htmlstring, pattern, None, None)
-    if mostfrequent is not None:
-        pagedate = '-'.join([mostfrequent, '07', '01'])
+    catch = '(2[01][0-9]{2})'
+    yearpat = '^(2[01][0-9]{2})'
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        pagedate = '-'.join([str(bestmatch), '07', '01'])
         if date_validator(pagedate) is True:
             return pagedate
 
+    # catchall
     return None
 
 
