@@ -1,5 +1,10 @@
 ## Changelog
 
+### version 0.2.1
+- refined date comparisons
+- debug logging options
+- ...
+
 ### version 0.2.0 (first alpha)
 - refined targeting of HTML structure
 - better extraction logic for plain text cases

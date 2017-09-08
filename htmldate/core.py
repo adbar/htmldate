@@ -46,6 +46,7 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 # time-ago datetime=
 # relative-time datetime=
 # timestamp
+# data-utime
 # ...
 
 EXTENSIVE_SEARCH_BOOL = True # adventurous mode
