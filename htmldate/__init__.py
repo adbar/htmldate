@@ -14,6 +14,13 @@ __version__ = '0.1.2'
 from .core import *
 
 
-# logging best practices # http://docs.python-guide.org/en/latest/writing/logging/
-import logging
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+# logging best practices
+# http://docs.python-guide.org/en/latest/writing/logging/
+# https://github.com/requests/requests/blob/master/requests/__init__.py
+try:  # Python 2.7+
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+logging.getLogger(__name__).addHandler(NullHandler())

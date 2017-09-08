@@ -3,6 +3,8 @@
 Implementing a basic command-line interface.
 """
 
+import argparse
+import logging
 import sys
 
 from htmldate import find_date
@@ -10,6 +12,13 @@ from htmldate import find_date
 
 def main():
     """ Run as a command-line utility. """
+    # arguments
+    argsparser = argparse.ArgumentParser()
+    argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+    args = argsparser.parse_args()
+    if args.verbose:
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
     # unicode check
     try:
         htmlstring = sys.stdin.read()
