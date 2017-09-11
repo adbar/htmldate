@@ -6,10 +6,6 @@ Module bundling all needed functions.
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
-## TODO:
-# speed benchmark
-# from og:image or <img>?
-
 # compatibility
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -43,6 +39,11 @@ from lxml import etree, html
 logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//*[contains(@class, 'date')]", "//span[starts-with(@class, 'field-content')]"]
+
+## TODO:
+# speed benchmark
+# from og:image or <img>?
+
 # time-ago datetime=
 # relative-time datetime=
 # timestamp
@@ -154,57 +155,50 @@ def examine_header(tree):
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # "og:" for OpenGraph http://ogp.me/
-                if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
-                    if headerdate is None:
-                        attempt = try_date(elem.get('content'))
-                        if attempt is not None:
-                            headerdate = attempt
+                if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
+                    logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_date(elem.get('content'))
                 # modified: override published_time
                 elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
+                    logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     attempt = try_date(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
             # name attribute
-            elif 'name' in elem.attrib: # elem.get('name') is not None:
+            elif 'name' in elem.attrib and headerdate is None: # elem.get('name') is not None:
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # date
-                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
-                    if headerdate is None:
-                        attempt = try_date(elem.get('content'))
-                        if attempt is not None:
-                            headerdate = attempt
+                if elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                    logger.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_date(elem.get('content'))
             # other types # itemscope?
             elif 'itemprop' in elem.attrib:
-                if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear'):
-                    if headerdate is None:
-                        if 'datetime' in elem.attrib:
-                            attempt = try_date(elem.get('datetime'))
-                        elif 'content' in elem.attrib:
-                            attempt = try_date(elem.get('content'))
-                        if attempt is not None:
-                            headerdate = attempt
+                if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear') and headerdate is None:
+                    logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    if 'datetime' in elem.attrib:
+                        headerdate = try_date(elem.get('datetime'))
+                    elif 'content' in elem.attrib:
+                        headerdate = try_date(elem.get('content'))
                 # override
                 elif elem.get('itemprop').lower() == 'datemodified':
+                    logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
                         attempt = try_date(elem.get('datetime'))
                     elif 'content' in elem.attrib:
                         attempt = try_date(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
-            elif 'pubdate' in elem.attrib:
+            elif 'pubdate' in elem.attrib and headerdate is None:
                 if elem.get('pubdate').lower() == 'pubdate':
-                    attempt = try_date(elem.get('content'))
-                    if attempt is not None:
-                        headerdate = attempt
+                    logger.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_date(elem.get('content'))
             # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
             elif 'http-equiv' in elem.attrib:
-                if elem.get('http-equiv').lower() in ('date', 'last-modified'):
-                    if headerdate is None:
-                        attempt = try_date(elem.get('content'))
-                        if attempt is not None:
-                            headerdate = attempt
+                if elem.get('http-equiv').lower() in ('date', 'last-modified') and headerdate is None:
+                    logger.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_date(elem.get('content'))
             #else:
             #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
 
