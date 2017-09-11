@@ -2,7 +2,9 @@
 
 ### version 0.2.1
 - refined date comparisons
-- debug logging options
+- debug and logging options
+- more tests and test files
+- extensive search can be disabled
 - ...
 
 ### version 0.2.0 (first alpha)

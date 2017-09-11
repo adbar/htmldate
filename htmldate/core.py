@@ -47,9 +47,9 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 # relative-time datetime=
 # timestamp
 # data-utime
+# <div class="entry-date">
 # ...
 
-EXTENSIVE_SEARCH_BOOL = True # adventurous mode
 
 OUTPUTFORMAT = '%Y-%m-%d'
 
@@ -97,7 +97,7 @@ def try_date(string):
     # faster than fire dateparser at once
     if OUTPUTFORMAT == '%Y-%m-%d' and re.match(r'[0-9]{4}', string):
         # simple case
-        result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=\D)', string)
+        result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
         if result is not None and date_validator(result.group(0)) is True:
             return result.group(0)
         # '201709011234' not covered by dateparser
@@ -144,23 +144,23 @@ def examine_header(tree):
     headerdate = None
     # meta elements in header
     try:
-        for elem in tree.xpath('//head/meta'):
+        for elem in tree.xpath('//meta'): # was //head/meta
             # safeguard
             if len(elem.attrib) < 1:
                 continue
             ## property attribute
-            if elem.get('property') is not None:
+            if 'property' in elem.attrib: # elem.get('property') is not None:
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # "og:" for OpenGraph http://ogp.me/
-                if elem.get('property') in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datePublished'):
+                if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
                     if headerdate is None:
                         attempt = try_date(elem.get('content'))
                         if attempt is not None:
                             headerdate = attempt
                 # modified: override published_time
-                elif elem.get('property') in ('article:modified_time', 'og:updated_time'):
+                elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                     attempt = try_date(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
@@ -170,24 +170,43 @@ def examine_header(tree):
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
                 # date
-                elif elem.get('name') in ('article.created', 'article_date_original', 'article.published', 'created', 'cXenseParse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     if headerdate is None:
                         attempt = try_date(elem.get('content'))
                         if attempt is not None:
                             headerdate = attempt
-            # other types
-            # itemscope?
-            elif elem.get('itemprop') in ('datecreated', 'datepublished', 'pubyear') or elem.get('pubdate') == 'pubdate':
-                if headerdate is None:
-                    attempt = try_date(elem.get('datetime'))
+            # other types # itemscope?
+            elif 'itemprop' in elem.attrib:
+                if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear'):
+                    if headerdate is None:
+                        if 'datetime' in elem.attrib:
+                            attempt = try_date(elem.get('datetime'))
+                        elif 'content' in elem.attrib:
+                            attempt = try_date(elem.get('content'))
+                        if attempt is not None:
+                            headerdate = attempt
+                # override
+                elif elem.get('itemprop').lower() == 'datemodified':
+                    if 'datetime' in elem.attrib:
+                        attempt = try_date(elem.get('datetime'))
+                    elif 'content' in elem.attrib:
+                        attempt = try_date(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
-            # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
-            elif elem.get('http-equiv') in ('date', 'last-modified'):
-                if headerdate is None:
+            elif 'pubdate' in elem.attrib:
+                if elem.get('pubdate').lower() == 'pubdate':
                     attempt = try_date(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
+            # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
+            elif 'http-equiv' in elem.attrib:
+                if elem.get('http-equiv').lower() in ('date', 'last-modified'):
+                    if headerdate is None:
+                        attempt = try_date(elem.get('content'))
+                        if attempt is not None:
+                            headerdate = attempt
+            #else:
+            #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
 
     except etree.XPathEvalError as err:
         logger.error('XPath %s', err)
@@ -259,10 +278,9 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
 
 
 def search_page(htmlstring):
-    """Search the page for common patterns (can be dangerous!)"""
+    """Search the page for common patterns (can lead to flawed results!)"""
     # init
     pagedate = None
-    logger.debug('start search')
 
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
@@ -354,7 +372,7 @@ def search_page(htmlstring):
 
 
 
-def find_date(htmlstring):
+def find_date(htmlstring, extensive_search=True):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     pagedate = None
@@ -386,6 +404,7 @@ def find_date(htmlstring):
     if elements is not None:
         for elem in elements:
             if 'datetime' in elem.attrib:
+                logger.debug('time datetime found: %s', elem.get('datetime'))
                 attempt = try_date(elem.get('datetime'))
                 if attempt is not None and date_validator(attempt) is True:
                     return attempt # break
@@ -402,7 +421,8 @@ def find_date(htmlstring):
         return match.group(1)
 
     # last resort
-    if EXTENSIVE_SEARCH_BOOL is True:
+    if extensive_search is True:
+        logger.debug('extensive search started')
         pagedate = search_page(htmlstring)
 
     return pagedate

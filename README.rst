@@ -69,13 +69,15 @@ A more advanced analysis of the document structure is sometimes needed:
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
-In the worst case, the module resorts to a wild guess:
+In the worst case, the module resorts to a guess based on an extensive search, which can be deactivated:
 
 .. code-block:: python
 
     >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
     '2017-08-11'
+    >>> htmldate.find_date(r.text, False)
+    >>>
 
 There are however pages for which no date can be found, ever:
 
@@ -95,6 +97,17 @@ A basic command-line interface is included:
 
     $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
     2016-12-23
+
+Usage:
+
+.. code-block:: bash
+    $ htmldate --help:
+    htmldate [-h] [-v] [-s]
+
+    optional arguments:
+        -h, --help     show this help message and exit
+        -v, --verbose  increase output verbosity
+        -s, --safe     safe mode: markup search only
 
 
 Additional information
