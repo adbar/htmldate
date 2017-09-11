@@ -26,7 +26,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.2.0',
+    version='0.2.1',
     description='Seamlessly extract the creation or modification date of web pages by scraping the HTML code or performing content guesses.',
     long_description=readme(),
     classifiers=[
@@ -42,10 +42,10 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
+        #'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
+        #'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

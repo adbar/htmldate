@@ -101,9 +101,9 @@ A basic command-line interface is included:
 Usage:
 
 .. code-block:: bash
+
     $ htmldate --help:
     htmldate [-h] [-v] [-s]
-
     optional arguments:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
