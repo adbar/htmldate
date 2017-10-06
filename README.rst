@@ -10,9 +10,6 @@ htmldate: find the creation date of HTML pages
 .. image:: https://img.shields.io/pypi/pyversions/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
 
-.. image:: https://img.shields.io/pypi/status/htmldate.svg
-    :target: https://pypi.python.org/pypi/htmldate
-
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
     :target: https://travis-ci.org/adbar/htmldate
 
@@ -24,7 +21,7 @@ Seamless extraction of the creation or modification date of web pages. *htmldate
 
 1. Starting from the header of the page, it uses common patterns to identify date fields.
 2. If this is not successful, it scans the whole document looking for structural markers.
-3. If no date cue could be found, it finally runs a series of heuristics on the content.
+3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup).
 
 Pull requests are welcome.
 
@@ -32,60 +29,19 @@ Pull requests are welcome.
 Usage
 -----
 
-The module takes the HTML document as input (string format) and returns a date when a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module takes the HTML document as input (string format) and returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 According to the tests it should be compatible with all common versions of Python (2 & 3).
+
+
+Installation
+~~~~~~~~~~~~
 
 Install from package repository: ``pip install htmldate``
 
 Direct installation of the latest version over pip is possible (see `build status <https://travis-ci.org/adbar/htmldate>`_):
 
 ``pip install git+https://github.com/adbar/htmldate.git``
-
-
-Within Python
-~~~~~~~~~~~~~
-
-All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
-
-In case the web page features clear metadata in the header, the extraction is straightforward:
-
-.. code-block:: python
-
-    >>> import requests
-    >>> import htmldate
-    >>> r = requests.get('r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
-
-    >>> htmldate.find_date(r.text)
-    '2016-02-17'
-
-A more advanced analysis of the document structure is sometimes needed:
-
-.. code-block:: python
-
-    >>> r = requests.get('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    >>> core.find_date(r.text)
-    '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
-    '# DEBUG result: 2016-12-23'
-    '2016-12-23'
-
-In the worst case, the module resorts to a guess based on an extensive search, which can be deactivated:
-
-.. code-block:: python
-
-    >>> r = requests.get('https://creativecommons.org/about/')
-    >>> htmldate.find_date(r.text)
-    '2017-08-11'
-    >>> htmldate.find_date(r.text, False)
-    >>>
-
-There are however pages for which no date can be found, ever:
-
-.. code-block:: python
-
-    >>> r = requests.get('https://example.com')
-    >>> htmldate.find_date(r.text)
-    >>>
 
 
 Command-line
@@ -102,12 +58,56 @@ Usage:
 
 .. code-block:: bash
 
-    $ htmldate --help:
+    $ htmldate --help
     htmldate [-h] [-v] [-s]
     optional arguments:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
         -s, --safe     safe mode: markup search only
+
+
+Within Python
+~~~~~~~~~~~~~
+
+All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
+
+In case the web page features clear metadata in the header, the extraction is straightforward:
+
+.. code-block:: python
+
+    >>> import requests
+    >>> import htmldate
+    >>> r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
+    >>> htmldate.find_date(r.text)
+    '2016-02-17'
+
+A more advanced analysis of the document structure is sometimes needed:
+
+.. code-block:: python
+
+    >>> r = requests.get('http://blog.python.org/2016/12/python-360-is-now-available.html')
+    >>> htmldate.find_date(r.text)
+    '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
+    '# DEBUG result: 2016-12-23'
+    '2016-12-23'
+
+In the worst case, the module resorts to a guess based on an extensive search, which can be deactivated:
+
+.. code-block:: python
+
+    >>> r = requests.get('https://creativecommons.org/about/')
+    >>> htmldate.find_date(r.text)
+    '2017-08-11'
+    >>> htmldate.find_date(r.text, extensive_search=False)
+    >>>
+
+There are however pages for which no date can be found, ever:
+
+.. code-block:: python
+
+    >>> r = requests.get('https://example.com')
+    >>> htmldate.find_date(r.text)
+    >>>
 
 
 Additional information
@@ -116,7 +116,7 @@ Additional information
 Context
 ~~~~~~~
 
-There are webpages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified.
+There are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified.
 
 This module is part of methods to derive metadata from web documents in order to build text corpora for (computational) linguistic analysis. For more information:
 
