@@ -97,9 +97,19 @@ In the worst case, the module resorts to a guess based on an extensive search, w
 
     >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
-    '2017-08-11'
+    '2017-08-11' # has been updated since
     >>> htmldate.find_date(r.text, extensive_search=False)
     >>>
+
+The output format of the dates found can be set in a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
+
+.. code-block:: python
+
+    >>> r = requests.get('https://www.gnu.org/licenses/gpl-3.0.en.html')
+    >>> htmldate.find_date(r.text)
+    '2016-11-18'
+    >>> htmldate.find_date(r.text, outputformat='%d %B %Y')
+    '18 November 2016'
 
 There are however pages for which no date can be found, ever:
 
