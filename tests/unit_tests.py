@@ -40,7 +40,7 @@ MOCK_PAGES = { \
 }
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-
+OUTPUTFORMAT = '%Y-%m-%d'
 
 
 def load_mock_page(url):
@@ -51,11 +51,12 @@ def load_mock_page(url):
 
 
 def test_no_date():
-    '''this page should not return any date'''
+    '''these pages should not return any date'''
     assert htmldate.find_date(load_mock_page('https://example.com')) is None
     assert htmldate.find_date(load_mock_page('https://www.intel.com/content/www/us/en/legal/terms-of-use.html')) is None
     # safe search
     assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/'), False) is None
+    assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) is None
 
 
 def test_exact_date():
@@ -90,23 +91,32 @@ def test_approximate_date():
 
 def test_date_validator():
     '''test internal date validation'''
-    assert htmldate.date_validator('2016-01-01') is True
-    assert htmldate.date_validator('1998-08-08') is True
-    assert htmldate.date_validator('2001-12-31') is True
-    assert htmldate.date_validator('1992-07-30') is False
-    assert htmldate.date_validator('1901-13-98') is False
-    assert htmldate.date_validator('202-01') is False
+    assert htmldate.date_validator('2016-01-01', OUTPUTFORMAT) is True
+    assert htmldate.date_validator('1998-08-08', OUTPUTFORMAT) is True
+    assert htmldate.date_validator('2001-12-31', OUTPUTFORMAT) is True
+    assert htmldate.date_validator('1992-07-30', OUTPUTFORMAT) is False
+    assert htmldate.date_validator('1901-13-98', OUTPUTFORMAT) is False
+    assert htmldate.date_validator('202-01', OUTPUTFORMAT) is False
+
+
+def output_format_validator():
+    '''test internal output format validation'''
+    assert htmldate.output_format_validator('%Y-%m-%d') is True
+    assert htmldate.output_format_validator('%M-%Y') is True
+    assert htmldate.output_format_validator('Y-%d') is False
+
+
 
 
 def test_try_date():
     '''test date extraction via external package'''
-    assert htmldate.try_date('Friday, September 01, 2017') == '2017-09-01'
-    assert htmldate.try_date('Fr, 1 Sep 2017 16:27:51 MESZ') == '2017-09-01'
-    assert htmldate.try_date('Freitag, 01. September 2017') == '2017-09-01'
-    # assert htmldate.try_date('Am 1. September 2017 um 15:36 Uhr schrieb') == '2017-09-01'
-    assert htmldate.try_date('1.9.2017') == '2017-09-01'
-    assert htmldate.try_date('1/9/2017') == '2017-09-01'
-    assert htmldate.try_date('201709011234') == '2017-09-01'
+    assert htmldate.try_date('Friday, September 01, 2017', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_date('Freitag, 01. September 2017', OUTPUTFORMAT) == '2017-09-01'
+    # assert htmldate.try_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_date('1.9.2017', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_date('1/9/2017', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_date('201709011234', OUTPUTFORMAT) == '2017-09-01'
 
 
 def test_search_pattern():
@@ -137,7 +147,7 @@ def test_search_pattern():
 
 def test_search_html():
     '''test pattern search in HTML'''
-    assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
+    assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT) == '2017-07-12'
 
 
 def test_cli():

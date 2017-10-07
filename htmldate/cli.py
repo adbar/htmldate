@@ -10,6 +10,10 @@ import sys
 from htmldate import find_date
 
 
+##TODO:
+# take list as input?
+# rename safe mode?
+
 
 def main():
     """ Run as a command-line utility. """

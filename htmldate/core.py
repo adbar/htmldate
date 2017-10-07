@@ -30,20 +30,23 @@ except ImportError:
 # third-party
 import dateparser
 from lxml import etree, html
+from lxml.html.clean import Cleaner
 
 # own
 # import settings
+
+## TODO:
+# take list of URs as input
+# more examples and tests
+# speed benchmark
+# from og:image or <img>?
+# MODIFIED vs CREATION date switch?
 
 
 ## INIT
 logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]"]
-
-## TODO:
-# speed benchmark
-# from og:image or <img>?
-
 # time-ago datetime=
 # relative-time datetime=
 # timestamp
@@ -51,21 +54,33 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 # ...
 
 
-OUTPUTFORMAT = '%Y-%m-%d'
+# OUTPUTFORMAT = '%Y-%m-%d'
 
 MIN_YEAR = 1995 # inclusive
 TODAY = datetime.date.today()
 MAX_YEAR = 2020 # inclusive
 
-# MODIFIED vs CREATION date switch?
+cleaner = Cleaner()
+cleaner.comments = False
+cleaner.embedded = True
+cleaner.forms = False
+cleaner.frames = True
+cleaner.javascript = False
+cleaner.links = True
+cleaner.meta = False
+cleaner.page_structure = True
+cleaner.processing_instructions = True
+cleaner.remove_unknown_tags = False
+cleaner.safe_attrs_only = False
+cleaner.scripts = False
+cleaner.style = False
 
 
-
-def date_validator(datestring):
+def date_validator(datestring, outputformat):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
     try:
-        dateobject = datetime.datetime.strptime(datestring, OUTPUTFORMAT)
+        dateobject = datetime.datetime.strptime(datestring, outputformat)
     except ValueError:
         return False
     # basic year validation
@@ -78,46 +93,46 @@ def date_validator(datestring):
     return False
 
 
-def output_format_validator():
+def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
     try:
-        datetime.datetime.strftime(dateobject, OUTPUTFORMAT)
+        datetime.datetime.strftime(dateobject, outputformat)
     except (NameError, ValueError) as err:
-        logging.error('wrong output format: %s %s', OUTPUTFORMAT, err)
+        logging.error('wrong output format: %s %s', outputformat, err)
         return False
     return True
 
 
-def try_date(string):
+def try_date(string, outputformat):
     """Use dateparser to parse the assumed date expression"""
     if string is None or len(string) < 4:
         return None
 
     # faster than fire dateparser at once
-    if OUTPUTFORMAT == '%Y-%m-%d' and re.match(r'[0-9]{4}', string):
+    if outputformat == '%Y-%m-%d' and re.match(r'[0-9]{4}', string):
         # simple case
         result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
-        if result is not None and date_validator(result.group(0)) is True:
+        if result is not None and date_validator(result.group(0), outputformat) is True:
             return result.group(0)
         # '201709011234' not covered by dateparser
         result = re.match(r'[0-9]{8}', string)
         if result is not None:
             temp = result.group(0)
             candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
-            if date_validator(candidate) is True:
+            if date_validator(candidate, outputformat) is True:
                 return candidate
 
     # send to dateparser
     target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
     if target is not None:
-        datestring = datetime.date.strftime(target, OUTPUTFORMAT)
-        if date_validator(datestring) is True:
+        datestring = datetime.date.strftime(target, outputformat)
+        if date_validator(datestring, outputformat) is True:
             return datestring
     return None
 
 
-def examine_date_elements(tree, expression):
+def examine_date_elements(tree, expression, outputformat):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -130,16 +145,16 @@ def examine_date_elements(tree, expression):
                 textcontent = elem.text_content().strip()
                 if 3 < len(textcontent) < 30 and re.search(r'\d', textcontent):
                     logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_date(elem.text_content().strip())
+                    attempt = try_date(elem.text_content().strip(), outputformat)
                     if attempt is not None:
                         logger.debug('result: %s', attempt)
-                        if date_validator(attempt) is True:
+                        if date_validator(attempt, outputformat) is True:
                             return attempt
     # catchall
     return None
 
 
-def examine_header(tree):
+def examine_header(tree, outputformat):
     """Parse header elements to find date cues"""
     headerdate = None
     # meta elements in header
@@ -156,11 +171,11 @@ def examine_header(tree):
                 # "og:" for OpenGraph http://ogp.me/
                 if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_date(elem.get('content'))
+                    headerdate = try_date(elem.get('content'), outputformat)
                 # modified: override published_time
                 elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_date(elem.get('content'))
+                    attempt = try_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
             # name attribute
@@ -171,33 +186,33 @@ def examine_header(tree):
                 # date
                 if elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     logger.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_date(elem.get('content'))
+                    headerdate = try_date(elem.get('content'), outputformat)
             # other types # itemscope?
             elif 'itemprop' in elem.attrib:
                 if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear') and headerdate is None:
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        headerdate = try_date(elem.get('datetime'))
+                        headerdate = try_date(elem.get('datetime'), outputformat)
                     elif 'content' in elem.attrib:
-                        headerdate = try_date(elem.get('content'))
+                        headerdate = try_date(elem.get('content'), outputformat)
                 # override
                 elif elem.get('itemprop').lower() == 'datemodified':
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        attempt = try_date(elem.get('datetime'))
+                        attempt = try_date(elem.get('datetime'), outputformat)
                     elif 'content' in elem.attrib:
-                        attempt = try_date(elem.get('content'))
+                        attempt = try_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
             elif 'pubdate' in elem.attrib and headerdate is None:
                 if elem.get('pubdate').lower() == 'pubdate':
                     logger.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_date(elem.get('content'))
+                    headerdate = try_date(elem.get('content'), outputformat)
             # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
             elif 'http-equiv' in elem.attrib:
                 if elem.get('http-equiv').lower() in ('date', 'last-modified') and headerdate is None:
                     logger.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_date(elem.get('content'))
+                    headerdate = try_date(elem.get('content'), outputformat)
             #else:
             #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
 
@@ -205,7 +220,7 @@ def examine_header(tree):
         logger.error('XPath %s', err)
         return None
 
-    if headerdate is not None and date_validator(headerdate) is True:
+    if headerdate is not None and date_validator(headerdate, outputformat) is True:
         return headerdate
     return None
 
@@ -270,7 +285,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
     return None
 
 
-def search_page(htmlstring):
+def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
     pagedate = None
@@ -287,7 +302,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
 
@@ -298,7 +313,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
     #
@@ -308,7 +323,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(3), bestmatch.group(2), bestmatch.group(1)])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
 
@@ -319,7 +334,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
 
@@ -332,7 +347,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
     #
@@ -342,7 +357,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(2), bestmatch.group(1), '01'])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
 
@@ -356,7 +371,7 @@ def search_page(htmlstring):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
-        if date_validator(pagedate) is True:
+        if date_validator(pagedate, outputformat) is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return pagedate
 
@@ -364,32 +379,52 @@ def search_page(htmlstring):
     return None
 
 
+def load_html(htmlobject):
+    """Load object given as input and validate its type (accepted: LXML tree and string)"""
+    if isinstance(htmlobject, html.HtmlElement):
+        # copy tree
+        tree = htmlobject
+        # derive string
+        htmlstring = html.tostring(htmlobject, encoding='unicode')
+    elif isinstance(htmlobject, str):
+        # robust parsing
+        try:
+            # copy string
+            htmlstring = htmlobject
+            # parse
+            parser = html.HTMLParser() # encoding='utf8'
+            tree = html.parse(StringIO(htmlobject), parser=parser)
+            ## TODO: clean page?
+            # tree = html.fromstring(html.encode('utf8'), parser=parser)
+            # <svg>
+        except UnicodeDecodeError as err:
+            logger.error('unicode %s', err)
+            tree = None
+        except UnboundLocalError as err:
+            logger.error('parsed string %s', err)
+            tree = None
+        except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
+            logger.error('parser %s', err)
+            tree = None
+    else:
+        logger.error('this type cannot be processed: %s', type(htmlobject))
+        tree = None
+        htmlstring = None
+    return (tree, htmlstring)
 
-def find_date(htmlstring, extensive_search=True):
+
+def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
-    pagedate = None
-    if output_format_validator() is False:
+    if output_format_validator(outputformat) is False:
+        return
+    tree, htmlstring = load_html(htmlobject)
+    if tree is None:
         return
 
-    # robust parsing
-    try:
-        tree = html.parse(StringIO(htmlstring), html.HTMLParser())
-        ## TODO: clean page?
-        # <svg>
-    except UnicodeDecodeError as err:
-        logger.error('unicode %s', err)
-        return None
-    except UnboundLocalError as err:
-        logger.error('parsed string %s', err)
-        return None
-    except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
-        logger.error('parser %s', err)
-        return None
-
     # first, try header
-    pagedate = examine_header(tree)
-    if pagedate is not None and date_validator(pagedate) is True:
+    pagedate = examine_header(tree, outputformat)
+    if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
 
     # <time>
@@ -398,24 +433,29 @@ def find_date(htmlstring, extensive_search=True):
         for elem in elements:
             if 'datetime' in elem.attrib:
                 logger.debug('time datetime found: %s', elem.get('datetime'))
-                attempt = try_date(elem.get('datetime'))
-                if attempt is not None and date_validator(attempt) is True:
+                attempt = try_date(elem.get('datetime'), outputformat)
+                if attempt is not None and date_validator(attempt, outputformat) is True:
                     return attempt # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr)
-        if dateresult is not None and date_validator(dateresult) is True:
+        dateresult = examine_date_elements(tree, expr, outputformat)
+        if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
+
+    # clean before string search
+    cleaned_html = cleaner.clean_html(tree)
+    htmlstring = html.tostring(cleaned_html, encoding='unicode')
+    
 
     # date regex timestamp rescue
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
-    if match and date_validator(match.group(1)) is True:
+    if match and date_validator(match.group(1), outputformat) is True:
         return match.group(1)
 
     # last resort
     if extensive_search is True:
         logger.debug('extensive search started')
-        pagedate = search_page(htmlstring)
+        pagedate = search_page(htmlstring, outputformat)
 
     return pagedate
