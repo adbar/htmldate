@@ -99,6 +99,15 @@ In the worst case, the module resorts to a guess based on an extensive search, w
     >>> htmldate.find_date(r.text, extensive_search=False)
     >>>
 
+It is also possible to use already parsed HTML (i.e. a LXML tree object):
+
+.. code-block:: python
+
+    >>> from lxml import html
+    >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
+    >>> htmldate.find_date(mytree)
+    '2016-07-12'
+
 The output format of the dates found can be set in a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
 
 .. code-block:: python

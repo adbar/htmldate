@@ -44,8 +44,8 @@ MOCK_PAGES = { \
 'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
 'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
 'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
-# '': '', \
 }
+# '': '', \
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -195,4 +195,3 @@ if __name__ == '__main__':
 
     # cli
     # test_cli() ## TODO
-

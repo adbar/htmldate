@@ -103,6 +103,13 @@ def output_format_validator(outputformat):
     return True
 
 
+def convert_date(datestring, inputformat, outputformat):
+    """Parse date and return string in desired format"""
+    dateobject = datetime.datetime.strptime(datestring, inputformat)
+    converted = dateobject.strftime(outputformat)
+    return converted
+
+
 def try_ymd_date(string, outputformat):
     """Use dateparser to parse the assumed date expression"""
     if string is None or len(string) < 4:
@@ -113,20 +120,14 @@ def try_ymd_date(string, outputformat):
         # simple case
         result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
         if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
-            # convert
-            dateobject = datetime.datetime.strptime(result.group(0), '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(result.group(0), '%Y-%m-%d', outputformat)
         # '201709011234' not covered by dateparser
         result = re.match(r'[0-9]{8}', string)
         if result is not None:
             temp = result.group(0)
             candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
             if date_validator(candidate, '%Y-%m-%d') is True:
-                # convert
-                dateobject = datetime.datetime.strptime(candidate, '%Y-%m-%d')
-                converted = dateobject.strftime(outputformat)
-                return converted
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # send to dateparser
     target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
@@ -144,7 +145,7 @@ def examine_date_elements(tree, expression, outputformat):
     except etree.XPathEvalError as err:
         logger.error('lxml expression %s throws an error: %s', expression, err)
     else:
-        if elements is not None and len(elements) > 1:
+        if elements is not None and len(elements) > 0:
             for elem in elements:
                 # simple length heuristics
                 textcontent = elem.text_content().strip()
@@ -301,7 +302,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
 def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
-    pagedate = None
+    # pagedate = None
 
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
@@ -317,9 +318,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # more loosely structured data
     pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
@@ -328,11 +327,9 @@ def search_page(htmlstring, outputformat):
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate,  '%Y-%m-%d') is True:
+        if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
     #
     pattern = '\D([0-9]{2}[/.-][0-9]{2}[/.-][0-9]{4})\D'
     catch = '([0-9]{2})[/.-]([0-9]{2})[/.-]([0-9]{4})'
@@ -342,9 +339,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(3), bestmatch.group(2), bestmatch.group(1)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # valid dates strings
     pattern = '(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)'
@@ -355,9 +350,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     ## 2 components
     logger.debug('switching to two components')
@@ -370,9 +363,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
     #
     pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
     catch = '([0-9]{2})[/.-]([0-9]{4})'
@@ -382,9 +373,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(2), bestmatch.group(1), '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     ## 1 component
     # last try
@@ -398,9 +387,7 @@ def search_page(htmlstring, outputformat):
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            dateobject = datetime.datetime.strptime(pagedate, '%Y-%m-%d')
-            converted = dateobject.strftime(outputformat)
-            return converted
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # catchall
     return None
@@ -470,9 +457,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
     elements = tree.xpath('//abbr[@data-utime]')
     if elements is not None and len(elements) > 0:
         reference = 0
-        print ('AA', len(elements))
         for elem in elements:
-            print (html.tostring(elem, encoding='unicode'))
             try:
                 candidate = int(elem.get('data-utime'))
             except ValueError:
@@ -503,13 +488,12 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('time regex found: %s', match.group(0))
-        dateobject = datetime.datetime.strptime(match.group(1), '%Y-%m-%d')
-        converted = dateobject.strftime(outputformat)
-        return converted
+        return convert_date(match.group(1), '%Y-%m-%d', outputformat)
 
     # last resort
     if extensive_search is True:
         logger.debug('extensive search started')
         pagedate = search_page(htmlstring, outputformat)
+        return pagedate
 
-    return pagedate
+    # return pagedate
