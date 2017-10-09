@@ -26,7 +26,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.2.1',
+    version='0.2.2',
     description='Seamlessly extract the creation or modification date of web pages by scraping the HTML code or performing content guesses.',
     long_description=readme(),
     classifiers=[
@@ -55,7 +55,7 @@ setup(
         'Topic :: Text Processing :: Linguistic',
         'Topic :: Text Processing :: Markup :: HTML',
     ],
-    keywords=['metadata-extraction', 'date-parser', 'html-parsing', 'webarchives'],
+    keywords=['metadata-extraction', 'date-parser', 'html-parsing', 'webarchives', 'web-scraping'],
     url='http://github.com/adbar/htmldate',
     author='Adrien Barbaresi',
     author_email='adrien.barbaresi@oeaw.ac.at',
