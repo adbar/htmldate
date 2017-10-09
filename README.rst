@@ -23,8 +23,6 @@ Seamless extraction of the creation or modification date of web pages. *htmldate
 2. If this is not successful, it scans the whole document looking for structural markers.
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup).
 
-Pull requests are welcome.
-
 
 Usage
 -----
@@ -120,6 +118,16 @@ There are however pages for which no date can be found, ever:
     >>>
 
 
+Tests
+~~~~~
+
+A series of webpages triggering different structural and content patterns is included for testing purposes:
+
+.. code-block:: bash
+
+    $ python tests/unit_tests.py
+
+
 Additional information
 ----------------------
 
@@ -145,6 +153,8 @@ Further analyses
 ~~~~~~~~~~~~~~~~
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
+
+Pull requests are welcome.
 
 
 Contact

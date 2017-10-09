@@ -36,6 +36,14 @@ MOCK_PAGES = { \
 'https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov': '500px.com.spring.html', \
 'https://www.eff.org/files/annual-report/2015/index.html': 'eff.org.2015.html', \
 'http://unexpecteduser.blogspot.de/2011/': 'unexpecteduser.2011.html', \
+'https://bayern.de/': 'bayern.de.html', \
+'https://www.facebook.com/visitaustria/': 'facebook.com.visitaustria.html', \
+'http://www.stuttgart.de/': 'stuttgart.de.html', \
+'https://www.gruene-niedersachsen.de': 'gruene-niedersachsen.de.html', \
+'https://die-partei.net/sh/': 'die-partei.net.sh.html', \
+'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
+'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
+'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
 # '': '', \
 }
 
@@ -68,6 +76,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
+    assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
     # other format
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), outputformat='%d %B %Y') == '09 August 2013'
     ## in document body
@@ -79,6 +88,8 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
     assert htmldate.find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/')) == '2011-03-30'
+    assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-10-09'
+    assert htmldate.find_date(load_mock_page('https://die-partei.net/sh/')) == '2014-07-19'
     assert htmldate.find_date(load_mock_page('https://www.rosneft.com/business/Upstream/Licensing/')) == '2017-02-27' # most probably 2014-12-31, found in text
     # other format
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/'), outputformat='%d %B %Y') == '30 March 2011'
@@ -93,6 +104,11 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-07-01' # actually 2017-09-01
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2016-12-15' # actually 2017-07-24
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
+    assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-09-29' # most probably 2017-10-06
+    assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-01' # actually 2017-10-09
+    assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
+    assert htmldate.find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
+    assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2010-11-01' # in meta, 2016 more plausible
     # other format
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
 
@@ -165,6 +181,7 @@ def test_cli():
 
 
 if __name__ == '__main__':
+
     # function-level
     test_date_validator()
     test_search_pattern()

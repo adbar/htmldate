@@ -56,15 +56,15 @@ DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'd
 
 MIN_YEAR = 1995 # inclusive
 TODAY = datetime.date.today()
-MAX_YEAR = 2020 # inclusive
+MAX_YEAR = datetime.date.today().year # inclusive # was 2020
 
 cleaner = Cleaner()
-cleaner.comments = False
+cleaner.comments = True
 cleaner.embedded = True
 cleaner.forms = False
 cleaner.frames = True
 cleaner.javascript = False
-cleaner.links = True
+cleaner.links = False
 cleaner.meta = False
 cleaner.page_structure = True
 cleaner.processing_instructions = True
@@ -144,7 +144,7 @@ def examine_date_elements(tree, expression, outputformat):
     except etree.XPathEvalError as err:
         logger.error('lxml expression %s throws an error: %s', expression, err)
     else:
-        if elements is not None:
+        if elements is not None and len(elements) > 1:
             for elem in elements:
                 # simple length heuristics
                 textcontent = elem.text_content().strip()
@@ -265,7 +265,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
     # all values are 1 (rare)?
     else:
         # select among most frequent
-        firstselect = occurrences.most_common(5)
+        firstselect = occurrences.most_common(10)
         logger.debug('firstselect: %s', firstselect)
         bestones = sorted(firstselect, reverse=True)[:2]
         first_pattern = bestones[0][0]
@@ -279,6 +279,14 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
         else:
             year1 = int(re.search(r'%s' % yearpat, first_pattern).group(1))
             year2 = int(re.search(r'%s' % yearpat, second_pattern).group(1))
+            # safety net: plausibility
+            if date_validator(str(year1), '%Y') is False:
+                if date_validator(str(year2), '%Y') is True:
+                    # logger.debug('first candidate not suitable: %s', year1)
+                    match = re.match(r'%s' % catch, second_pattern)
+                else:
+                    logger.debug('no suitable candidate: %s %s', year1, year2)
+                    return None
             # safety net: newer date but up to 50% less frequent
             if year2 > year1 and second_count/first_count > 0.5:
                 match = re.match(r'%s' % catch, second_pattern)
@@ -301,7 +309,7 @@ def search_page(htmlstring, outputformat):
     ## 3 components
     # logger.debug('3 components')
     # target URL characteristics
-    pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})/'
+    pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]'
     catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
     yearpat = '^\D?([12][0-9]{3})'
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -448,13 +456,35 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
 
     # <time>
     elements = tree.xpath('//time')
-    if elements is not None:
+    if elements is not None and len(elements) > 0:
         for elem in elements:
             if 'datetime' in elem.attrib:
                 logger.debug('time datetime found: %s', elem.get('datetime'))
                 attempt = try_ymd_date(elem.get('datetime'), outputformat)
                 if attempt is not None and date_validator(attempt, outputformat) is True:
                     return attempt # break
+            # else:
+            # ...
+
+    # data-utime (mostly Facebook)
+    elements = tree.xpath('//abbr[@data-utime]')
+    if elements is not None and len(elements) > 0:
+        reference = 0
+        print ('AA', len(elements))
+        for elem in elements:
+            print (html.tostring(elem, encoding='unicode'))
+            try:
+                candidate = int(elem.get('data-utime'))
+            except ValueError:
+                continue
+            logger.debug('data-utime found: %s', candidate)
+            # look for newest (i.e. largest time delta)
+            if candidate > reference:
+                reference = candidate
+        # convert and return
+        dateobject = datetime.datetime.fromtimestamp(reference)
+        converted = dateobject.strftime(outputformat)
+        return converted
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
@@ -465,10 +495,14 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
     # clean before string search
     cleaned_html = cleaner.clean_html(tree)
     htmlstring = html.tostring(cleaned_html, encoding='unicode')
+    # remove comments by hand as faulty in lxml
+    htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
+    logger.debug('html cleaned')
 
     # date regex timestamp rescue
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
+        logger.debug('time regex found: %s', match.group(0))
         dateobject = datetime.datetime.strptime(match.group(1), '%Y-%m-%d')
         converted = dateobject.strftime(outputformat)
         return converted

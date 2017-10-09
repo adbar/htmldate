@@ -30,7 +30,7 @@ def main():
     try:
         htmlstring = sys.stdin.read()
     except UnicodeDecodeError as err:
-        sys.stderr.write('# ERROR: system/buffer encoding:' + str(err) + '\n')
+        sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
         sys.exit(1)
 
     # safety check
