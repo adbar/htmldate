@@ -1,0 +1,7 @@
+[run]
+source = htmldate
+
+omit =
+    venv/*
+    tests/*
+    setup.py

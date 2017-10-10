@@ -10,12 +10,16 @@ python:
 
 before_install:
   - pip install -U dateparser lxml
+  - pip install -U codecov
 
 install:
   - pip install .
 
 script:
   - pytest
+
+after_success:
+    - codecov
 
 notifications:
   email:
