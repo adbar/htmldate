@@ -52,7 +52,7 @@ MOCK_PAGES = { \
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
-parser = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
+PARSER = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
 
 
 def load_mock_page(url):
@@ -63,6 +63,7 @@ def load_mock_page(url):
 
 
 def test_load():
+    '''test if loaded strings/trees are handled properly'''
     assert htmldate.load_html(123) == (None, None)
 
 
@@ -131,6 +132,16 @@ def test_date_validator():
     assert htmldate.date_validator('1992-07-30', OUTPUTFORMAT) is False
     assert htmldate.date_validator('1901-13-98', OUTPUTFORMAT) is False
     assert htmldate.date_validator('202-01', OUTPUTFORMAT) is False
+    assert htmldate.date_validator('1922', '%Y') is False
+    assert htmldate.date_validator('2004', '%Y') is True
+
+
+
+def test_convert_date():
+    '''test date conversion'''
+    assert htmldate.convert_date('2016-11-18', '%Y-%m-%d', '%d %B %Y') == '18 November 2016'
+    assert htmldate.convert_date('18 November 2016', '%d %B %Y', '%Y-%m-%d') == '2016-11-18'
+
 
 
 def output_format_validator():
@@ -138,19 +149,27 @@ def output_format_validator():
     assert htmldate.output_format_validator('%Y-%m-%d') is True
     assert htmldate.output_format_validator('%M-%Y') is True
     assert htmldate.output_format_validator('Y-%d') is False
+    assert htmldate.output_format_validator(123) is False
 
 
 def test_try_ymd_date():
     '''test date extraction via external package'''
-    assert htmldate.try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, parser) == '2017-09-01'
-    assert htmldate.try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, parser) == '2017-09-01'
-    assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # assert htmldate.try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('1.9.2017', OUTPUTFORMAT, parser) == '2017-09-01'
-    assert htmldate.try_ymd_date('1/9/2017', OUTPUTFORMAT, parser) == '2017-09-01'
-    assert htmldate.try_ymd_date('201709011234', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('1.9.2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('1/9/2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('201709011234', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # other output format
-    assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y', parser) == '01 September 2017'
+    assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y', PARSER) == '01 September 2017'
+    # wrong
+    assert htmldate.try_ymd_date('201', OUTPUTFORMAT, PARSER) is None
+
+
+# TODO
+# def test_header():
+#     assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
 def test_search_pattern():
@@ -197,6 +216,7 @@ if __name__ == '__main__':
     test_date_validator()
     test_search_pattern()
     test_try_ymd_date()
+    test_convert_date()
 
     # module-level
     test_no_date()
