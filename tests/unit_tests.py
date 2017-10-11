@@ -8,7 +8,10 @@ import os
 import sys
 # https://docs.pytest.org/en/latest/
 
+import dateparser
+
 import htmldate
+from htmldate import cli
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -49,6 +52,7 @@ MOCK_PAGES = { \
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
+parser = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
 
 
 def load_mock_page(url):
@@ -56,6 +60,10 @@ def load_mock_page(url):
     with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'r') as inputf:
         htmlstring = inputf.read()
     return htmlstring
+
+
+def test_load():
+    assert htmldate.load_html(123) == (None, None)
 
 
 def test_no_date():
@@ -69,6 +77,8 @@ def test_no_date():
 
 def test_exact_date():
     '''these pages should return an exact date'''
+    ## HTML tree
+    assert htmldate.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
     ## meta in header
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     assert htmldate.find_date(load_mock_page('https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov')) == '2013-02-16'
@@ -105,9 +115,9 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2016-12-15' # actually 2017-07-24
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-09-29' # most probably 2017-10-06
-    assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-01' # actually 2017-10-09
+    assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    assert htmldate.find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
+    # assert htmldate.find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
     assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2010-11-01' # in meta, 2016 more plausible
     # other format
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
@@ -132,15 +142,15 @@ def output_format_validator():
 
 def test_try_ymd_date():
     '''test date extraction via external package'''
-    assert htmldate.try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, parser) == '2017-09-01'
     # assert htmldate.try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('1.9.2017', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('1/9/2017', OUTPUTFORMAT) == '2017-09-01'
-    assert htmldate.try_ymd_date('201709011234', OUTPUTFORMAT) == '2017-09-01'
+    assert htmldate.try_ymd_date('1.9.2017', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('1/9/2017', OUTPUTFORMAT, parser) == '2017-09-01'
+    assert htmldate.try_ymd_date('201709011234', OUTPUTFORMAT, parser) == '2017-09-01'
     # other output format
-    assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y') == '01 September 2017'
+    assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y', parser) == '01 September 2017'
 
 
 def test_search_pattern():
@@ -177,12 +187,13 @@ def test_search_html():
 
 def test_cli():
     '''test the command-line interface'''
-    pass
+    assert cli.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
 
 
 if __name__ == '__main__':
 
     # function-level
+    test_load()
     test_date_validator()
     test_search_pattern()
     test_try_ymd_date()
@@ -194,4 +205,4 @@ if __name__ == '__main__':
     test_search_html()
 
     # cli
-    # test_cli() ## TODO
+    test_cli()

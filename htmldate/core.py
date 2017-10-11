@@ -36,9 +36,7 @@ from lxml.html.clean import Cleaner
 # import settings
 
 ## TODO:
-# write helper around conversion
 # take list of URLs as input
-# more examples and tests
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
@@ -48,13 +46,15 @@ from lxml.html.clean import Cleaner
 logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]"]
+
+
 # time-ago datetime=
 # relative-time datetime=
 # timestamp
 # data-utime
 # ...
 
-MIN_YEAR = 1995 # inclusive
+MIN_YEAR = 1995 # inclusive # TODO: change this in settings file
 TODAY = datetime.date.today()
 MAX_YEAR = datetime.date.today().year # inclusive # was 2020
 
@@ -72,6 +72,8 @@ cleaner.remove_unknown_tags = False
 cleaner.safe_attrs_only = False
 cleaner.scripts = False
 cleaner.style = False
+cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'table', 'svg', 'video']
+# 'embed', 'figure', 'img',
 
 
 def date_validator(datestring, outputformat):
@@ -110,7 +112,7 @@ def convert_date(datestring, inputformat, outputformat):
     return converted
 
 
-def try_ymd_date(string, outputformat):
+def try_ymd_date(string, outputformat, parser):
     """Use dateparser to parse the assumed date expression"""
     if string is None or len(string) < 4:
         return None
@@ -130,7 +132,8 @@ def try_ymd_date(string, outputformat):
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # send to dateparser
-    target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
+    # target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
+    target = parser.get_date_data(string)['date_obj']
     if target is not None:
         datestring = datetime.date.strftime(target, outputformat)
         if date_validator(datestring, outputformat) is True:
@@ -138,7 +141,7 @@ def try_ymd_date(string, outputformat):
     return None
 
 
-def examine_date_elements(tree, expression, outputformat):
+def examine_date_elements(tree, expression, outputformat, parser):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -151,7 +154,7 @@ def examine_date_elements(tree, expression, outputformat):
                 textcontent = elem.text_content().strip()
                 if 3 < len(textcontent) < 30 and re.search(r'\d', textcontent):
                     logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_ymd_date(elem.text_content().strip(), outputformat)
+                    attempt = try_ymd_date(elem.text_content().strip(), outputformat, parser)
                     if attempt is not None:
                         logger.debug('result: %s', attempt)
                         if date_validator(attempt, outputformat) is True:
@@ -160,11 +163,13 @@ def examine_date_elements(tree, expression, outputformat):
     return None
 
 
-def examine_header(tree, outputformat):
+def examine_header(tree, outputformat, parser):
     """Parse header elements to find date cues"""
     headerdate = None
+    reserve = None
     # meta elements in header
     try:
+        # loop through all meta elements
         for elem in tree.xpath('//meta'): # was //head/meta
             # safeguard
             if len(elem.attrib) < 1:
@@ -177,11 +182,11 @@ def examine_header(tree, outputformat):
                 # "og:" for OpenGraph http://ogp.me/
                 if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
                 # modified: override published_time
                 elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_ymd_date(elem.get('content'), outputformat)
+                    attempt = try_ymd_date(elem.get('content'), outputformat, parser)
                     if attempt is not None:
                         headerdate = attempt
             # name attribute
@@ -192,35 +197,48 @@ def examine_header(tree, outputformat):
                 # date
                 if elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     logger.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+            elif 'pubdate' in elem.attrib and headerdate is None:
+                if elem.get('pubdate').lower() == 'pubdate':
+                    logger.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
             # other types # itemscope?
             elif 'itemprop' in elem.attrib:
                 if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear') and headerdate is None:
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('datetime'), outputformat)
+                        headerdate = try_ymd_date(elem.get('datetime'), outputformat, parser)
                     elif 'content' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('content'), outputformat)
+                        headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
                 # override
                 elif elem.get('itemprop').lower() == 'datemodified':
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('datetime'), outputformat)
+                        attempt = try_ymd_date(elem.get('datetime'), outputformat, parser)
                     elif 'content' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('content'), outputformat)
+                        attempt = try_ymd_date(elem.get('content'), outputformat, parser)
                     if attempt is not None:
                         headerdate = attempt
-            elif 'pubdate' in elem.attrib and headerdate is None:
-                if elem.get('pubdate').lower() == 'pubdate':
-                    logger.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                # reserve with copyrightyear
+                elif headerdate is None and elem.get('itemprop').lower() == 'copyrightyear':
+                    logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    if 'content' in elem.attrib:
+                        attempt = '-'.join([elem.get('content'), '07', '01'])
+                        if date_validator(attempt, '%Y-%m-%d') is True:
+                            reserve = attempt
             # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
             elif 'http-equiv' in elem.attrib:
                 if elem.get('http-equiv').lower() in ('date', 'last-modified') and headerdate is None:
                     logger.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
             #else:
             #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
+
+
+        # if nothing was found, look for lower granularity (so far: "copyright year")
+        if headerdate is None and reserve is not None:
+            logger.debug('opting for reserve date with less granularity')
+            headerdate = reserve
 
     except etree.XPathEvalError as err:
         logger.error('XPath %s', err)
@@ -268,6 +286,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
         # select among most frequent
         firstselect = occurrences.most_common(10)
         logger.debug('firstselect: %s', firstselect)
+        ## TODO: revert DD-MM-YYYY patterns before sorting
         bestones = sorted(firstselect, reverse=True)[:2]
         first_pattern = bestones[0][0]
         first_count = bestones[0][1]
@@ -340,6 +359,17 @@ def search_page(htmlstring, outputformat):
         if date_validator(pagedate, '%Y-%m-%d') is True:
             logger.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
+
+    # TODO
+    #pattern = '\D([0-9]{2}[/.-][0-9]{2}[/.-][0-9]{2})\D'
+    #catch = '([0-9]{2})[/.-]([0-9]{2})[/.-]([0-9]{2})'
+    #yearpat = '([01][0-9])\D?$'
+    #bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    #if bestmatch is not None:
+    #    pagedate = '-'.join(['20' + bestmatch.group(3), bestmatch.group(2), bestmatch.group(1)])
+    #    if date_validator(pagedate, '%Y-%m-%d') is True:
+    #        logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+    #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # valid dates strings
     pattern = '(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)'
@@ -427,7 +457,7 @@ def load_html(htmlobject):
     return (tree, htmlstring)
 
 
-def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
+def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     if output_format_validator(outputformat) is False:
@@ -437,7 +467,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
         return
 
     # first, try header
-    pagedate = examine_header(tree, outputformat)
+    pagedate = examine_header(tree, outputformat, dparser)
     if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
 
@@ -447,7 +477,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
         for elem in elements:
             if 'datetime' in elem.attrib:
                 logger.debug('time datetime found: %s', elem.get('datetime'))
-                attempt = try_ymd_date(elem.get('datetime'), outputformat)
+                attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
                 if attempt is not None and date_validator(attempt, outputformat) is True:
                     return attempt # break
             # else:
@@ -473,7 +503,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d'):
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr, outputformat)
+        dateresult = examine_date_elements(tree, expr, outputformat, dparser)
         if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
 

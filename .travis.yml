@@ -16,7 +16,7 @@ matrix:
       env: TOXENV=py34
     - python: "3.7-dev"
       env: TOXENV=py37
-  fast_finish: true
+  # fast_finish: true
 
 before_install:
   - pip install -U dateparser lxml

@@ -26,17 +26,13 @@ Seamless extraction of the creation or modification date of web pages. *htmldate
 2. If this is not successful, it scans the whole document looking for structural markers.
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup).
 
-
-Usage
------
-
 The module takes the HTML document as input (string format) and returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
-According to the tests it should be compatible with all common versions of Python (2 & 3).
+It should be compatible with all common versions of Python (see tests and coverage).
 
 
 Installation
-~~~~~~~~~~~~
+------------
 
 Install from package repository: ``pip install htmldate``
 
@@ -45,8 +41,8 @@ Direct installation of the latest version over pip is possible (see `build statu
 ``pip install git+https://github.com/adbar/htmldate.git``
 
 
-Command-line
-~~~~~~~~~~~~
+On the command-line
+-------------------
 
 A basic command-line interface is included:
 
@@ -68,7 +64,7 @@ Usage:
 
 
 Within Python
-~~~~~~~~~~~~~
+-------------
 
 All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
 
@@ -81,6 +77,10 @@ In case the web page features clear metadata in the header, the extraction is st
     >>> r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
     >>> htmldate.find_date(r.text)
     '2016-02-17'
+
+
+Advanced heuristics
+~~~~~~~~~~~~~~~~~~~
 
 A more advanced analysis of the document structure is sometimes needed:
 
@@ -102,7 +102,11 @@ In the worst case, the module resorts to a guess based on an extensive search, w
     >>> htmldate.find_date(r.text, extensive_search=False)
     >>>
 
-It is also possible to use already parsed HTML (i.e. a LXML tree object):
+
+Input format
+~~~~~~~~~~~~
+
+The module expects strings as input. It is also possible to use already parsed HTML (i.e. a LXML tree object):
 
 .. code-block:: python
 
@@ -110,6 +114,10 @@ It is also possible to use already parsed HTML (i.e. a LXML tree object):
     >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
     >>> htmldate.find_date(mytree)
     '2016-07-12'
+
+
+Date format
+~~~~~~~~~~~
 
 The output format of the dates found can be set in a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
 
@@ -121,7 +129,13 @@ The output format of the dates found can be set in a format known to Python's ``
     >>> htmldate.find_date(r.text, outputformat='%d %B %Y')
     '18 November 2016'
 
-There are however pages for which no date can be found, ever:
+
+Caveats
+~~~~~~~
+
+The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of July.
+
+Besides, there are pages for which no date can be found, ever:
 
 .. code-block:: python
 
@@ -138,6 +152,8 @@ A series of webpages triggering different structural and content patterns is inc
 .. code-block:: bash
 
     $ python tests/unit_tests.py
+
+For more comprehensive tests ``tox`` is also an option (see ``tox.ini``).
 
 
 Additional information

@@ -11,7 +11,7 @@ from htmldate import find_date
 
 
 ##TODO:
-# take list as input?
+# take list as input
 # rename safe mode?
 
 
@@ -21,31 +21,40 @@ def main():
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     argsparser.add_argument("-s", "--safe", help="safe mode: markup search only", action="store_true")
+    argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing")
     args = argsparser.parse_args()
 
     if args.verbose:
         logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-    # unicode check
-    try:
-        htmlstring = sys.stdin.read()
-    except UnicodeDecodeError as err:
-        sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
-        sys.exit(1)
+    # process input on STDIN
+    if not args.inputfile:
 
-    # safety check
-    if len(htmlstring) > 10000000:
-        sys.stderr.write('# ERROR: file too large\n')
-    elif len(htmlstring) < 10:
-        sys.stderr.write('# ERROR: file too small\n')
-    # proceed
-    else:
-        if args.safe:
-            result = find_date(htmlstring, False)
+        # unicode check
+        try:
+            htmlstring = sys.stdin.read()
+        except UnicodeDecodeError as err:
+            sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
+            sys.exit(1)
+
+        # safety check
+        if len(htmlstring) > 10000000:
+            sys.stderr.write('# ERROR: file too large\n')
+        elif len(htmlstring) < 10:
+            sys.stderr.write('# ERROR: file too small\n')
+        # proceed
         else:
-            result = find_date(htmlstring)
-        if result:
-            sys.stdout.write(result + '\n')
+            if args.safe:
+                result = find_date(htmlstring, extensive_search=False)
+            else:
+                result = find_date(htmlstring)
+            if result:
+                sys.stdout.write(result + '\n')
+
+    # process input file line by line
+    else:
+        ## TODO
+        sys.stdout.write('# ERROR: not implemented yet')
 
 
 
