@@ -133,11 +133,13 @@ def try_ymd_date(string, outputformat, parser):
 
     # send to dateparser
     # target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
-    target = parser.get_date_data(string)['date_obj']
-    if target is not None:
-        datestring = datetime.date.strftime(target, outputformat)
-        if date_validator(datestring, outputformat) is True:
-            return datestring
+    # but in dateparser: 00:00:00
+    if string != '00:00:00':
+        target = parser.get_date_data(string)['date_obj']
+        if target is not None:
+            datestring = datetime.date.strftime(target, outputformat)
+            if date_validator(datestring, outputformat) is True:
+                return datestring
     return None
 
 
@@ -326,8 +328,23 @@ def search_page(htmlstring, outputformat):
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
 
+    # copyright symbol
+    logger.debug('looking for copyright/footer information')
+    copyear = 0
+    pattern = '©\D+([12][0-9]{3})\D'
+    catch = '^\D?([12][0-9]{3})'
+    yearpat = '^\D?([12][0-9]{3})'
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    if bestmatch is not None:
+        logger.debug('Copyright detected: %s', bestmatch.group(0))
+        pagedate = '-'.join([bestmatch.group(0), '07', '01'])
+        if date_validator(bestmatch.group(0), '%Y') is True:
+            logger.debug('date found for copyright/footer pattern "%s": %s', pattern, pagedate)
+            copyear = int(bestmatch.group(0))
+            # return convert_date(pagedate, '%Y-%m-%d', outputformat)
+
     ## 3 components
-    # logger.debug('3 components')
+    logger.debug('3 components')
     # target URL characteristics
     pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]'
     catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
@@ -336,8 +353,9 @@ def search_page(htmlstring, outputformat):
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # more loosely structured data
     pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
@@ -347,18 +365,28 @@ def search_page(htmlstring, outputformat):
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
     #
-    pattern = '\D([0-9]{2}[/.-][0-9]{2}[/.-][0-9]{4})\D'
-    catch = '([0-9]{2})[/.-]([0-9]{2})[/.-]([0-9]{4})'
+    pattern = '\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D'
+    catch = '([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})'
     yearpat = '(19[0-9]{2}|20[0-9]{2})\D?$'
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(3), bestmatch.group(2), bestmatch.group(1)])
+        if len(bestmatch.group(1)) == 1:
+            day = '0' + bestmatch.group(1)
+        else:
+            day = bestmatch.group(1)
+        if len(bestmatch.group(2)) == 1:
+            month = '0' + bestmatch.group(2)
+        else:
+            month = bestmatch.group(2)
+        pagedate = '-'.join([bestmatch.group(3), month, day])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(3)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # TODO
     #pattern = '\D([0-9]{2}[/.-][0-9]{2}[/.-][0-9]{2})\D'
@@ -379,8 +407,9 @@ def search_page(htmlstring, outputformat):
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     ## 2 components
     logger.debug('switching to two components')
@@ -392,22 +421,28 @@ def search_page(htmlstring, outputformat):
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
     #
-    pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
-    catch = '([0-9]{2})[/.-]([0-9]{4})'
+    pattern = '\D([0-3]?[0-9][/.-][0-9]{4})\D'
+    catch = '([0-3]?[0-9])[/.-]([0-9]{4})'
     yearpat = '([12][0-9]{3})\D?$'
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(2), bestmatch.group(1), '01'])
+        if len(bestmatch.group(1)) == 1:
+            month = '0' + bestmatch.group(1)
+        else:
+            month = bestmatch.group(1)
+        pagedate = '-'.join([bestmatch.group(2), month, '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(2)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     ## 1 component
-    # last try
     logger.debug('switching to one component')
+    # last try
     # pattern = '(\D19[0-9]{2}\D|\D20[0-9]{2}\D)'
     pattern = '\D([12][0-9]{3})\D'
     catch = '^\D?([12][0-9]{3})'
@@ -416,10 +451,14 @@ def search_page(htmlstring, outputformat):
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            if copyear == 0 or int(bestmatch.group(0)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # catchall
+    if copyear != 0:
+        pagedate = '-'.join([str(copyear), '07', '01'])
+        return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 

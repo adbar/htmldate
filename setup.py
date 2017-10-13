@@ -64,7 +64,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'dateparser == 0.6.0',
-        'lxml >= 3.7.0',
+        'lxml >= 4.0.0',
         'requests >= 2.18.0',
     ],
     # python_requires='>=3',

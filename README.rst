@@ -51,7 +51,7 @@ A basic command-line interface is included:
     $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
     2016-12-23
 
-Usage:
+For usage instructions see:
 
 .. code-block:: bash
 
@@ -61,6 +61,10 @@ Usage:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
         -s, --safe     safe mode: markup search only
+        -i INPUTFILE, --inputfile INPUTFILE
+                       name of input file for batch processing
+
+The batch mode ``-i`` is similar to ``wget -i``, it takes one URL per line as input and returns one result per line in tab-separated format.
 
 
 Within Python

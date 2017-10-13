@@ -47,7 +47,8 @@ MOCK_PAGES = { \
 'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
 'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
 'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
-'http://absegler.de': 'absegler.de.html', \
+'http://absegler.de/': 'absegler.de.html', \
+'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
 }
 # '': '', \
 
@@ -90,6 +91,7 @@ def test_exact_date():
     ## time in document body
     assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
     assert htmldate.find_date(load_mock_page('http://absegler.de/')) == '2017-08-09'
+    assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
     # other format
@@ -99,6 +101,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert htmldate.find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
     assert htmldate.find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
+    print(htmldate.find_date(load_mock_page('https://www.austria.info/')))
     assert htmldate.find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
     assert htmldate.find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
     assert htmldate.find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
@@ -112,20 +115,23 @@ def test_exact_date():
 
 def test_approximate_date():
     '''this page should return an approximate date'''
+    # copyright text
+    assert htmldate.find_date(load_mock_page('http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung')) == '2016-07-01' # somewhere in 2016
+    # other
     assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11' # or '2017-08-03'
     assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
     assert htmldate.find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-07-01' # actually "28 April, 2017"
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/')) == '2017-07-01'
-    assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-07-01' # actually 2017-09-01
-    assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2016-12-15' # actually 2017-07-24
+    assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-08-26' # actually 2017-07-24
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-09-29' # most probably 2017-10-06
     assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    # assert htmldate.find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
     assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2010-11-01' # in meta, 2016 more plausible
     # other format
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
+    # dates in table
+    # assert htmldate.find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
 
 
 def test_date_validator():
@@ -178,7 +184,7 @@ def test_try_ymd_date():
 
 def test_search_pattern():
     '''test pattern search in strings'''
-    # pattern 1
+    #
     pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
     catch = '([0-9]{4})[/.-]([0-9]{2})'
     yearpat = '^([12][0-9]{3})'
@@ -186,15 +192,13 @@ def test_search_pattern():
     assert htmldate.search_pattern('The date is 2002.02.15.', pattern, catch, yearpat) is not None
     assert htmldate.search_pattern('http://www.url.net/index.html', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat) is not None
-
-    # pattern 2
+    #
     pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
     catch = '([0-9]{2})[/.-]([0-9]{4})'
     yearpat = '([12][0-9]{3})$'
     assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat) is not None
-
-    # pattern 3
+    #
     pattern = '\D(2[01][0-9]{2})\D'
     catch = '(2[01][0-9]{2})'
     yearpat = '^(2[01][0-9]{2})'
@@ -204,8 +208,13 @@ def test_search_pattern():
 
 def test_search_html():
     '''test pattern search in HTML'''
+    # file input
     assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT) == '2017-07-12'
+    # file input + output format
     assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), '%d %B %Y') == '12 July 2017'
+    # tree input
+    assert htmldate.search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT) == '2010-05-01'
+    assert htmldate.search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT) == '2010-05-05'
 
 
 def test_cli():
