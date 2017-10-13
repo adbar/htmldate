@@ -7,12 +7,28 @@ import argparse
 import logging
 import sys
 
-from htmldate import find_date
+from codecs import open # python2
+
+from htmldate import find_date, fetch_url
 
 
-##TODO:
-# take list as input
-# rename safe mode?
+
+def examine(htmlstring, safebool):
+    """ Generic safeguards and triggers """
+    # safety check
+    if len(htmlstring) > 10000000:
+        sys.stderr.write('# ERROR: file too large\n')
+    elif len(htmlstring) < 10:
+        sys.stderr.write('# ERROR: file too small\n')
+    # proceed
+    else:
+        if safebool:
+            result = find_date(htmlstring, extensive_search=False)
+        else:
+            result = find_date(htmlstring)
+        return result
+    return None
+
 
 
 def main():
@@ -21,7 +37,7 @@ def main():
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     argsparser.add_argument("-s", "--safe", help="safe mode: markup search only", action="store_true")
-    argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing")
+    argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)")
     args = argsparser.parse_args()
 
     if args.verbose:
@@ -29,7 +45,6 @@ def main():
 
     # process input on STDIN
     if not args.inputfile:
-
         # unicode check
         try:
             htmlstring = sys.stdin.read()
@@ -37,24 +52,20 @@ def main():
             sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
             sys.exit(1)
 
-        # safety check
-        if len(htmlstring) > 10000000:
-            sys.stderr.write('# ERROR: file too large\n')
-        elif len(htmlstring) < 10:
-            sys.stderr.write('# ERROR: file too small\n')
-        # proceed
-        else:
-            if args.safe:
-                result = find_date(htmlstring, extensive_search=False)
-            else:
-                result = find_date(htmlstring)
-            if result:
-                sys.stdout.write(result + '\n')
+        result = examine(htmlstring, args.safe)
+        if result is not None:
+            sys.stdout.write(result + '\n')
 
     # process input file line by line
     else:
-        ## TODO
-        sys.stdout.write('# ERROR: not implemented yet')
+        with open(args.inputfile, 'r', 'utf-8') as inputfile:
+            for line in inputfile:
+                url = line.strip()
+                rget = fetch_url(url)
+                if rget is not None:
+                    result = examine(rget.text, args.safe)
+                    # if result is not None:
+                    sys.stdout.write(result + '\t' + url + '\n')
 
 
 

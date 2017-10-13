@@ -65,6 +65,7 @@ setup(
     install_requires=[
         'dateparser == 0.6.0',
         'lxml >= 3.7.0',
+        'requests >= 2.18.0',
     ],
     # python_requires='>=3',
     entry_points = {
