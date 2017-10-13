@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Module bundling all needed functions.
+Module bundling all functions needed to determine the date of HTML strings or LXML trees.
 """
 
 ## This file is available from https://github.com/adbar/htmldate
@@ -16,6 +16,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime
 import logging
 import re
+import time
 
 # from codecs import open
 from collections import Counter
@@ -36,7 +37,6 @@ from lxml.html.clean import Cleaner
 # import settings
 
 ## TODO:
-# take list of URLs as input
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
@@ -474,14 +474,35 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     # <time>
     elements = tree.xpath('//time')
     if elements is not None and len(elements) > 0:
+        # scan all the tags and look for the newest one
+        reference = 0
         for elem in elements:
+            # datetime attribute
             if 'datetime' in elem.attrib:
-                logger.debug('time datetime found: %s', elem.get('datetime'))
                 attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
-                if attempt is not None and date_validator(attempt, outputformat) is True:
-                    return attempt # break
-            # else:
-            # ...
+                if attempt is not None: # and date_validator(attempt, outputformat) is True:
+                    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                    if timestamp > reference:
+                        logger.debug('time/datetime found: %s %s', elem.get('datetime'), timestamp)
+                        reference = timestamp
+            # bare text in element
+            elif len(elem.text) > 4:
+                attempt = try_ymd_date(elem.text, outputformat, dparser)
+                if attempt is not None: # and date_validator(attempt, outputformat) is True:
+                    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                    if timestamp > reference:
+                        logger.debug('time/datetime found: %s %s', elem.text, timestamp)
+                        reference = timestamp
+           # else...
+           # ...
+        # return
+        if reference > 0:
+            # convert and return
+            dateobject = datetime.datetime.fromtimestamp(reference)
+            converted = dateobject.strftime(outputformat)
+            # quality control
+            if date_validator(converted, outputformat) is True:
+                return converted
 
     # data-utime (mostly Facebook)
     elements = tree.xpath('//abbr[@data-utime]')
@@ -497,9 +518,12 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             if candidate > reference:
                 reference = candidate
         # convert and return
-        dateobject = datetime.datetime.fromtimestamp(reference)
-        converted = dateobject.strftime(outputformat)
-        return converted
+        if reference > 0:
+            dateobject = datetime.datetime.fromtimestamp(reference)
+            converted = dateobject.strftime(outputformat)
+            # quality control
+            if date_validator(converted, outputformat) is True:
+                return converted
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:

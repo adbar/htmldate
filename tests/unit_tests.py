@@ -47,8 +47,10 @@ MOCK_PAGES = { \
 'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
 'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
 'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
+'http://absegler.de': 'absegler.de.html', \
 }
 # '': '', \
+
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -85,9 +87,11 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov')) == '2013-02-16'
     # other format
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
+    ## time in document body
+    assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
+    assert htmldate.find_date(load_mock_page('http://absegler.de/')) == '2017-08-09'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
-    assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
     # other format
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), outputformat='%d %B %Y') == '09 August 2013'
     ## in document body
