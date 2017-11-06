@@ -82,7 +82,12 @@ def test_no_date():
 def test_exact_date():
     '''these pages should return an exact date'''
     ## HTML tree
+    assert htmldate.find_date('<html><head><meta property="dc:created" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
+    assert htmldate.find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
+    assert htmldate.find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
+    assert htmldate.find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-07-01'
     assert htmldate.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
+
     ## meta in header
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     assert htmldate.find_date(load_mock_page('https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov')) == '2013-02-16'

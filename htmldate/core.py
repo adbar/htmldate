@@ -111,7 +111,7 @@ def date_validator(datestring, outputformat):
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
-    if not isinstance(outputformat, str) or not '%' in outputformat:
+    if not isinstance(outputformat, (basestring, str, unicode)) or not '%' in outputformat:
         logging.error('malformed output format: %s', outputformat)
         return False
     # test with date object
@@ -554,7 +554,7 @@ def load_html(htmlobject):
         tree = htmlobject
         # derive string
         htmlstring = html.tostring(htmlobject, encoding='unicode')
-    elif isinstance(htmlobject, str):
+    elif isinstance(htmlobject, (basestring, str, unicode)):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
             logger.info('URL detected, downloading: %s', htmlobject)
