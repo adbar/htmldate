@@ -450,14 +450,14 @@ def search_page(htmlstring, outputformat):
                 logger.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
-    # DD/MM/YY
-    pattern = '\D([0-3][0-9][/.][01][0-9][/.][019][0-9])\D'
+    # DD?/MM?/YY
+    pattern = '\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D'
     yearpat = '([0-9]{2})$'
     candidates = plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=True)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
     for item in candidates:
-        match = re.match(r'([0-3][0-9])[/.]([01][0-9])[/.]([0-9]{2})', item)
+        match = re.match(r'([0-3]?[0-9])[/.]([01]?[0-9])[/.]([0-9]{2})', item)
         if len(match.group(1)) == 1:
             day = '0' + match.group(1)
         else:
