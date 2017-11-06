@@ -16,6 +16,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime
 import logging
 import re
+import sys
 import time
 
 # from codecs import open
@@ -26,8 +27,6 @@ try:
 except ImportError:
     from io import StringIO # Python 3
 
-# from six import text_type
-
 # third-party
 import dateparser
 from lxml import etree, html
@@ -36,6 +35,15 @@ from lxml.html.clean import Cleaner
 # own
 from .download import fetch_url
 # import settings
+
+# compatibility by isinstance
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
+if PY3:
+    string_types = str
+else:
+    string_types = basestring
+
 
 
 ## TODO:
@@ -111,7 +119,7 @@ def date_validator(datestring, outputformat):
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
-    if not isinstance(outputformat, (basestring, str, unicode)) or not '%' in outputformat:
+    if not isinstance(outputformat, string_types) or not '%' in outputformat:
         logging.error('malformed output format: %s', outputformat)
         return False
     # test with date object
@@ -554,7 +562,7 @@ def load_html(htmlobject):
         tree = htmlobject
         # derive string
         htmlstring = html.tostring(htmlobject, encoding='unicode')
-    elif isinstance(htmlobject, (basestring, str, unicode)):
+    elif isinstance(htmlobject, string_types):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
             logger.info('URL detected, downloading: %s', htmlobject)
