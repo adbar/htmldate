@@ -101,7 +101,6 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert htmldate.find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
     assert htmldate.find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
-    print(htmldate.find_date(load_mock_page('https://www.austria.info/')))
     assert htmldate.find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
     assert htmldate.find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
     assert htmldate.find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
@@ -124,7 +123,7 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/')) == '2017-07-01'
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-08-26' # actually 2017-07-24
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
-    assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-09-29' # most probably 2017-10-06
+    assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-10-20' # most probably 2017-10-06
     assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
     assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2010-11-01' # in meta, 2016 more plausible
@@ -215,6 +214,8 @@ def test_search_html():
     # tree input
     assert htmldate.search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT) == '2010-05-01'
     assert htmldate.search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT) == '2010-05-05'
+    assert htmldate.search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT) == '1999-10-11'
+    assert htmldate.search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT) == '2006-12-06'
 
 
 def test_cli():

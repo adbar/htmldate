@@ -134,6 +134,15 @@ The output format of the dates found can be set in a format known to Python's ``
     '18 November 2016'
 
 
+Language-specific
+~~~~~~~~~~~~~~~~~
+
+... to complete ...
+htmldate.find_date(r.text, dparser=dateparser_object)
+like dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
+cf https://dateparser.readthedocs.io/en/latest/
+
+
 Caveats
 ~~~~~~~
 
