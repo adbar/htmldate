@@ -34,6 +34,7 @@ from lxml import etree, html
 from lxml.html.clean import Cleaner
 
 # own
+from .download import fetch_url
 # import settings
 
 
@@ -109,12 +110,17 @@ def date_validator(datestring, outputformat):
 
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
+    # test in abstracto
+    if not isinstance(outputformat, str) or not '%' in outputformat:
+        logging.error('malformed output format: %s', outputformat)
+        return False
+    # test with date object
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
     try:
         # datetime.datetime.strftime(dateobject, outputformat)
         dateobject.strftime(outputformat)
-    except (NameError, ValueError) as err:
-        logging.error('wrong output format: %s %s', outputformat, err)
+    except (NameError, TypeError, ValueError) as err:
+        logging.error('wrong output format or format type: %s %s', outputformat, err)
         return False
     return True
 
@@ -549,13 +555,20 @@ def load_html(htmlobject):
         # derive string
         htmlstring = html.tostring(htmlobject, encoding='unicode')
     elif isinstance(htmlobject, str):
-        # robust parsing
-        try:
-            # copy string
+        # the string is a URL, download it
+        if re.match(r'https?://', htmlobject):
+            logger.info('URL detected, downloading: %s', htmlobject)
+            rget = fetch_url(htmlobject)
+            if rget is not None:
+                htmlstring = rget.text
+        # copy string
+        else:
             htmlstring = htmlobject
+        ## robust parsing
+        try:
             # parse
             parser = html.HTMLParser() # encoding='utf8'
-            tree = html.parse(StringIO(htmlobject), parser=parser)
+            tree = html.parse(StringIO(htmlstring), parser=parser)
             ## TODO: clean page?
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
             # <svg>

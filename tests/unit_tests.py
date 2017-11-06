@@ -153,11 +153,11 @@ def test_convert_date():
 
 
 
-def output_format_validator():
+def test_output_format_validator():
     '''test internal output format validation'''
     assert htmldate.output_format_validator('%Y-%m-%d') is True
     assert htmldate.output_format_validator('%M-%Y') is True
-    assert htmldate.output_format_validator('Y-%d') is False
+    assert htmldate.output_format_validator('ABC') is False
     assert htmldate.output_format_validator(123) is False
 
 
@@ -215,7 +215,11 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT) == '2010-05-01'
     assert htmldate.search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT) == '2010-05-05'
     assert htmldate.search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT) == '1999-10-11'
+    assert htmldate.search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT) == '2011-03-03'
     assert htmldate.search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT) == '2006-12-06'
+    assert htmldate.search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT) == '2014-09-15'
+    assert htmldate.search_page('<html><body><p>It could be the 2015-04-30 or the 2003-11-24.</p></body></html>', OUTPUTFORMAT) == '2015-04-30'
+    assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-07-01'
 
 
 def test_cli():
@@ -224,6 +228,9 @@ def test_cli():
 
 
 if __name__ == '__main__':
+
+    # meta
+    test_output_format_validator()
 
     # function-level
     test_load()

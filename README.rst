@@ -70,28 +70,13 @@ The batch mode ``-i`` is similar to ``wget -i``, it takes one URL per line as in
 Within Python
 -------------
 
-All the functions of the module are currently bundled in *htmldate*, the examples below use the external module `requests <http://docs.python-requests.org/>`_.
+All the functions of the module are currently bundled in *htmldate*.
 
-In case the web page features clear metadata in the header, the extraction is straightforward:
-
-.. code-block:: python
-
-    >>> import requests
-    >>> import htmldate
-    >>> r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
-    >>> htmldate.find_date(r.text)
-    '2016-02-17'
-
-
-Advanced heuristics
-~~~~~~~~~~~~~~~~~~~
-
-A more advanced analysis of the document structure is sometimes needed:
+In case the web page features easily readable metadata in the header, the extraction is straightforward. A more advanced analysis of the document structure is sometimes needed:
 
 .. code-block:: python
 
-    >>> r = requests.get('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    >>> htmldate.find_date(r.text)
+    >>> htmldate.find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
@@ -100,8 +85,7 @@ In the worst case, the module resorts to a guess based on an extensive search, w
 
 .. code-block:: python
 
-    >>> r = requests.get('https://creativecommons.org/about/')
-    >>> htmldate.find_date(r.text)
+    >>> htmldate.find_date('https://creativecommons.org/about/')
     '2017-08-11' # has been updated since
     >>> htmldate.find_date(r.text, extensive_search=False)
     >>>
@@ -110,7 +94,7 @@ In the worst case, the module resorts to a guess based on an extensive search, w
 Input format
 ~~~~~~~~~~~~
 
-The module expects strings as input. It is also possible to use already parsed HTML (i.e. a LXML tree object):
+The module expects strings as shown above, it is also possible to use already parsed HTML (i.e. a LXML tree object):
 
 .. code-block:: python
 
@@ -118,6 +102,15 @@ The module expects strings as input. It is also possible to use already parsed H
     >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
     >>> htmldate.find_date(mytree)
     '2016-07-12'
+
+An external module can be used for download, as described in versions anterior to 0.3. This example uses the legacy mode with `requests <http://docs.python-requests.org/>`_ as external module.
+
+.. code-block:: python
+
+    >>> import requests
+    >>> import htmldate
+    >>> r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
+    >>> htmldate.find_date(r.text)
 
 
 Date format
@@ -127,24 +120,24 @@ The output format of the dates found can be set in a format known to Python's ``
 
 .. code-block:: python
 
-    >>> r = requests.get('https://www.gnu.org/licenses/gpl-3.0.en.html')
-    >>> htmldate.find_date(r.text)
-    '2016-11-18'
-    >>> htmldate.find_date(r.text, outputformat='%d %B %Y')
+    >>> htmldate.find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016'
 
 
 Language-specific
 ~~~~~~~~~~~~~~~~~
 
-... to complete ...
-htmldate.find_date(r.text, dparser=dateparser_object)
-like dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-cf https://dateparser.readthedocs.io/en/latest/
+The expected date format can be tweaked to suit particular needs, especially language-specific date expressions:
+
+.. code-block:: python
+
+    >>> htmldate.find_date(r.text, dparser=dateparser_object) # like dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
+
+See the init part of ``core.py`` as well as `the dateparser docs <https://dateparser.readthedocs.io/en/latest/>`_ for more information.
 
 
-Caveats
-~~~~~~~
+Known caveats
+~~~~~~~~~~~~~
 
 The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of July.
 

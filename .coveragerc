@@ -8,5 +8,7 @@ omit =
 [report]
 exclude_lines =
     if __name__ == .__main__.:
+    except .*etree.*:
     except ImportError:
     except .*requests.exceptions.*:
+    except UnboundLocalError:
