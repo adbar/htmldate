@@ -40,8 +40,8 @@ notifications:
     on_success: never
     on_failure: change
 
-cache:
-  pip: true
+#cache:
+#  pip: true
 
 
 ### OLD
