@@ -40,9 +40,9 @@ from .download import fetch_url
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 if PY3:
-    string_types = str
+    STRING_TYPES = str
 else:
-    string_types = basestring
+    STRING_TYPES = basestring
 
 
 
@@ -119,7 +119,7 @@ def date_validator(datestring, outputformat):
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
-    if not isinstance(outputformat, string_types) or not '%' in outputformat:
+    if not isinstance(outputformat, STRING_TYPES) or not '%' in outputformat:
         logging.error('malformed output format: %s', outputformat)
         return False
     # test with date object
@@ -557,12 +557,12 @@ def search_page(htmlstring, outputformat):
 
 def load_html(htmlobject):
     """Load object given as input and validate its type (accepted: LXML tree and string)"""
-    if isinstance(htmlobject, html.HtmlElement):
+    if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         # copy tree
         tree = htmlobject
         # derive string
         htmlstring = html.tostring(htmlobject, encoding='unicode')
-    elif isinstance(htmlobject, string_types):
+    elif isinstance(htmlobject, STRING_TYPES):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
             logger.info('URL detected, downloading: %s', htmlobject)
@@ -596,7 +596,7 @@ def load_html(htmlobject):
     return (tree, htmlstring)
 
 
-def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG)):
+def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG), url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     if output_format_validator(outputformat) is False:
@@ -609,6 +609,17 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     pagedate = examine_header(tree, outputformat, dparser)
     if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
+
+    # URL
+    if url is not None and re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', url):
+        dateresult = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', url).group(0)
+        logger.debug('found date in URL: %s', dateresult)
+        try:
+            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
+            if date_validator(converted, outputformat) is True:
+                return converted
+        except ValueError as err:
+            logger.debug('value error during conversion: %s %s', dateresult, err)
 
     # <time>
     elements = tree.xpath('//time')
@@ -625,7 +636,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                         logger.debug('time/datetime found: %s %s', elem.get('datetime'), timestamp)
                         reference = timestamp
             # bare text in element
-            elif len(elem.text) > 4:
+            elif elem.text is not None and len(elem.text) > 4:
                 attempt = try_ymd_date(elem.text, outputformat, dparser)
                 if attempt is not None: # and date_validator(attempt, outputformat) is True:
                     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())

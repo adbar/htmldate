@@ -186,6 +186,12 @@ def test_try_ymd_date():
 #     assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
+def test_url():
+    '''test url parameter'''
+    assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/category/2016/07/12/key-words') == '2016-07-12'
+    assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/2016/key-words') is None
+
+
 def test_search_pattern():
     '''test pattern search in strings'''
     #
@@ -223,7 +229,9 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT) == '2011-03-03'
     assert htmldate.search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT) == '2006-12-06'
     assert htmldate.search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT) == '2014-09-15'
-    assert htmldate.search_page('<html><body><p>It could be the 2015-04-30 or the 2003-11-24.</p></body></html>', OUTPUTFORMAT) == '2015-04-30'
+    assert htmldate.search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT) == '2015-04-30'
+    assert htmldate.search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT) == '2013-03-03'
+    assert htmldate.search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
     assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-07-01'
 
 
@@ -249,6 +257,7 @@ if __name__ == '__main__':
     test_exact_date()
     test_approximate_date()
     test_search_html()
+    test_url()
 
     # cli
     test_cli()

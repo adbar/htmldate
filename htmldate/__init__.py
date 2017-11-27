@@ -17,6 +17,8 @@ from .download import fetch_url
 ## logging best practices
 # http://docs.python-guide.org/en/latest/writing/logging/
 # https://github.com/requests/requests/blob/master/requests/__init__.py
+
+import logging
 try:  # Python 2.7+
     from logging import NullHandler
 except ImportError:
