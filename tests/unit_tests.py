@@ -80,8 +80,8 @@ def test_no_date():
     assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) is None
     # errors
     assert htmldate.find_date(' ', outputformat='X%') is None
-    assert htmldate.find_date('', outputformat='%X') is None
-    assert htmldate.find_date('', url='http://www.website.com/9999/01/43/') is None
+    assert htmldate.find_date('<html></html>', outputformat='%X') is None
+    assert htmldate.find_date('<html></html>', url='http://www.website.com/9999/01/43/') is None
     assert htmldate.find_date('<html></html>', url='http://www.website.com/9999/01/43/') is None
 
 
