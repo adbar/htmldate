@@ -68,6 +68,7 @@ def load_mock_page(url):
 def test_load():
     '''test if loaded strings/trees are handled properly'''
     assert htmldate.load_html(123) == (None, None)
+    assert htmldate.load_html('<html><body>XYZ</body></html>') is not None
 
 
 def test_no_date():
@@ -77,6 +78,11 @@ def test_no_date():
     # safe search
     assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/'), False) is None
     assert htmldate.find_date(load_mock_page('https://en.support.wordpress.com/')) is None
+    # errors
+    assert htmldate.find_date(' ', outputformat='X%') is None
+    assert htmldate.find_date('', outputformat='%X') is None
+    assert htmldate.find_date('', url='http://www.website.com/9999/01/43/') is None
+    assert htmldate.find_date('<html></html>', url='http://www.website.com/9999/01/43/') is None
 
 
 def test_exact_date():
@@ -164,6 +170,7 @@ def test_output_format_validator():
     assert htmldate.output_format_validator('%M-%Y') is True
     assert htmldate.output_format_validator('ABC') is False
     assert htmldate.output_format_validator(123) is False
+    assert htmldate.output_format_validator('X%') is False
 
 
 def test_try_ymd_date():
@@ -237,7 +244,9 @@ def test_search_html():
 
 def test_cli():
     '''test the command-line interface'''
-    assert cli.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
+    assert cli.examine(' ', True) is None
+    assert cli.examine('<html><body><span class="entry-date">July 12th, 2016</span></body></html>', True) == '2016-07-12'
+    assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 
 
 if __name__ == '__main__':

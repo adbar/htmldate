@@ -87,7 +87,7 @@ In the worst case, the module resorts to a guess based on an extensive search, w
 
     >>> htmldate.find_date('https://creativecommons.org/about/')
     '2017-08-11' # has been updated since
-    >>> htmldate.find_date(r.text, extensive_search=False)
+    >>> htmldate.find_date('https://creativecommons.org/about/', extensive_search=False)
     >>>
 
 
@@ -107,10 +107,10 @@ An external module can be used for download, as described in versions anterior t
 
 .. code-block:: python
 
-    >>> import requests
-    >>> import htmldate
-    >>> r = requests.get('https://www.theguardian.com/politics/2016/feb/17/merkel-eu-uk-germany-national-interest-cameron-justified')
+    >>> import htmldate, requests
+    >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
+    '2017-11-28' # may have changed since
 
 
 Date format
@@ -121,7 +121,7 @@ The output format of the dates found can be set in a format known to Python's ``
 .. code-block:: python
 
     >>> htmldate.find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
-    '18 November 2016'
+    '18 November 2016' # may have changed since
 
 
 Language-specific

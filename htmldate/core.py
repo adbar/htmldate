@@ -56,7 +56,7 @@ else:
 ## INIT
 logger = logging.getLogger(__name__)
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]"]
+DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]", "//*[ends-with(@id, 'lastmod')]"]
 
 
 # time-ago datetime=
