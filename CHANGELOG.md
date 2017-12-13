@@ -1,6 +1,9 @@
 ## Changelog
 
 
+### version 0.3.1
+- improved consistency and further tests
+
 ### version 0.3.0
 - improvements in markup analysis along with more tests
 - higher resolution for free text detection (e.g. DD/MM/YY)

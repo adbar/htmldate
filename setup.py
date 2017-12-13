@@ -26,7 +26,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.3.0',
+    version='0.3.1',
     description='Seamlessly extract the creation or modification date of web pages by scraping the HTML code or performing content guesses.',
     long_description=readme(),
     classifiers=[

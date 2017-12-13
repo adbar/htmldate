@@ -13,7 +13,7 @@ htmldate: find the creation date of HTML pages
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
     :target: https://travis-ci.org/adbar/htmldate
 
-.. image:: https://codecov.io/gh/adbar/htmldate/branch/master/graph/badge.svg
+.. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
 
 
