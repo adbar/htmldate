@@ -16,6 +16,11 @@ htmldate: find the creation date of HTML pages
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
 
+This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns or if necessary text-based heuristics. It takes URLs, HTML files or trees as input and outputs dates if something has been found found. It is designed to be computationally efficient and is used in production on millions of documents.
+
+.. contents:: **Contents**
+    :backlinks: none
+
 
 Description
 -----------
@@ -51,7 +56,7 @@ A basic command-line interface is included:
     $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
     '2016-12-23'
 
-For usage instructions see:
+For usage instructions see ``htmldate -h``:
 
 .. code-block:: bash
 
@@ -64,11 +69,15 @@ For usage instructions see:
         -i INPUTFILE, --inputfile INPUTFILE
                        name of input file for batch processing
 
-The batch mode ``-i`` is similar to ``wget -i``, it takes one URL per line as input and returns one result per line in tab-separated format.
+The batch mode ``-i`` is similar to ``wget -i``, it takes one URL per line as input and returns one result per line in tab-separated format:
+
+.. code-block:: bash
+
+    $ htmldate -sv -i list-of-urls.txt
 
 
-Within Python
--------------
+With Python
+-----------
 
 All the functions of the module are currently bundled in *htmldate*.
 
@@ -124,8 +133,8 @@ The output format of the dates found can be set in a format known to Python's ``
     '18 November 2016' # may have changed since
 
 
-Language-specific
-~~~~~~~~~~~~~~~~~
+Language-specific analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The expected date format can be tweaked to suit particular needs, especially language-specific date expressions:
 
@@ -168,9 +177,7 @@ Additional information
 Context
 ~~~~~~~
 
-There are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified.
-
-This module is part of methods to derive metadata from web documents in order to build text corpora for (computational) linguistic analysis. For more information:
+This module is part of methods to derive metadata from web documents in order to build text corpora for computational linguistic and NLP analysis, the original problem being that there are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified. For more information:
 
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01348706/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
@@ -183,8 +190,8 @@ Kudos to...
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
 
 
-Further analyses
-~~~~~~~~~~~~~~~~
+Going further
+~~~~~~~~~~~~~
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
 
