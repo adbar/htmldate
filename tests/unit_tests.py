@@ -12,6 +12,7 @@ import dateparser
 
 import htmldate
 from htmldate import cli
+from htmldate import download
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -249,6 +250,12 @@ def test_cli():
     assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 
 
+def test_download():
+    '''test the download utility'''
+    assert download.fetch_url('https://www.iana.org/404') is None
+
+
+
 if __name__ == '__main__':
 
     # meta
@@ -270,3 +277,6 @@ if __name__ == '__main__':
 
     # cli
     test_cli()
+
+    # download
+    test_download()
