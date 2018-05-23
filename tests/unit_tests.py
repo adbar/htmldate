@@ -246,6 +246,7 @@ def test_search_html():
 def test_cli():
     '''test the command-line interface'''
     assert cli.examine(' ', True) is None
+    assert cli.examine('0'*int(10e6), True) is None
     assert cli.examine('<html><body><span class="entry-date">July 12th, 2016</span></body></html>', True) == '2016-07-12'
     assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 

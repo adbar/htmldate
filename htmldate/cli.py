@@ -19,7 +19,7 @@ from htmldate import find_date, fetch_url
 def examine(htmlstring, safebool):
     """ Generic safeguards and triggers """
     # safety check
-    if len(htmlstring) > 10000000:
+    if len(htmlstring) > 1000000:
         sys.stderr.write('# ERROR: file too large\n')
     elif len(htmlstring) < 10:
         sys.stderr.write('# ERROR: file too small\n')
