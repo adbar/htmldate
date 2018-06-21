@@ -51,12 +51,14 @@ else:
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
+# deal with abbr published
+
 
 
 ## INIT
 logger = logging.getLogger(__name__)
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]", "//*[contains(@id, 'lastmod')]"]
+DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]", "//*[contains(@id, 'lastmod')]",]
 
 #
 # time-ago datetime=
@@ -371,7 +373,7 @@ def search_page(htmlstring, outputformat):
     # copyright symbol
     logger.debug('looking for copyright/footer information')
     copyear = 0
-    pattern = '©\D+([12][0-9]{3})\D'
+    pattern = '(?:©|&copy;|\(c\))\D+([12][0-9]{3})\D'
     yearpat = '^\D?([12][0-9]{3})'
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '^\D?([12][0-9]{3})'
@@ -627,6 +629,14 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
+            # first choice: entry-date + datetime attribute
+            if 'class' in elem.attrib and 'datetime' in elem.attrib:
+                if elem.get('class').startswith('entry-date'):
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
+                    if attempt is not None:
+                        reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                        logger.debug('time/datetime found: %s %s', elem.get('datetime'), reference)
+                        break
             # datetime attribute
             if 'datetime' in elem.attrib:
                 attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
@@ -654,19 +664,31 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             if date_validator(converted, outputformat) is True:
                 return converted
 
-    # data-utime (mostly Facebook)
-    elements = tree.xpath('//abbr[@data-utime]')
+    # <abbr>
+    elements = tree.xpath('//abbr')
     if elements is not None and len(elements) > 0:
         reference = 0
         for elem in elements:
-            try:
-                candidate = int(elem.get('data-utime'))
-            except ValueError:
-                continue
-            logger.debug('data-utime found: %s', candidate)
-            # look for newest (i.e. largest time delta)
-            if candidate > reference:
-                reference = candidate
+            # data-utime (mostly Facebook)
+            if 'data-utime' in elem.attrib:
+                try:
+                    candidate = int(elem.get('data-utime'))
+                except ValueError:
+                    continue
+                logger.debug('data-utime found: %s', candidate)
+                # look for newest (i.e. largest time delta)
+                if candidate > reference:
+                    reference = candidate
+            # class
+            if 'class' in elem.attrib:
+                if elem.get('class') == 'published' or elem.get('class') == 'date-published':
+                    # dates, not times of the day
+                    if elem.text and len(elem.text) > 10:
+                        trytext = re.sub(r'^am ', '', elem.text)
+                        logger.debug('abbr published found: %s', trytext)
+                        attempt = try_ymd_date(elem.text, outputformat, dparser)
+                        if attempt is not None: # and date_validator(attempt, outputformat) is True:
+                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         # convert and return
         if reference > 0:
             dateobject = datetime.datetime.fromtimestamp(reference)

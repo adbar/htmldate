@@ -102,7 +102,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
     ## time in document body
     assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
-    assert htmldate.find_date(load_mock_page('http://absegler.de/')) == '2017-08-09'
+    assert htmldate.find_date(load_mock_page('http://absegler.de/')) == '2017-08-06'
     assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
