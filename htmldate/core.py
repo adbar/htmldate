@@ -47,7 +47,7 @@ else:
 
 
 ## TODO:
-# simplify!
+# simplify! (date search in url; )
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
@@ -173,6 +173,22 @@ def try_ymd_date(string, outputformat, parser):
     return None
 
 
+def extract_url_date(testurl, outputformat):
+    """Extract the date out of an URL string"""
+    # easy extract in Y-M-D format
+    if re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl):
+        dateresult = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl).group(0)
+        logger.debug('found date in URL: %s', dateresult)
+        try:
+            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
+            if date_validator(converted, outputformat) is True:
+                return converted
+        except ValueError as err:
+            logger.debug('value error during conversion: %s %s', dateresult, err)
+    # catchall
+    return None
+
+
 def examine_date_elements(tree, expression, outputformat, parser):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -218,6 +234,12 @@ def examine_header(tree, outputformat, parser):
     reserve = None
     # meta elements in header
     try:
+        # link canonical
+        for elem in tree.xpath('//link[@rel="canonical"]'): # was //head/meta
+            if 'href' in elem.attrib:
+                dateresult = extract_url_date(elem.get('href'), outputformat)
+                if dateresult is not None:
+                    return dateresult
         # loop through all meta elements
         for elem in tree.xpath('//meta'): # was //head/meta
             # safeguard
@@ -282,6 +304,7 @@ def examine_header(tree, outputformat, parser):
                     headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
             #else:
             #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
+            ## TODO: og:url
 
 
         # if nothing was found, look for lower granularity (so far: "copyright year")
@@ -624,21 +647,16 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     if tree is None:
         return
 
+    # URL
+    if url is not None:
+        dateresult = extract_url_date(url, outputformat)
+        if dateresult is not None:
+            return dateresult
+
     # first, try header
     pagedate = examine_header(tree, outputformat, dparser)
     if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
-
-    # URL
-    if url is not None and re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', url):
-        dateresult = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', url).group(0)
-        logger.debug('found date in URL: %s', dateresult)
-        try:
-            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
-            if date_validator(converted, outputformat) is True:
-                return converted
-        except ValueError as err:
-            logger.debug('value error during conversion: %s %s', dateresult, err)
 
     # <time>
     elements = tree.xpath('//time')

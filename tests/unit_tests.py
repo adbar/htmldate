@@ -50,6 +50,7 @@ MOCK_PAGES = { \
 'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
 'http://absegler.de/': 'absegler.de.html', \
 'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
+'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': 'jovelstefan.de.parken.html', \
 }
 # '': '', \
 
@@ -94,6 +95,9 @@ def test_exact_date():
     assert htmldate.find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
     assert htmldate.find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-07-01'
     assert htmldate.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
+
+    ## link in header
+    assert htmldate.find_date(load_mock_page('http://www.jovelstefan.de/2012/05/11/parken-in-paris/')) == '2012-05-11'
 
     ## meta in header
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
