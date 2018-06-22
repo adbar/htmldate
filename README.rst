@@ -16,24 +16,28 @@ htmldate: find the creation date of HTML pages
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
 
-This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns or if necessary text-based heuristics. It takes URLs, HTML files or trees as input and outputs dates if something has been found found. It is designed to be computationally efficient and is used in production on millions of documents.
+
+This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns or if necessary text-based heuristics. It takes URLs, HTML files or trees as input and outputs a date.
+
 
 .. contents:: **Contents**
     :backlinks: none
 
 
-Description
------------
+Features
+--------
 
-Seamless extraction of the creation or modification date of web pages. *htmldate* provides following ways to date documents, based on HTML parsing and scraping functions:
+Seamless extraction of the creation or modification date of web pages. *htmldate* provides following ways to date documents, based on HTML parsing and scraping functions and on robust date parsing:
 
-1. Starting from the header of the page, it uses common patterns to identify date fields.
-2. If this is not successful, it scans the whole document looking for structural markers.
+1. Starting from the header of the page, it uses common patterns to identify date fields: ``link`` and ``meta`` elements, including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
+2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup).
 
 The module takes the HTML document as input (string format) and returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
-It should be compatible with all common versions of Python (see tests and coverage).
+-  should be compatible with all common versions of Python (see tests and coverage)
+-  safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
+-  designed to be computationally efficient and is used in production on millions of documents
 
 
 Installation
