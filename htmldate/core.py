@@ -237,7 +237,6 @@ def examine_header(tree, outputformat, parser):
     """Parse header elements to find date cues"""
     headerdate = None
     reserve = None
-    # meta elements in header
     try:
         # link canonical
         for elem in tree.xpath('//link[@rel="canonical"]'):
@@ -250,7 +249,7 @@ def examine_header(tree, outputformat, parser):
             # safeguard
             if len(elem.attrib) < 1:
                 continue
-            ## property attribute
+            # property attribute
             if 'property' in elem.attrib: # elem.get('property') is not None:
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
@@ -403,6 +402,16 @@ def select_candidate(occurrences, catch, yearpat):
     return None
 
 
+def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
+    """Filter free text candidates in the YMD format"""
+    if bestmatch is not None:
+        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
+        if date_validator(pagedate, '%Y-%m-%d') is True:
+            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
+                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+
+
 def search_pattern(htmlstring, pattern, catch, yearpat):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
@@ -443,12 +452,9 @@ def search_page(htmlstring, outputformat):
     catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
 
     # more loosely structured data
     pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
@@ -457,12 +463,10 @@ def search_page(htmlstring, outputformat):
     catch = '([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})'
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
+
     #
     pattern = '\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D'
     yearpat = '(19[0-9]{2}|20[0-9]{2})\D?$'
@@ -486,12 +490,9 @@ def search_page(htmlstring, outputformat):
     yearpat = '^([0-9]{4})'
     # select
     bestmatch = select_candidate(candidates, catch, yearpat)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
 
     # valid dates strings
     pattern = '(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)'
@@ -500,12 +501,9 @@ def search_page(htmlstring, outputformat):
     catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
 
     # DD?/MM?/YY
     pattern = '\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D'
@@ -533,11 +531,9 @@ def search_page(htmlstring, outputformat):
     catch = '([0-9]{4})-([0-9]{2})-([0-9]{2})'
     yearpat = '^([0-9]{4})'
     bestmatch = select_candidate(candidates, catch, yearpat)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            logger.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
 
     ## 2 components
     logger.debug('switching to two components')
