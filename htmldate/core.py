@@ -51,6 +51,8 @@ else:
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
+# .lower() in tags and attributes?
+# 
 
 
 
@@ -644,10 +646,11 @@ def load_html(htmlobject):
 def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG), url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
-    if output_format_validator(outputformat) is False:
-        return
     tree, htmlstring = load_html(htmlobject)
+    # safety
     if tree is None:
+        return
+    if output_format_validator(outputformat) is False:
         return
 
     # URL
@@ -667,24 +670,26 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
-            # first choice: entry-date + datetime attribute
-            if 'class' in elem.attrib and 'datetime' in elem.attrib:
-                if elem.get('class').startswith('entry-date'):
+            # go for datetime
+            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
+                # first choice: entry-date + datetime attribute
+                if 'class' in elem.attrib:
+                    if elem.get('class').startswith('entry-date'):
+                        attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
+                        if attempt is not None:
+                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                            logger.debug('time/datetime found: %s %s', elem.get('datetime'), reference)
+                            break
+                # datetime attribute
+                else:
                     attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
-                    if attempt is not None:
-                        reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-                        logger.debug('time/datetime found: %s %s', elem.get('datetime'), reference)
-                        break
-            # datetime attribute
-            if 'datetime' in elem.attrib:
-                attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
-                if attempt is not None: # and date_validator(attempt, outputformat) is True:
-                    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-                    if timestamp > reference:
-                        logger.debug('time/datetime found: %s %s', elem.get('datetime'), timestamp)
-                        reference = timestamp
+                    if attempt is not None: # and date_validator(attempt, outputformat) is True:
+                        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                        if timestamp > reference:
+                            logger.debug('time/datetime found: %s %s', elem.get('datetime'), timestamp)
+                            reference = timestamp
             # bare text in element
-            elif elem.text is not None and len(elem.text) > 4:
+            elif elem.text is not None and len(elem.text) > 6:
                 attempt = try_ymd_date(elem.text, outputformat, dparser)
                 if attempt is not None: # and date_validator(attempt, outputformat) is True:
                     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())

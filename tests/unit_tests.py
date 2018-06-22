@@ -71,6 +71,7 @@ def test_load():
     '''test if loaded strings/trees are handled properly'''
     assert htmldate.load_html(123) == (None, None)
     assert htmldate.load_html('<html><body>XYZ</body></html>') is not None
+    assert htmldate.find_date(None) is None
 
 
 def test_no_date():
@@ -100,16 +101,26 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('http://www.jovelstefan.de/2012/05/11/parken-in-paris/')) == '2012-05-11'
 
     ## meta in header
+    assert htmldate.find_date('<html><head><meta/></head><body></body></html>') is None
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     assert htmldate.find_date(load_mock_page('https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov')) == '2013-02-16'
+    assert htmldate.find_date('<html><head><meta name="og:url" content="http://www.example.com/2018/02/01/entrytitle"/></head><body></body></html>') == '2018-02-01'
+    assert htmldate.find_date('<html><head><meta itemprop="datecreated" datetime="2018-02-02"/></head><body></body></html>') == '2018-02-02'
+    assert htmldate.find_date('<html><head><meta itemprop="datemodified" content="2018-02-04"/></head><body></body></html>') == '2018-02-04'
+    assert htmldate.find_date('<html><head><meta http-equiv="last-modified" content="2018-02-05"/></head><body></body></html>') == '2018-02-05'
+
     # other format
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
     ## time in document body
     assert htmldate.find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
     assert htmldate.find_date(load_mock_page('http://absegler.de/')) == '2017-08-06'
     assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
+    assert htmldate.find_date('<html><body><time datetime="08:00"></body></html>') is None
+    assert htmldate.find_date('<html><body><time datetime="2014-07-10 08:30:45.687"></body></html>') == '2014-07-10'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
+    assert htmldate.find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>') == '2016-11-12'
+    assert htmldate.find_date('<html><body><abbr class="date-published">8.11.2016</abbr></body></html>') == '2016-11-08'
     # other format
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), outputformat='%d %B %Y') == '09 August 2013'
     ## in document body
@@ -124,6 +135,8 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-10-09'
     assert htmldate.find_date(load_mock_page('https://die-partei.net/sh/')) == '2014-07-19'
     assert htmldate.find_date(load_mock_page('https://www.rosneft.com/business/Upstream/Licensing/')) == '2017-02-27' # most probably 2014-12-31, found in text
+    assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-07-01'
+    assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-07-01'
     # other format
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/'), outputformat='%d %B %Y') == '30 March 2011'
 
