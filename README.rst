@@ -17,7 +17,7 @@ htmldate: find the creation date of HTML pages
     :target: https://codecov.io/gh/adbar/htmldate
 
 
-This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns or if necessary text-based heuristics. It takes URLs, HTML files or trees as input and outputs a date.
+This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns, text-based heuristics and robust date extraction. It takes URLs, HTML files or trees as input and outputs a date.
 
 
 .. contents:: **Contents**
@@ -35,9 +35,9 @@ Seamless extraction of the creation or modification date of web pages. *htmldate
 
 The module takes the HTML document as input (string format) and returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
--  should be compatible with all common versions of Python (see tests and coverage)
--  safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
--  designed to be computationally efficient and is used in production on millions of documents
+-  Should be compatible with all common versions of Python (see tests and coverage)
+-  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
+-  Designed to be computationally efficient and is used in production on millions of documents
 
 
 Installation
