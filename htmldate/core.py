@@ -59,7 +59,22 @@ else:
 ## INIT
 logger = logging.getLogger(__name__)
 
-DATE_EXPRESSIONS = ["//*[starts-with(@id, 'date')]", "//*[starts-with(@class, 'date')]", "//*[starts-with(@id, 'time')]", "//*[starts-with(@class, 'time')]", "//*[starts-with(@class, 'byline')]", "//*[starts-with(@class, 'entry-date')]", "//*[starts-with(@class, 'post-meta')]", "//*[starts-with(@class, 'postmetadata')]", "//*[starts-with(@itemprop, 'date')]", "//span[starts-with(@class, 'field-content')]", "//*[contains(@class, 'date')]", "//*[contains(@id, 'lastmod')]", "//*[starts-with(@class, 'entry-time')]"]
+DATE_EXPRESSIONS = [
+    "//*[starts-with(@id, 'date')]", \
+    "//*[starts-with(@class, 'date')]", \
+    "//*[starts-with(@id, 'time')]", \
+    "//*[starts-with(@class, 'time')]", \
+    "//*[starts-with(@class, 'byline')]", \
+    "//*[starts-with(@class, 'entry-date')]", \
+    "//*[starts-with(@class, 'entry-time')]", \
+    "//*[starts-with(@class, 'post-meta')]", \
+    "//*[starts-with(@class, 'postmetadata')]", \
+    "//*[starts-with(@itemprop, 'date')]", \
+    "//span[starts-with(@class, 'field-content')]", \
+    "//*[contains(@class, 'date')]", \
+    "//*[contains(@id, 'lastmod')]", \
+    "//*[contains(@class, 'post_date')]", \
+]
 
 #
 # time-ago datetime=
@@ -147,6 +162,7 @@ def try_ymd_date(string, outputformat, parser):
     """Use dateparser to parse the assumed date expression"""
     if string is None or len(string) < 4:
         return None
+    # logger.debug('try_ymd: %s', string)
 
     # faster than fire dateparser at once
     if re.match(r'[0-9]{4}', string):
@@ -171,6 +187,7 @@ def try_ymd_date(string, outputformat, parser):
     # send to dateparser
     # target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
     # but in dateparser: 00:00:00
+    # logger.debug('try_ymd_dateparser: %s', string)
     if string != '00:00:00':
         target = parser.get_date_data(string)['date_obj']
         if target is not None:
@@ -211,7 +228,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
     for elem in elements:
             # simple length heuristics
             textcontent = elem.text_content().strip()
-            if not textcontent or len(textcontent) < 3:
+            if not textcontent or len(textcontent) < 6:
                 continue
             elif not re.search(r'\d', textcontent):
                 continue
@@ -224,8 +241,8 @@ def examine_date_elements(tree, expression, outputformat, parser):
                     return attempt
                 # try a shorter first segment
                 else:
-                    toexamine = re.sub(r'[^0-9\.-]+', '', toexamine)
-                    if len(toexamine) < 6:
+                    toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
+                    if len(toexamine) < 7:
                         continue
                     logger.debug('re-analyzing: %s', toexamine)
                     attempt = try_ymd_date(toexamine, outputformat, parser)
@@ -647,6 +664,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     tree, htmlstring = load_html(htmlobject)
+    logger.debug('starting')
     # safety
     if tree is None:
         return
@@ -674,7 +692,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
                 # first choice: entry-date + datetime attribute
                 if 'class' in elem.attrib:
-                    if elem.get('class').startswith('entry-date'):
+                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
                         attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
                         if attempt is not None:
                             reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
@@ -725,6 +743,13 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             # class
             if 'class' in elem.attrib:
                 if elem.get('class') == 'published' or elem.get('class') == 'date-published':
+                    # other attributes
+                    if 'title' in elem.attrib:
+                        trytext = elem.get('title')
+                        logger.debug('abbr published-title found: %s', trytext)
+                        attempt = try_ymd_date(trytext, outputformat, dparser)
+                        if attempt is not None: # and date_validator(attempt, outputformat) is True:
+                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
@@ -758,6 +783,10 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('time regex found: %s', match.group(0))
         return convert_date(match.group(1), '%Y-%m-%d', outputformat)
+    match = re.search(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
+    if match and date_validator(match.group(1), '%d-%m-%Y') is True:
+        logger.debug('time regex found: %s', match.group(0))
+        return convert_date(match.group(1), '%d-%m-%Y', outputformat)
 
     # last resort
     if extensive_search is True:

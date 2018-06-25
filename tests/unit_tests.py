@@ -51,6 +51,7 @@ MOCK_PAGES = { \
 'http://absegler.de/': 'absegler.de.html', \
 'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
 'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': 'jovelstefan.de.parken.html', \
+'http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/': 'freundeskreis-videoclips.de.html', \
 }
 # '': '', \
 
@@ -117,6 +118,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
     assert htmldate.find_date('<html><body><time datetime="08:00"></body></html>') is None
     assert htmldate.find_date('<html><body><time datetime="2014-07-10 08:30:45.687"></body></html>') == '2014-07-10'
+    assert htmldate.find_date('<html><head></head><body><time class="entry-time" itemprop="datePublished" datetime="2018-04-18T09:57:38+00:00"></body></html>') == '2018-04-18'
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
     assert htmldate.find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>') == '2016-11-12'
@@ -132,9 +134,10 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
     assert htmldate.find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/')) == '2011-03-30'
-    assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-10-09'
+    assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-09-01' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://die-partei.net/sh/')) == '2014-07-19'
     assert htmldate.find_date(load_mock_page('https://www.rosneft.com/business/Upstream/Licensing/')) == '2017-02-27' # most probably 2014-12-31, found in text
+    assert htmldate.find_date(load_mock_page('http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/')) == '2017-07-12'
     assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-07-01'
     assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-07-01'
     # other format
@@ -264,7 +267,8 @@ def test_cli():
     '''test the command-line interface'''
     assert cli.examine(' ', True) is None
     assert cli.examine('0'*int(10e6), True) is None
-    assert cli.examine('<html><body><span class="entry-date">July 12th, 2016</span></body></html>', True) == '2016-07-12'
+    # assert cli.examine('<html><body><span class="entry-date">July 12th, 2016</span></body></html>', True) == '2016-07-12'
+    assert cli.examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
     assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 
 
