@@ -47,12 +47,11 @@ else:
 
 
 ## TODO:
-# simplify! (date search in text; )
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
 # .lower() in tags and attributes?
-# 
+# time-ago datetime= relative-time datetime=
 
 
 
@@ -75,13 +74,6 @@ DATE_EXPRESSIONS = [
     "//*[contains(@id, 'lastmod')]", \
     "//*[contains(@class, 'post_date')]", \
 ]
-
-#
-# time-ago datetime=
-# relative-time datetime=
-# timestamp
-# data-utime
-# ...
 
 
 ## Plausible dates
@@ -199,11 +191,25 @@ def try_ymd_date(string, outputformat, parser):
     return None
 
 
+def compare_reference(reference, expression, outputformat, dparser):
+    """Compare the date expression to a reference"""
+    attempt = try_ymd_date(expression, outputformat, dparser)
+    if attempt is not None:
+        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+        if timestamp > reference:
+            return timestamp
+        else:
+            return reference
+    else:
+        return reference
+
+
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
-    if re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl):
-        dateresult = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl).group(0)
+    match = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl)
+    if match:
+        dateresult = match.group(0)
         logger.debug('found date in URL: %s', dateresult)
         try:
             converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
@@ -348,7 +354,7 @@ def examine_header(tree, outputformat, parser):
 
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
-    occurrences = Counter(re.findall(r'%s' % pattern, htmlstring))
+    occurrences = Counter(re.findall(r'%s' % pattern, htmlstring)) ## slow
     toremove = set()
     # logger.debug('occurrences: %s', occurrences)
     for item in occurrences.keys():
@@ -450,8 +456,8 @@ def search_page(htmlstring, outputformat):
     copyear = 0
     pattern = '(?:©|&copy;|\(c\))\D+([12][0-9]{3})\D'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '^\D?([12][0-9]{3})'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     #bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
@@ -467,8 +473,8 @@ def search_page(htmlstring, outputformat):
     # target URL characteristics
     pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
@@ -478,8 +484,8 @@ def search_page(htmlstring, outputformat):
     # more loosely structured data
     pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
@@ -516,8 +522,8 @@ def search_page(htmlstring, outputformat):
     # valid dates strings
     pattern = '(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
@@ -559,8 +565,8 @@ def search_page(htmlstring, outputformat):
     #
     pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '([0-9]{4})[/.-]([0-9]{2})'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
@@ -601,8 +607,8 @@ def search_page(htmlstring, outputformat):
     # pattern = '(\D19[0-9]{2}\D|\D20[0-9]{2}\D)'
     pattern = '\D([12][0-9]{3})\D'
     yearpat = '^\D?([12][0-9]{3})'
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     catch = '^\D?([12][0-9]{3})'
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
@@ -693,27 +699,18 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 # first choice: entry-date + datetime attribute
                 if 'class' in elem.attrib:
                     if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
-                        attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
-                        if attempt is not None:
-                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-                            logger.debug('time/datetime found: %s %s', elem.get('datetime'), reference)
+                        logger.debug('time/datetime found: %s', elem.get('datetime'))
+                        reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
+                        if reference > 0:
                             break
                 # datetime attribute
                 else:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, dparser)
-                    if attempt is not None: # and date_validator(attempt, outputformat) is True:
-                        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-                        if timestamp > reference:
-                            logger.debug('time/datetime found: %s %s', elem.get('datetime'), timestamp)
-                            reference = timestamp
+                    logger.debug('time/datetime found: %s', elem.get('datetime'))
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
-                attempt = try_ymd_date(elem.text, outputformat, dparser)
-                if attempt is not None: # and date_validator(attempt, outputformat) is True:
-                    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-                    if timestamp > reference:
-                        logger.debug('time/datetime found: %s %s', elem.text, timestamp)
-                        reference = timestamp
+                logger.debug('time/datetime found: %s', elem.text)
+                reference = compare_reference(reference, elem.text, outputformat, dparser)
            # else...
            # ...
         # return
@@ -747,16 +744,12 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         logger.debug('abbr published-title found: %s', trytext)
-                        attempt = try_ymd_date(trytext, outputformat, dparser)
-                        if attempt is not None: # and date_validator(attempt, outputformat) is True:
-                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                        reference = compare_reference(reference, trytext, outputformat, dparser)
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
                         logger.debug('abbr published found: %s', trytext)
-                        attempt = try_ymd_date(elem.text, outputformat, dparser)
-                        if attempt is not None: # and date_validator(attempt, outputformat) is True:
-                            reference = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+                        reference = compare_reference(reference, trytext, outputformat, dparser)
         # convert and return
         if reference > 0:
             dateobject = datetime.datetime.fromtimestamp(reference)
