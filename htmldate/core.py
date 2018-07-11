@@ -73,7 +73,13 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'date')]", \
     "//*[contains(@id, 'lastmod')]", \
     "//*[contains(@class, 'post_date')]", \
+    "//*[@class='press_location_time']", \
+    "//*[@class='article_date']", \
+    "//span[@class='meta']", \
+    "//span[@class='created-post']", \
+    "//p[@class='info']", \
 ]
+
 
 
 ## Plausible dates
@@ -181,7 +187,12 @@ def try_ymd_date(string, outputformat, parser):
     # but in dateparser: 00:00:00
     # logger.debug('try_ymd_dateparser: %s', string)
     if string != '00:00:00':
-        target = parser.get_date_data(string)['date_obj']
+        # try with dateparser
+        try:
+            target = parser.get_date_data(string)['date_obj']
+        # tzinfo.py line 323: loc_dt = dt + delta
+        except OverflowError:
+            target = None
         if target is not None:
             logger.debug('result: %s', target)
             datestring = datetime.date.strftime(target, outputformat)
@@ -232,16 +243,19 @@ def examine_date_elements(tree, expression, outputformat, parser):
         return None
     # loop through the elements to analyze
     for elem in elements:
+            # trim
+            temptext = elem.text_content().strip()
+            temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
+            textcontent = temptext.strip()
             # simple length heuristics
-            textcontent = elem.text_content().strip()
             if not textcontent or len(textcontent) < 6:
                 continue
             elif not re.search(r'\d', textcontent):
                 continue
             else:
                 # try a first part
-                toexamine = textcontent[:30]
-                logger.debug('analyzing: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                toexamine = textcontent[:40]
+                logger.debug('analyzing: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), textcontent)
                 attempt = try_ymd_date(toexamine, outputformat, parser)
                 if attempt is not None:
                     return attempt
