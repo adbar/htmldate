@@ -37,16 +37,17 @@ from .download import fetch_url
 # import settings
 
 # compatibility by isinstance
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-if PY3:
-    STRING_TYPES = str
-else:
-    STRING_TYPES = basestring
+#PY2 = sys.version_info[0] == 2
+#PY3 = sys.version_info[0] == 3
+#if PY3:
+#    STRING_TYPES = str
+#else:
+#    STRING_TYPES = basestring
 
 
 
 ## TODO:
+# manually set latestdate, latestdate != TODAY
 # speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
@@ -77,6 +78,7 @@ DATE_EXPRESSIONS = [
     "//*[@class='article_date']", \
     "//span[@class='meta']", \
     "//span[@class='created-post']", \
+    "//span[@class='field-datum']", \
     "//p[@class='info']", \
 ]
 
@@ -261,7 +263,9 @@ def examine_date_elements(tree, expression, outputformat, parser):
                     return attempt
                 # try a shorter first segment
                 else:
-                    toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
+                    toexamine = re.sub(r'^[^0-9]+', '', toexamine)
+                    toexamine = re.sub(r'[^0-9]+$', '', toexamine)
+                    # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
                     if len(toexamine) < 7:
                         continue
                     logger.debug('re-analyzing: %s', toexamine)
@@ -685,6 +689,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     # init
     tree, htmlstring = load_html(htmlobject)
     logger.debug('starting')
+
     # safety
     if tree is None:
         return

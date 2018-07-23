@@ -55,6 +55,7 @@ MOCK_PAGES = { \
 'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': 'scs78.de.html', \
 'https://www.goodform.ch/blog/schattiges_plaetzchen': 'goodform.ch.blog.html', \
 'https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html': 'transgen.de.aktuell.html', \
+'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html', \
 }
 # '': '', \
 
@@ -145,6 +146,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html')) == '2018-06-10'
     assert htmldate.find_date(load_mock_page('https://www.goodform.ch/blog/schattiges_plaetzchen')) == '2018-06-27'
     assert htmldate.find_date(load_mock_page('https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html')) == '2018-01-18'
+    assert htmldate.find_date(load_mock_page('http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/')) == '2018-07-03'
     assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-07-01'
     assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-07-01'
     # other format
