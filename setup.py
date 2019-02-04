@@ -15,7 +15,6 @@ from setuptools import setup # find_packages,
 #    from distutils.core import setup
 
 
-
 here = os.path.abspath(os.path.dirname(__file__))
 packages = ['htmldate']
 
@@ -26,7 +25,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.3.3',
+    version='0.3.4',
     description='This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns, text-based heuristics and robust date extraction. It takes URLs, HTML files or trees as input and outputs a date.',
     long_description=readme(),
     classifiers=[
@@ -55,14 +54,14 @@ setup(
     keywords=['datetime', 'date-parser', 'entity-extraction', 'html-extraction', 'html-parsing', 'metadata-extraction',  'webarchives', 'web-scraping'],
     url='http://github.com/adbar/htmldate',
     author='Adrien Barbaresi',
-    author_email='adrien.barbaresi@oeaw.ac.at',
+    author_email='barbaresi@bbaw.de',
     license='GPLv3+',
     packages=packages,
     include_package_data=True,
     install_requires=[
-        'dateparser == 0.6.0',
-        'lxml >= 4.0.0',
-        'requests >= 2.18.0',
+        'dateparser == 0.7.0',
+        'lxml >= 4.2.0',
+        'requests >= 2.19.0',
     ],
     # python_requires='>=3',
     entry_points = {

@@ -65,7 +65,7 @@ MOCK_PAGES = { \
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
 # PARSER = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
-PARSER = dateparser.DateDataParser(languages=['de', 'en'], allow_redetect_language=False, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
+PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
 
 
 def load_mock_page(url):
@@ -164,7 +164,7 @@ def test_approximate_date():
     # other
     assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11' # or '2017-08-03'
     assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
-    assert htmldate.find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-07-01' # actually "28 April, 2017"
+    assert htmldate.find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-01-17' # actually "28 April, 2017"
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/')) == '2017-07-01'
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-08-26' # actually 2017-07-24
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
