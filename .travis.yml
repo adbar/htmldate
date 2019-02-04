@@ -1,5 +1,6 @@
 sudo: false
 language: python
+dist: xenial
 
 matrix:
   include:
@@ -9,7 +10,7 @@ matrix:
       env: TOXENV=py35
     - python: "3.6"
       env: TOXENV=py36
-    - python: "3.7-dev"
+    - python: "3.7"
       env: TOXENV=py37
     - python: "3.8-dev"
       env: TOXENV=py38
@@ -40,19 +41,3 @@ notifications:
 
 #cache:
 #  pip: true
-
-
-### OLD
-
-#python:
-#   - 2.6 #throws error on Travis' side?
-#  - 2.7
-#    env: TOXENV=py27
-#   - 3.3 # throws error on Travis' side?
-#  - 3.4
-#    env: TOXENV=py34
-#  - 3.5
-#    env: TOXENV=py35
-#  - 3.6
-#    env: TOXENV=py36
-#  - 3.7-dev
