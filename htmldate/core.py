@@ -80,8 +80,10 @@ DATE_EXPRESSIONS = [
     "//span[@class='created-post']", \
     "//span[@class='field-datum']", \
     "//p[@class='info']", \
+    "//p[@class='blog-post-meta']", \
+    "//div[contains(@class, 'PublishDate')]", \
+    "//*[@itemprop='datePublished']", \
 ]
-
 
 
 ## Plausible dates
@@ -230,6 +232,18 @@ def extract_url_date(testurl, outputformat):
                 return converted
         except ValueError as err:
             logger.debug('value error during conversion: %s %s', dateresult, err)
+    # test another pattern
+    else:
+        match = re.search(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', testurl)
+        if match:
+            dateresult = match.group(0)
+            logger.debug('found date in URL: %s', dateresult)
+            try:
+                converted = convert_date(dateresult, '%Y-%m-%d', outputformat)
+                if date_validator(converted, outputformat) is True:
+                    return converted
+            except ValueError as err:
+                logger.debug('value error during conversion: %s %s', dateresult, err)
     # catchall
     return None
 
@@ -707,40 +721,6 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
 
-    # <time>
-    elements = tree.xpath('//time')
-    if elements is not None and len(elements) > 0:
-        # scan all the tags and look for the newest one
-        reference = 0
-        for elem in elements:
-            # go for datetime
-            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
-                # first choice: entry-date + datetime attribute
-                if 'class' in elem.attrib:
-                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
-                        logger.debug('time/datetime found: %s', elem.get('datetime'))
-                        reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
-                        if reference > 0:
-                            break
-                # datetime attribute
-                else:
-                    logger.debug('time/datetime found: %s', elem.get('datetime'))
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
-            # bare text in element
-            elif elem.text is not None and len(elem.text) > 6:
-                logger.debug('time/datetime found: %s', elem.text)
-                reference = compare_reference(reference, elem.text, outputformat, dparser)
-           # else...
-           # ...
-        # return
-        if reference > 0:
-            # convert and return
-            dateobject = datetime.datetime.fromtimestamp(reference)
-            converted = dateobject.strftime(outputformat)
-            # quality control
-            if date_validator(converted, outputformat) is True:
-                return converted
-
     # <abbr>
     elements = tree.xpath('//abbr')
     if elements is not None and len(elements) > 0:
@@ -782,6 +762,40 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         dateresult = examine_date_elements(tree, expr, outputformat, dparser)
         if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
+
+    # <time>
+    elements = tree.xpath('//time')
+    if elements is not None and len(elements) > 0:
+        # scan all the tags and look for the newest one
+        reference = 0
+        for elem in elements:
+            # go for datetime
+            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
+                # first choice: entry-date + datetime attribute
+                if 'class' in elem.attrib:
+                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
+                        logger.debug('time/datetime found: %s', elem.get('datetime'))
+                        reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
+                        if reference > 0:
+                            break
+                # datetime attribute
+                else:
+                    logger.debug('time/datetime found: %s', elem.get('datetime'))
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
+            # bare text in element
+            elif elem.text is not None and len(elem.text) > 6:
+                logger.debug('time/datetime found: %s', elem.text)
+                reference = compare_reference(reference, elem.text, outputformat, dparser)
+           # else...
+           # ...
+        # return
+        if reference > 0:
+            # convert and return
+            dateobject = datetime.datetime.fromtimestamp(reference)
+            converted = dateobject.strftime(outputformat)
+            # quality control
+            if date_validator(converted, outputformat) is True:
+                return converted
 
     # clean before string search
     cleaned_html = cleaner.clean_html(tree)
