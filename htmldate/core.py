@@ -248,6 +248,23 @@ def extract_url_date(testurl, outputformat):
     return None
 
 
+def extract_partial_url_date(testurl, outputformat):
+    """Extract an approximate date out of an URL string"""
+    # easy extract in Y-M-D format
+    match = re.search(r'[0-9]{4}/[0-9]{2}/', testurl)
+    if match:
+        dateresult = match.group(0) + '01'
+        logger.debug('found date in URL: %s', dateresult)
+        try:
+            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
+            if date_validator(converted, outputformat) is True:
+                return converted
+        except ValueError as err:
+            logger.debug('value error during conversion: %s %s', dateresult, err)
+    # catchall
+    return None
+
+
 def examine_date_elements(tree, expression, outputformat, parser):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -796,6 +813,12 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             # quality control
             if date_validator(converted, outputformat) is True:
                 return converted
+
+    # URL 2
+    if url is not None:
+        dateresult = extract_partial_url_date(url, outputformat)
+        if dateresult is not None:
+            return dateresult
 
     # clean before string search
     cleaned_html = cleaner.clean_html(tree)

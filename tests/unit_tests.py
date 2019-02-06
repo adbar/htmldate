@@ -190,12 +190,10 @@ def test_date_validator():
     assert htmldate.date_validator('2004', '%Y') is True
 
 
-
 def test_convert_date():
     '''test date conversion'''
     assert htmldate.convert_date('2016-11-18', '%Y-%m-%d', '%d %B %Y') == '18 November 2016'
     assert htmldate.convert_date('18 November 2016', '%d %B %Y', '%Y-%m-%d') == '2016-11-18'
-
 
 
 def test_output_format_validator():
@@ -235,6 +233,11 @@ def test_url():
     assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/2012-11/keine-kurzung-bei-der-jugend-klubs-konnen-vorerst-aufatmen-bvv-beschliest-haushaltsplan/') is None
     assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/6666-42-87/') is None
 
+
+def test_approximate_url():
+    '''test url parameter'''
+    assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/blog/2016/07/key-words') == '2016-07-01'
+    assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/category/2016/') is None
 
 
 def test_search_pattern():
@@ -313,6 +316,7 @@ if __name__ == '__main__':
     test_approximate_date()
     test_search_html()
     test_url()
+    test_approximate_url()
 
     # cli
     test_cli()
