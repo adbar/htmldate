@@ -83,6 +83,9 @@ DATE_EXPRESSIONS = [
     "//p[@class='blog-post-meta']", \
     "//div[contains(@class, 'PublishDate')]", \
     "//*[@itemprop='datePublished']", \
+    "//span[@class='published']", \
+    "//span[@class='datum']", \
+    "//*[contains(@id, 'lastmod')]", \
 ]
 
 
@@ -287,7 +290,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
                 continue
             else:
                 # try a first part
-                toexamine = textcontent[:40]
+                toexamine = textcontent[:48]
                 logger.debug('analyzing: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), textcontent)
                 attempt = try_ymd_date(toexamine, outputformat, parser)
                 if attempt is not None:
@@ -347,7 +350,7 @@ def examine_header(tree, outputformat, parser):
                 elif elem.get('name').lower() == 'og:url':
                     headerdate = extract_url_date(elem.get('content'), outputformat)
                 # date
-                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'last-modified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     logger.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
             elif headerdate is None and 'pubdate' in elem.attrib:
