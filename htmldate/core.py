@@ -62,20 +62,21 @@ logger = logging.getLogger(__name__)
 DATE_EXPRESSIONS = [
     "//*[starts-with(@id, 'date')]", \
     "//*[starts-with(@class, 'date')]", \
+    "//*[starts-with(@itemprop, 'date')]", \
     "//*[starts-with(@id, 'time')]", \
     "//*[starts-with(@class, 'time')]", \
     "//*[starts-with(@class, 'byline')]", \
     "//*[starts-with(@class, 'entry-date')]", \
     "//*[starts-with(@class, 'entry-time')]", \
     "//*[starts-with(@class, 'post-meta')]", \
+    "//*[starts-with(@class, 'entry-meta')]", \
     "//*[starts-with(@class, 'postmetadata')]", \
-    "//*[starts-with(@itemprop, 'date')]", \
     "//span[starts-with(@class, 'field-content')]", \
     "//*[contains(@class, 'date')]", \
     "//*[contains(@id, 'lastmod')]", \
+    "//*[@class='article_date']", \
     "//*[contains(@class, 'post_date')]", \
     "//*[@class='press_location_time']", \
-    "//*[@class='article_date']", \
     "//span[@class='meta']", \
     "//span[@class='created-post']", \
     "//span[@class='field-datum']", \
@@ -86,7 +87,14 @@ DATE_EXPRESSIONS = [
     "//span[@class='published']", \
     "//span[@class='datum']", \
     "//*[contains(@id, 'lastmod')]", \
+    "//*[@class='postMeta']", \
+    "//p[@class='subline']", \
+    "//*[@class='meta-before']", \
+    "//*[@id='meta-publish-date-single']", \
+    "//span[@class='submitted']", \
+    "//small", \
 ]
+
 
 
 ## Plausible dates
@@ -253,10 +261,10 @@ def extract_url_date(testurl, outputformat):
 
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
-    # easy extract in Y-M-D format
-    match = re.search(r'[0-9]{4}/[0-9]{2}/', testurl)
+    # easy extract in Y-M format
+    match = re.search(r'/([0-9]{4}/[0-9]{2})/', testurl)
     if match:
-        dateresult = match.group(0) + '01'
+        dateresult = match.group(1) + '/01'
         logger.debug('found date in URL: %s', dateresult)
         try:
             converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
@@ -291,7 +299,8 @@ def examine_date_elements(tree, expression, outputformat, parser):
             else:
                 # try a first part
                 toexamine = textcontent[:48]
-                logger.debug('analyzing: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), textcontent)
+                logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
+                logger.debug('analyzing (string): %s', toexamine)
                 attempt = try_ymd_date(toexamine, outputformat, parser)
                 if attempt is not None:
                     return attempt
@@ -315,12 +324,6 @@ def examine_header(tree, outputformat, parser):
     headerdate = None
     reserve = None
     try:
-        # link canonical
-        for elem in tree.xpath('//link[@rel="canonical"]'):
-            if 'href' in elem.attrib:
-                dateresult = extract_url_date(elem.get('href'), outputformat)
-                if dateresult is not None:
-                    return dateresult
         # loop through all meta elements
         for elem in tree.xpath('//meta'): # was //head/meta
             # safeguard
@@ -378,7 +381,7 @@ def examine_header(tree, outputformat, parser):
                 elif headerdate is None and elem.get('itemprop').lower() == 'copyrightyear':
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'content' in elem.attrib:
-                        attempt = '-'.join([elem.get('content'), '07', '01'])
+                        attempt = '-'.join([elem.get('content'), '01', '01'])
                         if date_validator(attempt, '%Y-%m-%d') is True:
                             reserve = attempt
             # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
@@ -664,7 +667,7 @@ def search_page(htmlstring, outputformat):
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(0), '07', '01'])
+        pagedate = '-'.join([bestmatch.group(0), '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
             if copyear == 0 or int(bestmatch.group(0)) >= copyear:
                 logger.debug('date found for pattern "%s": %s', pattern, pagedate)
@@ -672,7 +675,7 @@ def search_page(htmlstring, outputformat):
 
     # catchall
     if copyear != 0:
-        pagedate = '-'.join([str(copyear), '07', '01'])
+        pagedate = '-'.join([str(copyear), '01', '01'])
         return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
@@ -731,6 +734,11 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         return
 
     # URL
+    if url is None:
+        # link canonical
+        for elem in tree.xpath('//link[@rel="canonical"]'):
+            if 'href' in elem.attrib:
+                url = elem.get('href')
     if url is not None:
         dateresult = extract_url_date(url, outputformat)
         if dateresult is not None:

@@ -102,7 +102,7 @@ def test_exact_date():
     assert htmldate.find_date('<html><head><meta property="dc:created" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
     assert htmldate.find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
     assert htmldate.find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
-    assert htmldate.find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-07-01'
+    assert htmldate.find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-01-01'
     assert htmldate.find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
 
     ## link in header
@@ -151,8 +151,8 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.goodform.ch/blog/schattiges_plaetzchen')) == '2018-06-27'
     assert htmldate.find_date(load_mock_page('https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html')) == '2018-01-18'
     assert htmldate.find_date(load_mock_page('http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/')) == '2018-07-03'
-    assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-07-01'
-    assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-07-01'
+    assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-01-01'
+    assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-01-01'
     # other format
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/'), outputformat='%d %B %Y') == '30 March 2011'
 
@@ -160,14 +160,14 @@ def test_exact_date():
 def test_approximate_date():
     '''this page should return an approximate date'''
     # copyright text
-    assert htmldate.find_date(load_mock_page('http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung')) == '2016-07-01' # somewhere in 2016
+    assert htmldate.find_date(load_mock_page('http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung')) == '2016-01-01' # somewhere in 2016
     # other
     assert htmldate.find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11' # or '2017-08-03'
     assert htmldate.find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
     assert htmldate.find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-04-28'
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/')) == '2017-07-01'
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-08-26' # actually 2017-07-24
-    assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-07-01' # actually 2017-08-09
+    assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-01-01' # actually 2017-08-09
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-10-20' # most probably 2017-10-06
     assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
@@ -280,7 +280,7 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT) == '2015-04-30'
     assert htmldate.search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT) == '2013-03-03'
     assert htmldate.search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
-    assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-07-01'
+    assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-01-01'
 
 
 def test_cli():
