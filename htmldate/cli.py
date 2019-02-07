@@ -67,8 +67,10 @@ def main():
                 rget = fetch_url(url)
                 if rget is not None:
                     result = examine(rget.text, args.safe)
-                    # if result is not None:
-                    sys.stdout.write(result + '\t' + url + '\n')
+                    if result is not None:
+                        sys.stdout.write(result + '\t' + url + '\n')
+                    else:
+                        sys.stdout.write('\t' + url + '\n')
 
 
 
