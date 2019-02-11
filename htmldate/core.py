@@ -16,7 +16,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime
 import logging
 import re
-import sys
 import time
 
 # from codecs import open
@@ -36,15 +35,6 @@ from lxml.html.clean import Cleaner
 from .download import fetch_url
 # import settings
 
-# compatibility by isinstance
-#PY2 = sys.version_info[0] == 2
-#PY3 = sys.version_info[0] == 3
-#if PY3:
-STRING_TYPES = str
-#else:
-#    STRING_TYPES = basestring
-
-
 
 ## TODO:
 # manually set latestdate, latestdate != TODAY
@@ -60,28 +50,28 @@ STRING_TYPES = str
 logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = [
-    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]", \
-    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]", \
-    "//*[contains(@class, 'time') or contains(@id, 'time')]", \
-    "//*[contains(@itemprop, 'date')]", \
-    "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]", \
-    "//*[contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postmetadata') or contains(@class, 'postMeta')]", \
-    "//*[@class='meta' or @class='meta-before' or @class='asset-meta']", \
-    "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]", \
-    "//*[contains(@id, 'lastmod')]", \
-    "//span[starts-with(@class, 'field-content')]", \
-    "//*[@class='post-footer']", \
-    "//footer", \
-    "//small", \
+    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
+    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]",
+    "//*[contains(@class, 'time') or contains(@id, 'time')]",
+    "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]",
+    "//*[contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postmetadata') or contains(@class, 'postMeta')]",
+    "//*[@class='meta' or @class='meta-before' or @class='asset-meta']",
+    "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
+    "//*[contains(@id, 'lastmod')]",
+    "//*[contains(@itemprop, 'date')]",
+    "//span[starts-with(@class, 'field-content')]",
+    "//small",
+    "//footer",
+    "//*[@class='post-footer']",
 ]
 
 
 ## Plausible dates
- # earliest possible year to take into account (inclusive)
+# earliest possible year to take into account (inclusive)
 MIN_YEAR = 1995
- # latest possible date
+# latest possible date
 TODAY = datetime.date.today()
- # latest possible year
+# latest possible year
 MAX_YEAR = datetime.date.today().year
 
 ## DateDataParser object
@@ -129,7 +119,7 @@ def date_validator(datestring, outputformat):
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
-    if not isinstance(outputformat, STRING_TYPES) or not '%' in outputformat:
+    if not isinstance(outputformat, str) or not '%' in outputformat:
         logging.error('malformed output format: %s', outputformat)
         return False
     # test with date object
@@ -203,10 +193,9 @@ def compare_reference(reference, expression, outputformat, dparser):
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         if timestamp > reference:
             return timestamp
-        else:
-            return reference
-    else:
         return reference
+    # else:
+    return reference
 
 
 def extract_url_date(testurl, outputformat):
@@ -266,35 +255,37 @@ def examine_date_elements(tree, expression, outputformat, parser):
         return None
     # loop through the elements to analyze
     for elem in elements:
-            # trim
-            temptext = elem.text_content().strip()
-            temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
-            textcontent = temptext.strip()
-            # simple length heuristics
-            if not textcontent or len(textcontent) < 6:
+        # trim
+        temptext = elem.text_content().strip()
+        temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
+        textcontent = temptext.strip()
+        # simple length heuristics
+        if not textcontent or len(textcontent) < 6:
+            continue
+        # try the beginning of the string
+        else:
+            toexamine = textcontent[:48]
+            # more than 4 digits required
+            if len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            elif len(re.findall(r'\d', textcontent)) < 4:
+            logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
+            logger.debug('analyzing (string): %s', toexamine)
+            # try with all the text
+            attempt = try_ymd_date(toexamine, outputformat, parser)
+            if attempt is not None:
+                return attempt
+            # try a shorter first segment
+            toexamine = re.sub(r'^[^0-9]+', '', toexamine)
+            toexamine = re.sub(r'\|.+$', '', toexamine)
+            toexamine = re.sub(r'[^0-9]+$', '', toexamine)
+            # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
+            if len(toexamine) < 7:
                 continue
-            else:
-                # try a first part
-                toexamine = textcontent[:48]
-                logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
-                logger.debug('analyzing (string): %s', toexamine)
-                attempt = try_ymd_date(toexamine, outputformat, parser)
-                if attempt is not None:
-                    return attempt
-                # try a shorter first segment
-                else:
-                    toexamine = re.sub(r'^[^0-9]+', '', toexamine)
-                    toexamine = re.sub(r'\|.+$', '', toexamine)
-                    toexamine = re.sub(r'[^0-9]+$', '', toexamine)
-                    # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
-                    if len(toexamine) < 7:
-                        continue
-                    logger.debug('re-analyzing: %s', toexamine)
-                    attempt = try_ymd_date(toexamine, outputformat, parser)
-                    if attempt is not None:
-                        return attempt
+            logger.debug('re-analyzing (shortened): %s', toexamine)
+            attempt = try_ymd_date(toexamine, outputformat, parser)
+            if attempt is not None:
+                return attempt
+
     # catchall
     return None
 
@@ -422,8 +413,8 @@ def select_candidate(occurrences, catch, yearpat):
     """Select a candidate among the most frequent matches"""
     # logger.debug('occurrences: %s', occurrences)
     if len(occurrences) == 0:
-        return
-    elif len(occurrences) == 1:
+        return None
+    if len(occurrences) == 1:
         match = re.search(r'%s' % catch, list(occurrences.keys())[0])
         if match:
             return match
@@ -667,7 +658,7 @@ def load_html(htmlobject):
         tree = htmlobject
         # derive string
         htmlstring = html.tostring(htmlobject, encoding='unicode')
-    elif isinstance(htmlobject, STRING_TYPES):
+    elif isinstance(htmlobject, str):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
             logger.info('URL detected, downloading: %s', htmlobject)
@@ -709,9 +700,9 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
 
     # safety
     if tree is None:
-        return
+        return None
     if output_format_validator(outputformat) is False:
-        return
+        return None
 
     # URL
     if url is None:
@@ -799,8 +790,8 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             elif elem.text is not None and len(elem.text) > 6:
                 logger.debug('time/datetime found: %s', elem.text)
                 reference = compare_reference(reference, elem.text, outputformat, dparser)
-           # else...
-           # ...
+            # else...
+            # ...
         # return
         if reference > 0:
             # convert and return
