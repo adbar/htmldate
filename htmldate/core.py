@@ -60,49 +60,20 @@ STRING_TYPES = str
 logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = [
-    "//*[starts-with(@id, 'date')]", \
-    "//*[contains(@class, 'date')]", \
-    "//*[contains(@class, 'time')]", \
-    "//*[starts-with(@itemprop, 'date')]", \
-    "//*[starts-with(@id, 'time')]", \
-    "//*[starts-with(@class, 'time')]", \
-    "//*[starts-with(@class, 'byline')]", \
-    "//*[starts-with(@class, 'entry-date')]", \
-    "//*[starts-with(@class, 'entry-time')]", \
-    "//*[starts-with(@class, 'post-meta')]", \
-    "//*[starts-with(@class, 'post-byline')]", \
-    "//*[starts-with(@class, 'entry-meta')]", \
-    "//*[starts-with(@class, 'postmetadata')]", \
-    "//*[@class='postMeta']", \
-    "//*[contains(@class, 'published')]", \
-    "//*[@class='pubdate']", \
-    "//*[contains(@class, 'post-date')]", \
-    "//*[contains(@class, 'post_date')]", \
-    "//*[@class='posted']", \
+    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]", \
+    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]", \
+    "//*[contains(@class, 'time') or contains(@id, 'time')]", \
+    "//*[contains(@itemprop, 'date')]", \
+    "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]", \
+    "//*[contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postmetadata') or contains(@class, 'postMeta')]", \
+    "//*[@class='meta' or @class='meta-before' or @class='asset-meta']", \
+    "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]", \
+    "//*[contains(@id, 'lastmod')]", \
     "//span[starts-with(@class, 'field-content')]", \
-    "//*[contains(@id, 'lastmod')]", \
-    "//*[@class='article_date']", \
-    "//*[@class='press_location_time']", \
-    "//span[@class='created-post']", \
-    "//span[@class='field-datum']", \
-    "//p[@class='info']", \
-    "//p[@class='blog-post-meta']", \
-    "//div[contains(@class, 'PublishDate')]", \
-    "//*[@itemprop='datePublished']", \
-    "//span[@class='published']", \
-    "//span[@class='datum']", \
-    "//*[contains(@id, 'lastmod')]", \
-    "//p[@class='subline']", \
-    "//*[@class='meta-before']", \
-    "//*[@id='meta-publish-date-single']", \
-    "//span[@class='meta']", \
-    "//div[@class='asset-meta']", \
-    "//span[@class='submitted']", \
     "//*[@class='post-footer']", \
     "//footer", \
     "//small", \
 ]
-
 
 
 ## Plausible dates
