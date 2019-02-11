@@ -92,7 +92,9 @@ DATE_EXPRESSIONS = [
     "//*[@class='meta-before']", \
     "//*[@id='meta-publish-date-single']", \
     "//span[@class='submitted']", \
+    "//div[@class='asset-meta']", \
     "//small", \
+    "//footer", \
 ]
 
 
@@ -307,6 +309,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
                 # try a shorter first segment
                 else:
                     toexamine = re.sub(r'^[^0-9]+', '', toexamine)
+                    toexamine = re.sub(r'\|.+$', '', toexamine)
                     toexamine = re.sub(r'[^0-9]+$', '', toexamine)
                     # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
                     if len(toexamine) < 7:
@@ -784,6 +787,11 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             # quality control
             if date_validator(converted, outputformat) is True:
                 return converted
+        # try rescue in abbr content
+        else:
+            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser)
+            if dateresult is not None and date_validator(dateresult, outputformat) is True:
+                return dateresult # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
@@ -839,6 +847,10 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     logger.debug('html cleaned')
 
     # date regex timestamp rescue
+    match = re.search(r'"datePublished":"([0-9]{4}-[0-9]{2}-[0-9]{2})', htmlstring)
+    if match and date_validator(match.group(1), '%Y-%m-%d') is True:
+        logger.debug('JSON time found: %s', match.group(0))
+        return convert_date(match.group(1), '%Y-%m-%d', outputformat)
     match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('time regex found: %s', match.group(0))

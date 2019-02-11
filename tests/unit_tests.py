@@ -58,6 +58,8 @@ MOCK_PAGES = { \
 'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html', \
 'https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean': 'aboutpam.com.html', \
 'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html', \
+'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html', \
+'http://blog.kinra.de/?p=959/': 'kinra.de.html', \
 }
 # '': '', \
 
@@ -130,6 +132,10 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
     assert htmldate.find_date(load_mock_page('https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean')) == '2017-12-15'
     assert htmldate.find_date(load_mock_page('https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529')) == '2019-01-29'
+    assert htmldate.find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
+
+    # abbr in document body
+    assert htmldate.find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
     assert htmldate.find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>') == '2016-11-12'
     assert htmldate.find_date('<html><body><abbr class="date-published">8.11.2016</abbr></body></html>') == '2016-11-08'
     # other format
