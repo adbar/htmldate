@@ -61,7 +61,8 @@ logger = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = [
     "//*[starts-with(@id, 'date')]", \
-    "//*[starts-with(@class, 'date')]", \
+    "//*[contains(@class, 'date')]", \
+    "//*[contains(@class, 'time')]", \
     "//*[starts-with(@itemprop, 'date')]", \
     "//*[starts-with(@id, 'time')]", \
     "//*[starts-with(@class, 'time')]", \
@@ -69,15 +70,19 @@ DATE_EXPRESSIONS = [
     "//*[starts-with(@class, 'entry-date')]", \
     "//*[starts-with(@class, 'entry-time')]", \
     "//*[starts-with(@class, 'post-meta')]", \
+    "//*[starts-with(@class, 'post-byline')]", \
     "//*[starts-with(@class, 'entry-meta')]", \
     "//*[starts-with(@class, 'postmetadata')]", \
+    "//*[@class='postMeta']", \
+    "//*[contains(@class, 'published')]", \
+    "//*[@class='pubdate']", \
+    "//*[contains(@class, 'post-date')]", \
+    "//*[contains(@class, 'post_date')]", \
+    "//*[@class='posted']", \
     "//span[starts-with(@class, 'field-content')]", \
-    "//*[contains(@class, 'date')]", \
     "//*[contains(@id, 'lastmod')]", \
     "//*[@class='article_date']", \
-    "//*[contains(@class, 'post_date')]", \
     "//*[@class='press_location_time']", \
-    "//span[@class='meta']", \
     "//span[@class='created-post']", \
     "//span[@class='field-datum']", \
     "//p[@class='info']", \
@@ -87,14 +92,15 @@ DATE_EXPRESSIONS = [
     "//span[@class='published']", \
     "//span[@class='datum']", \
     "//*[contains(@id, 'lastmod')]", \
-    "//*[@class='postMeta']", \
     "//p[@class='subline']", \
     "//*[@class='meta-before']", \
     "//*[@id='meta-publish-date-single']", \
-    "//span[@class='submitted']", \
+    "//span[@class='meta']", \
     "//div[@class='asset-meta']", \
-    "//small", \
+    "//span[@class='submitted']", \
+    "//*[@class='post-footer']", \
     "//footer", \
+    "//small", \
 ]
 
 
@@ -296,7 +302,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
             # simple length heuristics
             if not textcontent or len(textcontent) < 6:
                 continue
-            elif not re.search(r'\d', textcontent):
+            elif len(re.findall(r'\d', textcontent)) < 4:
                 continue
             else:
                 # try a first part
@@ -865,5 +871,3 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         logger.debug('extensive search started')
         pagedate = search_page(htmlstring, outputformat)
         return pagedate
-
-    # return pagedate
