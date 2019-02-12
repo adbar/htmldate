@@ -25,14 +25,14 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.3.4',
+    version='0.4.0',
     description='This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns, text-based heuristics and robust date extraction. It takes URLs, HTML files or trees as input and outputs a date.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         #'Development Status :: 3 - Alpha',
-        'Development Status :: 4 - Beta',
-        #'Development Status :: 5 - Production/Stable',
+        #'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         #'Development Status :: 6 - Mature',
         #'Development Status :: 7 - Inactive',
         'Intended Audience :: Developers',
