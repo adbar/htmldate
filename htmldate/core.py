@@ -59,10 +59,11 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
     "//*[contains(@id, 'lastmod')]",
     "//*[contains(@itemprop, 'date')]",
-    "//*[contains(@class, 'author') or contains(@class, 'field-content')]",
-    "//small",
     "//footer",
     "//*[@class='post-footer']",
+    "//*[@class='footer' or @id='footer']",
+    "//small",
+    "//*[contains(@class, 'author') or contains(@class, 'field-content')]",
 ]
 
 
@@ -473,7 +474,7 @@ def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
     # pagedate = None
-
+    # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
     ## this is risky
 
