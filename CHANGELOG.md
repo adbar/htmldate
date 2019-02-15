@@ -1,6 +1,15 @@
 ## Changelog
 
 
+### version 0.4.1
+- fixed lxml dependency
+- reordered XPath-expressions
+
+### version 0.4.0
+- refined and combined XPath-expressions
+- better extraction of dates in free text
+- better coverage and consistency issues solved
+
 ### version 0.3.1
 - improved consistency and further tests
 
