@@ -131,6 +131,10 @@ def test_exact_date():
     assert htmldate.find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03'
     assert htmldate.find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00"></time></p></footer></body></html>') == '2019-01-03'
 
+    ## precise pattern in document body
+    assert htmldate.find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
+    assert htmldate.find_date('<html><body>Datum: 10.11.2017</body></html>') == '2017-11-10'
+
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
     assert htmldate.find_date(load_mock_page('https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean')) == '2017-12-15'

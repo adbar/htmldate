@@ -65,6 +65,7 @@ DATE_EXPRESSIONS = [
     "//small",
     "//*[contains(@class, 'author') or contains(@class, 'field-content')]",
 ]
+# "//*[contains(@class, 'fa-clock-o')]",
 
 
 ## Plausible dates
@@ -96,7 +97,7 @@ cleaner.remove_unknown_tags = False
 cleaner.safe_attrs_only = False
 cleaner.scripts = False
 cleaner.style = False
-cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'table', 'svg', 'video']
+cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'table', 'video']
 # 'embed', 'figure', 'img',
 
 
@@ -828,6 +829,15 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     if match and date_validator(match.group(1), '%d-%m-%Y') is True:
         logger.debug('time regex found: %s', match.group(0))
         return convert_date(match.group(1), '%d-%m-%Y', outputformat)
+
+    # precise German patterns
+    match = re.search(r'(Datum|Stand): ?([0-9]{2}\.[0-9]{2}\.[0-9]{4})', htmlstring)
+    if match:
+        candidate = match.group(2).replace('.', '-')
+        logger.debug(candidate)
+        if date_validator(candidate, '%d.%m.%Y') is True:
+            logger.debug('precise pattern found: %s', match.group(0))
+            return convert_date(candidate, '%d.%m.%Y', outputformat)
 
     # last resort
     if extensive_search is True:
