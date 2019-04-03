@@ -61,7 +61,7 @@ def fetch_url(url): # custombool?
             logging.error('not a 200 response: %s', rget.status_code)
         elif rget.text is None or len(rget.text) < 100:
             logging.error('file too small/incorrect response: %s %s', url, len(rget.text))
-        elif len(rget.text) > 10000000:
+        elif len(rget.text) > 20000000:
             logging.error('file too large: %s %s', url, len(rget.text))
         else:
             return rget
