@@ -146,7 +146,7 @@ def try_ymd_date(string, outputformat, parser):
     # logger.debug('try_ymd: %s', string)
 
     # faster than fire dateparser at once
-    if re.match(r'[0-9]{4}', string):
+    if string[0:4].isdigit(): # was slow: re.match(r'[0-9]{4}', string):
         # try speedup with ciso8601
         try:
             result = ciso8601.parse_datetime_as_naive(string)
@@ -158,17 +158,15 @@ def try_ymd_date(string, outputformat, parser):
         except ValueError:
             logger.debug('ciso8601 error: %s', string)
             pass
-        # simple case
         #result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
         #if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
         #    logger.debug('ymd manual result: %s', result.group(0))
         #    converted = convert_date(result.group(0), '%Y-%m-%d', outputformat)
         #    if date_validator(converted, outputformat) is True:
         #        return converted
-        # '201709011234' not covered by dateparser
-        result = re.match(r'[0-9]{8}', string)
-        if result is not None:
-            temp = result.group(0)
+        ## '201709011234' not covered by dateparser # regex was too slow
+        if string[0:8].isdigit():
+            temp = string[0:8]
             candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
             if date_validator(candidate, '%Y-%m-%d') is True:
                 logger.debug('ymd manual result: %s', candidate)
@@ -400,7 +398,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
                 potential_year = int(re.search(r'%s' % yearpat, item).group(1))
             else:
                 lastdigits = re.search(r'%s' % yearpat, item).group(1)
-                if re.match(r'9', lastdigits):
+                if lastdigits[0] == '9':
                     potential_year = int('19' + lastdigits)
                 else:
                     potential_year = int('20' + lastdigits)
@@ -582,7 +580,7 @@ def search_page(htmlstring, outputformat):
             month = '0' + match.group(2)
         else:
             month = match.group(2)
-        if re.match(r'9', match.group(3)):
+        if match.group(3)[0] == '9':
             year = '19' + match.group(3)
         else:
             year = '20' + match.group(3)
