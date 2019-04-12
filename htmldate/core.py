@@ -159,12 +159,12 @@ def try_ymd_date(string, outputformat, parser):
             logger.debug('ciso8601 error: %s', string)
             pass
         # simple case
-        result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
-        if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
-            logger.debug('ymd manual result: %s', result.group(0))
-            converted = convert_date(result.group(0), '%Y-%m-%d', outputformat)
-            if date_validator(converted, outputformat) is True:
-                return converted
+        #result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
+        #if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
+        #    logger.debug('ymd manual result: %s', result.group(0))
+        #    converted = convert_date(result.group(0), '%Y-%m-%d', outputformat)
+        #    if date_validator(converted, outputformat) is True:
+        #        return converted
         # '201709011234' not covered by dateparser
         result = re.match(r'[0-9]{8}', string)
         if result is not None:
