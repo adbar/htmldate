@@ -7,8 +7,8 @@ Extract the date of web pages, or web archeology in practice.
 __title__ = 'htmldate'
 __author__ = 'Adrien Barbaresi'
 __license__ = 'GNU GPL v3'
-__copyright__ = 'Copyright 2017, Adrien Barbaresi'
-__version__ = '0.3.1'
+__copyright__ = 'Copyright 2019, Adrien Barbaresi'
+__version__ = '0.4.1'
 
 ## imports
 from .core import *
