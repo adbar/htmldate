@@ -59,6 +59,7 @@ setup(
     packages=packages,
     include_package_data=True,
     install_requires=[
+        'ciso8601',
         'dateparser == 0.7.0',
         'lxml == 4.3.0', # CPython parser issue with version 4.3.1
         'requests >= 2.19.0',

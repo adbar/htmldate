@@ -20,13 +20,10 @@ import time
 
 # from codecs import open
 from collections import Counter
-
-try:
-    from cStringIO import StringIO # Python 2
-except ImportError:
-    from io import StringIO # Python 3
+from io import StringIO # Python 3
 
 # third-party
+import ciso8601
 import dateparser
 from lxml import etree, html
 from lxml.html.clean import Cleaner
@@ -150,10 +147,21 @@ def try_ymd_date(string, outputformat, parser):
 
     # faster than fire dateparser at once
     if re.match(r'[0-9]{4}', string):
+        # try speedup with ciso8601
+        try:
+            result = ciso8601.parse_datetime_as_naive(string)
+            converted = result.strftime(outputformat)
+            ## too cumbersome
+            if date_validator(converted, outputformat) is True:
+                logger.debug('ciso8601 result: %s', result)
+                return converted
+        except ValueError:
+            logger.debug('ciso8601 error: %s', string)
+            pass
         # simple case
         result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
         if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
-            logger.debug('result: %s', result.group(0))
+            logger.debug('ymd manual result: %s', result.group(0))
             converted = convert_date(result.group(0), '%Y-%m-%d', outputformat)
             if date_validator(converted, outputformat) is True:
                 return converted
@@ -163,7 +171,7 @@ def try_ymd_date(string, outputformat, parser):
             temp = result.group(0)
             candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
             if date_validator(candidate, '%Y-%m-%d') is True:
-                logger.debug('result: %s', candidate)
+                logger.debug('ymd manual result: %s', candidate)
                 converted = convert_date(candidate, '%Y-%m-%d', outputformat)
                 if date_validator(converted, outputformat) is True:
                     return converted
