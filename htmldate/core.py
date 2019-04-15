@@ -40,6 +40,7 @@ from .download import fetch_url
 # MODIFIED vs CREATION date switch?
 # .lower() in tags and attributes?
 # time-ago datetime= relative-time datetime=
+# German/English switch
 
 
 
@@ -79,6 +80,8 @@ PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DA
 logger.debug('settings: %s %s %s', MIN_YEAR, TODAY, MAX_YEAR)
 logger.debug('dateparser configuration: %s', PARSERCONFIG)
 
+# LXML
+HTML_PARSER = html.HTMLParser() # encoding='utf8'
 
 cleaner = Cleaner()
 cleaner.comments = True
@@ -98,23 +101,40 @@ cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'pictu
 # 'embed', 'figure', 'img',
 
 
-def date_validator(datestring, outputformat):
+@profile
+def date_validator(date_input, outputformat):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
-    try:
-        dateobject = datetime.datetime.strptime(datestring, outputformat)
-    except ValueError:
-        return False
+    if not isinstance(date_input, datetime.date):
+        # speed-up
+        if outputformat == '%Y-%m-%d':
+            try:
+                dateobject = datetime.datetime(int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10]))
+            except ValueError:
+                return False
+        # default
+        else:
+            try:
+                dateobject = datetime.datetime.strptime(date_input, outputformat)
+            except ValueError:
+                return False
+    else:
+        dateobject = date_input
     # basic year validation
     year = int(datetime.date.strftime(dateobject, '%Y'))
     if MIN_YEAR <= year <= MAX_YEAR:
         # not newer than today
-        if dateobject.date() <= TODAY:
-            return True
-    logger.debug('date not valid: %s', datestring)
+        try:
+            if dateobject.date() <= TODAY:
+                return True
+        except AttributeError:
+            if dateobject <= TODAY:
+                return True
+    logger.debug('date not valid: %s', date_input)
     return False
 
 
+@profile
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
@@ -132,71 +152,206 @@ def output_format_validator(outputformat):
     return True
 
 
+@profile
 def convert_date(datestring, inputformat, outputformat):
     """Parse date and return string in desired format"""
+    # speed-up (%Y-%m-%d)
+    if inputformat == outputformat:
+        return str(datestring)
+    # date object (speedup)
+    if isinstance(datestring, datetime.date):
+        converted = datestring.strftime(outputformat)
+        return converted
+    # normal
     dateobject = datetime.datetime.strptime(datestring, inputformat)
     converted = dateobject.strftime(outputformat)
     return converted
 
 
+@profile
+def regex_parse_de(string):
+    # text match
+    match = re.match(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})', string)
+    if not match:
+        return None
+    # padding for first element
+    if len(match.group(1)) == 1:
+        firstelem = '0' + match.group(1)
+    else:
+        firstelem = match.group(1)
+    # second element
+    if match.group(2) in ('Januar', 'Jänner'):
+        secondelem = '01'
+    elif match.group(2) in ('Februar', 'Feber'):
+        secondelem = '02'
+    elif match.group(2) == 'März':
+        secondelem = '03'
+    elif match.group(2) == 'April':
+        secondelem = '04'
+    elif match.group(2) == 'Mai':
+        secondelem = '05'
+    elif match.group(2) == 'Juni':
+        secondelem = '06'
+    elif match.group(2) == 'Juli':
+        secondelem = '07'
+    elif match.group(2) == 'August':
+        secondelem = '08'
+    elif match.group(2) == 'September':
+        secondelem = '09'
+    elif match.group(2) == 'Oktober':
+        secondelem = '10'
+    elif match.group(2) == 'November':
+        secondelem = '11'
+    else:
+        secondelem = '12'
+    dateobject = datetime.datetime(int(match.group(3)), int(secondelem), int(firstelem))
+    return dateobject
+
+@profile
+def regex_parse_en(string):
+    # text match
+    match = re.match(r'([0-9]{1,2}) (January|February|March|April|May|June|July|August|September|October|November|December),? ([0-9]{4})', string)
+    if not match:
+        return None
+    # padding for first element
+    if len(match.group(1)) == 1:
+        firstelem = '0' + match.group(1)
+    else:
+        firstelem = match.group(1)
+    # second element
+    if match.group(2) == 'January':
+        secondelem = '01'
+    elif match.group == 'February':
+        secondelem = '02'
+    elif match.group(2) == 'March':
+        secondelem = '03'
+    elif match.group(2) == 'April':
+        secondelem = '04'
+    elif match.group(2) == 'May':
+        secondelem = '05'
+    elif match.group(2) == 'June':
+        secondelem = '06'
+    elif match.group(2) == 'July':
+        secondelem = '07'
+    elif match.group(2) == 'August':
+        secondelem = '08'
+    elif match.group(2) == 'September':
+        secondelem = '09'
+    elif match.group(2) == 'October':
+        secondelem = '10'
+    elif match.group(2) == 'November':
+        secondelem = '11'
+    else:
+        secondelem = '12'
+    dateobject = datetime.datetime(int(match.group(3)), int(secondelem), int(firstelem))
+    return dateobject
+
+
+@profile
+def custom_parse(string, outputformat):
+    """Try to bypass the slow dateparser"""
+    # '201709011234' not covered by dateparser # regex was too slow
+    if string[0:8].isdigit():
+        candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            logger.debug('ymd manual result: %s', candidate)
+            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+            return converted
+    # faster than fire dateparser at once
+    match = re.match(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})', string)
+    if match:
+        #if len(match.group(1)) == 1:
+        #    firstelem = '0' + match.group(1)
+        #else:
+        #    firstelem = match.group(1)
+        #if len(match.group(2)) == 1:
+        #    secondelem = '0' + match.group(2)
+        #else:
+        #    secondelem = match.group(2)
+        candidate = datetime.date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
+        # candidate = '-'.join((match.group(3), secondelem, firstelem))
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            logger.debug('D.M.Y manual result: %s', candidate)
+            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+            return converted
+    # text match
+    dateobject = regex_parse_de(string)
+    if dateobject is None:
+        dateobject = regex_parse_en(string)
+    # examine
+    if dateobject is not None:
+        try:
+            if date_validator(dateobject, outputformat) is True:
+                logger.debug('custom parse result: %s', dateobject)
+                converted = dateobject.strftime(outputformat)
+                return converted
+        except ValueError as err:
+            logger.debug('value error during conversion: %s %s', dateresult, err)
+    return None
+
+
+@profile
 def try_ymd_date(string, outputformat, parser):
     """Use dateparser to parse the assumed date expression"""
+    # discard on formal criteria
     if string is None or len(string) < 4:
         return None
-    # logger.debug('try_ymd: %s', string)
+    if re.match(r'[0-9]{2}:[0-9]{2}:[0-9]{2}$', string):
+        return None
 
-    # faster than fire dateparser at once
-    if string[0:4].isdigit(): # was slow: re.match(r'[0-9]{4}', string):
+    # much faster
+    if string[0:4].isdigit():
         # try speedup with ciso8601
         try:
             result = ciso8601.parse_datetime_as_naive(string)
-            converted = result.strftime(outputformat)
-            ## too cumbersome
-            if date_validator(converted, outputformat) is True:
+            if date_validator(result, outputformat) is True:
                 logger.debug('ciso8601 result: %s', result)
+                converted = result.strftime(outputformat)
                 return converted
         except ValueError:
             logger.debug('ciso8601 error: %s', string)
-            pass
-        #result = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?=(\D|$))', string)
-        #if result is not None and date_validator(result.group(0), '%Y-%m-%d') is True:
-        #    logger.debug('ymd manual result: %s', result.group(0))
-        #    converted = convert_date(result.group(0), '%Y-%m-%d', outputformat)
-        #    if date_validator(converted, outputformat) is True:
-        #        return converted
-        ## '201709011234' not covered by dateparser # regex was too slow
-        if string[0:8].isdigit():
-            temp = string[0:8]
-            candidate = '-'.join((temp[0:4], temp[4:6], temp[6:8]))
-            if date_validator(candidate, '%Y-%m-%d') is True:
-                logger.debug('ymd manual result: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                if date_validator(converted, outputformat) is True:
-                    return converted
+
+    # faster
+    customresult = custom_parse(string, outputformat)
+    if customresult is not None:
+        return customresult
+
+    if find_date.extensive_search is False:
+        return None
 
     # send to dateparser
-    # target = dateparser.parse(string, settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
-    # but in dateparser: 00:00:00
-    # logger.debug('try_ymd_dateparser: %s', string)
-    if string != '00:00:00':
-        # try with dateparser
-        try:
-            target = parser.get_date_data(string)['date_obj']
-        # tzinfo.py line 323: loc_dt = dt + delta
-        except OverflowError:
-            target = None
-        if target is not None:
-            logger.debug('result: %s', target)
+    # logger.debug('send to dateparser: %s', string)
+    try:
+        target = parser.get_date_data(string)['date_obj']
+    # tzinfo.py line 323: loc_dt = dt + delta
+    except OverflowError:
+        target = None
+    if target is not None:
+        logger.debug('dateparser result: %s', target)
+        # datestring = datetime.date.strftime(target, outputformat)
+        if date_validator(target, outputformat) is True:
             datestring = datetime.date.strftime(target, outputformat)
-            if date_validator(datestring, outputformat) is True:
-                return datestring
+            return datestring
     # catchall
     return None
 
 
+@profile
 def compare_reference(reference, expression, outputformat, dparser):
     """Compare the date expression to a reference"""
-    attempt = try_ymd_date(expression, outputformat, dparser)
+    # trim
+    temptext = expression.strip()
+    temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
+    textcontent = temptext.strip()
+    # simple length heuristics
+    if not textcontent or len(textcontent) < 6:
+        return reference
+    # try the beginning of the string
+    textcontent = textcontent[:48]
+    # more than 4 digits required
+    if len(list(filter(str.isdigit, textcontent))) < 4:
+        return reference
+    attempt = try_ymd_date(textcontent, outputformat, dparser)
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         if timestamp > reference:
@@ -206,28 +361,33 @@ def compare_reference(reference, expression, outputformat, dparser):
     return reference
 
 
+@profile
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
-    match = re.search(r'[0-9]{4}/[0-9]{2}/[0-9]{2}', testurl)
+    match = re.search(r'([0-9]{4})/([0-9]{2})/([0-9]{2})', testurl)
     if match:
         dateresult = match.group(0)
         logger.debug('found date in URL: %s', dateresult)
         try:
-            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
-            if date_validator(converted, outputformat) is True:
+            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
+            dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            if date_validator(dateobject, outputformat) is True:
+                converted = dateobject.strftime(outputformat)
                 return converted
         except ValueError as err:
             logger.debug('value error during conversion: %s %s', dateresult, err)
     # test another pattern
     else:
-        match = re.search(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', testurl)
+        match = re.search(r'([0-9]{4})-([0-9]{2})-([0-9]{2})', testurl)
         if match:
             dateresult = match.group(0)
             logger.debug('found date in URL: %s', dateresult)
             try:
-                converted = convert_date(dateresult, '%Y-%m-%d', outputformat)
-                if date_validator(converted, outputformat) is True:
+                # converted = convert_date(dateresult, '%Y-%m-%d', outputformat)
+                dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+                if date_validator(dateobject, outputformat) is True:
+                    converted = dateobject.strftime(outputformat)
                     return converted
             except ValueError as err:
                 logger.debug('value error during conversion: %s %s', dateresult, err)
@@ -235,16 +395,19 @@ def extract_url_date(testurl, outputformat):
     return None
 
 
+@profile
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
     # easy extract in Y-M format
-    match = re.search(r'/([0-9]{4}/[0-9]{2})/', testurl)
+    match = re.search(r'/([0-9]{4})/([0-9]{2})/', testurl)
     if match:
-        dateresult = match.group(1) + '/01'
+        dateresult = match.group(0) + '/01'
         logger.debug('found date in URL: %s', dateresult)
         try:
-            converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
-            if date_validator(converted, outputformat) is True:
+            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
+            dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), 1)
+            if date_validator(dateobject, outputformat) is True:
+                converted = dateobject.strftime(outputformat)
                 return converted
         except ValueError as err:
             logger.debug('value error during conversion: %s %s', dateresult, err)
@@ -252,7 +415,8 @@ def extract_partial_url_date(testurl, outputformat):
     return None
 
 
-def examine_date_elements(tree, expression, outputformat, parser):
+@profile
+def examine_date_elements(tree, expression, outputformat, parser, extensive_search=True):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -276,14 +440,26 @@ def examine_date_elements(tree, expression, outputformat, parser):
             # more than 4 digits required
             if len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
-            logger.debug('analyzing (string): %s', toexamine)
+            ## TODO: further tests
+            customresult = custom_parse(toexamine, outputformat)
+            if customresult is not None:
+                return customresult
+            # a little help
+            match = re.search(r'[0-9]{1,2}\. [A-Za-zä]+ [0-9]{4}|[0-9]{1,2}\. ?[0-9]{1,2}\. ?[0-9]{2,4}', toexamine)
+            if match:
+                specialtest = match.group(0)
+                logger.debug('analyzing (substring): %s', specialtest)
+                attempt = try_ymd_date(specialtest, outputformat, parser)
+                if attempt is not None:
+                    return attempt
             # try with all the text
-            attempt = try_ymd_date(toexamine, outputformat, parser)
-            if attempt is not None:
-                return attempt
+            if extensive_search is True:
+                logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
+                logger.debug('analyzing (string): %s', toexamine)
+                attempt = try_ymd_date(toexamine, outputformat, parser)
+                if attempt is not None:
+                    return attempt
             # try a shorter first segment
-            toexamine = re.sub(r'^[^0-9]+', '', toexamine)
             toexamine = re.sub(r'\|.+$', '', toexamine)
             toexamine = re.sub(r'[^0-9]+$', '', toexamine)
             # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
@@ -293,11 +469,11 @@ def examine_date_elements(tree, expression, outputformat, parser):
             attempt = try_ymd_date(toexamine, outputformat, parser)
             if attempt is not None:
                 return attempt
-
     # catchall
     return None
 
 
+@profile
 def examine_header(tree, outputformat, parser):
     """Parse header elements to find date cues"""
     headerdate = None
@@ -386,9 +562,10 @@ def examine_header(tree, outputformat, parser):
     return None
 
 
+@profile
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
-    occurrences = Counter(re.findall(r'%s' % pattern, htmlstring)) ## slow
+    occurrences = Counter(re.findall(r'%s' % pattern, htmlstring)) ## TODO: slow
     toremove = set()
     # logger.debug('occurrences: %s', occurrences)
     for item in occurrences.keys():
@@ -417,6 +594,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     return occurrences
 
 
+@profile
 def select_candidate(occurrences, catch, yearpat):
     """Select a candidate among the most frequent matches"""
     # logger.debug('occurrences: %s', occurrences)
@@ -461,6 +639,7 @@ def select_candidate(occurrences, catch, yearpat):
     return None
 
 
+@profile
 def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
@@ -469,14 +648,17 @@ def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
                 logger.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    return None
 
 
+@profile
 def search_pattern(htmlstring, pattern, catch, yearpat):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     return select_candidate(candidates, catch, yearpat)
 
 
+@profile
 def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
@@ -659,6 +841,7 @@ def search_page(htmlstring, outputformat):
     return None
 
 
+@profile
 def load_html(htmlobject):
     """Load object given as input and validate its type (accepted: LXML tree and string)"""
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
@@ -679,8 +862,7 @@ def load_html(htmlobject):
         ## robust parsing
         try:
             # parse
-            parser = html.HTMLParser() # encoding='utf8'
-            tree = html.parse(StringIO(htmlstring), parser=parser)
+            tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
             ## TODO: clean page?
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
             # <svg>
@@ -700,16 +882,18 @@ def load_html(htmlobject):
     return (tree, htmlstring)
 
 
+@profile
 def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG), url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     tree, htmlstring = load_html(htmlobject)
+    find_date.extensive_search = extensive_search
     logger.debug('starting')
 
     # safety
     if tree is None:
         return None
-    if output_format_validator(outputformat) is False:
+    if outputformat != '%Y-%m-%d' and output_format_validator(outputformat) is False:
         return None
 
     # URL
@@ -750,6 +934,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         logger.debug('abbr published-title found: %s', trytext)
+                        ## TODO: slow!!
                         reference = compare_reference(reference, trytext, outputformat, dparser)
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
@@ -765,13 +950,13 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 return converted
         # try rescue in abbr content
         else:
-            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser)
+            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser, extensive_search)
             if dateresult is not None and date_validator(dateresult, outputformat) is True:
                 return dateresult # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr, outputformat, dparser)
+        dateresult = examine_date_elements(tree, expr, outputformat, dparser, extensive_search)
         if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
 
@@ -850,3 +1035,5 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         logger.debug('extensive search started')
         pagedate = search_page(htmlstring, outputformat)
         return pagedate
+
+    return None
