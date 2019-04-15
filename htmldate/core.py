@@ -84,11 +84,11 @@ logger.debug('dateparser configuration: %s', PARSERCONFIG)
 HTML_PARSER = html.HTMLParser() # encoding='utf8'
 
 cleaner = Cleaner()
-cleaner.comments = True
+cleaner.comments = False
 cleaner.embedded = True
 cleaner.forms = False
 cleaner.frames = True
-cleaner.javascript = False
+cleaner.javascript = True
 cleaner.links = False
 cleaner.meta = False
 cleaner.page_structure = True
@@ -96,9 +96,10 @@ cleaner.processing_instructions = True
 cleaner.remove_unknown_tags = False
 cleaner.safe_attrs_only = False
 cleaner.scripts = False
-cleaner.style = False
-cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'table', 'video']
-# 'embed', 'figure', 'img',
+cleaner.style = True
+cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'video'] # 'embed', 'figure', 'img', 'table'
+
+TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
 
 
 @profile
@@ -175,37 +176,10 @@ def regex_parse_de(string):
     match = re.search(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})', string)
     if not match:
         return None
-    # padding for first element
-    if len(match.group(1)) == 1:
-        firstelem = '0' + match.group(1)
-    else:
-        firstelem = match.group(1)
     # second element
-    if match.group(2) in ('Januar', 'Jänner'):
-        secondelem = '01'
-    elif match.group(2) in ('Februar', 'Feber'):
-        secondelem = '02'
-    elif match.group(2) == 'März':
-        secondelem = '03'
-    elif match.group(2) == 'April':
-        secondelem = '04'
-    elif match.group(2) == 'Mai':
-        secondelem = '05'
-    elif match.group(2) == 'Juni':
-        secondelem = '06'
-    elif match.group(2) == 'Juli':
-        secondelem = '07'
-    elif match.group(2) == 'August':
-        secondelem = '08'
-    elif match.group(2) == 'September':
-        secondelem = '09'
-    elif match.group(2) == 'Oktober':
-        secondelem = '10'
-    elif match.group(2) == 'November':
-        secondelem = '11'
-    else:
-        secondelem = '12'
-    dateobject = datetime.date(int(match.group(3)), int(secondelem), int(firstelem))
+    secondelem = TEXT_MONTHS[match.group(2)]
+    # process and return
+    dateobject = datetime.date(int(match.group(3)), int(secondelem), int(match.group(1)))
     logger.debug('German text parse: %s', dateobject)
     return dateobject
 
@@ -214,50 +188,26 @@ def regex_parse_en(string):
     """Try full-text parse for English date elements"""
     ## TODO:
     # 3/14/2016
-    textmonth = None
+    # https://github.com/vi3k6i5/flashtext
     # general search
-    if not re.search(r'January|February|March|April|May|June|July|August|September|October|November|December', string):
+    if not re.search(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember', string):
         return None
-    # British English
-    match = re.search(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December),? ([0-9]{4})', string)
-    if match:
-        day = match.group(1)
-        textmonth = match.group(4)
-        year = match.group(5)
     # American English
+    match = re.search(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})', string)
+    if match:
+        day = match.group(2)
+        month = TEXT_MONTHS[match.group(1)]
+        year = match.group(4)
+    # British English
     else:
-        match = re.search(r'(January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})', string)
+        match = re.search(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})', string)
         if match:
-            day = match.group(2)
-            textmonth = match.group(1)
-            year = match.group(4)
-    # month conversion
-    if textmonth is None:
-        return None
-    if textmonth == 'January':
-        month = '01'
-    elif textmonth == 'February':
-        month = '02'
-    elif textmonth == 'March':
-        month = '03'
-    elif textmonth == 'April':
-        month = '04'
-    elif textmonth == 'May':
-        month = '05'
-    elif textmonth == 'June':
-        month = '06'
-    elif textmonth == 'July':
-        month = '07'
-    elif textmonth == 'August':
-        month = '08'
-    elif textmonth == 'September':
-        month = '09'
-    elif textmonth == 'October':
-        month = '10'
-    elif textmonth == 'November':
-        month = '11'
-    else:
-        month = '12'
+            day = match.group(1)
+            month = TEXT_MONTHS[match.group(4)]
+            year = match.group(5)
+        else:
+            return None
+    # process and return
     dateobject = datetime.date(int(year), int(month), int(day))
     logger.debug('English text parse: %s', dateobject)
     return dateobject
@@ -266,22 +216,40 @@ def regex_parse_en(string):
 @profile
 def custom_parse(string, outputformat):
     """Try to bypass the slow dateparser"""
+    logger.debug('custom parse test: %s', string)
     # '201709011234' not covered by dateparser # regex was too slow
     if string[0:8].isdigit():
         candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
         if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('ymd manual result: %s', candidate)
+            logger.debug('ymd custom match: %s', candidate)
+            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+            return converted
+    # %Y-%m-%d search
+    match = re.search(r'([0-9]{4})-([0-9]{2})-([0-9]{2})', string)
+    if match:
+        candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            logger.debug('ymd custom search: %s', candidate)
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # faster than fire dateparser at once
-    match = re.search(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})', string)
-    if match:
-        candidate = datetime.date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
-        # candidate = '-'.join((match.group(3), secondelem, firstelem))
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('D.M.Y manual result: %s', candidate)
-            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-            return converted
+    datestub = re.search(r'[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}', string)
+    ## TODO: simplify
+    if datestub:
+        match = re.match(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})', datestub.group(0))
+        if match:
+            candidate = datetime.date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                logger.debug('D.M.Y custom search: %s', candidate)
+                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+                return converted
+        else:
+            match = re.match(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2})', datestub.group(0))
+            candidate = datetime.date(int('20' + match.group(3)), int(match.group(2)), int(match.group(1)))
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                logger.debug('D.M.Y (2) custom search: %s', candidate)
+                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+                return converted
     # text match
     dateobject = regex_parse_de(string)
     if dateobject is None:
@@ -294,7 +262,7 @@ def custom_parse(string, outputformat):
                 converted = dateobject.strftime(outputformat)
                 return converted
         except ValueError as err:
-            logger.debug('value error during conversion: %s %s', dateresult, err)
+            logger.debug('value error during conversion: %s %s', string, err)
     return None
 
 
@@ -1004,7 +972,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     cleaned_html = cleaner.clean_html(tree)
     htmlstring = html.tostring(cleaned_html, encoding='unicode')
     # remove comments by hand as faulty in lxml
-    htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
+    # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
     logger.debug('html cleaned')
 
     # date regex timestamp rescue

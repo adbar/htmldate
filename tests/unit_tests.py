@@ -157,7 +157,7 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
     assert htmldate.find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/')) == '2011-03-30'
-    assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-09-01' # actually 2017-10-09
+    assert htmldate.find_date(load_mock_page('https://www.gruene-niedersachsen.de')) == '2017-10-09'
     assert htmldate.find_date(load_mock_page('https://die-partei.net/sh/')) == '2014-07-19'
     assert htmldate.find_date(load_mock_page('https://www.rosneft.com/business/Upstream/Licensing/')) == '2017-02-27' # most probably 2014-12-31, found in text
     assert htmldate.find_date(load_mock_page('http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/')) == '2017-07-12'
@@ -185,7 +185,7 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-10-06' # most probably 2017-10-06
     assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2010-11-01' # in meta, 2016 more plausible
+    assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
     # other format
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
     # dates in table
