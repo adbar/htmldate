@@ -60,7 +60,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'ciso8601',
-        'dateparser == 0.7.1',
+        'dateparser == 0.7.1', # 0.5.0 is the fastest
         'lxml == 4.3.0', # CPython parser issue with version 4.3.1
         'requests >= 2.19.0',
     ],
