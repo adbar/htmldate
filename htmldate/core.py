@@ -102,7 +102,7 @@ cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'pictu
 TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
 
 
-@profile
+#@profile
 def date_validator(date_input, outputformat):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
@@ -135,7 +135,7 @@ def date_validator(date_input, outputformat):
     return False
 
 
-@profile
+#@profile
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
@@ -153,7 +153,7 @@ def output_format_validator(outputformat):
     return True
 
 
-@profile
+#@profile
 def convert_date(datestring, inputformat, outputformat):
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)
@@ -169,7 +169,7 @@ def convert_date(datestring, inputformat, outputformat):
     return converted
 
 
-@profile
+#@profile
 def regex_parse_de(string):
     """Try full-text parse for German date elements"""
     # text match
@@ -183,7 +183,7 @@ def regex_parse_de(string):
     logger.debug('German text parse: %s', dateobject)
     return dateobject
 
-@profile
+#@profile
 def regex_parse_en(string):
     """Try full-text parse for English date elements"""
     ## TODO:
@@ -213,7 +213,7 @@ def regex_parse_en(string):
     return dateobject
 
 
-@profile
+#@profile
 def custom_parse(string, outputformat):
     """Try to bypass the slow dateparser"""
     logger.debug('custom parse test: %s', string)
@@ -266,7 +266,7 @@ def custom_parse(string, outputformat):
     return None
 
 
-@profile
+##@profile
 def try_ymd_date(string, outputformat, parser):
     """Use dateparser to parse the assumed date expression"""
     # discard on formal criteria
@@ -312,7 +312,7 @@ def try_ymd_date(string, outputformat, parser):
     return None
 
 
-@profile
+#@profile
 def compare_reference(reference, expression, outputformat, dparser):
     """Compare the date expression to a reference"""
     # trim
@@ -337,7 +337,7 @@ def compare_reference(reference, expression, outputformat, dparser):
     return reference
 
 
-@profile
+#@profile
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
@@ -371,7 +371,7 @@ def extract_url_date(testurl, outputformat):
     return None
 
 
-@profile
+#@profile
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
     # easy extract in Y-M format
@@ -391,7 +391,7 @@ def extract_partial_url_date(testurl, outputformat):
     return None
 
 
-@profile
+#@profile
 def examine_date_elements(tree, expression, outputformat, parser, extensive_search=True):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -441,7 +441,7 @@ def examine_date_elements(tree, expression, outputformat, parser, extensive_sear
     return None
 
 
-@profile
+#@profile
 def examine_header(tree, outputformat, parser):
     """Parse header elements to find date cues"""
     headerdate = None
@@ -530,7 +530,7 @@ def examine_header(tree, outputformat, parser):
     return None
 
 
-@profile
+#@profile
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(re.findall(r'%s' % pattern, htmlstring)) ## TODO: slow
@@ -562,7 +562,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     return occurrences
 
 
-@profile
+#@profile
 def select_candidate(occurrences, catch, yearpat):
     """Select a candidate among the most frequent matches"""
     # logger.debug('occurrences: %s', occurrences)
@@ -607,7 +607,7 @@ def select_candidate(occurrences, catch, yearpat):
     return None
 
 
-@profile
+#@profile
 def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
@@ -619,14 +619,14 @@ def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
     return None
 
 
-@profile
+#@profile
 def search_pattern(htmlstring, pattern, catch, yearpat):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     return select_candidate(candidates, catch, yearpat)
 
 
-@profile
+#@profile
 def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
@@ -809,7 +809,7 @@ def search_page(htmlstring, outputformat):
     return None
 
 
-@profile
+#@profile
 def load_html(htmlobject):
     """Load object given as input and validate its type (accepted: LXML tree and string)"""
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
@@ -850,7 +850,7 @@ def load_html(htmlobject):
     return (tree, htmlstring)
 
 
-@profile
+#@profile
 def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG), url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
