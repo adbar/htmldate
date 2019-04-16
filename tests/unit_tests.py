@@ -5,6 +5,7 @@ Unit tests for the htmldate library.
 
 import logging
 import os
+import re
 import sys
 # https://docs.pytest.org/en/latest/
 
@@ -257,23 +258,23 @@ def test_approximate_url():
 def test_search_pattern():
     '''test pattern search in strings'''
     #
-    pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
-    catch = '([0-9]{4})[/.-]([0-9]{2})'
-    yearpat = '^([12][0-9]{3})'
+    pattern = re.compile('\D([0-9]{4}[/.-][0-9]{2})\D')
+    catch = re.compile('([0-9]{4})[/.-]([0-9]{2})')
+    yearpat = re.compile('^([12][0-9]{3})')
     assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('The date is 2002.02.15.', pattern, catch, yearpat) is not None
     assert htmldate.search_pattern('http://www.url.net/index.html', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat) is not None
     #
-    pattern = '\D([0-9]{2}[/.-][0-9]{4})\D'
-    catch = '([0-9]{2})[/.-]([0-9]{4})'
-    yearpat = '([12][0-9]{3})$'
+    pattern = re.compile('\D([0-9]{2}[/.-][0-9]{4})\D')
+    catch = re.compile('([0-9]{2})[/.-]([0-9]{4})')
+    yearpat = re.compile('([12][0-9]{3})$')
     assert htmldate.search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat) is not None
     #
-    pattern = '\D(2[01][0-9]{2})\D'
-    catch = '(2[01][0-9]{2})'
-    yearpat = '^(2[01][0-9]{2})'
+    pattern = re.compile('\D(2[01][0-9]{2})\D')
+    catch = re.compile('(2[01][0-9]{2})')
+    yearpat = re.compile('^(2[01][0-9]{2})')
     assert htmldate.search_pattern('It happened in the film 300.', pattern, catch, yearpat) is None
     assert htmldate.search_pattern('It happened in 2002.', pattern, catch, yearpat) is not None
 

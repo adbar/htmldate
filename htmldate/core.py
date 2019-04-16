@@ -27,6 +27,7 @@ import ciso8601
 import dateparser
 from lxml import etree, html
 from lxml.html.clean import Cleaner
+import regex
 
 # own
 from .download import fetch_url
@@ -65,7 +66,6 @@ DATE_EXPRESSIONS = [
 ]
 # "//*[contains(@class, 'fa-clock-o')]",
 
-
 ## Plausible dates
 # earliest possible year to take into account (inclusive)
 MIN_YEAR = 1995
@@ -100,6 +100,19 @@ cleaner.style = True
 cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'video'] # 'embed', 'figure', 'img', 'table'
 
 TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
+
+## REGEX cache
+american_english = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})')
+british_english = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})')
+general_textsearch = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
+german_textsearch = re.compile(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})')
+complete_url = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
+partial_url = re.compile(r'/([0-9]{4})/([0-9]{2})/')
+ymd_pattern = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+datestub_pattern = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+# use of regex module for speed
+german_pattern = regex.compile(r'(Datum|Stand): ?([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
+timestamp_pattern = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 
 #@profile
@@ -173,7 +186,7 @@ def convert_date(datestring, inputformat, outputformat):
 def regex_parse_de(string):
     """Try full-text parse for German date elements"""
     # text match
-    match = re.search(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})', string)
+    match = german_textsearch.search(string)
     if not match:
         return None
     # second element
@@ -190,17 +203,17 @@ def regex_parse_en(string):
     # 3/14/2016
     # https://github.com/vi3k6i5/flashtext
     # general search
-    if not re.search(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember', string):
+    if not general_textsearch.search(string):
         return None
     # American English
-    match = re.search(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})', string)
+    match = american_english.search(string)
     if match:
         day = match.group(2)
         month = TEXT_MONTHS[match.group(1)]
         year = match.group(4)
     # British English
     else:
-        match = re.search(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})', string)
+        match = british_english.search(string)
         if match:
             day = match.group(1)
             month = TEXT_MONTHS[match.group(4)]
@@ -225,7 +238,7 @@ def custom_parse(string, outputformat):
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # %Y-%m-%d search
-    match = re.search(r'([0-9]{4})-([0-9]{2})-([0-9]{2})', string)
+    match = ymd_pattern.search(string)
     if match:
         candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         if date_validator(candidate, '%Y-%m-%d') is True:
@@ -233,23 +246,17 @@ def custom_parse(string, outputformat):
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # faster than fire dateparser at once
-    datestub = re.search(r'[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}', string)
-    ## TODO: simplify
-    if datestub:
-        match = re.match(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})', datestub.group(0))
-        if match:
-            candidate = datetime.date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
-            if date_validator(candidate, '%Y-%m-%d') is True:
-                logger.debug('D.M.Y custom search: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
-        else:
-            match = re.match(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2})', datestub.group(0))
-            candidate = datetime.date(int('20' + match.group(3)), int(match.group(2)), int(match.group(1)))
-            if date_validator(candidate, '%Y-%m-%d') is True:
-                logger.debug('D.M.Y (2) custom search: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
+    datestub = datestub_pattern.search(string)
+    if datestub and len(datestub.group(3)) in (2, 4):
+        if len(datestub.group(3)) == 2:
+            candidate = datetime.date(int('20' + datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
+        elif len(datestub.group(3)) == 4:
+            candidate = datetime.date(int(datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
+        # test candidate
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            logger.debug('D.M.Y custom search: %s', candidate)
+            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+            return converted
     # text match
     dateobject = regex_parse_de(string)
     if dateobject is None:
@@ -266,7 +273,7 @@ def custom_parse(string, outputformat):
     return None
 
 
-##@profile
+#@profile
 def try_ymd_date(string, outputformat, parser):
     """Use dateparser to parse the assumed date expression"""
     # discard on formal criteria
@@ -341,7 +348,7 @@ def compare_reference(reference, expression, outputformat, dparser):
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
-    match = re.search(r'([0-9]{4})/([0-9]{2})/([0-9]{2})', testurl)
+    match = complete_url.search(testurl)
     if match:
         dateresult = match.group(0)
         logger.debug('found date in URL: %s', dateresult)
@@ -375,7 +382,7 @@ def extract_url_date(testurl, outputformat):
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
     # easy extract in Y-M format
-    match = re.search(r'/([0-9]{4})/([0-9]{2})/', testurl)
+    match = partial_url.search(testurl)
     if match:
         dateresult = match.group(0) + '/01'
         logger.debug('found date in URL: %s', dateresult)
@@ -533,16 +540,18 @@ def examine_header(tree, outputformat, parser):
 #@profile
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
-    occurrences = Counter(re.findall(r'%s' % pattern, htmlstring)) ## TODO: slow
+    ## TODO: slow
+    allmatches = pattern.findall(htmlstring)
+    occurrences = Counter(allmatches)
     toremove = set()
     # logger.debug('occurrences: %s', occurrences)
     for item in occurrences.keys():
         # scrap implausible dates
         try:
             if tocomplete is False:
-                potential_year = int(re.search(r'%s' % yearpat, item).group(1))
+                potential_year = int(yearpat.search(item).group(1))
             else:
-                lastdigits = re.search(r'%s' % yearpat, item).group(1)
+                lastdigits = yearpat.search(item).group(1)
                 if lastdigits[0] == '9':
                     potential_year = int('19' + lastdigits)
                 else:
@@ -569,7 +578,7 @@ def select_candidate(occurrences, catch, yearpat):
     if len(occurrences) == 0:
         return None
     if len(occurrences) == 1:
-        match = re.search(r'%s' % catch, list(occurrences.keys())[0])
+        match = catch.search(list(occurrences.keys())[0])
         if match:
             return match
     # select among most frequent
@@ -584,24 +593,24 @@ def select_candidate(occurrences, catch, yearpat):
     logger.debug('bestones: %s', bestones)
     # same number of occurrences: always take most recent
     if first_count == second_count:
-        match = re.search(r'%s' % catch, first_pattern)
+        match = catch.search(first_pattern)
     else:
-        year1 = int(re.search(r'%s' % yearpat, first_pattern).group(1))
-        year2 = int(re.search(r'%s' % yearpat, second_pattern).group(1))
+        year1 = int(yearpat.search(first_pattern).group(1))
+        year2 = int(yearpat.search(second_pattern).group(1))
         # safety net: plausibility
         if date_validator(str(year1), '%Y') is False:
             if date_validator(str(year2), '%Y') is True:
                 # logger.debug('first candidate not suitable: %s', year1)
-                match = re.match(r'%s' % catch, second_pattern)
+                match = catch.match(second_pattern)
             else:
                 logger.debug('no suitable candidate: %s %s', year1, year2)
                 return None
         # safety net: newer date but up to 50% less frequent
         if year2 > year1 and second_count/first_count > 0.5:
-            match = re.match(r'%s' % catch, second_pattern)
+            match = catch.match(second_pattern)
         # not newer or hopefully not significant
         else:
-            match = re.match(r'%s' % catch, first_pattern)
+            match = catch.match(first_pattern)
     if match:
         return match
     return None
@@ -633,14 +642,14 @@ def search_page(htmlstring, outputformat):
     # pagedate = None
     # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
-    ## this is risky
+    # speed profiler
 
     # copyright symbol
     logger.debug('looking for copyright/footer information')
     copyear = 0
-    pattern = '(?:©|&copy;|\(c\))\D+([12][0-9]{3})\D'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '^\D?([12][0-9]{3})'
+    pattern = re.compile(r'(?:©|&copy;|\(c\))\D+([12][0-9]{3})\D')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'^\D?([12][0-9]{3})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     #bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -655,9 +664,9 @@ def search_page(htmlstring, outputformat):
     ## 3 components
     logger.debug('3 components')
     # target URL characteristics
-    pattern = '/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '([0-9]{4})/([0-9]{2})/([0-9]{2})'
+    pattern = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -666,9 +675,9 @@ def search_page(htmlstring, outputformat):
         return result
 
     # more loosely structured data
-    pattern = '\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})'
+    pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -677,8 +686,8 @@ def search_page(htmlstring, outputformat):
         return result
 
     #
-    pattern = '\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D'
-    yearpat = '(19[0-9]{2}|20[0-9]{2})\D?$'
+    pattern = re.compile(r'\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D')
+    yearpat = re.compile(r'(19[0-9]{2}|20[0-9]{2})\D?$')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
@@ -695,8 +704,8 @@ def search_page(htmlstring, outputformat):
         candidate = '-'.join([match.group(3), month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = '([0-9]{4})-([0-9]{2})-([0-9]{2})'
-    yearpat = '^([0-9]{4})'
+    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+    yearpat = re.compile(r'^([0-9]{4})')
     # select
     bestmatch = select_candidate(candidates, catch, yearpat)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
@@ -704,9 +713,9 @@ def search_page(htmlstring, outputformat):
         return result
 
     # valid dates strings
-    pattern = '(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '([12][0-9]{3})([01][0-9])([0-3][0-9])'
+    pattern = re.compile(r'(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'([12][0-9]{3})([01][0-9])([0-3][0-9])')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -715,8 +724,8 @@ def search_page(htmlstring, outputformat):
         return result
 
     # DD?/MM?/YY
-    pattern = '\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D'
-    yearpat = '([0-9]{2})$'
+    pattern = re.compile(r'\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D')
+    yearpat = re.compile(r'([0-9]{2})$')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=True)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
@@ -737,8 +746,8 @@ def search_page(htmlstring, outputformat):
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = '([0-9]{4})-([0-9]{2})-([0-9]{2})'
-    yearpat = '^([0-9]{4})'
+    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+    yearpat = re.compile(r'^([0-9]{4})')
     bestmatch = select_candidate(candidates, catch, yearpat)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
@@ -747,9 +756,9 @@ def search_page(htmlstring, outputformat):
     ## 2 components
     logger.debug('switching to two components')
     #
-    pattern = '\D([0-9]{4}[/.-][0-9]{2})\D'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '([0-9]{4})[/.-]([0-9]{2})'
+    pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -760,8 +769,8 @@ def search_page(htmlstring, outputformat):
                 logger.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
     #
-    pattern = '\D([0-3]?[0-9][/.-][0-9]{4})\D'
-    yearpat = '([12][0-9]{3})\D?$'
+    pattern = re.compile(r'\D([0-3]?[0-9][/.-][0-9]{4})\D')
+    yearpat = re.compile(r'([12][0-9]{3})\D?$')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
@@ -774,8 +783,8 @@ def search_page(htmlstring, outputformat):
         candidate = '-'.join([match.group(2), month, '01'])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = '([0-9]{4})-([0-9]{2})-([0-9]{2})'
-    yearpat = '^([0-9]{4})'
+    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+    yearpat = re.compile(r'^([0-9]{4})')
     # select
     bestmatch = select_candidate(candidates, catch, yearpat)
     if bestmatch is not None:
@@ -789,9 +798,9 @@ def search_page(htmlstring, outputformat):
     logger.debug('switching to one component')
     # last try
     # pattern = '(\D19[0-9]{2}\D|\D20[0-9]{2}\D)'
-    pattern = '\D([12][0-9]{3})\D'
-    yearpat = '^\D?([12][0-9]{3})'
-    catch = '^\D?([12][0-9]{3})'
+    pattern = re.compile(r'\D([12][0-9]{3})\D')
+    yearpat = re.compile(r'^\D?([12][0-9]{3})')
+    catch = re.compile(r'^\D?([12][0-9]{3})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     bestmatch = select_candidate(candidates, catch, yearpat)
     # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
@@ -831,7 +840,6 @@ def load_html(htmlobject):
         try:
             # parse
             tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
-            ## TODO: clean page?
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
             # <svg>
         except UnicodeDecodeError as err:
@@ -902,7 +910,6 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         logger.debug('abbr published-title found: %s', trytext)
-                        ## TODO: slow!!
                         reference = compare_reference(reference, trytext, outputformat, dparser)
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
@@ -980,17 +987,13 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('JSON time found: %s', match.group(0))
         return convert_date(match.group(1), '%Y-%m-%d', outputformat)
-    match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
+    match = timestamp_pattern.search(htmlstring)
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('time regex found: %s', match.group(0))
         return convert_date(match.group(1), '%Y-%m-%d', outputformat)
-    match = re.search(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}', htmlstring)
-    if match and date_validator(match.group(1), '%d-%m-%Y') is True:
-        logger.debug('time regex found: %s', match.group(0))
-        return convert_date(match.group(1), '%d-%m-%Y', outputformat)
 
     # precise German patterns
-    match = re.search(r'(Datum|Stand): ?([0-9]{2}\.[0-9]{2}\.[0-9]{4})', htmlstring)
+    match = german_pattern.search(htmlstring)
     if match:
         candidate = match.group(2).replace('.', '-')
         logger.debug(candidate)
