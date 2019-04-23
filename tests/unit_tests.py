@@ -2,12 +2,13 @@
 """
 Unit tests for the htmldate library.
 """
+# https://docs.pytest.org/en/latest/
 
 import logging
 import os
 import re
 import sys
-# https://docs.pytest.org/en/latest/
+import time
 
 import dateparser
 
@@ -16,7 +17,6 @@ from htmldate import cli
 from htmldate import download
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
 
 MOCK_PAGES = { \
 'http://blog.python.org/2016/12/python-360-is-now-available.html': 'blog.python.org.html', \
@@ -149,6 +149,11 @@ def test_exact_date():
     # other format
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), outputformat='%d %B %Y') == '09 August 2013'
 
+    ## other expressions in document body
+    assert htmldate.find_date('<html><body>"datePublished":"2018-01-04"</body></html>') == '2018-01-04'
+    assert htmldate.find_date('<html><body>Stand: 1.4.18</body></html>') == '2018-04-01'
+    assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-09'
+
     ## in document body
     assert htmldate.find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2017-08-25'
     assert htmldate.find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
@@ -184,7 +189,6 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-07-24'
     assert htmldate.find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-01-01' # actually 2017-08-09
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-10-06' # most probably 2017-10-06
-    assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-11' # actually 2017-10-09
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
     assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
     # other format
@@ -222,7 +226,11 @@ def test_output_format_validator():
 
 def test_try_ymd_date():
     '''test date extraction via external package'''
+    htmldate.find_date.extensive_search = False
+    assert htmldate.try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) is None
+    htmldate.find_date.extensive_search = True
     assert htmldate.try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     assert htmldate.try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER) == '2017-09-01'
     assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # assert htmldate.try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
@@ -233,11 +241,22 @@ def test_try_ymd_date():
     assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y', PARSER) == '01 September 2017'
     # wrong
     assert htmldate.try_ymd_date('201', OUTPUTFORMAT, PARSER) is None
+    assert htmldate.try_ymd_date('14:35:10', OUTPUTFORMAT, PARSER) is None
 
 
 # TODO
 # def test_header():
 #     assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
+
+#def test_compare_reference():
+#    '''test comparison function'''
+#    assert htmldate.compare_reference('') is not None
+
+
+def test_regex_parse_en():
+    '''test date extraction using rules and regular expressions'''
+    assert htmldate.regex_parse_en('Tuesday, March 26th, 2019') is not None
+    assert htmldate.regex_parse_en('3rd Tuesday in March') is None
 
 
 def test_url():
@@ -297,6 +316,7 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
     assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-01-01'
     assert htmldate.search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT) == '2018-01-01'
+    # assert htmldate.search_page('<html><body><p>Next © Copyright 2019</p></body></html>', OUTPUTFORMAT) == '2019-01-01'
 
 
 
@@ -309,9 +329,10 @@ def test_cli():
     assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 
 
-def test_download():
+def test_load():
     '''test the download utility'''
     assert download.fetch_url('https://www.iana.org/404') is None
+    assert htmldate.load_html('https://example.org/') is not None
 
 
 if __name__ == '__main__':
@@ -325,6 +346,7 @@ if __name__ == '__main__':
     test_search_pattern()
     test_try_ymd_date()
     test_convert_date()
+    test_regex_parse_en()
 
     # module-level
     test_no_date()
@@ -338,4 +360,4 @@ if __name__ == '__main__':
     test_cli()
 
     # download
-    test_download()
+    test_load()

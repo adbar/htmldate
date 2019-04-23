@@ -111,7 +111,7 @@ partial_url = re.compile(r'/([0-9]{4})/([0-9]{2})/')
 ymd_pattern = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 datestub_pattern = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 # use of regex module for speed
-german_pattern = regex.compile(r'(Datum|Stand): ?([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
+german_pattern = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 timestamp_pattern = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 
@@ -989,13 +989,15 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
         return convert_date(match.group(1), '%Y-%m-%d', outputformat)
 
     # precise German patterns
-    match = german_pattern.search(htmlstring)
-    if match:
-        candidate = match.group(2).replace('.', '-')
-        logger.debug(candidate)
-        if date_validator(candidate, '%d.%m.%Y') is True:
-            logger.debug('precise pattern found: %s', match.group(0))
-            return convert_date(candidate, '%d.%m.%Y', outputformat)
+    de_match = german_pattern.search(htmlstring)
+    if de_match and len(de_match.group(3)) in (2, 4):
+        if len(de_match.group(3)) == 2:
+            candidate = datetime.date(int('20' + de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+        else:
+            candidate = datetime.date(int(de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            logger.debug('precise pattern found: %s', de_match.group(0))
+            return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # last resort
     if extensive_search is True:
