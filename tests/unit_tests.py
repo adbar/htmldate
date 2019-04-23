@@ -296,6 +296,8 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT) == '2013-03-03'
     assert htmldate.search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
     assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-01-01'
+    assert htmldate.search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT) == '2018-01-01'
+
 
 
 def test_cli():

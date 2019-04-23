@@ -53,7 +53,7 @@ DATE_EXPRESSIONS = [
     "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]",
     "//*[contains(@class, 'time') or contains(@id, 'time')]",
     "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]",
-    "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta')]",
+    "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
     "//*[@class='meta' or @class='meta-before' or @class='asset-meta']",
     "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
     "//*[contains(@id, 'lastmod')]",
@@ -234,7 +234,7 @@ def custom_parse(string, outputformat):
     if string[0:8].isdigit():
         candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
         if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('ymd custom match: %s', candidate)
+            logger.debug('ymd match: %s', candidate)
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # %Y-%m-%d search
@@ -242,7 +242,7 @@ def custom_parse(string, outputformat):
     if match:
         candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('ymd custom search: %s', candidate)
+            logger.debug('ymd match: %s', candidate)
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # faster than fire dateparser at once
@@ -254,7 +254,7 @@ def custom_parse(string, outputformat):
             candidate = datetime.date(int(datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
         # test candidate
         if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('D.M.Y custom search: %s', candidate)
+            logger.debug('D.M.Y match: %s', candidate)
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
             return converted
     # text match
@@ -327,13 +327,10 @@ def compare_reference(reference, expression, outputformat, dparser):
     temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
     textcontent = temptext.strip()
     # simple length heuristics
-    if not textcontent or len(textcontent) < 6:
+    if not textcontent or len(list(filter(str.isdigit, textcontent))) < 4:
         return reference
     # try the beginning of the string
     textcontent = textcontent[:48]
-    # more than 4 digits required
-    if len(list(filter(str.isdigit, textcontent))) < 4:
-        return reference
     attempt = try_ymd_date(textcontent, outputformat, dparser)
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
@@ -423,7 +420,6 @@ def examine_date_elements(tree, expression, outputformat, parser, extensive_sear
             # more than 4 digits required
             if len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            ## TODO: further tests
             customresult = custom_parse(toexamine, outputformat)
             if customresult is not None:
                 return customresult
@@ -647,7 +643,7 @@ def search_page(htmlstring, outputformat):
     # copyright symbol
     logger.debug('looking for copyright/footer information')
     copyear = 0
-    pattern = re.compile(r'(?:©|&copy;|\(c\))\D+([12][0-9]{3})\D')
+    pattern = re.compile(r'(?:©|&copy;|Copyright|\(c\))\D+([12][0-9]{3})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'^\D?([12][0-9]{3})')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
