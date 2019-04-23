@@ -1,0 +1,646 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de-DE">
+<!--
+ - Hey Dude, wat liest du denn meinen Quellcode, hm? Na, viel Vergnügen dann ma...
+-->
+<head profile="http://gmpg.org/xfn/11">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="shortcut icon" href="http://blog.todamax.net/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="icon" href="http://blog.todamax.net/favicon.ico" type="image/vnd.microsoft.icon" /> 
+
+<title>MIDP Emulator KEmulator und Brick Challenge | -=daMax=-</title>
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=4.0;" />
+
+<style type="text/css">@import url(http://blog.todamax.net/wp-content/themes/todamax_v2/style.css) all;</style>
+<script type="text/javascript" src="http://blog.todamax.net/wp-content/themes/todamax_v2/jsfunctions.js"></script>
+
+<!--[if IE]>
+    <style type="text/css">@import url(http://blog.todamax.net/wp-content/themes/todamax_v2/style.css);</style>
+    <style type="text/css">@import url(http://blog.todamax.net/wp-content/themes/todamax_v2/ie.css);</style>
+<![endif]-->
+
+<link rel="alternate" type="application/rss+xml" title="-=daMax=- RSS Feed" href="http://blog.todamax.net/feed/" />
+<link rel="pingback" href="http://blog.todamax.net/xmlrpc.php" />
+
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="http://blog.todamax.net/wp-content/themes/todamax_v2/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script type="text/javascript" src="http://blog.todamax.net/wurli/wurli_blog.js"></script>
+
+
+<!-- All in One SEO Pack 2.5 by Michael Torbert of Semper Fi Web Design[582,646] -->
+<meta name="description"  content="Neulich packte mich das Verlangen, mein erstes selbstprogrammiertes Spiel mal wieder zu spielen. Da es sich dabei um ein Spiel für Handys von anno dunnemals handelt, ist das natürlich heutzutage gar nicht mehr so einfach. Zum Glück gibt es mit KEmulator einen großartigen Emulator für eben jene Handys. Das Ding emuliert" />
+
+<meta name="keywords"  content="1337,coding,spiele" />
+
+<link rel="canonical" href="http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/" />
+<!-- /all in one seo pack -->
+<link rel='dns-prefetch' href='//www.themadguys.de' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="-=daMax=- &raquo; MIDP Emulator KEmulator und Brick Challenge Kommentar-Feed" href="http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/feed/" />
+<link rel='stylesheet' id='wp-block-library-css'  href='http://blog.todamax.net/wp-includes/css/dist/block-library/style.min.css?ver=5.1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='stcr-font-awesome-css'  href='http://blog.todamax.net/wp-content/plugins/subscribe-to-comments-reloaded/includes/css/font-awesome.min.css?ver=5.1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-polls-css'  href='http://blog.todamax.net/wp-content/plugins/wp-polls/polls-css.css?ver=2.75.2' type='text/css' media='all' />
+<style id='wp-polls-inline-css' type='text/css'>
+.wp-polls .pollbar {
+	margin: 1px;
+	font-size: 6px;
+	line-height: 8px;
+	height: 8px;
+	background: #e89900;
+	border: 1px solid #000000;
+}
+
+</style>
+<link rel='stylesheet' id='wp-pagenavi-css'  href='http://blog.todamax.net/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70' type='text/css' media='all' />
+<script type='text/javascript' src='http://blog.todamax.net/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='http://blog.todamax.net/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript' src='http://blog.todamax.net/wp-content/plugins/subscribe-to-comments-reloaded/includes/js/stcr-plugin.js?ver=5.1.1'></script>
+<script type='text/javascript' src='http://blog.todamax.net/wp-content/plugins/wp-ajax-edit-comments/js-includes/wp-ajax-edit-comments.js.php?ver=1.1'></script>
+<link rel='https://api.w.org/' href='http://blog.todamax.net/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://blog.todamax.net/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://blog.todamax.net/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Hier Titel einfügen' href='http://blog.todamax.net/2018/hier-titel-einfuegen/' />
+<link rel='next' title='Monologue of the Algorithm' href='http://blog.todamax.net/2018/monologue-of-the-algorithm/' />
+<link rel='shortlink' href='http://blog.todamax.net/?p=77841' />
+<link rel="alternate" type="application/json+oembed" href="http://blog.todamax.net/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fblog.todamax.net%2F2018%2Fmidp-emulator-kemulator-und-brick-challenge%2F" />
+<link rel="alternate" type="text/xml+oembed" href="http://blog.todamax.net/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fblog.todamax.net%2F2018%2Fmidp-emulator-kemulator-und-brick-challenge%2F&#038;format=xml" />
+	<link rel="icon" href="http://blog.todamax.net/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="http://blog.todamax.net/favicon.ico" type="image/x-icon" />
+<script type="text/javascript" src="http://blog.todamax.net/wp-content/plugins/flash-video-player/swfobject.js"></script>
+<style>
+    
+    @-ms-viewport {
+	    width: device-width;
+    }
+    
+    @viewport {
+	    width: device-width;
+    }
+
+    @media screen and (max-width: 1024px)  {
+      #ad-space {display:none;}
+    }
+
+    #ad-space {
+      background: #E89900;
+      color:      #FFF;
+      z-index:    999999;
+      width:      100%;
+      height:     100%;
+      top:        0;
+      left:       0;
+      position:   fixed;
+      overflow:   auto;
+      display:    none;
+    }
+
+    #ad-space-inner {
+      position:   relative;
+      top:        50px;
+      margin:     0 auto;
+      width:      700px;      
+      text-align: center;
+      font-size:  1.2em;
+    }
+    #ad-space-inner a {
+      color:           #FFF;
+      text-decoration: underline;
+
+    }
+    #ad-space-inner h1 {
+      color:       #FFF;
+      text-align:  center;
+      font-size:   150px;
+      font-weight: bold;
+    }
+    #ad-space-inner h2, #ad-space-inner h2 a {
+      color:       #000;
+      text-align:  center;
+      font-size:   1em;
+      font-weight: bold;
+      margin:2em 0;
+    }
+    
+    #ad-space-inner  small {
+      font-size:   0.6em;
+    }
+    
+</style><link type="text/css" rel="stylesheet" href="http://blog.todamax.net/wp-content/plugins/wp-ajax-edit-comments/css/editComments.css" />
+<!-- <meta name="NextGEN" version="2.2.54" /> -->
+
+</head>
+<body id="mybody" onClick="try{return (handleMouseButton(event))}catch (e){}">
+<!--<a href="http://blog.todamax.net/2013/7-september-freiheit-statt-angst-2013/"><div class= "pagepeel"><img src="http://blog.todamax.net/wp-content/uploads/2013/08/FSA-Eckle1.gif" width="110" height="110" border="0"/></div></a>-->
+<div id="console">bla</div>
+<div id="allwrapper1">
+<div id="allwrapper2">
+<div id="header">
+  <div id="headerimg"></div>
+  <div id="taglinewrapper"><a href="http://blog.todamax.net/"><span id="tagline">daMax hat die Faxen dicke </span></a></div>
+</div>
+<div id="miniheader">
+  <div id="mh-background"></div>
+  <div id="mh-logo-wrapper"><a href="http://blog.todamax.net/"><div id="mh-logo"></div></a></div>
+</div>
+
+<!--<div id="searchmobile"><form method="get" id="searchform" action="http://blog.todamax.net/">
+<div><input type="text" name="s" id="s"
+onfocus="this.value=''"
+value="...suchen..." /><input type="submit" id="searchsubmit" value="" />
+</div>
+</form>
+ </div>-->
+<button id="mobilemenubutton" onClick="ToggleSidebar();"></button>
+<div id="logowrapper"><a href="http://blog.todamax.net/"><div id="logolink">&nbsp;</div></a></div>
+	<div id="cookiepolicy"><div class="text">Diese Website verwendet <a href="https://de.wikipedia.org/wiki/Cookie">Cookies</a>, um so geil zu sein wie sie ist. </div><a href="#" onclick="hideCookieBar(); return false;"><div class="button">Cool, her damit!</div></a> <a href="http://www.themadguys.de/TheEndOfTheInternet.html"><div class="button">Oh Gott oh Gott! NEIN! Das will ich nicht!</div></a></div>
+<div id="page">
+<style>
+body{
+	cursor:url('http://blog.todamax.net/wurli/hand-cookie.cur'),url('http://blog.todamax.net/wurli/hand-cookie.png'),url('http://blog.todamax.net/wurli/hand-cookie.gif'),auto;
+}
+</style>
+
+<script type="text/javascript">
+
+function getClientWidth() {
+  return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
+}
+
+function getClientHeight() {
+  return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
+}
+
+checkCookieBar();
+/*
+function getClientWidth() {
+  var w = window,
+  d = document,
+  e = d.documentElement,
+  g = d.getElementsByTagName('body')[0],
+  x = w.innerWidth || e.clientWidth || g.clientWidth,
+  y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  return x;
+  //return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
+}
+
+function getClientHeight() {
+  var w = window,
+  d = document,
+  e = d.documentElement,
+  g = d.getElementsByTagName('body')[0],
+  x = w.innerWidth || e.clientWidth || g.clientWidth,
+  y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  return y;
+  //return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
+}
+*/
+</script>
+
+  <div id="content" class="narrowcolumn">
+  
+    <center><div class="navigation">
+      <div class="naviclassic">
+        <div class="alignleft">&laquo; <a href="http://blog.todamax.net/2018/hier-titel-einfuegen/" rel="prev">Hier Titel einfügen</a></div>
+        <div class="alignright"><a href="http://blog.todamax.net/2018/monologue-of-the-algorithm/" rel="next">Monologue of the Algorithm</a> &raquo;</div>
+      </div>
+    </div></center>
+
+    <div class="post" id="post-77841">
+      <div class="postcontent">
+        <h1><a href="http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/" rel="bookmark" title="Permanent Link: MIDP Emulator KEmulator und Brick Challenge">MIDP Emulator KEmulator und Brick Challenge</a></h1>
+        <small>Donnerstag, 15.2.2018, 19:51  <!-- --> &gt; da]v[ax <!-- --></small>
+        <div class="entry">
+          <p>Neulich packte mich das Verlangen, mein erstes selbstprogrammiertes Spiel mal wieder zu spielen. Da es sich dabei um ein Spiel für Handys von anno dunnemals handelt, ist das natürlich heutzutage gar nicht mehr so einfach. Zum Glück gibt es mit <a href="http://www.javaemulator.com/java-emulator.php" target="_blank">KEmulator</a> einen großartigen Emulator für eben jene Handys. Das Ding emuliert eine ganze Palette von Telefonen und kann sogar Videos aufzeichnen und genau das habe ich die letzten Tage auch massiv getan:</p>
+<p><center><br />
+<iframe src="https://player.vimeo.com/video/130513216?color=ff9933&byline=0&portrait=0" width="176" height="208" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <iframe src="https://player.vimeo.com/video/130456106?color=ff9933&byline=0&portrait=0" width="176" height="208" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>
+<p></center><br />
+ Grundvoraussetzung für den ganzen Spaß ist natürlich eine Java-Runtime, hier werden schließlich Java-MIDlets emuliert. </p>
+<p>So, und weil inzwischen sämtliche Geräte aussterben, auf denen das Spiel überhaupt noch läuft und weil alle daran beteiligten Firmen inzwischen pleite sind, <strong>erkläre ich Brick Challenge hiermit für Abandonware</strong> und werfe es für lau in die Runde: <a href="/wp-content/uploads/2018/02/Brick_Challenge_All_Versions.zip">DOWNLOAD</a></p>
+
+                    <p class="posttags"></p>
+    <p class="postmetadata2"><small> | Abgelegt unter <a href="http://blog.todamax.net/category/31337/" rel="category tag">1337</a>, <a href="http://blog.todamax.net/category/coding/" rel="category tag">Coding</a>, <a href="http://blog.todamax.net/category/spiele/" rel="category tag">Spiele</a><br />
+    The views expressed by the author are personal.</small></p>
+
+        </div>
+      </div>
+    </div>
+    <!-- Plugin: related posts -->
+    <p class="related_posts">
+    Artikel aus der gleichen Kategorie:
+    <br /><a href="http://blog.todamax.net/2019/gpx-routen-in-google-maps-auf-android-iphone-einblenden/" title="GPX-Routen in Google-Maps auf Android/iPhone einblenden" rel="nofollow">GPX-Routen in Google-Maps auf Android/iPhone einblenden &laquo;</a><br /><a href="http://blog.todamax.net/2019/versteht-hier-jemand-das-iphone/" title="Versteht hier jemand das iPhone?" rel="nofollow">Versteht hier jemand das iPhone? &laquo;</a><br /><a href="http://blog.todamax.net/2018/delight-mercury/" title="delight - mercury" rel="nofollow">delight - mercury &laquo;</a>    </p>
+    <!-- /Plugin: related posts -->
+    <div class="comments">
+          
+    <!-- You can start editing here. -->
+
+    
+        <!-- If comments are open, but there are no comments. -->
+
+    
+    
+<!---------------------------------------------------------------------------->
+
+        <div class="commentformwrapper">
+    <a name="respond"></a><h2 class="respondstart">Antworten</h2>
+
+    <div class="cancel-comment-reply">
+    <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2018/midp-emulator-kemulator-und-brick-challenge/#respond" style="display:none;">Hier klicken, um das Antworten abzubrechen.</a></small>
+
+    </div>
+    
+    
+    <form action="http://blog.todamax.net/wp-comments-post.php" method="post" id="commentform">
+
+    
+    <p><input type="text" name="author" id="author" value="" size="22" tabindex="1" aria-required='true' />
+    <label for="author"><small>Name (required)</small></label></p>
+
+    <p><input type="text" name="email" id="email" value="" size="22" tabindex="2" aria-required='true' />
+    <label for="email"><small>Mail (will not be published) (required)</small></label></p>
+
+    <p><input class="commentinput" type="text" name="url" id="url" value="" tabindex="3" />
+    <label for="url"><small>Website</small></label></p>
+
+        
+    <label for="comment"></label>
+    
+    <p><b>Dein Kommentar</b></p>
+
+    <p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
+
+    <p><input name="submit" type="submit" id="submit" tabindex="5" value="ab dafür!" />
+    <input type='hidden' name='comment_post_ID' value='77841' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+    </p>
+   <p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="1b1210ccb7" /></p><style type='text/css'>.stcr-hidden{display: none !important;}</style><div class='stcr-form stcr-hidden'><!-- Subscribe to Comments Reloaded version 180212 --><!-- BEGIN: subscribe to comments reloaded --><label for='subscribe-reloaded' class="stcr-label"><input style='width:15px;' type='checkbox' name='subscribe-reloaded' id='subscribe-reloaded' value='yes' /> Benachrichtige mich bei neuen Kommentaren per E-Mail.
+</label><!-- END: subscribe to comments reloaded --></div>	<style>
+	.yarr { visibility:hidden; position:relative }
+	.yarr span { cursor:pointer; position:absolute; bottom:0; right:0 }
+	.yarr img { vertical-align:-2px }
+	.comment:hover .yarr { visibility:visible }
+	.balloonquote { position: absolute; background: #f0f0f0; text-shadow: 1px 1px 0 #fff; border: 1px solid #ccc; max-width: 570px; padding: 10px 10px 0; z-index: 2; }
+	.balloonquote .comment-reply-link, .balloonquote a.comment-edit-link { display: none; }
+	.balloonquote p { margin-bottom: 10px; padding-bottom: 0px;}
+	</style>
+
+	<script type="text/javascript">
+		function bar_replyTo(e,t){var n='@<a href="'+e+'">'+t+"</a>: ";var r;if(document.getElementById("comment")&&document.getElementById("comment").type=="textarea"){r=document.getElementById("comment")}else{return false}if(document.selection){r.focus();sel=document.selection.createRange();sel.text=n;r.focus()}else if(r.selectionStart||r.selectionStart=="0"){var i=r.selectionStart;var s=r.selectionEnd;var o=s;r.value=r.value.substring(0,i)+n+r.value.substring(s,r.value.length);o+=n.length;r.focus();r.selectionStart=o;r.selectionEnd=o}else{r.value+=n;r.focus()}}
+
+		var $bar = jQuery.noConflict();
+		$bar(function(){	
+			$bar('a').mouseenter(function(){	
+				var commentId = $bar(this).attr("href");
+				var commentNonId = commentId.replace(/\d+/g, '');		
+				if (commentNonId == '#comment-') {
+					var commentContent = $bar(commentId + ' .comment-content').html();
+					$bar('<div class="balloonquote">' + commentContent + '</div>').insertAfter(this);	
+				}
+				$bar(this).mouseleave(function(){
+					$bar('.balloonquote').remove();
+				});
+			});
+		});
+	</script>
+<p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="30"/></p>
+    </form>
+
+<div id="commenthint"><small><b>Das Kleingedruckte:</b><br>Halte Dich bitte an <a href="/spielregeln/">die Spielregeln</a>. Welche Emoticons du verwenden kannst, steht <a href="/emoticons">hier</a>.
+	
+	<br>&nbsp;<br>Um hier kommentieren zu können, musst Du einen beliebigen Namen sowie eine beliebige E-Mail-Adresse angeben. Diese Daten werden dann erstmal zur Spamerkennung in die USA geschickt, dort und danach auch auf meinem Server gespeichert. Mit dem Absenden Deines Kommentars erklärst Du Dich damit und <a href="http://blog.todamax.net/datenschutz/">den hier geltenden Datenschutzbestimmungen</a>  (insbesondere dem Abschnitt <a href="http://blog.todamax.net/datenschutz/#Kommentarfunktion">Kommentarfunktion</a>) einverstanden. Wenn Du damit nicht einverstanden bist, lass das Kommentieren bleiben, aber dann deinstalliere bitte auch sofort WhatsApp und verabschiede Dich von Facebook.
+	
+Kommentarabonnements werden automatisch nach 3 Monaten gelöscht.
+
+<br>&nbsp;<br>&nbsp;Wer <a href="http://de.selfhtml.org/html/referenz/elemente.htm">HTML</a> kann, ist klar im Vorteil. Diese Tags sind erlaubt: <br><code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;s&gt; &lt;strike&gt; &lt;strong&gt; </code>
+    
+    <br>&nbsp;<br>&nbsp;Bei der Menge an Spam-Kommentaren passiert es hin und wieder, dass ein Kommentar vom Spamfilter gefressen wird. Bitte sei mir nicht böse aber ich habe weder Zeit noch Lust, solch verloren gegangenen Kommentaren hinterher zu forschen. Wenn das öfters passiert, schreib' mir 'ne Mail damit ich dich whitelisten kann.</small></div>
+    
+        </div><!-- ende commentformwrapper -->
+
+        </div>
+  
+  </div>
+	<div id="mobilesidebarbutton"></div>
+	<div id="sidebar">
+		<ul>	
+			<li id="search-2" class="widget widget_search"><form method="get" id="searchform" action="http://blog.todamax.net/">
+<div><input type="text" name="s" id="s"
+onfocus="this.value=''"
+value="...suchen..." /><input type="submit" id="searchsubmit" value="" />
+</div>
+</form>
+</li><li id="custom_html-2" class="widget_text widget widget_custom_html"><h2 class="widgettitle">Radio</h2><div class="textwidget custom-html-widget"><iframe src="http://radio.todamax.net/index.php" width="205" height="210" scrolling="no" frameborder="0"></iframe>
+<small>
+Radio: <a style="border: none;" href="http://laut.fm/todamax">http://laut.fm/todamax</a><br />
+Stream: <a style="border: none;" href="http://stream.laut.fm/todamax" target="_new">http://stream.laut.fm/todamax</a><br />
+Sendeplan: <a style="border: none;" href="http://blog.todamax.net/2016/radio-todamax-sendeplan/">gibt's auch</a></small></div></li><li id="categories-1" class="widget widget_categories"><h2 class="widgettitle">Kategorien</h2>		<ul>
+				<li class="cat-item cat-item-13"><a href="http://blog.todamax.net/category/31337/" title="c4nUr34d7h15? U R 4 1337 h4x0r 7h3n...">1337</a>
+</li>
+	<li class="cat-item cat-item-16"><a href="http://blog.todamax.net/category/bekloppte/" title="Leute mit gehörigem Dachschaden">Bekloppte</a>
+</li>
+	<li class="cat-item cat-item-19"><a href="http://blog.todamax.net/category/coding/" title="Code-Monkey-Futter">Coding</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="http://blog.todamax.net/category/zeugs-krams-ungategorisierbares/" >Dingens</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="http://blog.todamax.net/category/geek/" title="Eine etwas andere Lebenseinstellung">Geek</a>
+</li>
+	<li class="cat-item cat-item-18"><a href="http://blog.todamax.net/category/grafix/" title="Augenfutter">Grafix/Bilder/Kunst</a>
+<ul class='children'>
+	<li class="cat-item cat-item-39"><a href="http://blog.todamax.net/category/grafix/street-art/" title="Kunst im öffentlichen Raum">Street art / Graffiti</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-1560"><a href="http://blog.todamax.net/category/gute-nachrichten/" >Gute Nachrichten</a>
+</li>
+	<li class="cat-item cat-item-1607"><a href="http://blog.todamax.net/category/hardware/" >Hardware</a>
+</li>
+	<li class="cat-item cat-item-38"><a href="http://blog.todamax.net/category/ich/" title="Egozentrik">Ich</a>
+</li>
+	<li class="cat-item cat-item-11"><a href="http://blog.todamax.net/category/internetmythen/" title="Wer nichts weiß glaubt alles.">Internetmythen</a>
+</li>
+	<li class="cat-item cat-item-23"><a href="http://blog.todamax.net/category/links-querbeet/" title="Kurz und krass">Links querbeet</a>
+</li>
+	<li class="cat-item cat-item-9"><a href="http://blog.todamax.net/category/mp3/" title="Ohrenfutter zum Runterladen">MP3</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://blog.todamax.net/category/musik/" title="Ohrenfutter">Musik</a>
+<ul class='children'>
+	<li class="cat-item cat-item-36"><a href="http://blog.todamax.net/category/musik/aufgewacht/" title="Der Muntermacher am Montagmorgen">Aufgewacht!</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-8"><a href="http://blog.todamax.net/category/nuetzlich/" title="Tipps und Tool, die das Leben leichter machen">Nützlich</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="http://blog.todamax.net/category/real-life/" title="Gibt es ein Leben außerhalb des Rechners?">Real life</a>
+<ul class='children'>
+	<li class="cat-item cat-item-1599"><a href="http://blog.todamax.net/category/real-life/lecker-essen/" >Lecker Essen</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-53"><a href="http://blog.todamax.net/category/rechnerrants/" title="1+1=10">Rechnerrants</a>
+<ul class='children'>
+	<li class="cat-item cat-item-1614"><a href="http://blog.todamax.net/category/rechnerrants/androidaberwitz/" title="Begebenheiten aus dem Alltag eines Streichelfonbesitzers">Androidaberwitz</a>
+</li>
+	<li class="cat-item cat-item-1615"><a href="http://blog.todamax.net/category/rechnerrants/iot-irrsinn/" >IoT-Irrsinn</a>
+</li>
+	<li class="cat-item cat-item-52"><a href="http://blog.todamax.net/category/rechnerrants/linuxlastereien/" title="Geschichten aus der Welt eines freien Betriebssystems">Linuxlästereien</a>
+</li>
+	<li class="cat-item cat-item-33"><a href="http://blog.todamax.net/category/rechnerrants/macmadness/" title="Alles aus der Welt des Apfels">Macmadness</a>
+</li>
+	<li class="cat-item cat-item-17"><a href="http://blog.todamax.net/category/rechnerrants/windows-wahnsinn/" title="Dinge, die einen kirre machen können. Und ihre Abhilfe.">Windowswahnsinn</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-1401"><a href="http://blog.todamax.net/category/rocketscience/" >Rocketscience</a>
+</li>
+	<li class="cat-item cat-item-12"><a href="http://blog.todamax.net/category/software/" title="Gute / günstige / tolle / nützliche Software">Software</a>
+</li>
+	<li class="cat-item cat-item-15"><a href="http://blog.todamax.net/category/spass/" title="Alles was Spaß macht">Spaß</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://blog.todamax.net/category/spiele/" title="Hauptsächlich Computerspiele">Spiele</a>
+</li>
+	<li class="cat-item cat-item-22"><a href="http://blog.todamax.net/category/machtspielchen/" >The power game</a>
+<ul class='children'>
+	<li class="cat-item cat-item-35"><a href="http://blog.todamax.net/category/machtspielchen/abmahnwahn/" title="Abmahnungen sind ein lohnendes Geschäft geworden. Hier erfährst du mehr dazu.">Abwahnwahn</a>
+</li>
+	<li class="cat-item cat-item-20"><a href="http://blog.todamax.net/category/machtspielchen/heim-ins-reich/" title="Mich beschleicht immer öfter das Gefühl, dass wir mit der gegenwärtigen Weltpolitik auf fürchterliche Zustände zusteuern.">Heim ins Reich</a>
+</li>
+	<li class="cat-item cat-item-37"><a href="http://blog.todamax.net/category/machtspielchen/s-21/" title="Aufstand im Ländle">S21</a>
+</li>
+	<li class="cat-item cat-item-51"><a href="http://blog.todamax.net/category/machtspielchen/umweltschweinereien/" title="Von einer strahlenden und keimfreien Zukunft">Umweltschweinereien</a>
+</li>
+	<li class="cat-item cat-item-262"><a href="http://blog.todamax.net/category/machtspielchen/weltrevolution/" title="Spürt ihr das? Da tut sich doch was...">Weltrevolution</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-14"><a href="http://blog.todamax.net/category/video/" title="Ich glotz TV! Nee gar nich ;)">Video</a>
+</li>
+		</ul>
+			</li><li id="text-3" class="widget widget_text"><h2 class="widgettitle">Feeds</h2>			<div class="textwidget"><ul><li><a href="http://blog.todamax.net/feed/"><img src="http://blog.todamax.net/wp-includes/images/rss.png" class="rssicon"> Artikel als RSS</a></li>
+<li><a href="http://blog.todamax.net/comments/feed/"><img src="http://blog.todamax.net/wp-includes/images/rss.png" class="rssicon"> Kommentare als RSS</a></li>
+<li><a href="http://blog.todamax.net/2013/einzelne-kategorien-eines-wordpress-blogs-als-rss-feed-abonnieren/"><img src="http://blog.todamax.net/wp-includes/images/rss.png" class="rssicon"> noch mehr Feeds</a></li>
+</ul></div>
+		</li><li id="pages-2" class="widget widget_pages"><h2 class="widgettitle">Zeugs</h2>		<ul>
+			<li class="page_item page-item-85094"><a href="http://blog.todamax.net/archiv/">Archiv</a></li>
+<li class="page_item page-item-94108"><a href="http://blog.todamax.net/datenschutz/">Datenschutz</a></li>
+<li class="page_item page-item-51089"><a href="http://blog.todamax.net/spielregeln/">Spielregeln</a></li>
+<li class="page_item page-item-48241"><a href="http://blog.todamax.net/kontakt/">Kontakt</a></li>
+<li class="page_item page-item-2262"><a href="http://blog.todamax.net/tolle-blogs/">Tolle Blogs</a></li>
+		</ul>
+			</li><li id="text-8" class="widget widget_text"><h2 class="widgettitle">daMax woanders</h2>			<div class="textwidget"><ul><li><del><a href="http://maximized.soup.io" target="blank">In der Suppe</a></del> :(</li>
+<li><a href="http://laut.fm/todamax" target="blank">Im Radio</a></li>
+<li><a href="http://vimeo.com/todamax">Auf Video</a></li>
+<li><a href="https://twitter.com/blogtodamax" target="blank">Beim Zwitschervogel</a></li>
+<li><a href="http://toodaamaax.tumblr.com">Im Trockner</a></li>
+</ul></div>
+		</li><li id="execphp-3" class="widget widget_execphp"><h2 class="widgettitle">Und ihr so&#8230;</h2>			<div class="execphpwidget"><small>
+<ul>
+	<li><a href="http://blog.todamax.net/2019/gpx-routen-in-google-maps-auf-android-iphone-einblenden/#comment-673953" title="on GPX-Routen in Google-Maps auf Android/iPhone einblenden">da]v[ax</a> meinte zu <b>GPX-Routen in Google-Maps auf Android/iPhone einblenden</b>: @megatherium: Danke! Gruß zurück :)...</li>
+	<li><a href="http://blog.todamax.net/2019/versteht-hier-jemand-das-iphone/#comment-673895" title="on Versteht hier jemand das iPhone?">daMax</a> meinte zu <b>Versteht hier jemand das iPhone?</b>: @operatester: ich habe aufm eiPhone Safari und Brave, b...</li>
+	<li><a href="http://blog.todamax.net/2019/versteht-hier-jemand-das-iphone/#comment-673758" title="on Versteht hier jemand das iPhone?">operatester</a> meinte zu <b>Versteht hier jemand das iPhone?</b>: @operatester:
+sorry, vergiss den Müll mit Firefox, da ...</li>
+	<li><a href="http://blog.todamax.net/2019/versteht-hier-jemand-das-iphone/#comment-673739" title="on Versteht hier jemand das iPhone?">operatester</a> meinte zu <b>Versteht hier jemand das iPhone?</b>: Hallo und schön das du wieder da bist
+mir scheint alles o.k., es liegt vielleicht daran, dass der i...</li>
+	<li><a href="http://blog.todamax.net/2019/gpx-routen-in-google-maps-auf-android-iphone-einblenden/#comment-673584" title="on GPX-Routen in Google-Maps auf Android/iPhone einblenden">megatherium</a> meinte zu <b>GPX-Routen in Google-Maps auf Android/iPhone einblenden</b>: Schön, daß du wieder bloggst!
+
+Schöne Ostern...</li>
+	<li><a href="http://blog.todamax.net/2019/1-jahr-pause-und-nu/#comment-671429" title="on 1 Jahr Pause - und nu?">da]v[ax</a> meinte zu <b>1 Jahr Pause - und nu?</b>: @nootgernoot: Du erinnerst dich echt noch an den Post ü...</li>
+	<li><a href="http://blog.todamax.net/2019/1-jahr-pause-und-nu/#comment-670664" title="on 1 Jahr Pause - und nu?">nootgernoot</a> meinte zu <b>1 Jahr Pause - und nu?</b>: &gt;Ronny macht tapfer sein Ding[...]
+
+naja, er hat sich wieder auf das verbreiten von katzenbildc...</li>
+	<li><a href="http://blog.todamax.net/2019/1-jahr-pause-und-nu/#comment-669916" title="on 1 Jahr Pause - und nu?">da]v[ax</a> meinte zu <b>1 Jahr Pause - und nu?</b>: @Rano64: ouha! Ähm. Ja, shit ey....</li>
+	<li><a href="http://blog.todamax.net/2019/1-jahr-pause-und-nu/#comment-669800" title="on 1 Jahr Pause - und nu?">Rano64</a> meinte zu <b>1 Jahr Pause - und nu?</b>: Bin auch noch da, aber nicht mehr lange. Ich werde alles niederbrennen. Die Frau hat mich nach 26 Ja...</li>
+	<li><a href="http://blog.todamax.net/2017/aus-versehen-erlaubte-sites-in-ublock-origin-wieder-permanent-blocken/#comment-668857" title="on Aus Versehen erlaubte Sites in uBlock Origin wieder permanent blocken">liliput</a> meinte zu <b>Aus Versehen erlaubte Sites in uBlock Origin wieder permanent blocken</b>: Schade, bei mir gibt es kein EDIT - ganz oben - Temporary Rules findet ihr die Regel ganz oben
+Da s...</li>
+</ul></small></div>
+		</li><li id="ayb_posts-3" class="widget ayb_posts"><h2 class="widgettitle">Heute vor 5 Jahren</h2><ul><li style="margin-left:10px;text-indent:-1em"><a href="http://blog.todamax.net/2014/kernel-panic/">Kernel Panic</a></li><li style="margin-left:10px;text-indent:-1em"><a href="http://blog.todamax.net/2014/was-man-mit-2-klampfen-nicht-so-alles-anstellen-kann/">Was man mit 2 Klampfen nicht so alles anstellen kann</a></li><li style="margin-left:10px;text-indent:-1em"><a href="http://blog.todamax.net/2014/echte-einhoerner/">Echte Einhörner...</a></li><li style="margin-left:10px;text-indent:-1em"><a href="http://blog.todamax.net/2014/links-2014-04-23/">Links 2014-04-23</a></li><li style="margin-left:10px;text-indent:-1em"><a href="http://blog.todamax.net/2014/werbewarten/">Werbewarten</a></li></ul></li><li id="archives-2" class="widget widget_archive"><h2 class="widgettitle">Was bisher geschah:</h2>		<ul>
+				<li><a href='http://blog.todamax.net/2019/04/'>April 2019</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2019/02/'>Februar 2019</a>&nbsp;(1)</li>
+	<li><a href='http://blog.todamax.net/2018/02/'>Februar 2018</a>&nbsp;(12)</li>
+	<li><a href='http://blog.todamax.net/2018/01/'>Januar 2018</a>&nbsp;(28)</li>
+	<li><a href='http://blog.todamax.net/2017/12/'>Dezember 2017</a>&nbsp;(41)</li>
+	<li><a href='http://blog.todamax.net/2017/11/'>November 2017</a>&nbsp;(43)</li>
+	<li><a href='http://blog.todamax.net/2017/10/'>Oktober 2017</a>&nbsp;(38)</li>
+	<li><a href='http://blog.todamax.net/2017/09/'>September 2017</a>&nbsp;(41)</li>
+	<li><a href='http://blog.todamax.net/2017/08/'>August 2017</a>&nbsp;(62)</li>
+	<li><a href='http://blog.todamax.net/2017/07/'>Juli 2017</a>&nbsp;(48)</li>
+	<li><a href='http://blog.todamax.net/2017/06/'>Juni 2017</a>&nbsp;(11)</li>
+	<li><a href='http://blog.todamax.net/2017/05/'>Mai 2017</a>&nbsp;(40)</li>
+	<li><a href='http://blog.todamax.net/2017/04/'>April 2017</a>&nbsp;(43)</li>
+	<li><a href='http://blog.todamax.net/2017/03/'>März 2017</a>&nbsp;(38)</li>
+	<li><a href='http://blog.todamax.net/2017/02/'>Februar 2017</a>&nbsp;(40)</li>
+	<li><a href='http://blog.todamax.net/2017/01/'>Januar 2017</a>&nbsp;(64)</li>
+	<li><a href='http://blog.todamax.net/2016/12/'>Dezember 2016</a>&nbsp;(64)</li>
+	<li><a href='http://blog.todamax.net/2016/11/'>November 2016</a>&nbsp;(78)</li>
+	<li><a href='http://blog.todamax.net/2016/10/'>Oktober 2016</a>&nbsp;(101)</li>
+	<li><a href='http://blog.todamax.net/2016/09/'>September 2016</a>&nbsp;(74)</li>
+	<li><a href='http://blog.todamax.net/2016/08/'>August 2016</a>&nbsp;(66)</li>
+	<li><a href='http://blog.todamax.net/2016/07/'>Juli 2016</a>&nbsp;(49)</li>
+	<li><a href='http://blog.todamax.net/2016/06/'>Juni 2016</a>&nbsp;(100)</li>
+	<li><a href='http://blog.todamax.net/2016/05/'>Mai 2016</a>&nbsp;(67)</li>
+	<li><a href='http://blog.todamax.net/2016/04/'>April 2016</a>&nbsp;(71)</li>
+	<li><a href='http://blog.todamax.net/2016/03/'>März 2016</a>&nbsp;(73)</li>
+	<li><a href='http://blog.todamax.net/2016/02/'>Februar 2016</a>&nbsp;(95)</li>
+	<li><a href='http://blog.todamax.net/2016/01/'>Januar 2016</a>&nbsp;(118)</li>
+	<li><a href='http://blog.todamax.net/2015/12/'>Dezember 2015</a>&nbsp;(54)</li>
+	<li><a href='http://blog.todamax.net/2015/11/'>November 2015</a>&nbsp;(56)</li>
+	<li><a href='http://blog.todamax.net/2015/10/'>Oktober 2015</a>&nbsp;(81)</li>
+	<li><a href='http://blog.todamax.net/2015/09/'>September 2015</a>&nbsp;(49)</li>
+	<li><a href='http://blog.todamax.net/2015/08/'>August 2015</a>&nbsp;(140)</li>
+	<li><a href='http://blog.todamax.net/2015/07/'>Juli 2015</a>&nbsp;(130)</li>
+	<li><a href='http://blog.todamax.net/2015/06/'>Juni 2015</a>&nbsp;(81)</li>
+	<li><a href='http://blog.todamax.net/2015/05/'>Mai 2015</a>&nbsp;(97)</li>
+	<li><a href='http://blog.todamax.net/2015/04/'>April 2015</a>&nbsp;(77)</li>
+	<li><a href='http://blog.todamax.net/2015/03/'>März 2015</a>&nbsp;(84)</li>
+	<li><a href='http://blog.todamax.net/2015/02/'>Februar 2015</a>&nbsp;(104)</li>
+	<li><a href='http://blog.todamax.net/2015/01/'>Januar 2015</a>&nbsp;(141)</li>
+	<li><a href='http://blog.todamax.net/2014/12/'>Dezember 2014</a>&nbsp;(148)</li>
+	<li><a href='http://blog.todamax.net/2014/11/'>November 2014</a>&nbsp;(90)</li>
+	<li><a href='http://blog.todamax.net/2014/10/'>Oktober 2014</a>&nbsp;(109)</li>
+	<li><a href='http://blog.todamax.net/2014/09/'>September 2014</a>&nbsp;(55)</li>
+	<li><a href='http://blog.todamax.net/2014/08/'>August 2014</a>&nbsp;(35)</li>
+	<li><a href='http://blog.todamax.net/2014/07/'>Juli 2014</a>&nbsp;(119)</li>
+	<li><a href='http://blog.todamax.net/2014/06/'>Juni 2014</a>&nbsp;(163)</li>
+	<li><a href='http://blog.todamax.net/2014/05/'>Mai 2014</a>&nbsp;(178)</li>
+	<li><a href='http://blog.todamax.net/2014/04/'>April 2014</a>&nbsp;(136)</li>
+	<li><a href='http://blog.todamax.net/2014/03/'>März 2014</a>&nbsp;(107)</li>
+	<li><a href='http://blog.todamax.net/2014/02/'>Februar 2014</a>&nbsp;(91)</li>
+	<li><a href='http://blog.todamax.net/2014/01/'>Januar 2014</a>&nbsp;(147)</li>
+	<li><a href='http://blog.todamax.net/2013/12/'>Dezember 2013</a>&nbsp;(104)</li>
+	<li><a href='http://blog.todamax.net/2013/11/'>November 2013</a>&nbsp;(135)</li>
+	<li><a href='http://blog.todamax.net/2013/10/'>Oktober 2013</a>&nbsp;(128)</li>
+	<li><a href='http://blog.todamax.net/2013/09/'>September 2013</a>&nbsp;(107)</li>
+	<li><a href='http://blog.todamax.net/2013/08/'>August 2013</a>&nbsp;(227)</li>
+	<li><a href='http://blog.todamax.net/2013/07/'>Juli 2013</a>&nbsp;(138)</li>
+	<li><a href='http://blog.todamax.net/2013/06/'>Juni 2013</a>&nbsp;(243)</li>
+	<li><a href='http://blog.todamax.net/2013/05/'>Mai 2013</a>&nbsp;(136)</li>
+	<li><a href='http://blog.todamax.net/2013/04/'>April 2013</a>&nbsp;(88)</li>
+	<li><a href='http://blog.todamax.net/2013/03/'>März 2013</a>&nbsp;(166)</li>
+	<li><a href='http://blog.todamax.net/2013/02/'>Februar 2013</a>&nbsp;(125)</li>
+	<li><a href='http://blog.todamax.net/2013/01/'>Januar 2013</a>&nbsp;(159)</li>
+	<li><a href='http://blog.todamax.net/2012/12/'>Dezember 2012</a>&nbsp;(132)</li>
+	<li><a href='http://blog.todamax.net/2012/11/'>November 2012</a>&nbsp;(146)</li>
+	<li><a href='http://blog.todamax.net/2012/10/'>Oktober 2012</a>&nbsp;(110)</li>
+	<li><a href='http://blog.todamax.net/2012/09/'>September 2012</a>&nbsp;(103)</li>
+	<li><a href='http://blog.todamax.net/2012/08/'>August 2012</a>&nbsp;(134)</li>
+	<li><a href='http://blog.todamax.net/2012/07/'>Juli 2012</a>&nbsp;(67)</li>
+	<li><a href='http://blog.todamax.net/2012/06/'>Juni 2012</a>&nbsp;(99)</li>
+	<li><a href='http://blog.todamax.net/2012/05/'>Mai 2012</a>&nbsp;(120)</li>
+	<li><a href='http://blog.todamax.net/2012/04/'>April 2012</a>&nbsp;(112)</li>
+	<li><a href='http://blog.todamax.net/2012/03/'>März 2012</a>&nbsp;(110)</li>
+	<li><a href='http://blog.todamax.net/2012/02/'>Februar 2012</a>&nbsp;(164)</li>
+	<li><a href='http://blog.todamax.net/2012/01/'>Januar 2012</a>&nbsp;(128)</li>
+	<li><a href='http://blog.todamax.net/2011/12/'>Dezember 2011</a>&nbsp;(92)</li>
+	<li><a href='http://blog.todamax.net/2011/11/'>November 2011</a>&nbsp;(131)</li>
+	<li><a href='http://blog.todamax.net/2011/10/'>Oktober 2011</a>&nbsp;(160)</li>
+	<li><a href='http://blog.todamax.net/2011/09/'>September 2011</a>&nbsp;(118)</li>
+	<li><a href='http://blog.todamax.net/2011/08/'>August 2011</a>&nbsp;(123)</li>
+	<li><a href='http://blog.todamax.net/2011/07/'>Juli 2011</a>&nbsp;(137)</li>
+	<li><a href='http://blog.todamax.net/2011/06/'>Juni 2011</a>&nbsp;(132)</li>
+	<li><a href='http://blog.todamax.net/2011/05/'>Mai 2011</a>&nbsp;(93)</li>
+	<li><a href='http://blog.todamax.net/2011/04/'>April 2011</a>&nbsp;(119)</li>
+	<li><a href='http://blog.todamax.net/2011/03/'>März 2011</a>&nbsp;(205)</li>
+	<li><a href='http://blog.todamax.net/2011/02/'>Februar 2011</a>&nbsp;(154)</li>
+	<li><a href='http://blog.todamax.net/2011/01/'>Januar 2011</a>&nbsp;(155)</li>
+	<li><a href='http://blog.todamax.net/2010/12/'>Dezember 2010</a>&nbsp;(106)</li>
+	<li><a href='http://blog.todamax.net/2010/11/'>November 2010</a>&nbsp;(91)</li>
+	<li><a href='http://blog.todamax.net/2010/10/'>Oktober 2010</a>&nbsp;(123)</li>
+	<li><a href='http://blog.todamax.net/2010/09/'>September 2010</a>&nbsp;(87)</li>
+	<li><a href='http://blog.todamax.net/2010/08/'>August 2010</a>&nbsp;(53)</li>
+	<li><a href='http://blog.todamax.net/2010/07/'>Juli 2010</a>&nbsp;(88)</li>
+	<li><a href='http://blog.todamax.net/2010/06/'>Juni 2010</a>&nbsp;(74)</li>
+	<li><a href='http://blog.todamax.net/2010/05/'>Mai 2010</a>&nbsp;(68)</li>
+	<li><a href='http://blog.todamax.net/2010/04/'>April 2010</a>&nbsp;(92)</li>
+	<li><a href='http://blog.todamax.net/2010/03/'>März 2010</a>&nbsp;(89)</li>
+	<li><a href='http://blog.todamax.net/2010/02/'>Februar 2010</a>&nbsp;(74)</li>
+	<li><a href='http://blog.todamax.net/2010/01/'>Januar 2010</a>&nbsp;(61)</li>
+	<li><a href='http://blog.todamax.net/2009/12/'>Dezember 2009</a>&nbsp;(66)</li>
+	<li><a href='http://blog.todamax.net/2009/11/'>November 2009</a>&nbsp;(90)</li>
+	<li><a href='http://blog.todamax.net/2009/10/'>Oktober 2009</a>&nbsp;(77)</li>
+	<li><a href='http://blog.todamax.net/2009/09/'>September 2009</a>&nbsp;(78)</li>
+	<li><a href='http://blog.todamax.net/2009/08/'>August 2009</a>&nbsp;(62)</li>
+	<li><a href='http://blog.todamax.net/2009/07/'>Juli 2009</a>&nbsp;(85)</li>
+	<li><a href='http://blog.todamax.net/2009/06/'>Juni 2009</a>&nbsp;(98)</li>
+	<li><a href='http://blog.todamax.net/2009/05/'>Mai 2009</a>&nbsp;(54)</li>
+	<li><a href='http://blog.todamax.net/2009/04/'>April 2009</a>&nbsp;(46)</li>
+	<li><a href='http://blog.todamax.net/2009/03/'>März 2009</a>&nbsp;(14)</li>
+	<li><a href='http://blog.todamax.net/2009/02/'>Februar 2009</a>&nbsp;(10)</li>
+	<li><a href='http://blog.todamax.net/2009/01/'>Januar 2009</a>&nbsp;(16)</li>
+	<li><a href='http://blog.todamax.net/2008/12/'>Dezember 2008</a>&nbsp;(11)</li>
+	<li><a href='http://blog.todamax.net/2008/11/'>November 2008</a>&nbsp;(3)</li>
+	<li><a href='http://blog.todamax.net/2008/10/'>Oktober 2008</a>&nbsp;(3)</li>
+	<li><a href='http://blog.todamax.net/2008/09/'>September 2008</a>&nbsp;(3)</li>
+	<li><a href='http://blog.todamax.net/2008/08/'>August 2008</a>&nbsp;(1)</li>
+	<li><a href='http://blog.todamax.net/2008/07/'>Juli 2008</a>&nbsp;(4)</li>
+	<li><a href='http://blog.todamax.net/2008/06/'>Juni 2008</a>&nbsp;(3)</li>
+	<li><a href='http://blog.todamax.net/2008/04/'>April 2008</a>&nbsp;(1)</li>
+	<li><a href='http://blog.todamax.net/2008/02/'>Februar 2008</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2007/12/'>Dezember 2007</a>&nbsp;(1)</li>
+	<li><a href='http://blog.todamax.net/2007/10/'>Oktober 2007</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2006/07/'>Juli 2006</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2006/02/'>Februar 2006</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2006/01/'>Januar 2006</a>&nbsp;(2)</li>
+	<li><a href='http://blog.todamax.net/2005/12/'>Dezember 2005</a>&nbsp;(1)</li>
+	<li><a href='http://blog.todamax.net/2005/10/'>Oktober 2005</a>&nbsp;(3)</li>
+	<li><a href='http://blog.todamax.net/2004/09/'>September 2004</a>&nbsp;(3)</li>
+		</ul>
+			</li><li id="text-10" class="widget widget_text">			<div class="textwidget"><center><a style="border:none" href="http://archiv.feynsinn.org/?p=14700" target="_blank"><img src="http://blog.todamax.net/wp-content/uploads/2012/07/underdog2012damaxantique150px.jpg"></a></center></div>
+		</li><li id="text-14" class="widget widget_text">			<div class="textwidget"><img src="http://blog.todamax.net/wp-content/uploads/2015/10/bug.gif"/></div>
+		</li>		</ul>
+	</div>
+
+<!-- ngg_resource_manager_marker --><script type='text/javascript' src='http://blog.todamax.net/wp-content/plugins/pro-adblock-todamax/pro-adblock.js'></script>
+<script type='text/javascript' src='http://www.themadguys.de/ads/adsbygoogle.js'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var pollsL10n = {"ajax_url":"http:\/\/blog.todamax.net\/wp-admin\/admin-ajax.php","text_wait":"Your last request is still being processed. Please wait a while ...","text_valid":"Please choose a valid poll answer.","text_multiple":"Maximum number of choices allowed: ","show_loading":"1","show_fading":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://blog.todamax.net/wp-content/plugins/wp-polls/polls-js.js?ver=2.75.2'></script>
+<script type='text/javascript' src='http://blog.todamax.net/wp-includes/js/wp-embed.min.js?ver=5.1.1'></script>
+<script async="async" type='text/javascript' src='http://blog.todamax.net/wp-content/plugins/akismet/_inc/form.js?ver=4.1.1'></script>
+<div id="ad-space">
+        <div id="ad-space-inner">
+            <h1><b>OOPS!</b></h1>
+            Es sieht so aus, als hättest du keinen Werbeblocker installiert. Das ist schlecht für dein Gehirn und manchmal auch für deinen Computer.<br>
+            <br>
+            Bitte besuche eine der folgenden Seiten und installiere dir einen AdBlocker deiner Wahl, danach kannst du todamax wieder ohne Einschränkungen genießen.<br>
+            <br><br>
+            <b><a href="https://github.com/gorhill/uBlock" target="_blank">uBlock Origin</a></b>: für <a href="https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm" target="_blank">Chrome</a> | <a href="https://addons.mozilla.org/firefox/addon/ublock-origin/" target="_blank">Firefox</a> | <a href="https://extensions.apple.com/details/?id=net.gorhill.uBlock-96G4BAKDQ9" target="_blank">Safari</a><br><br>
+            <b><a href="https://adguard.com/en/adguard-adblock-browser-extension/overview.html" target=_blank">AdGuard</a></b>: für <a href="https://chrome.google.com/webstore/detail/adguard-adblocker/bgnkhhnnamicmpeenaelnjfhikgbkllg" target="_blank">Chrome</a> | <a href="https://chrome.adtidy.org/app.html?app=main.xpi" target="_blank">Firefox</a> | <a href="https://safari-extensions.apple.com/details/?id=com.adguard.safari-N33TQXN8C7" target="_blank">Safari</a> | <a href="https://addons.opera.com/extensions/details/adguard/" target="_blank">Opera</a> | <a href="https://adguard.com/adguard-adblock-browser-extension/overview.html#yandex" target="_blank">Yandex</a><br><br>
+            <strong><a href="https://adblockplus.org/" target="_blank">AdBlock Plus</a></strong>: für <a href="https://adblockplus.org/de/chrome" target="_blank">Chrome</a> | <a href="https://adblockplus.org/de/firefox" target="_blank">Firefox</a> | <a href="https://adblockplus.org/de/safari" target="_blank">Safari</a> | <a href="https://adblockplus.org/de/opera" target="_blank">Opera</a> | <a href="https://adblockplus.org/de/internet-explorer" target="_blank">Internet Explorer</a><br /><br />
+            <b><a href="https://github.com/gorhill/uMatrix" target="_blank">uMatrix</a></b>: für <a href="https://addons.mozilla.org/firefox/addon/umatrix/" target="_blank">Firefox</a> | <a href="https://chrome.google.com/webstore/detail/%C2%B5matrix/ogfcmafjalglgifnmanfmnieipoejdcf" target="_blank">Chrome</a> | <a href="https://addons.opera.com/en-gb/extensions/details/umatrix/" target="_blank">Opera</a><br><br>
+            
+<table width="100%" border="0" cellpadding="10"><tr>
+            <td width="50%" valign="top" align="left"><h2><a href="#" onclick="hideadspace();setadspacecookie();return false;">Ey, lass mich einfach rein, okay?</a><br>
+            <small>(Setzt per Javascript einen Cookie. Wenn Du das alles deaktiviert hast, weiß ich auch nicht, wie ich dir helfen soll)</small></h2></td>
+
+<td width="50%" valign="top" align="right"><h2><a href="#" onclick="hideadspace();setadspacecookieforever();return false;">Ich will das hier nie wieder sehen.</a><br>
+            <small>(Setzt per Javascript einen sehr langlebigen Cookie. Wenn Du das alles deaktiviert hast oder Cookies automatisch oder auch von Hand löschst, weiß ich auch nicht, wie ich dir helfen soll)</small></h2></td>
+            </tr>
+</table>
+        </div>
+    </div>	<!-- WP Dynamic Drive Thumbnail Image Viewer Plugin -->
+	<script type="text/javascript">
+/* <![CDATA[ */
+	var loading_url = 'http://blog.todamax.net/wp-content/plugins/thumbnail-viewer/images/loadingImage.gif';
+/* ]]> */
+</script>
+	<link rel="stylesheet" href="http://blog.todamax.net/wp-content/plugins/thumbnail-viewer/css/thumbnailviewer.css" type="text/css" media="screen" />
+	<script src="http://blog.todamax.net/wp-content/plugins/thumbnail-viewer/js/thumbnailviewer.js" type="text/javascript">
+	</script>
+<div id="footer">Willkommen in der Scrollwüste<br>todamax rennt auf <a href="https://wordpress.org/" rel="nofollow" target="_blank" style="border:none;">wordpress</a><br> und schreibt in <a href="http://is.gd/oturey"  rel="nofollow">dejavu mono book</a><br>(mit minimalen anpassungen in oberlängen und kerning)</div>
+</div><!--  ende page! -->
+</div><!-- ende allwrapper2-->
+</div><!-- ende allwrapper1-->
+<!-- Anti-Internetausdrucker----------------------------------------------- -->
+<style  type="text/css">#print{display:none;}@media print{body{background-color:#ffffff;font-size:1px;color:#ffffff;}a,abbr,acronym,address,applet,area,b,base,basefont,bdo,big,blockquote,br,button,caption,center,cite,code,col,colgroup,dd,del,dfn,dir,div,dl,dt,em,fieldset,font,form,frame,frameset,h1,h2,h3,h4,h5,h6,hr,i,iframe,img,input,ins,isindex,kbd,label,legend,li,link,map,menu,meta,noframes,noscript,object,ol,optgroup,option,p,param,pre,q,s,samp,select,small,span,strike,strong,sub,sup,table,tbody,td,textarea,tfoot,th,thead,title,tr,tt,u,ul,var{display:none;}#print p{display:block;}#print p a{display:inline;}#print{left:0;top:0;padding:0;margin:0;height:220mm;width:170mm;font-size:12pt;font-family:sans-serif;line-height:16pt;color:#000000;background-color:#ffffff;display:block !important;text-align:center;}#print img{width:100mm;height:105mm;margin:auto;display:block;}}</style><div id="print"><img src="http://blog.todamax.net/wp-content/uploads/2012/02/politiker-stopp-print-kopf.png" alt="" /><p>Ihr Browser versucht gerade eine Seite aus dem sogenannten Internet auszudrucken. Das Internet ist ein weltweites Netzwerk von Computern, das den Menschen ganz neue Möglichkeiten der Kommunikation bietet.</p><p>Da Politiker im Regelfall von neuen Dingen nichts verstehen, halten wir es für notwendig, sie davor zu schützen. Dies ist im beidseitigen Interesse, da unnötige Angstzustände bei ihnen verhindert werden, ebenso wie es uns vor profilierungs- und machtsüchtigen Politikern schützt.</p><p>Sollten Sie der Meinung sein, dass Sie diese Internetseite dennoch sehen sollten, so können Sie jederzeit durch normalen Gebrauch eines Internetbrowsers darauf zugreifen. Dazu sind aber minimale Computerkenntnisse erforderlich. Sollten Sie diese nicht haben, vergessen Sie einfach dieses Internet und lassen uns in Ruhe.</p><p>Die Umgehung dieser Ausdrucksperre ist nach §95a UrhG verboten.</p><p>Mehr Informationen unter <a href="http://www.politiker-stopp.de">www.politiker-stopp.de</a>.</p></div>
+<!-- //Anti-Internetausdrucker---------------------------------------------- -->
+
+</body>
+</html>

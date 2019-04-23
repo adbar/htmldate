@@ -61,6 +61,14 @@ MOCK_PAGES = { \
 'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html', \
 'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html', \
 'http://blog.kinra.de/?p=959/': 'kinra.de.html', \
+'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': 'hobby-werkstatt-blog.de.roomba.html', \
+'https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html': 'tagesausblick.de.dow.html', \
+'http://www.heimicke.de/chronik/zahlen-und-daten/': 'heimicke.de.zahlen.html', \
+'https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html': 'weltwoche.ch.html', \
+'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html', \
+'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html', \
+'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
+'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
 }
 # '': '', \
 
@@ -135,12 +143,19 @@ def test_exact_date():
     ## precise pattern in document body
     assert htmldate.find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
     assert htmldate.find_date('<html><body>Datum: 10.11.2017</body></html>') == '2017-11-10'
+    assert htmldate.find_date(load_mock_page('https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html')) == '2012-12-22'
+    assert htmldate.find_date(load_mock_page('http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/')) == '2018-02-15'
+    assert htmldate.find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03' # JSON dateModified
 
     ## meta in document body
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
     assert htmldate.find_date(load_mock_page('https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean')) == '2017-12-15'
     assert htmldate.find_date(load_mock_page('https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529')) == '2019-01-29'
     assert htmldate.find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
+    assert htmldate.find_date(load_mock_page('http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php')) == '2015-12-14'
+    assert htmldate.find_date(load_mock_page('https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa')) == '2019-02-20'
+    # does not work
+    # assert htmldate.find_date('<html><body><span class="date">Mai<span>06</span>2018</span></body></html>') == '2018-05-06' # https://www.wienbadminton.at/news/119843/Come-Together
 
     # abbr in document body
     assert htmldate.find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
@@ -171,10 +186,12 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('https://www.goodform.ch/blog/schattiges_plaetzchen')) == '2018-06-27'
     assert htmldate.find_date(load_mock_page('https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html')) == '2018-01-18'
     assert htmldate.find_date(load_mock_page('http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/')) == '2018-07-03'
-    assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-01-01'
-    assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-01-01'
+    assert htmldate.find_date(load_mock_page('https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html')) == '2019-01-23'
     # other format
     assert htmldate.find_date(load_mock_page('http://unexpecteduser.blogspot.de/2011/'), outputformat='%d %B %Y') == '30 March 2011'
+    # free text
+    assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-01-01'
+    assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-01-01'
 
 
 def test_approximate_date():
@@ -191,6 +208,7 @@ def test_approximate_date():
     assert htmldate.find_date(load_mock_page('https://bayern.de/')) == '2017-10-06' # most probably 2017-10-06
     assert htmldate.find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
     assert htmldate.find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
+    assert htmldate.find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/')) == '2011-12-01'
     # other format
     assert htmldate.find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
     # dates in table
@@ -242,6 +260,7 @@ def test_try_ymd_date():
     # wrong
     assert htmldate.try_ymd_date('201', OUTPUTFORMAT, PARSER) is None
     assert htmldate.try_ymd_date('14:35:10', OUTPUTFORMAT, PARSER) is None
+    assert htmldate.try_ymd_date('12:00 h', OUTPUTFORMAT, PARSER) is None
 
 
 # TODO
@@ -303,7 +322,7 @@ def test_search_html():
     # file input
     assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT) == '2017-07-12'
     # file input + output format
-    assert htmldate.search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), '%d %B %Y') == '12 July 2017'
+    assert htmldate.search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y') == '06 April 2019'
     # tree input
     assert htmldate.search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT) == '2010-05-01'
     assert htmldate.search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT) == '2010-05-05'

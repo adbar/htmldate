@@ -7,6 +7,7 @@ Implementing a basic command-line interface.
 ## under GNU GPL v3 license
 
 import argparse
+# import io
 import logging
 import sys
 
@@ -52,6 +53,7 @@ def main():
         try:
             htmlstring = sys.stdin.read()
         except UnicodeDecodeError as err:
+            # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
             sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
             sys.exit(1)
 

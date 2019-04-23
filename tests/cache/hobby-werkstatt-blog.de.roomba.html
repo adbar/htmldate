@@ -1,0 +1,614 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de-DE">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>Eine Arduino-Virtual-Wall für den IRobot Roomba &laquo; Hobbywerkstatt</title>
+<link rel="shortcut icon" href="http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/favicon/favicon.ico" /><link rel="canonical" href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php" /><link rel="alternate" type="application/rss+xml" title="Hobbywerkstatt RSS Feed" href="http://www.hobby-werkstatt-blog.de/feed" />
+<link rel="alternate" type="application/atom+xml" title="Hobbywerkstatt Atom Feed" href="http://www.hobby-werkstatt-blog.de/feed/atom" />
+<link rel="pingback" href="http://www.hobby-werkstatt-blog.de/xmlrpc.php" />
+<link rel="alternate" type="application/rss+xml" title="Hobbywerkstatt &raquo; Eine Arduino-Virtual-Wall f&#252;r den IRobot Roomba Kommentar Feed" href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php/feed" />
+<script type='text/javascript' src='http://www.hobby-werkstatt-blog.de/wp-includes/js/jquery/jquery.js?ver=1.3.2'></script>
+<script type='text/javascript' src='http://www.hobby-werkstatt-blog.de/wp-includes/js/comment-reply.js?ver=20090102'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.hobby-werkstatt-blog.de/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.hobby-werkstatt-blog.de/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Hobbywerkstatt' href='http://www.hobby-werkstatt-blog.de' />
+<link rel='start' title='Willkommen in meiner Hobby-Werkstatt' href='http://www.hobby-werkstatt-blog.de/blafasel/4-willkommen-in-meiner-hobby-werkstatt.php' />
+<link rel='prev' title='MYOG: Eine Rahmentasche f&#252;rs Fahrrad' href='http://www.hobby-werkstatt-blog.de/myog/405-myog-eine-rahmentasche-fuers-fahrrad.php' />
+<link rel='next' title='Arduino: Ein Spannungssensor und der Serielle Plotter' href='http://www.hobby-werkstatt-blog.de/arduino/436-arduino-ein-spannungssensor-und-der-serielle-plotter.php' />
+<link rel='canonical' href='http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php' />
+<style type="text/css">body{text-align:center;margin:0;padding:0;padding-top:8px;padding-bottom:8px;font-family:tahoma,arial,sans-serif;font-size:0.95em;letter-spacing:+1px;color:#000000;background:url(/wp-content/themes/atahualpa351/images/background.jpg) repeat top left}a:link,a:visited,a:active{color:#004477;font-weight:normal;text-decoration:none;}a:hover{color:#FF8800;font-weight:normal;text-decoration:underline}ul,ol,dl,p,h1,h2,h3,h4,h5,h6{margin-top:10px;margin-bottom:10px;padding-top:0;padding-bottom:0;}ul ul,ul ol,ol ul,ol ol{margin-top:0;margin-bottom:0}code,pre{font-family:"Courier New",Courier,monospace;font-size:1em}pre{overflow:auto;word-wrap:normal;padding-bottom:1.5em;overflow-y:hidden;width:99%}abbr[title],acronym[title]{border-bottom:1px dotted}hr{display:block;height:2px;border:none;margin:0.5em auto;color:#cccccc;background-color:#cccccc}table{font-size:1em;}div.post,ul.commentlist li,ol.commentlist li{word-wrap:break-word;}pre,.wp_syntax{word-wrap:normal;}div#wrapper{text-align:center;margin-left:auto;margin-right:auto;display:block;width:990px}div#container{padding:10;background:#ffffff;width:auto;margin-left:auto;margin-right:auto;text-align:left;display:block}table#layout{font-size:100%;width:100%;table-layout:fixed}.colone{width:200px}.colone-inner{width:200px}.coltwo{width:100% }.colthree-inner{width:200px}.colthree{width:320px}td#header{width:auto;padding:0}table#logoarea,table#logoarea tr,table#logoarea td{margin:0;padding:0;background:none;border:0}table#logoarea{width:100%;border-spacing:0px}img.logo{display:block;margin:0 0 0 0}td.logoarea-logo{width:1%}h1.blogtitle,h2.blogtitle{ display:block;margin:0;padding:0;letter-spacing:-1px;line-height:1.0em;font-family:tahoma,arial,sans-serif;font-size:240%;font-smooth:always}h1.blogtitle a:link,h1.blogtitle a:visited,h1.blogtitle a:active,h2.blogtitle a:link,h2.blogtitle a:visited,h2.blogtitle a:active{ text-decoration:none;color:#666666;font-weight:bold;font-smooth:always}h1.blogtitle a:hover,h2.blogtitle a:hover{ text-decoration:none;color:#000000;font-weight:bold}p.tagline{margin:0;padding:0;font-size:1.2em;font-weight:bold;color:#666666}td.feed-icons{white-space:nowrap;}div.rss-box{height:1%;display:block;padding:10px 0 10px 10px;margin:0;width:280px}a.comments-icon{height:22px;line-height:22px;margin:0 5px 0 5px;padding-left:22px;display:block;text-decoration:none;float:right;white-space:nowrap}a.comments-icon:link,a.commentss-icon:active,a.comments-icon:visited{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/comment-gray.png) no-repeat scroll center left}a.comments-icon:hover{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/comment.png) no-repeat scroll center left}a.posts-icon{height:22px;line-height:22px;margin:0 5px 0 0;padding-left:20px;display:block;text-decoration:none;float:right;white-space:nowrap}a.posts-icon:link,a.posts-icon:active,a.posts-icon:visited{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/rss-gray.png) no-repeat scroll center left}a.posts-icon:hover{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/rss.png) no-repeat scroll center left}a.email-icon{height:22px;line-height:22px;margin:0 5px 0 5px;padding-left:24px;display:block;text-decoration:none;float:right;white-space:nowrap}a.email-icon:link,a.email-icon:active,a.email-icon:visited{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/email-gray.png) no-repeat scroll center left}a.email-icon:hover{background:transparent url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/email.png) no-repeat scroll center left}td.search-box{height:1%}div.searchbox{height:35px;border:1px dashed #cccccc;border-bottom:0;width:200px;margin:0;padding:0}div.searchbox-form{margin:5px 10px 5px 10px}div.horbar1,div.horbar2{font-size:1px;clear:both;display:block;position:relative;padding:0;margin:0;width:100%;}div.horbar1{height:5px;background:#ffffff;border-top:dashed 1px #cccccc}div.horbar2{height:5px;background:#ffffff;border-bottom:dashed 1px #cccccc}div.header-image-container{position:relative;margin:0;padding:0;height:137px;}div.clickable{position:absolute;top:0;left:0;z-index:3;margin:0;padding:0;width:100%;height:137px;}a.divclick:link,a.divclick:visited,a.divclick:active,a.divclick:hover{width:100%;height:100%;display:block;text-decoration:none}td#left{vertical-align:top;border-right:dashed 1px #CCCCCC;padding:10px 10px 10px 10px;background:#ffffff}td#left-inner{vertical-align:top;border-right:dashed 1px #CCCCCC;padding:10px 10px 10px 10px;background:#ffffff}td#right{vertical-align:top;border-left:dashed 1px #CCCCCC;padding:10px 10px 10px 10px;background:#ffffff}td#right-inner{vertical-align:top;border-left:dashed 1px #CCCCCC;padding:10px 10px 10px 10px;background:#ffffff}td#middle{vertical-align:top;width:100%;padding:0 20px 30px 20px}td#footer{width:auto;background-color:#003366;border-top:solid 1px #003366;padding:10px;text-align:center;color:#777777;font-size:95%}td#footer a:link,td#footer a:visited,td#footer a:active{text-decoration:none;color:#777777;font-weight:normal}td#footer a:hover{text-decoration:none;color:#777777;font-weight:normal}div.widget{display:block;width:auto;margin:0 0 15px 0}div.widget-title{display:block;width:auto}div.widget-title h3,td#left h3.tw-widgettitle,td#right h3.tw-widgettitle,td#left ul.tw-nav-list,td#right ul.tw-nav-list{padding:0;margin:0;font-size:1.2em;font-weight:bold}div.widget ul,div.textwidget{display:block;width:auto}div.widget select{width:98%;margin-top:5px;}div.widget ul{list-style-type:none;margin:0;padding:0;width:auto}div.widget ul li{display:block;margin:2px 0 2px 0px;padding:0 0 0 5px;border-left:solid 7px #FFFFFF}div.widget ul li:hover,div.widget ul li.sfhover{display:block;width:auto;border-left:solid 7px #004477;}div.widget ul li ul li{margin:2px 0 2px 5px;padding:0 0 0 0px;border-left:solid 7px #FFFFFF;}div.widget ul li ul li:hover,div.widget ul li ul li.sfhover{border-left:solid 7px #004477;}div.widget ul li ul li ul li{margin:2px 0 2px 5px;padding:0 0 0 0px;border-left:solid 7px #FFFFFF;}div.widget ul li ul li ul li:hover,div.widget ul li ul li ul li.sfhover{border-left:solid 7px #004477;}div.widget ul li a:link,div.widget ul li a:visited,div.widget ul li a:active{text-decoration:none;font-weight:normal;color:#004477;font-weight:normal;}div.widget ul li ul li a:link,div.widget ul li ul li a:visited,div.widget ul li ul li a:active{color:#004477;font-weight:normal;}div.widget ul li ul li ul li a:link,div.widget ul li ul li ul li a:visited,div.widget ul li ul li ul li a:active{color:#004477;font-weight:normal;}div.widget ul li a:hover{color:#FF8800;}div.widget ul li ul li a:hover{color:#FF8800;}div.widget ul li ul li ul li a:hover{color:#FF8800;}div.widget ul li a:link,div.widget ul li a:visited,div.widget ul li a:active,div.widget ul li a:hover{display:inline}* html div.widget ul li a:link,* html div.widget ul li a:visited,* html div.widget ul li a:active,* html div.widget ul li a:hover{height:1%; } div.widget_pages ul li,div.widget_categories ul li{border-left:0 !important;padding:0 !important}div.widget_pages ul li a:link,div.widget_pages ul li a:visited,div.widget_pages ul li a:active,div.widget_categories ul li a:link,div.widget_categories ul li a:visited,div.widget_categories ul li a:active{padding:0 0 0 5px;border-left:solid 7px #FFFFFF}div.widget_pages ul li a:hover,div.widget_categories ul li a:hover{border-left:solid 7px #004477;}div.widget_pages ul li ul li a:link,div.widget_pages ul li ul li a:visited,div.widget_pages ul li ul li a:active,div.widget_categories ul li ul li a:link,div.widget_categories ul li ul li a:visited,div.widget_categories ul li ul li a:active{padding:0 0 0 0px;border-left:solid 7px #FFFFFF}div.widget_pages ul li ul li a:hover,div.widget_categories ul li ul li a:hover{border-left:solid 7px #004477;}div.widget_pages ul li ul li ul li a:link,div.widget_pages ul li ul li ul li a:visited,div.widget_pages ul li ul li ul li a:active,div.widget_categories ul li ul li ul li a:link,div.widget_categories ul li ul li ul li a:visited,div.widget_categories ul li ul li ul li a:active{padding:0 0 0 0px;border-left:solid 7px #FFFFFF}div.widget_pages ul li ul li ul li a:hover,div.widget_categories ul li ul li ul li a:hover{border-left:solid 7px #004477;}div.widget_pages ul li a:link,div.widget_pages ul li a:active,div.widget_pages ul li a:visited,div.widget_pages ul li a:hover{display:block !important}div.widget_categories ul li a:link,div.widget_categories ul li a:active,div.widget_categories ul li a:visited,div.widget_categories ul li a:hover{display:inline !important}table.subscribe{width:100%}table.subscribe td.email-text{padding:0 0 5px 0;vertical-align:top}table.subscribe td.email-field{padding:0;width:100%}table.subscribe td.email-button{padding:0 0 0 5px}table.subscribe td.post-text{padding:7px 0 0 0;vertical-align:top}table.subscribe td.comment-text{padding:7px 0 0 0;vertical-align:top}div.post,div.page{display:block;margin:0 0 30px 0}div.sticky{background:#eee url(http://www.hobby-garten-blog.de/wp-content/themes/atahualpa/images/sticky.gif) 99% 5% no-repeat;border:dashed 1px #cccccc;padding:10px}div.post-kicker{margin:0 0 5px 0}div.post-kicker a:link,div.post-kicker a:visited,div.post-kicker a:active{color:#000000;text-decoration:none;text-transform:uppercase}div.post-kicker a:hover{color:#cc0000}div.post-headline{}div.post-headline h1,div.post-headline h2{ margin:0; padding:0;padding:0;margin:0;color:#444444;font-size:1.2em}div.post-headline h2 a:link,div.post-headline h2 a:visited,div.post-headline h2 a:active,div.post-headline h1 a:link,div.post-headline h1 a:visited,div.post-headline h1 a:active{color:#004477;text-decoration:none;font-size:1.0em;font-weight:700}div.post-headline h2 a:hover,div.post-headline h1 a:hover{color:#FF8800;text-decoration:none;font-size:1.0em;font-weight:700}div.post-byline{margin:5px 0 10px 0}div.post-byline a:link,div.post-byline a:visited,div.post-byline a:active{}div.post-byline a:hover{}div.post-bodycopy{}div.post-bodycopy p{margin:1em 0;padding:0;display:block}div.post-pagination{}div.post-footer{clear:both;display:block;margin:0;padding:5px;background:#eeeeee;color:#666;line-height:18px}div.post-footer a:link,div.post-footer a:visited,div.post-footer a:active{color:#004477;font-weight:normal;text-decoration:none}div.post-footer a:hover{color:#FF8800;font-weight:normal;text-decoration:underline}div.post-kicker img,div.post-byline img,div.post-footer img{border:0;padding:0;margin:0 0 -1px 0;background:none}span.post-ratings{display:inline-block;width:auto;white-space:nowrap}div.navigation-top{margin:0 0 10px 0;padding:0 0 10px 0;border-bottom:dashed 1px #cccccc}div.navigation-middle{margin:10px 0 20px 0;padding:10px 0 10px 0;border-top:dashed 1px #cccccc;border-bottom:dashed 1px #cccccc}div.navigation-bottom{margin:20px 0 0 0;padding:10px 0 0 0;border-top:dashed 1px #cccccc}div.navigation-comments-above{margin:0 0 10px 0;padding:5px 0 5px 0}div.navigation-comments-below{margin:0 0 10px 0;padding:5px 0 5px 0}div.older{float:left;width:48%;text-align:left;margin:0;padding:0}div.newer{float:right;width:48%;text-align:right;margin:0;padding:0;}div.older-home{float:left;width:44%;text-align:left;margin:0;padding:0}div.newer-home{float:right;width:44%;text-align:right;margin:0;padding:0;}div.home{float:left;width:8%;text-align:center;margin:0;padding:0}form,.feedburner-email-form{margin:0;padding:0;}fieldset{border:1px solid #cccccc;width:auto;padding:0.35em 0.625em 0.75em;display:block;}legend{color:#000000;background:#f4f4f4;border:1px solid #cccccc;padding:2px 6px;margin-bottom:15px;}form p{margin:5px 0 0 0;padding:0;}div.xhtml-tags p{margin:0}label{margin-right:0.5em;font-family:arial;cursor:pointer;}input.text,input.textbox,input.password,input.file,input.TextField,textarea{padding:3px;color:#000000;border-top:solid 1px #333333;border-left:solid 1px #333333;border-right:solid 1px #999999;border-bottom:solid 1px #cccccc;background:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/inputbackgr.gif) top left no-repeat}textarea{width:96%;}input.inputblur{color:#777777;width:95%}input.inputfocus{color:#000000;width:95%}input.highlight,textarea.highlight{background:#e8eff7;border-color:#37699f}.button,.Button{padding:0 2px;height:24px;line-height:16px;background-color:#777777;color:#ffffff;border:solid 2px #555555;font-weight:bold}.buttonhover{padding:0 2px;cursor:pointer;background-color:#6b9c6b;color:#ffffff;border:solid 2px #496d49}form#commentform input#submit{ padding:0 .25em; width:0; overflow:visible}form#commentform input#submit[class]{width:auto}form#commentform input#submit{padding:4px 10px 4px 10px;font-size:1.2em;line-height:1.5em;height:36px}table.searchform{width:100%}table.searchform td.searchfield{padding:0;width:100%}table.searchform td.searchbutton{padding:0 0 0 5px}table.searchform td.searchbutton input{padding:0 0 0 5px}blockquote{height:1%;display:block;clear:both;color:#555555;padding:1em 1em;background:#f4f4f4;border:solid 1px #e1e1e1}blockquote blockquote{height:1%;display:block;clear:both;color:#444444;padding:1em 1em;background:#e1e1e1;border:solid 1px #d3d3d3}div.post table{border-collapse:collapse;margin:10px 0}div.post table caption{width:auto;margin:0 auto;background:#eeeeee;border:#999999;padding:4px 8px;color:#666666}div.post table th{background:#888888;color:#ffffff;font-weight:bold;font-size:90%;padding:4px 8px;border:solid 1px #ffffff;text-align:left}div.post table td{padding:4px 8px;background-color:#ffffff;border-bottom:1px solid #dddddd;text-align:left}div.post table tfoot td{}div.post table tr.alt td{background:#f4f4f4}div.post table tr.over td{background:#e2e2e2}#calendar_wrap{padding:0;border:none}table#wp-calendar{width:100%;font-size:90%;border-collapse:collapse;background-color:#ffffff;margin:0 auto}table#wp-calendar caption{width:auto;background:#eeeeee;border:none;;padding:3px;margin:0 auto;font-size:1em}table#wp-calendar th{border:solid 1px #eeeeee;background-color:#999999;color:#ffffff;font-weight:bold;padding:2px;text-align:center}table#wp-calendar td{padding:0;line-height:18px;background-color:#ffffff;border:1px solid #dddddd;text-align:center}table#wp-calendar tfoot td{border:solid 1px #eeeeee;background-color:#eeeeee}table#wp-calendar td a{display:block;background-color:#eeeeee;width:100%;height:100%;padding:0}div#respond{margin:25px 0;padding:25px;background:#eee;-moz-border-radius:8px;-khtml-border-radius:8px;-webkit-border-radius:8px;border-radius:8px;}p.thesetags{margin:10px 0}h3.reply{margin:0;padding:0 0 10px 0}ol.commentlist{margin:15px 0 25px 0;list-style-type:none;padding:0;display:block;border-top:dotted 1px #cccccc}ol.commentlist li{padding:15px 10px;display:block;height:1%;margin:0;background-color:#FFFFFF;border-bottom:dotted 1px #cccccc}ol.commentlist li.alt{display:block;height:1%;background-color:#EEEEEE;border-bottom:dotted 1px #cccccc}ol.commentlist li.authorcomment{display:block;height:1%;background-color:#D0FFD0}ol.commentlist span.authorname{font-weight:bold;font-size:110%}ol.commentlist span.commentdate{color:#666666;font-size:90%;margin-bottom:5px;display:block}ol.commentlist span.editcomment{display:block}ol.commentlist li p{margin:2px 0 5px 0}div.comment-number{float:right;font-size:2em;line-height:2em;font-family:georgia,serif;font-weight:bold;color:#ddd;margin:-10px 0 0 0;position:relative;height:1%}div.comment-number a:link,div.comment-number a:visited,div.comment-number a:active{color:#ccc}textarea#comment{width:98%;margin:10px 0;display:block}ul.commentlist{margin:15px 0 15px 0;list-style-type:none;padding:0;display:block;border-top:dotted 1px #cccccc}ul.commentlist ul{margin:0;border:none;list-style-type:none;padding:0}ul.commentlist li{padding:0; margin:0;display:block;clear:both;height:1%;}ul.commentlist ul.children li{ margin-left:30px}ul.commentlist div.comment-container{padding:10px;margin:0}ul.children div.comment-container{background-color:transparent;border:dotted 1px #ccc;padding:10px;margin:0 10px 8px 0; -moz-border-radius:5px; -khtml-border-radius:5px; -webkit-border-radius:5px; border-radius:5px}ul.children div.bypostauthor{}ul.commentlist li.thread-even{background-color:#FFFFFF;border-bottom:dotted 1px #cccccc}ul.commentlist li.thread-odd{background-color:#EEEEEE;border-bottom:dotted 1px #cccccc}ul.commentlist div.bypostauthor{background-color:#D0FFD0}ul.children div.bypostauthor{border:dotted 1px #D0FFD0}ul.commentlist span.authorname{font-size:110%}div.comment-meta a:link,div.comment-meta a:visited,div.comment-meta a:active,div.comment-meta a:hover{font-weight:normal}div#cancel-comment-reply{margin:-5px 0 10px 0}div.comment-number{float:right;font-size:2em;line-height:2em;font-family:georgia,serif;font-weight:bold;color:#ddd;margin:-10px 0 0 0;position:relative;height:1%}div.comment-number a:link,div.comment-number a:visited,div.comment-number a:active{color:#ccc}.page-numbers{padding:2px 6px;border:solid 1px #000000;-moz-border-radius:6px;-khtml-border-radius:6px;-webkit-border-radius:6px;border-radius:6px}span.current{background:#ddd}a.prev,a.next{border:none}a.page-numbers:link,a.page-numbers:visited,a.page-numbers:active{text-decoration:none;color:#004477;border-color:#004477}a.page-numbers:hover{text-decoration:none;color:#FF8800;border-color:#FF8800}div.xhtml-tags{display:none}abbr em{border:none !important;border-top:dashed 1px #aaa !important;display:-moz-inline-box !important;display:inline-block !important;background:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/commentluv.gif) 0% 90% no-repeat;margin-top:8px;padding:5px 5px 2px 20px !important;font-style:normal}p.subscribe-to-comments{margin-bottom:10px}div#gsHeader{display:none;}div.g2_column{margin:0 !important;width:100% !important;font-size:1.2em}div#gsNavBar{border-top-width:0 !important}p.giDescription{font-size:1.2em;line-height:1 !important}p.giTitle{margin:0.3em 0 !important;font-size:1em;font-weight:normal;color:#666}div#wp-email img{border:0;padding:0}div#wp-email input,div#wp-email textarea{margin-top:5px;margin-bottom:2px}div#wp-email p{margin-bottom:10px}input#wp-email-submit{ padding:0; font-size:30px; height:50px; line-height:50px; overflow:visible;}img.WP-EmailIcon{ vertical-align:text-bottom !important}.tw-accordion .tw-widgettitle,.tw-accordion .tw-widgettitle:hover,.tw-accordion .tw-hovered,.tw-accordion .selected,.tw-accordion .selected:hover{ background:transparent !important; background-image:none !important}.tw-accordion .tw-widgettitle span{ padding-left:0 !important}.tw-accordion h3.tw-widgettitle{border-bottom:solid 1px #ccc}.tw-accordion h3.selected{border-bottom:none}td#left .without_title,td#right .without_title{ margin-top:0;margin-bottom:0}ul.tw-nav-list{border-bottom:solid 1px #999;display:block;margin-bottom:5px !important}td#left ul.tw-nav-list li,td#right ul.tw-nav-list li{padding:0 0 1px 0;margin:0 0 -1px 5px; border:solid 1px #ccc;border-bottom:none;-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;-moz-border-radius-bottomright:0;-moz-border-radius-bottomleft:0;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-left-radius:0;background:#eee}td#left ul.tw-nav-list li.ui-tabs-selected,td#right ul.tw-nav-list li.ui-tabs-selected{ background:none;border:solid 1px #999;border-bottom:solid 1px #fff !important}ul.tw-nav-list li a:link,ul.tw-nav-list li a:visited,ul.tw-nav-list li a:active,ul.tw-nav-list li a:hover{padding:0 8px !important;background:none;border-left:none !important;outline:none}td#left ul.tw-nav-list li.ui-tabs-selected a,td#left li.ui-tabs-selected a:hover,td#right ul.tw-nav-list li.ui-tabs-selected a,td#right li.ui-tabs-selected a:hover{ color:#000000; text-decoration:none;font-weight:bold;background:none !important;outline:none}td#left .ui-tabs-panel,td#right .ui-tabs-panel{ margin:0; padding:0}img{border:0}#dbem-location-map img{ background:none !important}.post img{padding:5px;border:solid 1px #dddddd;background-color:#f3f3f3;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;}.post img.size-full{margin:5px 0 5px 0}.post img.alignleft{float:left;margin:10px 10px 5px 0;}.post img.alignright{float:right;margin:10px 0 5px 10px;}.post img.aligncenter{display:block;margin:10px auto}.aligncenter,div.aligncenter{ display:block; margin-left:auto; margin-right:auto}.alignleft,div.alignleft{float:left;margin:10px 10px 5px 0}.alignright,div.alignright{ float:right; margin:10px 0 5px 10px}div.archives-page img{border:0;padding:0;background:none;margin-bottom:0;vertical-align:-10%}.wp-caption{max-width:96%;width:auto 100%;height:auto;display:block;border:1px solid #dddddd;text-align:center;background-color:#f3f3f3;padding-top:4px;margin:10px 0 0 0;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;}* html .wp-caption{height:100%;}.wp-caption img{ margin:0 !important; padding:0 !important; border:0 none !important}.wp-caption p.wp-caption-text{font-size:0.8em;line-height:13px;padding:2px 4px 5px;margin:0;color:#666666}img.wp-post-image{float:left;border:0;padding:0;background:none;margin:0 10px 5px 0}img.wp-smiley{ float:none;border:none !important;margin:0 1px -1px 1px;padding:0 !important;background:none !important}img.avatar{float:left;display:block;float:right;margin:0 0 1px 8px;padding:3px;border:solid 1px #ddd;background-color:#f3f3f3;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;}#comment_quicktags{text-align:left;padding:10px 0 2px 0;display:block}#comment_quicktags input.ed_button{background:#f4f4f4;border:2px solid #cccccc;color:#444444;margin:2px 4px 2px 0;width:auto;padding:0 4px;height:24px;line-height:16px}#comment_quicktags input.ed_button_hover{background:#dddddd;border:2px solid #666666;color:#000000;margin:2px 4px 2px 0;width:auto;padding:0 4px;height:24px;line-height:16px;cursor:pointer}#comment_quicktags #ed_strong{font-weight:bold}#comment_quicktags #ed_em{font-style:italic}@media print{body{background:white;color:black;margin:0;font-size:10pt !important;font-family:arial,sans-serif;}div.post-footer{line-height:normal !important;color:#555 !important;font-size:9pt !important}a:link,a:visited,a:active,a:hover{text-decoration:underline !important;color:#000}h2{color:#000;font-size:14pt !important;font-weight:normal !important}h3{color:#000;font-size:12pt !important;}#header,#footer,.colone,.colthree,.navigation,.navigation-top,.navigation-middle,.navigation-bottom,.wp-pagenavi-navigation,#comment,#respond,.remove-for-print{display:none}td#left,td#right,td#left-inner,td#right-inner{width:0}td#middle{width:100%}*:lang(en) td#left{ display:none}*:lang(en) td#right{ display:none}*:lang(en) td#left-inner{ display:none}*:lang(en) td#right-inner{ display:none}td#left:empty{ display:none}td#right:empty{ display:none}td#left-inner:empty{ display:none}td#right-inner:empty{ display:none}}ul.rMenu,ul.rMenu ul,ul.rMenu li,ul.rMenu a{display:block;margin:0;padding:0}ul.rMenu,ul.rMenu li,ul.rMenu ul{list-style:none}ul.rMenu ul{display:none}ul.rMenu li{position:relative;z-index:1}ul.rMenu li:hover{z-index:999}ul.rMenu li:hover > ul{display:block;position:absolute}ul.rMenu li:hover{background-position:0 0} ul.rMenu-hor li{float:left;width:auto}ul.rMenu-hRight li{float:right}ul.rMenu-ver li{float:none}div#menu1 ul.rMenu-ver,div#menu1 ul.rMenu-ver ul{width:11em}div#menu2 ul.rMenu-ver,div#menu2 ul.rMenu-ver ul{width:11em}ul.rMenu-wide{width:100%}ul.rMenu-vRight{float:right}ul.rMenu-lFloat{float:left}ul.rMenu-noFloat{float:none}div.rMenu-center ul.rMenu{float:left;position:relative;left:50%}div.rMenu-center ul.rMenu li{position:relative;left:-50%}div.rMenu-center ul.rMenu li li{left:auto}ul.rMenu-hor ul{top:auto;right:auto;left:auto;margin-top:-1px}ul.rMenu-hor ul ul{margin-top:0;margin-left:0px}ul.rMenu-ver ul{left:100%;right:auto;top:auto;top:0}ul.rMenu-vRight ul,ul.rMenu-hRight ul.rMenu-ver ul{left:-100%;right:auto;top:auto}ul.rMenu-hRight ul{left:auto;right:0;top:auto;margin-top:-1px}div#menu1 ul.rMenu{background:#003366;border:solid 1px #1A5943}div#menu2 ul.rMenu{background:#666666;border:0}div#menu1 ul.rMenu li a{border:solid 1px #1A5943}div#menu2 ul.rMenu li a{border:0}ul.rMenu-hor li{margin-bottom:-1px;margin-top:-1px;margin-left:-1px}ul#rmenu li{}ul#rmenu li ul li{}ul.rMenu-hor{padding-left:1px }ul.rMenu-ver li{margin-left:0;margin-top:-1px; }div#menu1 ul.rMenu-ver{border-top:solid 1px #1A5943}div#menu2 ul.rMenu-ver{border-top:0}div#menu1 ul.rMenu li a{padding:4px 5px}div#menu2 ul.rMenu li a{padding:4px 5px}div#menu1 ul.rMenu li a:link,div#menu1 ul.rMenu li a:hover,div#menu1 ul.rMenu li a:visited,div#menu1 ul.rMenu li a:active{text-decoration:none;margin:0;color:#FFFFFF;text-transform:none;font:14px Arial,Verdana,sans-serif;}div#menu2 ul.rMenu li a:link,div#menu2 ul.rMenu li a:hover,div#menu2 ul.rMenu li a:visited,div#menu2 ul.rMenu li a:active{text-decoration:none;margin:0;color:#FEFEFE;text-transform:uppercase;font:12px Verdana,sans-serif;}div#menu1 ul.rMenu li{background-color:#003366}div#menu2 ul.rMenu li{background-color:#666666}div#menu1 ul.rMenu li:hover,div#menu1 ul.rMenu li.sfhover{background:#009944}div#menu2 ul.rMenu li:hover,div#menu2 ul.rMenu li.sfhover{background:#444444}div#menu1 ul.rMenu li.current_page_item > a:link,div#menu1 ul.rMenu li.current_page_item > a:active,div#menu1 ul.rMenu li.current_page_item > a:hover,div#menu1 ul.rMenu li.current_page_item > a:visited{background-color:#009944;color:#EEEEEE}div#menu1 ul.rMenu li.current_page_item a:link,div#menu1 ul.rMenu li.current_page_item a:active,div#menu1 ul.rMenu li.current_page_item a:hover,div#menu1 ul.rMenu li.current_page_item a:visited,div#menu1 ul.rMenu li a:hover{background-color:#009944;color:#EEEEEE}div#menu2 ul.rMenu li.current-cat > a:link,div#menu2 ul.rMenu li.current-cat > a:active,div#menu2 ul.rMenu li.current-cat > a:hover,div#menu2 ul.rMenu li.current-cat > a:visited{background-color:#222222;color:#FEFEFE}div#menu2 ul.rMenu li.current-cat a:link,div#menu2 ul.rMenu li.current-cat a:active,div#menu2 ul.rMenu li.current-cat a:hover,div#menu2 ul.rMenu li.current-cat a:visited,div#menu2 ul.rMenu li a:hover{background-color:#222222;color:#FEFEFE}div#menu1 ul.rMenu li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a{padding-right:15px;padding-left:5px;background-repeat:no-repeat;background-position:100% 50%;background-image:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/expand-right.gif)}div#menu2 ul.rMenu li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a{padding-right:15px;padding-left:5px;background-repeat:no-repeat;background-position:100% 50%;background-image:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/expand-right-white.gif)}ul.rMenu-vRight li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-vRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a,ul.rMenu-hRight li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand a{padding-right:5px;padding-left:20px;background-image:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/expand-left.gif);background-repeat:no-repeat;background-position:-5px 50%}div#menu1 ul.rMenu-hor li.rMenu-expand a{padding-left:5px;padding-right:15px !important;background-position:100% 50%;background-image:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/expand-down.gif)}div#menu2 ul.rMenu-hor li.rMenu-expand a{padding-left:5px;padding-right:15px !important;background-position:100% 50%;background-image:url(http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/expand-down-white.gif)}div#menu1 ul.rMenu li.rMenu-expand li a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li a,div#menu1 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li a{background-image:none;padding-right:5px;padding-left:5px}div#menu2 ul.rMenu li.rMenu-expand li a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li a,div#menu2 ul.rMenu li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li.rMenu-expand li a{background-image:none;padding-right:5px;padding-left:5px}* html ul.rMenu{display:inline-block;display:block;position:relative;position:static}* html ul.rMenu ul{float:left;float:none}ul.rMenu ul{}* html ul.rMenu-ver li,* html ul.rMenu-hor li ul.rMenu-ver li{width:100%;float:left;clear:left}*:first-child+html ul.rMenu-ver > li{width:100%;float:left;clear:left}ul.rMenu li a{position:relative;min-width:0}* html ul.rMenu-hor li{width:11em;width:auto}* html div.rMenu-center{position:relative;z-index:1}* html ul.rMenu ul{display:block;position:absolute}* html ul.rMenu ul,* html ul.rMenu-hor ul,* html ul.rMenu-ver ul,* html ul.rMenu-vRight ul,* html ul.rMenu-hRight ul.rMenu-ver ul,* html ul.rMenu-hRight ul{left:-10000px}* html ul.rMenu li.sfhover{z-index:999}* html ul.rMenu li.sfhover ul{left:auto}* html ul.rMenu li.sfhover ul ul,* html ul.rMenu li.sfhover ul ul ul,* html ul.rMenu li.sfhover ul ul ul ul,* html ul.rMenu li.sfhover ul ul ul ul ul,* html ul.rMenu li.sfhover ul ul ul ul ul ul{display:none}* html ul.rMenu li.sfhover ul,* html ul.rMenu li li.sfhover ul,* html ul.rMenu li li li.sfhover ul,* html ul.rMenu li li li li.sfhover ul,* html ul.rMenu li li li li li.sfhover ul{display:block}* html ul.rMenu-ver li.sfhover ul{left:100%}* html ul.rMenu-vRight li.sfhover ul,* html ul.rMenu-hRight ul.rMenu-ver li.sfhover ul{left:-100%}* html ul.rMenu iframe{position:absolute;left:0;top:0;z-index:-1}* html ul.rMenu{margin-left:1px}* html ul.rMenu ul,* html ul.rMenu ul ul,* html ul.rMenu ul ul ul,* html ul.rMenu ul ul ul ul{margin-left:0}* html ul.rMenu{display:inline-block;display:block;position:relative;position:static}* html ul.rMenu ul{float:left;float:none}ul.rMenu ul{background-color:#fff}* html ul.rMenu-ver li,* html ul.rMenu-hor li ul.rMenu-ver li{width:100%;float:left;clear:left}*:first-child+html ul.rMenu-ver > li:hover ul{min-width:0}ul.rMenu li a{position:relative;min-width:0}* html ul.rMenu-hor li{width:6em;width:auto}* html div.rMenu-center{position:relative;z-index:1}html:not([lang*=""]) div.rMenu-center ul.rMenu li a:hover{height:100%}html:not([lang*=""]) div.rMenu-center ul.rMenu li a:hover{height:auto}* html ul.rMenu ul{display:block;position:absolute}* html ul.rMenu ul,* html ul.rMenu-hor ul,* html ul.rMenu-ver ul,* html ul.rMenu-vRight ul,* html ul.rMenu-hRight ul.rMenu-ver ul,* html ul.rMenu-hRight ul{left:-10000px}* html ul.rMenu li.sfhover{z-index:999}* html ul.rMenu li.sfhover ul{left:auto}* html ul.rMenu li.sfhover ul ul,* html ul.rMenu li.sfhover ul ul ul{display:none}* html ul.rMenu li.sfhover ul,* html ul.rMenu li li.sfhover ul,* html ul.rMenu li li li.sfhover ul{display:block}* html ul.rMenu-ver li.sfhover ul{left:60%}* html ul.rMenu-vRight li.sfhover ul,* html ul.rMenu-hRight ul.rMenu-ver li.sfhover ul{left:-60%}* html ul.rMenu iframe{position:absolute;left:0;top:0;z-index:-1}.clearfix:after{ content:".";display:block;height:0;clear:both;visibility:hidden}.clearfix{min-width:0;display:inline-block;display:block}* html .clearfix{height:1%;}.clearfix:after{ content:".";display:block;height:0;clear:both;visibility:hidden}.clearfix{min-width:0;display:inline-block;display:block}* html .clearfix{height:1%;}.clearboth{clear:both;height:1%;font-size:1%;line-height:1%;display:block;padding:0;margin:0}h2{font-size:1.25em;}h3{font-size:1.15em;}h4{font-size:0.95em;}</style>
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+
+/* JQUERY */
+jQuery(document).ready(function(){  
+
+
+	/* jQuery('ul#rmenu').superfish(); */
+	/* jQuery('ul#rmenu').superfish().find('ul').bgIframe({opacity:false}); */
+ 
+	/* For IE6 */
+	if (jQuery.browser.msie && /MSIE 6\.0/i.test(window.navigator.userAgent) && !/MSIE 7\.0/i.test(window.navigator.userAgent) && !/MSIE 8\.0/i.test(window.navigator.userAgent)) {
+
+		/* Max-width for images in IE6 */		
+		var centerwidth = jQuery("td#middle").width(); 
+		
+		/* Images without caption */
+		jQuery(".post img").each(function() { 
+			var maxwidth = centerwidth - 10 + 'px';
+			var imgwidth = jQuery(this).width(); 
+			var imgheight = jQuery(this).height(); 
+			var newimgheight = (centerwidth / imgwidth * imgheight) + 'px';	
+			if (imgwidth > centerwidth) { 
+				jQuery(this).css({width: maxwidth}); 
+				jQuery(this).css({height: newimgheight}); 
+			}
+		});
+		
+		/* Images with caption */
+		jQuery("div.wp-caption").each(function() { 
+			var captionwidth = jQuery(this).width(); 
+			var maxcaptionwidth = centerwidth + 'px';
+			var captionheight = jQuery(this).height();
+			var captionimgwidth =  jQuery("div.wp-caption img").width();
+			var captionimgheight =  jQuery("div.wp-caption img").height();
+			if (captionwidth > centerwidth) { 
+				jQuery(this).css({width: maxcaptionwidth}); 
+				var newcaptionheight = (centerwidth / captionwidth * captionheight) + 'px';
+				var newcaptionimgheight = (centerwidth / captionimgwidth * captionimgheight) + 'px';
+				jQuery(this).css({height: newcaptionheight}); 
+				jQuery("div.wp-caption img").css({height: newcaptionimgheight}); 
+				}
+		});
+		
+		/* sfhover for LI:HOVER support in IE6: */
+		jQuery("ul li").
+			hover( function() {
+					jQuery(this).addClass("sfhover")
+				}, 
+				function() {
+					jQuery(this).removeClass("sfhover")
+				} 
+			); 
+
+	/* End IE6 */
+	}
+	
+	jQuery(".post table tr").
+		mouseover(function() {
+			jQuery(this).addClass("over");
+		}).
+		mouseout(function() {
+			jQuery(this).removeClass("over");
+		});
+
+	
+	jQuery(".post table tr:even").
+		addClass("alt");
+
+	
+	jQuery("input.text, input.TextField, input.file, input.password, textarea").
+		focus(function () {  
+			jQuery(this).addClass("highlight"); 
+		}).
+		blur(function () { 
+			jQuery(this).removeClass("highlight"); 
+		})
+	
+	jQuery("input.inputblur").
+		focus(function () {  
+			jQuery(this).addClass("inputfocus"); 
+		}).
+		blur(function () { 
+			jQuery(this).removeClass("inputfocus"); 
+		})
+
+		
+
+	
+	jQuery("input.button, input.Button").
+		mouseover(function() {
+			jQuery(this).addClass("buttonhover");
+		}).
+		mouseout(function() {
+			jQuery(this).removeClass("buttonhover");
+		});
+
+	/* toggle "you can use these xhtml tags" */
+	jQuery("a.xhtmltags").
+		click(function(){ 
+			jQuery("div.xhtml-tags").slideToggle(300); 
+		});
+
+	/* For the Tabbed Widgets plugin: */
+	jQuery("ul.tw-nav-list").
+		addClass("clearfix");
+
+		
+	
+});
+
+//]]>
+</script>
+<!--[if IE 6]>
+<script type="text/javascript" src="http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/js/DD_roundies.js"></script>
+<script type="text/javascript">DD_roundies.addRule('a.posts-icon, a.comments-icon, a.email-icon, img.logo');</script>
+<![endif]-->
+</head>
+<body class="single postid-424">
+<script type="text/javascript">
+window.google_analytics_uacct = "UA-430432-4";
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-430432-4']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script><div id="wrapper">
+<div id="container">
+<table id="layout" border="0" cellspacing="0" cellpadding="0">
+<colgroup>
+<col class="coltwo" />
+<col class="colthree" /></colgroup> 
+	<tr>
+
+		<!-- Header -->
+		<td id="header" colspan="2">
+
+		<div id="imagecontainer" class="header-image-container" style="background: url('http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/header/werkstatt.jpg') top center no-repeat;"><div class="clickable"><a class="divclick" title="Hobbywerkstatt" href ="http://www.hobby-werkstatt-blog.de/">&nbsp;</a></div></div> <div id="menu1"><ul id="rmenu2" class="clearfix rMenu-hor rMenu">
+<li class="page_item"><a href="http://www.hobby-werkstatt-blog.de/" title="Hobbywerkstatt">Meine Werkstatt</a></li>
+<li class="page_item page-item-242"><a href="http://www.hobby-werkstatt-blog.de/links" >Links</a></li>
+</ul></div>
+ <div id="werbung" class="bfa_widget_area"><div id="text-9" class="widget widget_text">			<div class="textwidget"><br/><center>
+<script type="text/javascript"><!--
+google_ad_client = "pub-6361083152912442";
+/* Werkstatt 728x90, Erstellt 02.06.10 */
+google_ad_slot = "0637123279";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</center><br/></div>
+		</div></div>
+		</td>
+		<!-- / Header -->
+
+	</tr>
+
+	<!-- Main Body -->	
+	<tr id="bodyrow">
+
+		
+				
+
+		<!-- Main Column -->
+		<td id="middle">
+
+	
+
+		
+		 
+
+		<div class="clearfix navigation-top">
+		<div class="older">&laquo; <a href="http://www.hobby-werkstatt-blog.de/arduino/436-arduino-ein-spannungssensor-und-der-serielle-plotter.php" rel="next">Arduino: Ein Spannungssensor und der Serielle Plotter</a> &nbsp;</div><div class="newer">&nbsp; <a href="http://www.hobby-werkstatt-blog.de/myog/405-myog-eine-rahmentasche-fuers-fahrrad.php" rel="prev">MYOG: Eine Rahmentasche f&#252;rs Fahrrad</a> &raquo;</div></div>
+<div class="post-424 post hentry category-arduino tag-arduino tag-infrarot-led" id="post-424">
+
+
+<div class="post-headline">		<h1>Eine Arduino-Virtual-Wall f&uuml;r den IRobot Roomba</h1>
+		</div>
+<div class="post-byline">von <a href="http://www.hobby-garten-blog.de/heiner-otterstedt" title="Besuche Heiner&#8217;s Website" rel="external">Heiner</a></div>
+<div class="post-bodycopy clearfix"><p>Einige unserer T&#252;rschwellen sind nicht voll Roomba-kompatibel. Der Staubsauger f&#228;hrt in einer Richtung hin&#252;ber, kommt aber nicht wieder zur&#252;ck weil sich dort ein etwas steilerer Absatz befindet der den Bumper ausl&#246;st. Die Schwelle wirkt sozusagen als Roomba-Ventil. Da bleibt einem nur die T&#252;ren geschlossen zu halten oder der Bau einer (virtuellen) Wand.</p>
+<p>Eine virtuelle Wand ist ein einfaches Infrarot-Signal, dass dem Roomba mitteilt, dass es an dieser Stelle nicht weiter geht. Er verh&#228;lt sich dann so als w&#252;rde er an einer Hardware-Wand entlang fahren.</p>
+<h4>Ben&#246;tigte Bauteile</h4>
+<p>Virtuellen W&#228;nde kann man nat&#252;rlich k&#228;uflich erwerben (zum Beispiel <a rel="nofollow" href="http://www.amazon.de/gp/product/B009ZC5CDY/ref=as_li_tl?ie=UTF8&amp;camp=1638&amp;creative=6742&amp;creativeASIN=B009ZC5CDY&amp;linkCode=as2&amp;tag=amateurtelesc-21">dr&#252;ben bei Amazon</a>). Ich hatte die ben&#246;tigten Teile f&#252;r eine Arduino-Virtual-Wall in meiner Bastelkiste rumliegen, also habe ich mir mal so eine Wand selbst gebaut. Folgende Teile habe ich f&#252;r den Prototyp verwendet:</p>
+<ul>
+<li>1 Arduino (hier Arduino Nano)</li>
+<li>1 Infrarot LED (hier TSAL5100)</li>
+<li>1 Widerstand (hier 39 Ohm)</li>
+</ul>
+<p>Alles in allem kosten diese Bauteile so ca. 5 Euro.</p>
+<p>Die TSAL5100 Infrarot-LED hat seine Peak-Wellenl&#228;nge bei 940 nm. Das scheint f&#252;r den Roomba optimal zu passen.  Der Abstrahlwinkel betr&#228;gt ± 10 Grad. Gef&#252;hlt scheint mir das etwas viel zu sein. In einem Abstand von 3 Metern hat der &#8220;Strahl&#8221; bei 20 Grad Abstrahlwinkel schon einen Durchmesser von gut einem Meter. Entsprechend abgeschw&#228;cht ist das Signal, das beim Roomba ankommt. Trotzdem erkennt er das Signal bei dieser Entfernung noch sicher.</p>
+<h4>Schaltplan</h4>
+<p><a href="http://www.hobby-werkstatt-blog.de/wp-content/uploads/2015/12/roomba2.jpg"><img class="alignright size-medium wp-image-427" title="roomba2" src="http://www.hobby-werkstatt-blog.de/wp-content/uploads/2015/12/roomba2-223x300.jpg" alt="" width="223" height="300" /></a>Naja, einen Schaltplan ben&#246;tigt man f&#252;r meine Virtual Wall eingetlich nicht. Ich habe trotzdem mal schnell einen gezeichnet. Meine Virtual Wall soll die <a href="https://github.com/z3t0/Arduino-IRremote">Arduino-IRremote Library</a> verwenden. Diese Library verwendet standardm&#228;&#223;ig den Pin D3 des Arduino. Von D3 f&#252;hrt der Weg also &#252;ber den Vorwiderstand (39 Ohm) weiter zur IR-LED und zur&#252;ck zu einem der GND-Pins des Arduino.</p>
+<h4>Software</h4>
+<p>Die Software muss wie auch bei &#8220;normalen&#8221; Fernbedienungen ein 38kHz Tr&#228;ger-Signal erzeugen. Dieses Signal wird mit 1kHz moduliert. Das hei&#223;t die 38kHz Pulse werden in jeder Millisekunde ein- bzw. ausgeschaltet. Das ist mit dem Arduino leicht zu realisieren. Noch einfacher geht es mit der Arduino-IRremote-Library:</p>
+<pre><code>
+#include &lt;IRremote.h&gt;
+
+IRsend irsend; // IRemote initialisieren (Pin 3)
+
+void setup()
+{ irsend.enableIROut(38); // 38 kHz Tr&#228;ger
+}
+
+void loop()
+{ irsend.mark(1000); // 1 ms Mark
+  irsend.space(1000); // 1 ms Space
+}
+</code></pre>
+<p>Und hier noch kurz ein Zeitraffer-Video der virtuellen Wand im Einsatz: Die IR-LED befindet sich links etwa in der Mitte. Ich hatte die Schaltung etwas mit dem Gel-Akku abgeschirmt, damit der Roomba sie nicht &#252;berf&#228;hrt. Der Infrarot-Strahl zeigt in Richtung untere rechte Ecke des Videos. Die Entfernung zwischen LED und gegen&#252;ber liegender Wand betr&#228;gt gut 3 Meter.</p>
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/AMwUmObpvrs" frameborder="0" allowfullscreen></iframe></p>
+<p>Nun muss das Ganze nur noch zusammen gel&#246;tet und in einem kleinen Geh&#228;use verstaut werden. Der IR-Empf&#228;nger sitzt vorn oben auf dem Geh&#228;use des Roomba. Deshalb darf die IR-LED nicht zu tief aufgestellt werden. Ansonsten schattet der Roomba selbst das Signal ab, wenn er dicht an der Virtual Wall vorbei f&#228;hrt.</p>
+<p><strong>Werbung:</strong></p>
+<ul>
+<li><a rel="nofollow" href="http://www.amazon.de/gp/product/B013EEPAE4/ref=as_li_tl?ie=UTF8&amp;camp=1638&amp;creative=6742&amp;creativeASIN=B013EEPAE4&amp;linkCode=as2&amp;tag=amateurtelesc-21">DAOKAI® 5PCS MINI USB Nano V3.0 ATmega328P CH340G 5V 16M Mikrocontroller-Brett f&#252;r Arduino</a></li>
+<li><a rel="nofollow" href="http://www.amazon.de/gp/product/B008GRTSV6/ref=as_li_tl?ie=UTF8&amp;camp=1638&amp;creative=6742&amp;creativeASIN=B008GRTSV6&amp;linkCode=as2&amp;tag=amateurtelesc-21">Arduino Uno Rev3 (Original &#8211; Made in Italy)</a></li>
+<li><a rel="nofollow" href="http://www.amazon.de/gp/product/B009ZC5CDY/ref=as_li_tl?ie=UTF8&amp;camp=1638&amp;creative=6742&amp;creativeASIN=B009ZC5CDY&amp;linkCode=as2&amp;tag=amateurtelesc-21">iRobot Virtuelle Wand, 2 St&#252;ck</a></li>
+<li><a rel="nofollow" href="http://www.amazon.de/gp/product/B004MLWKMY/ref=as_li_tl?ie=UTF8&amp;camp=1638&amp;creative=6742&amp;creativeASIN=B004MLWKMY&amp;linkCode=as2&amp;tag=amateurtelesc-21">iRobot Virtual Wall Lighthouse f&#252;r Roomba 581, 585, 780, 782, 790, 880</a></li>
+</ul>
+<p><strong>Siehe auch:</strong></p>
+<ul>
+<li><a href="http://www.hobby-werkstatt-blog.de/arduino/263-programmierbarer-fernausloeser-fuer-digitalkameras.php">Programmierbarer Fernausl&#246;ser f&#252;r Digitalkameras</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/arduino/286-arduino-infrarot-receiver-module.php">Arduino: Infrarot-Receiver Module</a></li>
+</ul>
+<p><strong>Weblinks</strong></p>
+<ul>
+<li><a href="http://www.righto.com/2009/08/multi-protocol-infrared-remote-library.html">A Multi-Protocol Infrared Remote Library for the Arduino</a></li>
+<li><a href="https://github.com/z3t0/Arduino-IRremote">Github &#8211; Arduino IRemote</a></li>
+</ul>
+</div>
+
+<div id="extra" class="bfa_widget_area"><div id="text-10" class="widget widget_text">			<div class="textwidget"><br/>
+<script type="text/javascript"><!--
+google_ad_client = "pub-6361083152912442";
+/* Werkstatt 468x60, Erstellt 02.06.10 */
+google_ad_slot = "6133769969";
+google_ad_width = 468;
+google_ad_height = 60;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+		</div></div>
+<div class="post-footer">Dieser Artikel wurde am 14. Dezember 2015 um 14:48 von <a href="http://www.hobby-werkstatt-blog.de/author/admin/" title="Artikel von Heiner">Heiner</a> geschrieben und unter dem Stichwort <a href="http://www.hobby-werkstatt-blog.de/tag/arduino" rel="tag">Arduino</a>, <a href="http://www.hobby-werkstatt-blog.de/tag/infrarot-led" rel="tag">Infrarot LED</a>, in die Kategorie <a href="http://www.hobby-werkstatt-blog.de/category/arduino" title="Alle Artikel in Arduino ansehen" rel="category tag">Arduino</a> eingeordnet. <a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comments" class="comments-link"  title="Kommentiere Eine Arduino-Virtual-Wall f&#252;r den IRobot Roomba">Es gibt schon 9 Kommentare, wie ist deine Meinung zu diesem Thema?</a> </div>
+</div><!-- / Post -->						
+	
+	
+
+
+	<a name="comments"></a><!-- named anchor for skip links -->
+	<h3 id="comments">9 comments to Eine Arduino-Virtual-Wall f&#252;r den IRobot Roomba</h3>
+
+	
+	<!-- Comment List -->
+	<ul class="commentlist">
+		
+			<li class="comment even thread-even depth-1 clearfix" id="comment-57873">
+		<div id="div-comment-57873" class="clearfix comment-container">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/1009271f01286c9d7fe11f43da9dc9f5?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname">Erkan</span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-57873">
+		15. Dezember 2015 at 11:21</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=57873#respond' onclick='return addComment.moveForm("comment-57873", "57873", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Das ist eine sehr beeindruckende L&#246;sung. Ich habe fr&#252;her auch immer gerne elektronische Schaltungen gebastelt aber auf die Idee w&#228;re ich nicht gekommen. Das Video zeigt, dass es funktioniert, ein tolles Beispiel. Ich hab mir die Anleitung auf Englisch auch angesehen, aber die haben leider kein Video dazu gedreht und da ist der Text auch viel zu lang. Der Artikel hier hat die richtige L&#228;nge.</p>
+		</div>
+</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1 clearfix" id="comment-57887">
+		<div id="div-comment-57887" class="clearfix comment-container">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/282cba79dcfb0621d6beff998cd96b85?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname">Martin</span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-57887">
+		16. Dezember 2015 at 21:50</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=57887#respond' onclick='return addComment.moveForm("comment-57887", "57887", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Meine Mathematik ist schon etwas eingerostet. Wie kommst du von dem Abstrahlwinkel auf den Durchmesser des abgestrahlten Lichtkegels?</p>
+		</div>
+<ul class='children'>
+		<li class="comment byuser comment-author-admin bypostauthor even depth-2 clearfix" id="comment-57889">
+		<div id="div-comment-57889" class="clearfix comment-container bypostauthor">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/bb0098fcc21eb685f681207c180ed189?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname"><a href='http://www.hobby-garten-blog.de/heiner-otterstedt' rel='external' class='url'>Heiner</a></span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-57889">
+		17. Dezember 2015 at 07:50</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=57889#respond' onclick='return addComment.moveForm("comment-57889", "57889", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Ja, das mit der eingerosteten Mathe kenne ich aus eigener Erfahrung <img src='http://www.hobby-werkstatt-blog.de/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>Wenn man sich zu dem Problem eine Skizze macht, dann erkennt man, dass sich vom Zentrum des Kegels zur Au&#223;enseite ein rechtwinkliges Dreieck ergibt. Der Rand des Lichtkegels entspricht der Hypotenuse, die Katheten sind der Abstand zur LED und der halbe Durchmesser des Lichtkegels.</p>
+<p>Im rechtwinkligen Dreieck gilt:</p>
+<p><code>tan(alpha) = Gegenkathete / Ankathete</code></p>
+<p>Ich nenne den Abstrahlwinkel hier mal &#8220;alpha&#8221; und den Abstand zur LED (Ankathete) &#8220;a&#8221;. Den Durchmesser des Strahls im Abstand a (also die Gegenkathete zum Winkel alpha) nenne ich &#8220;h&#8221;.</p>
+<p><code>tan(alpha) = h / a</code></p>
+<p><code>h = tan(alpha) * a</code></p>
+<p>10 Grad in Bogenma&#223; umrechnen&#8230;</p>
+<p><code>10 * (pi/180) = 0.1745 (grundet)</code></p>
+<p>und dann ausrechnen &#8230;</p>
+<p><code>h = tan(0.1745) * 300 cm = 53 cm (ebenfalls gerundet).</code></p>
+<p>Die Gegenkathete des rechtwinkligen Dreiecks beschreibt nur den halben Durchmesser des Lichtkegels, also &#8230;</p>
+<p><code>2 * 53 cm = 106 cm</code></p>
+		</div>
+</li>
+</ul>
+</li>
+		<li class="comment odd alt thread-even depth-1 clearfix" id="comment-59630">
+		<div id="div-comment-59630" class="clearfix comment-container">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/6232fd381d3e4339cb494e52332a7564?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname">Lukas</span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-59630">
+		27. Mai 2016 at 16:55</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=59630#respond' onclick='return addComment.moveForm("comment-59630", "59630", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>warum bekomme ich mit dem oben stehenden code folgrnde Fehlermedungen?</p>
+<p>Arduino: 1.6.9 (Mac OS X), Board: &#8220;Arduino Nano, ATmega328&#8243;</p>
+<p>roomba:3: error: &#8216;IRsend&#8217; does not name a type<br />
+ IRsend irsend; // IRemote initialisieren (Pin 3)<br />
+ ^<br />
+/Users/lukas/Documents/Arduino/roomba/roomba.ino: In function &#8216;void setup()&#8217;:<br />
+roomba:6: error: &#8216;irsend&#8217; was not declared in this scope<br />
+ { irsend.enableIROut(38); // 38 kHz Tr&#228;ger<br />
+   ^<br />
+/Users/lukas/Documents/Arduino/roomba/roomba.ino: In function &#8216;void loop()&#8217;:<br />
+roomba:10: error: &#8216;irsend&#8217; was not declared in this scope<br />
+ { irsend.mark(1000); // 1 ms Mark<br />
+   ^<br />
+exit status 1<br />
+&#8216;IRsend&#8217; does not name a type</p>
+<p>Dieser Bericht w&#228;re detaillierter, wenn die Option<br />
+&#8220;Ausf&#252;hrliche Ausgabe w&#228;hrend der Kompilierung&#8221;<br />
+in Datei -&gt; Voreinstellungen aktiviert w&#228;re.</p>
+<p>Ich nutze das erste mal einen Arduino, bin also ganz &#8220;hilflos&#8221;</p>
+<p>Vielen Dank f&#252;r eure Hilfe!</p>
+		</div>
+<ul class='children'>
+		<li class="comment byuser comment-author-admin bypostauthor even depth-2 clearfix" id="comment-59676">
+		<div id="div-comment-59676" class="clearfix comment-container bypostauthor">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/bb0098fcc21eb685f681207c180ed189?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname"><a href='http://www.hobby-garten-blog.de/heiner-otterstedt' rel='external' class='url'>Heiner</a></span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-59676">
+		30. Mai 2016 at 05:49</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=59676#respond' onclick='return addComment.moveForm("comment-59676", "59676", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Moin Lukas,</p>
+<p>ich vermute, dass die <a href="https://github.com/z3t0/Arduino-IRremote">Arduino-IRremote Library</a> bei dir noch nicht installiert ist. (Siehe dort auch den kurzen Abschnitt &#8220;Installation&#8221;)</p>
+		</div>
+</li>
+</ul>
+</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1 clearfix" id="comment-59721">
+		<div id="div-comment-59721" class="clearfix comment-container">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/6232fd381d3e4339cb494e52332a7564?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname">Lukas</span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-59721">
+		3. Juni 2016 at 12:53</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=59721#respond' onclick='return addComment.moveForm("comment-59721", "59721", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Vielen Dank Heiner,</p>
+<p>jetzt klappt es!</p>
+<p>Muss mur noch rausfinden warum meine ir-led nichts tut.<br />
+Da es die Tsal5100 nicht mehr gibt habe ich die osram SFH 4346 genommen.<br />
+Abgesehen vom Abstrahlwinkel hat sie die gleichen Werte, aber sie sendet nicht.</p>
+		</div>
+<ul class='children'>
+		<li class="comment byuser comment-author-admin bypostauthor even depth-2 clearfix" id="comment-59744">
+		<div id="div-comment-59744" class="clearfix comment-container bypostauthor">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/bb0098fcc21eb685f681207c180ed189?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname"><a href='http://www.hobby-garten-blog.de/heiner-otterstedt' rel='external' class='url'>Heiner</a></span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-59744">
+		6. Juni 2016 at 05:27</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=59744#respond' onclick='return addComment.moveForm("comment-59744", "59744", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Hast Du die LED richtig rum drin? Richtiger Vorwiederstand?</p>
+<p>Mit den meisten Digitalkameras kann man sehen, ob die LED tats&#228;chlich nicht leuchtet. Die nehmen meist auch einen Teil des infraroten Lichts mit auf. Man kann vorher testen, ob die eigene Kamera geeignet ist, indem man sich die LED einer Fernbedienung in der Vorschau der Kamera ansieht.</p>
+		</div>
+</li>
+</ul>
+</li>
+		<li class="comment odd alt thread-even depth-1 clearfix" id="comment-59939">
+		<div id="div-comment-59939" class="clearfix comment-container">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/6232fd381d3e4339cb494e52332a7564?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname">Lukas</span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-59939">
+		25. Juni 2016 at 18:13</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=59939#respond' onclick='return addComment.moveForm("comment-59939", "59939", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Ja richtig rum und mit handcam gesehen dass da nix passiert.<br />
+Vorwiderstand hab ich auch 39 Ohm genommen.</p>
+		</div>
+<ul class='children'>
+		<li class="comment byuser comment-author-admin bypostauthor even depth-2 clearfix" id="comment-60030">
+		<div id="div-comment-60030" class="clearfix comment-container bypostauthor">
+		<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/bb0098fcc21eb685f681207c180ed189?s=55&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D55&amp;r=G' class='avatar avatar-55 photo' height='55' width='55' />		<span class="authorname"><a href='http://www.hobby-garten-blog.de/heiner-otterstedt' rel='external' class='url'>Heiner</a></span>
+		</div>
+				<div class="comment-meta commentmetadata">
+		<a href="http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#comment-60030">
+		7. Juli 2016 at 07:51</a>
+        <span class="comment-reply-link"><a class='comment-reply-link' href='/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php?replytocom=60030#respond' onclick='return addComment.moveForm("comment-60030", "60030", "respond", "424")'> &middot; Antwort</a></span>		 
+		</div>
+		<p>Hmm, da f&#228;llt mir erst mal nix ein. Evtl. irgendein Fl&#252;chtigkeitsfehler oder ein Defekt der LED. Teste doch mal, ob Dein Aufbau funktioniert, wenn Du ihn mit dem Blink-Beispiel (an Pin 13) ansteuerst.</p>
+		</div>
+</li>
+</ul>
+</li>
+	
+	</ul>
+	<!-- / Comment List -->
+
+	
+
+
+
+			
+		<!-- Comment Form -->
+		<div id="respond">
+		
+		<a name="commentform"></a><!-- named anchor for skip links -->
+		<h3 class="reply">Leave a Reply</h3>
+	
+		<div id="cancel-comment-reply">
+		<a rel="nofollow" id="cancel-comment-reply-link" href="/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php#respond" style="display:none;">Cancel</a>		</div>
+	
+		<form action="http://www.hobby-werkstatt-blog.de/wp-comments-post.php"
+        method="post" id="commentform">
+
+				
+			<p>
+			<input class="text author" type="text" name="author" id="author" value="" size="30" tabindex="1" />&nbsp;
+			<label for="author"> <strong>
+            Name </strong>(required)</label>
+			</p>
+
+			<p>
+			<input class="text email" type="text" name="email" id="email" value="" size="30" tabindex="2" />&nbsp;
+			<label for="email"> <strong>
+            Mail</strong> (will not be published) (required)</label>
+			</p>
+
+			<p>
+			<input class="text url" type="text" name="url" id="url" value="" size="30" tabindex="3" />&nbsp;
+			<label for="url">
+            Website</label>
+			</p>
+			
+			
+						<p class="thesetags clearfix">
+                You can use <a class="xhtmltags" href="#" onclick="return false;">these HTML tags</a></p>
+				<div class="xhtml-tags"><p><code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt;                 </code></p></div>
+
+			
+		<!-- Comment Textarea -->
+		<p><textarea name="comment" id="comment" rows="10" cols="10" tabindex="4"></textarea></p>
+				
+		<!-- Submit -->
+		<p><input name="submit" type="submit" class="button" id="submit"
+        tabindex="5" value="Submit Comment" />
+		<input type='hidden' name='comment_post_ID' value='424' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>
+		
+		</form>
+		</div><!-- / respond -->
+		<!-- / Comment Form -->
+
+		
+
+		
+			
+
+
+
+</td>
+<!-- / Main Column -->
+
+
+<!-- Right Sidebar -->
+<td id="right">
+
+	<div id="text-2" class="widget widget_text"><div class="widget-title"><h3>Willkommen in der Werkstatt!</h3></div>			<div class="textwidget"><div>
+<div style="float: right; margin-left: 1em; border:0" >
+<a href="http://www.hobby-werkstatt-blog.de/feed">
+  <img style="border: 0px solid ; width: 64px; height: 64px;" alt="Hobby-Werkstatt Feed" src="http://www.hobby-werkstatt-blog.de/ho-images/feed.gif" title="Hobby-Werkstatt Feed"/>
+</a>
+</div>
+<div align="justify">
+<p>Hier kannst Du mitlesen, woran ich in meiner Freizeit gerade so herum bastle. Im Moment ist es zum Beispiel vorwiegend das Projekt <a href="http://www.hobby-werkstatt-blog.de/category/miranda">Miranda</a> - ein 12" Ritchey Chrétien Cassegrain Teleskop. Du kannst neue Beiträge abonnieren indem du auf das gelbe Symbol klickst.
+</div>
+</div>
+
+
+</div>
+		</div><div id="text-5" class="widget widget_text"><div class="widget-title"><h3>Navigation, beliebte Artikel</h3></div>			<div class="textwidget"><ul>
+<li><strong><a href="http://www.hobby-werkstatt-blog.de/">Startseite</a></strong></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/impressum.html">Impressum</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/garten/132-gartenhaus-selbstbau.php">Bilder vom Gartenhaus Selbstbau</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/tipps-und-tricks/121-tv-fernbedienung-als-fernausloeser-fuer-nikon-kameras.php">TV-Fernbedienung als Fernauslöser</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/amateur-telescope-making/183-mit-der-oberfraese-kreise-ausschneiden.php">Mit der Oberfräse Kreise ausschneiden</a>
+<li><a href="http://www.hobby-werkstatt-blog.de/amateur-telescope-making/107-kreuztisch.php">Der neue Kreuztisch</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/werkzeug/93-umbau-der-tischbohrmaschine.php">Umbau der Tischbohrmaschine</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/amateur-telescope-making/80-der-laterale-drahttest-fuer-einsteiger.php">Der laterale Drahttest für Einsteiger</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/werkzeug/59-werkzeug-vom-discounter.php">Gewindeschneider vom Discounter?</a></li>
+<li><a href="http://www.hobby-werkstatt-blog.de/amateur-telescope-making/6-reparatur-am-okularauszug-meines-neuen-vixen-80l.php">Reparatur am Okularauszug</a></li>
+</ul>
+</div>
+		</div><div id="text-7" class="widget widget_text"><div class="widget-title"><h3>Kategorien</h3></div>			<div class="textwidget"><a href="http://www.hobby-werkstatt-blog.de/category/amateur-telescope-making" title="Alle unter Amateur Telescope Making abgelegten Beiträge ansehen">Amateur Telescope Making</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/blafasel" title="Alle unter Blafasel abgelegten Beiträge ansehen">Blafasel</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/feinschliff" title="Alle unter Feinschliff abgelegten Beiträge ansehen">Feinschliff</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/flohmarkt" title="Alle unter Flohmarkt abgelegten Beiträge ansehen">Flohmarkt</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/garten" title="Alle unter Garten abgelegten Beiträge ansehen">Garten</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/grobschliff" title="Alle unter Grobschliff abgelegten Beiträge ansehen">Grobschliff</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/links" title="Alle unter Links abgelegten Beiträge ansehen">Links</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/miranda" title="Alle unter Miranda abgelegten Beiträge ansehen">Miranda</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/optischer-test" title="Alle unter Optischer Test abgelegten Beiträge ansehen">Optischer Test</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/software" title="Alle unter Software abgelegten Beiträge ansehen">Software</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/tipps-und-tricks" title="Alle unter Tipps und Tricks abgelegten Beiträge ansehen">Tipps und Tricks</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/umfragen" title="Alle unter Umfragen abgelegten Beiträge ansehen">Umfragen</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/video" title="Alle unter Video abgelegten Beiträge ansehen">Video</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/vixen-80l" title="Alle unter Vixen 80L abgelegten Beiträge ansehen">Vixen 80L</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/vixen-super-polaris" title="Alle unter Vixen Super Polaris abgelegten Beiträge ansehen">Vixen Super Polaris</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/werkzeug" title="Alle unter Werkzeug abgelegten Beiträge ansehen">Werkzeug</a> ·
+<a href="http://www.hobby-werkstatt-blog.de/category/wheel-horse" title="Alle unter Wheel Horse abgelegten Beiträge ansehen">Wheel Horse</a><br /></div>
+		</div><div id="search-2" class="widget widget_search"><form method="get" class="searchform" action="http://www.hobby-werkstatt-blog.de/">
+<table class="searchform" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td class="searchfield">
+<input type="text" class="text inputblur" value="" name="s" />
+</td>
+<td class="searchbutton">
+<input name="submit" value="Search" type="image" src="http://www.hobby-werkstatt-blog.de/wp-content/themes/atahualpa351/images/magnifier2-gray.gif" style="display: block; border:none; padding: 0 0 0 5px; margin: 0;" />
+</td>
+</tr></table>
+</form></div><div id="text-1" class="widget widget_text"><div class="widget-title"><h3>Licence</h3></div>			<div class="textwidget"><!--Creative Commons License--><a href="http://creativecommons.org/licenses/by-sa/2.0/de/" rel="license"><img alt="Creative Commons License" style="border-width: 0; float: left; margin-right: 1em" src="http://creativecommons.org/images/public/somerights20.png"/></a>Der Inhalt dieses Blogs steht unter einer <a href="http://creativecommons.org/licenses/by-sa/2.0/de/" rel="license">Creative Commons-Lizenz</a>. Dass heisst, du darfst den Inhalt vervielfältigen, verbreiten und öffentlich aufführen sowie Bearbeitungen anfertigen. Bedingung ist, dass du den Namen des Autors nennst und dass die Weitergabe unter gleichen Bedingungen erfolgt.<!--/Creative Commons License--><!-- <rdf:RDF xmlns="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<Work rdf:about="">
+		<license rdf:resource="http://creativecommons.org/licenses/by-sa/2.0/de/" />
+	<dc:type rdf:resource="http://purl.org/dc/dcmitype/Text" />
+	</Work>
+	<License rdf:about="http://creativecommons.org/licenses/by-sa/2.0/de/"><permits rdf:resource="http://web.resource.org/cc/Reproduction"/><permits rdf:resource="http://web.resource.org/cc/Distribution"/><requires rdf:resource="http://web.resource.org/cc/Notice"/><requires rdf:resource="http://web.resource.org/cc/Attribution"/><permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/><requires rdf:resource="http://web.resource.org/cc/ShareAlike"/></License></rdf:RDF> -->
+<br/>
+</div>
+		</div>
+</td>
+<!-- / Right Sidebar -->
+
+</tr>
+<!-- / Main Body -->
+<tr>
+
+<!-- Footer -->
+<td id="footer" colspan="2">
+
+    <p>
+    <div id="footer" class="bfa_widget_area"></div>    </p>
+    
+    
+    
+</td>
+<!-- / Footer -->
+
+</tr>
+</table><!-- / layout -->
+</div><!-- / container -->
+</div><!-- / wrapper -->
+</body>
+</html>

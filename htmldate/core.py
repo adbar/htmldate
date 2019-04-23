@@ -65,6 +65,7 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'author') or contains(@class, 'field-content')]",
 ]
 # "//*[contains(@class, 'fa-clock-o')]",
+# "//*[contains(@id, 'metadata')]",
 
 ## Plausible dates
 # earliest possible year to take into account (inclusive)
@@ -279,7 +280,8 @@ def try_ymd_date(string, outputformat, parser):
     # discard on formal criteria
     if string is None or len(list(filter(str.isdigit, string))) < 4:
         return None
-    if re.match(r'[0-9]{2}:[0-9]{2}:[0-9]{2}$', string):
+    # just time, not a date
+    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string): # :[0-9]{2}$
         return None
 
     # much faster
@@ -979,7 +981,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     logger.debug('html cleaned')
 
     # date regex timestamp rescue
-    match = re.search(r'"datePublished":"([0-9]{4}-[0-9]{2}-[0-9]{2})', htmlstring)
+    match = re.search(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})', htmlstring)
     if match and date_validator(match.group(1), '%Y-%m-%d') is True:
         logger.debug('JSON time found: %s', match.group(0))
         return convert_date(match.group(1), '%Y-%m-%d', outputformat)
