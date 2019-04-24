@@ -6,11 +6,6 @@ Module bundling all functions needed to determine the date of HTML strings or LX
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
-# compatibility
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-# from future import standard_library
-# standard_library.install_aliases()
 
 # standard
 import datetime
@@ -36,7 +31,6 @@ from .download import fetch_url
 
 ## TODO:
 # manually set latestdate, latestdate != TODAY
-# speed benchmark
 # from og:image or <img>?
 # MODIFIED vs CREATION date switch?
 # .lower() in tags and attributes?
@@ -103,14 +97,16 @@ cleaner.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'pictu
 TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
 
 ## REGEX cache
-american_english = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})')
-british_english = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})')
+american_english = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
+british_english = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})') # ([0-9]{2,4})
+english_date = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 general_textsearch = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
 german_textsearch = re.compile(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})')
 complete_url = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
 partial_url = re.compile(r'/([0-9]{4})/([0-9]{2})/')
 ymd_pattern = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 datestub_pattern = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+json_pattern = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 # use of regex module for speed
 german_pattern = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 timestamp_pattern = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
@@ -200,28 +196,35 @@ def regex_parse_de(string):
 #@profile
 def regex_parse_en(string):
     """Try full-text parse for English date elements"""
-    ## TODO:
-    # 3/14/2016
-    # https://github.com/vi3k6i5/flashtext
-    # general search
-    if not general_textsearch.search(string):
-        return None
-    # American English
-    match = american_english.search(string)
+    # https://github.com/vi3k6i5/flashtext ?
+    # numbers
+    match = english_date.search(string)
     if match:
         day = match.group(2)
-        month = TEXT_MONTHS[match.group(1)]
-        year = match.group(4)
-    # British English
+        month = match.group(1)
+        year = match.group(3)
     else:
-        match = british_english.search(string)
-        if match:
-            day = match.group(1)
-            month = TEXT_MONTHS[match.group(4)]
-            year = match.group(5)
-        else:
+        # general search
+        if not general_textsearch.search(string):
             return None
+        # American English
+        match = american_english.search(string)
+        if match:
+            day = match.group(2)
+            month = TEXT_MONTHS[match.group(1)]
+            year = match.group(4)
+        # British English
+        else:
+            match = british_english.search(string)
+            if match:
+                day = match.group(1)
+                month = TEXT_MONTHS[match.group(4)]
+                year = match.group(5)
+            else:
+                return None
     # process and return
+    if len(year) == 2:
+        year = '20' + year
     dateobject = datetime.date(int(year), int(month), int(day))
     logger.debug('English text parse: %s', dateobject)
     return dateobject
@@ -283,6 +286,9 @@ def try_ymd_date(string, outputformat, parser):
     # just time, not a date
     if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string): # :[0-9]{2}$
         return None
+    # just a year, not a date
+    if re.match(r'\D*[0-9]{4}\D*$', string): # :[0-9]{2}$
+        return None
 
     # much faster
     if string[0:4].isdigit():
@@ -305,7 +311,7 @@ def try_ymd_date(string, outputformat, parser):
         return None
 
     # send to dateparser
-    # logger.debug('send to dateparser: %s', string)
+    logger.debug('send to dateparser: %s', string)
     try:
         target = parser.get_date_data(string)['date_obj']
     # tzinfo.py line 323: loc_dt = dt + delta
@@ -398,7 +404,7 @@ def extract_partial_url_date(testurl, outputformat):
 
 
 #@profile
-def examine_date_elements(tree, expression, outputformat, parser, extensive_search=True):
+def examine_date_elements(tree, expression, outputformat, parser):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -418,27 +424,16 @@ def examine_date_elements(tree, expression, outputformat, parser, extensive_sear
             continue
         # try the beginning of the string
         else:
+            # shorten
             toexamine = textcontent[:48]
+            # trim non-digits at the end of the string
+            toexamine = re.sub(r'\D+$', '', toexamine)
+            #toexamine = re.sub(r'\|.+$', '', toexamine)
             # more than 4 digits required
-            if len(list(filter(str.isdigit, toexamine))) < 4:
+            if len(toexamine) < 7 or len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            customresult = custom_parse(toexamine, outputformat)
-            if customresult is not None:
-                return customresult
-            # try with all the text
-            if extensive_search is True:
-                logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
-                logger.debug('analyzing (string): %s', toexamine)
-                attempt = try_ymd_date(toexamine, outputformat, parser)
-                if attempt is not None:
-                    return attempt
-            # try a shorter first segment
-            toexamine = re.sub(r'\|.+$', '', toexamine)
-            toexamine = re.sub(r'[^0-9]+$', '', toexamine)
-            # toexamine = re.sub(r'[^0-9\./-]+', '', toexamine)
-            if len(toexamine) < 7:
-                continue
-            logger.debug('re-analyzing (shortened): %s', toexamine)
+            logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
+            logger.debug('analyzing (string): %s', toexamine)
             attempt = try_ymd_date(toexamine, outputformat, parser)
             if attempt is not None:
                 return attempt
@@ -538,7 +533,7 @@ def examine_header(tree, outputformat, parser):
 #@profile
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
-    ## TODO: slow
+    ## slow
     allmatches = pattern.findall(htmlstring)
     occurrences = Counter(allmatches)
     toremove = set()
@@ -861,7 +856,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     tree, htmlstring = load_html(htmlobject)
-    find_date.extensive_search = extensive_search
+    # find_date.extensive_search = extensive_search
     logger.debug('starting')
 
     # safety
@@ -888,7 +883,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
 
     # <abbr>
     elements = tree.xpath('//abbr')
-    if elements is not None and len(elements) > 0:
+    if elements is not None: # and len(elements) > 0:
         reference = 0
         for elem in elements:
             # data-utime (mostly Facebook)
@@ -923,19 +918,19 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 return converted
         # try rescue in abbr content
         else:
-            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser, extensive_search)
+            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser)
             if dateresult is not None and date_validator(dateresult, outputformat) is True:
                 return dateresult # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr, outputformat, dparser, extensive_search)
+        dateresult = examine_date_elements(tree, expr, outputformat, dparser)
         if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
 
     # <time>
     elements = tree.xpath('//time')
-    if elements is not None and len(elements) > 0:
+    if elements is not None: # and len(elements) > 0:
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
@@ -981,14 +976,14 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
     logger.debug('html cleaned')
 
     # date regex timestamp rescue
-    match = re.search(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})', htmlstring)
-    if match and date_validator(match.group(1), '%Y-%m-%d') is True:
-        logger.debug('JSON time found: %s', match.group(0))
-        return convert_date(match.group(1), '%Y-%m-%d', outputformat)
-    match = timestamp_pattern.search(htmlstring)
-    if match and date_validator(match.group(1), '%Y-%m-%d') is True:
-        logger.debug('time regex found: %s', match.group(0))
-        return convert_date(match.group(1), '%Y-%m-%d', outputformat)
+    json_match = json_pattern.search(htmlstring)
+    if json_match and date_validator(json_match.group(1), '%Y-%m-%d') is True:
+        logger.debug('JSON time found: %s', json_match.group(0))
+        return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
+    timestamp_match = timestamp_pattern.search(htmlstring)
+    if timestamp_match and date_validator(timestamp_match.group(1), '%Y-%m-%d') is True:
+        logger.debug('time regex found: %s', timestamp_match.group(0))
+        return convert_date(timestamp_match.group(1), '%Y-%m-%d', outputformat)
 
     # precise German patterns
     de_match = german_pattern.search(htmlstring)
