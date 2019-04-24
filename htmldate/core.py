@@ -13,7 +13,6 @@ import logging
 import re
 import time
 
-# from codecs import open
 from collections import Counter
 from io import StringIO # Python 3
 
@@ -36,7 +35,6 @@ from .download import fetch_url
 # .lower() in tags and attributes?
 # time-ago datetime= relative-time datetime=
 # German/English switch
-
 
 
 ## INIT
@@ -118,17 +116,14 @@ def date_validator(date_input, outputformat):
     # try if date can be parsed using chosen outputformat
     if not isinstance(date_input, datetime.date):
         # speed-up
-        if outputformat == '%Y-%m-%d':
-            try:
+        try:
+            if outputformat == '%Y-%m-%d':
                 dateobject = datetime.datetime(int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10]))
-            except ValueError:
-                return False
-        # default
-        else:
-            try:
+            # default
+            else:
                 dateobject = datetime.datetime.strptime(date_input, outputformat)
-            except ValueError:
-                return False
+        except ValueError:
+            return False
     else:
         dateobject = date_input
     # basic year validation
@@ -279,6 +274,7 @@ def custom_parse(string, outputformat):
 
 #@profile
 def external_date_parser(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
+    """Use the dateparser module"""
     logger.debug('send to dateparser: %s', string)
     try:
         target = parser.get_date_data(string)['date_obj']
@@ -324,7 +320,7 @@ def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings
     # slow but extensive search
     if find_date.extensive_search is True:
         # send to dateparser
-        dateparser_result = external_date_parser(string, outputformat)
+        dateparser_result = external_date_parser(string, outputformat, parser)
         if dateparser_result is not None:
             return dateparser_result
     # catchall
@@ -856,11 +852,11 @@ def load_html(htmlobject):
 
 
 #@profile
-def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparser=dateparser.DateDataParser(settings=PARSERCONFIG), url=None):
+def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     tree, htmlstring = load_html(htmlobject)
-    # find_date.extensive_search = extensive_search
+    find_date.extensive_search = extensive_search
     logger.debug('starting')
 
     # safety
@@ -956,7 +952,6 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 logger.debug('time/datetime found: %s', elem.text)
                 reference = compare_reference(reference, elem.text, outputformat)
             # else...
-            # ...
         # return
         if reference > 0:
             # convert and return

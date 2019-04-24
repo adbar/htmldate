@@ -8,7 +8,6 @@ import logging
 import os
 import re
 import sys
-import time
 
 import dateparser
 
@@ -86,7 +85,7 @@ def load_mock_page(url):
     return htmlstring
 
 
-def test_load():
+def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert htmldate.load_html(123) == (None, None)
     assert htmldate.load_html('<html><body>XYZ</body></html>') is not None
@@ -253,7 +252,7 @@ def test_try_ymd_date():
     assert htmldate.try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # assert htmldate.try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
     assert htmldate.try_ymd_date('1.9.2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert htmldate.try_ymd_date('1/9/2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert htmldate.try_ymd_date('1/9/17', OUTPUTFORMAT, PARSER) == '2017-01-09' # assuming MDY format
     assert htmldate.try_ymd_date('201709011234', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # other output format
     assert htmldate.try_ymd_date('1.9.2017', '%d %B %Y', PARSER) == '01 September 2017'
@@ -276,6 +275,7 @@ def test_regex_parse_en():
     '''test date extraction using rules and regular expressions'''
     assert htmldate.regex_parse_en('Tuesday, March 26th, 2019') is not None
     assert htmldate.regex_parse_en('3rd Tuesday in March') is None
+    assert htmldate.regex_parse_en('3/14/2016') is not None
 
 
 def test_url():
@@ -360,7 +360,7 @@ if __name__ == '__main__':
     test_output_format_validator()
 
     # function-level
-    test_load()
+    test_input()
     test_date_validator()
     test_search_pattern()
     test_try_ymd_date()
