@@ -278,39 +278,7 @@ def custom_parse(string, outputformat):
 
 
 #@profile
-def try_ymd_date(string, outputformat, parser):
-    """Use dateparser to parse the assumed date expression"""
-    # discard on formal criteria
-    if string is None or len(list(filter(str.isdigit, string))) < 4:
-        return None
-    # just time, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string): # :[0-9]{2}$
-        return None
-    # just a year, not a date
-    if re.match(r'\D*[0-9]{4}\D*$', string): # :[0-9]{2}$
-        return None
-
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601
-        try:
-            result = ciso8601.parse_datetime_as_naive(string)
-            if date_validator(result, outputformat) is True:
-                logger.debug('ciso8601 result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
-        except ValueError:
-            logger.debug('ciso8601 error: %s', string)
-
-    # faster
-    customresult = custom_parse(string, outputformat)
-    if customresult is not None:
-        return customresult
-
-    if find_date.extensive_search is False:
-        return None
-
-    # send to dateparser
+def external_date_parser(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
     logger.debug('send to dateparser: %s', string)
     try:
         target = parser.get_date_data(string)['date_obj']
@@ -323,12 +291,48 @@ def try_ymd_date(string, outputformat, parser):
         if date_validator(target, outputformat) is True:
             datestring = datetime.date.strftime(target, outputformat)
             return datestring
+    return None
+
+
+#@profile
+def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
+    """Use a series of heuristics and rules to parse a potential date expression"""
+    # discard on formal criteria
+    if string is None or len(list(filter(str.isdigit, string))) < 4:
+        return None
+    # just time, not a date
+    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string): # :[0-9]{2}$
+        return None
+    # just a year, not a date
+    if re.match(r'\D*[0-9]{4}\D*$', string): # :[0-9]{2}$
+        return None
+    # much faster
+    if string[0:4].isdigit():
+        # try speedup with ciso8601
+        try:
+            result = ciso8601.parse_datetime_as_naive(string)
+            if date_validator(result, outputformat) is True:
+                logger.debug('ciso8601 result: %s', result)
+                converted = result.strftime(outputformat)
+                return converted
+        except ValueError:
+            logger.debug('ciso8601 error: %s', string)
+    # faster
+    customresult = custom_parse(string, outputformat)
+    if customresult is not None:
+        return customresult
+    # slow but extensive search
+    if find_date.extensive_search is True:
+        # send to dateparser
+        dateparser_result = external_date_parser(string, outputformat)
+        if dateparser_result is not None:
+            return dateparser_result
     # catchall
     return None
 
 
 #@profile
-def compare_reference(reference, expression, outputformat, dparser):
+def compare_reference(reference, expression, outputformat):
     """Compare the date expression to a reference"""
     # trim
     temptext = expression.strip()
@@ -339,7 +343,7 @@ def compare_reference(reference, expression, outputformat, dparser):
         return reference
     # try the beginning of the string
     textcontent = textcontent[:48]
-    attempt = try_ymd_date(textcontent, outputformat, dparser)
+    attempt = try_ymd_date(textcontent, outputformat)
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         if timestamp > reference:
@@ -404,7 +408,7 @@ def extract_partial_url_date(testurl, outputformat):
 
 
 #@profile
-def examine_date_elements(tree, expression, outputformat, parser):
+def examine_date_elements(tree, expression, outputformat):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -434,7 +438,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
                 continue
             logger.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
             logger.debug('analyzing (string): %s', toexamine)
-            attempt = try_ymd_date(toexamine, outputformat, parser)
+            attempt = try_ymd_date(toexamine, outputformat)
             if attempt is not None:
                 return attempt
     # catchall
@@ -442,7 +446,7 @@ def examine_date_elements(tree, expression, outputformat, parser):
 
 
 #@profile
-def examine_header(tree, outputformat, parser):
+def examine_header(tree, outputformat):
     """Parse header elements to find date cues"""
     headerdate = None
     reserve = None
@@ -460,11 +464,11 @@ def examine_header(tree, outputformat, parser):
                 # "og:" for OpenGraph http://ogp.me/
                 if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
                 # modified: override published_time
                 elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                     logger.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_ymd_date(elem.get('content'), outputformat, parser)
+                    attempt = try_ymd_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
             # name attribute
@@ -478,26 +482,26 @@ def examine_header(tree, outputformat, parser):
                 # date
                 elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'last-modified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
                     logger.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
             elif headerdate is None and 'pubdate' in elem.attrib:
                 if elem.get('pubdate').lower() == 'pubdate':
                     logger.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
             # other types # itemscope?
             elif headerdate is None and 'itemprop' in elem.attrib:
                 if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear') and headerdate is None:
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('datetime'), outputformat, parser)
+                        headerdate = try_ymd_date(elem.get('datetime'), outputformat)
                     elif 'content' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+                        headerdate = try_ymd_date(elem.get('content'), outputformat)
                 # override
                 elif elem.get('itemprop').lower() == 'datemodified':
                     logger.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('datetime'), outputformat, parser)
+                        attempt = try_ymd_date(elem.get('datetime'), outputformat)
                     elif 'content' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('content'), outputformat, parser)
+                        attempt = try_ymd_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
                 # reserve with copyrightyear
@@ -511,7 +515,7 @@ def examine_header(tree, outputformat, parser):
             elif headerdate is None and 'http-equiv' in elem.attrib:
                 if elem.get('http-equiv').lower() in ('date', 'last-modified') and headerdate is None:
                     logger.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, parser)
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
             #else:
             #    logger.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
 
@@ -877,7 +881,7 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
             return dateresult
 
     # first, try header
-    pagedate = examine_header(tree, outputformat, dparser)
+    pagedate = examine_header(tree, outputformat)
     if pagedate is not None and date_validator(pagedate, outputformat) is True:
         return pagedate
 
@@ -903,12 +907,12 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         logger.debug('abbr published-title found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat, dparser)
+                        reference = compare_reference(reference, trytext, outputformat)
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
                         logger.debug('abbr published found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat, dparser)
+                        reference = compare_reference(reference, trytext, outputformat)
         # convert and return
         if reference > 0:
             dateobject = datetime.datetime.fromtimestamp(reference)
@@ -918,13 +922,13 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 return converted
         # try rescue in abbr content
         else:
-            dateresult = examine_date_elements(tree, '//abbr', outputformat, dparser)
+            dateresult = examine_date_elements(tree, '//abbr', outputformat)
             if dateresult is not None and date_validator(dateresult, outputformat) is True:
                 return dateresult # break
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr, outputformat, dparser)
+        dateresult = examine_date_elements(tree, expr, outputformat)
         if dateresult is not None and date_validator(dateresult, outputformat) is True:
             return dateresult # break
 
@@ -940,17 +944,17 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', dparse
                 if 'class' in elem.attrib:
                     if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
                         logger.debug('time/datetime found: %s', elem.get('datetime'))
-                        reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
+                        reference = compare_reference(reference, elem.get('datetime'), outputformat)
                         if reference > 0:
                             break
                 # datetime attribute
                 else:
                     logger.debug('time/datetime found: %s', elem.get('datetime'))
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat, dparser)
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat)
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 logger.debug('time/datetime found: %s', elem.text)
-                reference = compare_reference(reference, elem.text, outputformat, dparser)
+                reference = compare_reference(reference, elem.text, outputformat)
             # else...
             # ...
         # return
