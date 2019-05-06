@@ -296,11 +296,8 @@ def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings
     # discard on formal criteria
     if string is None or len(list(filter(str.isdigit, string))) < 4:
         return None
-    # just time, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string): # :[0-9]{2}$
-        return None
-    # just a year, not a date
-    if re.match(r'\D*[0-9]{4}\D*$', string): # :[0-9]{2}$
+    # just time/single year, not a date
+    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
         return None
     # much faster
     if string[0:4].isdigit():
@@ -632,10 +629,8 @@ def search_pattern(htmlstring, pattern, catch, yearpat):
 def search_page(htmlstring, outputformat):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
-    # pagedate = None
     # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
-    # speed profiler
 
     # copyright symbol
     logger.debug('looking for copyright/footer information')
