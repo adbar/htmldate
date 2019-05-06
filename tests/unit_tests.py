@@ -126,6 +126,7 @@ def test_exact_date():
     assert htmldate.find_date('<html><head><meta itemprop="datecreated" datetime="2018-02-02"/></head><body></body></html>') == '2018-02-02'
     assert htmldate.find_date('<html><head><meta itemprop="datemodified" content="2018-02-04"/></head><body></body></html>') == '2018-02-04'
     assert htmldate.find_date('<html><head><meta http-equiv="last-modified" content="2018-02-05"/></head><body></body></html>') == '2018-02-05'
+    assert htmldate.find_date('<html><head><meta name="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
     # other format
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
 
@@ -266,9 +267,11 @@ def test_try_ymd_date():
 # def test_header():
 #     assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
 
-#def test_compare_reference():
-#    '''test comparison function'''
-#    assert htmldate.compare_reference('') is not None
+
+def test_compare_reference():
+    '''test comparison function'''
+    assert htmldate.compare_reference(0, 'AAAA', OUTPUTFORMAT) == 0
+    assert htmldate.compare_reference(0, '2018-02-01', OUTPUTFORMAT) == 1517439600.0
 
 
 def test_regex_parse_en():
@@ -342,8 +345,7 @@ def test_search_html():
 def test_cli():
     '''test the command-line interface'''
     assert cli.examine(' ', True) is None
-    assert cli.examine('0'*int(10e6), True) is None
-    # assert cli.examine('<html><body><span class="entry-date">July 12th, 2016</span></body></html>', True) == '2016-07-12'
+    assert cli.examine('0'*int(10e7), True) is None
     assert cli.examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
     assert cli.examine('<html><body>2016-07-12</body></html>', False) == '2016-07-12'
 
@@ -351,6 +353,8 @@ def test_cli():
 def test_load():
     '''test the download utility'''
     assert download.fetch_url('https://www.iana.org/404') is None
+    assert download.fetch_url('https://www.google.com/blank.html') is None
+    # print(len(download.fetch_url('https://blank.org').text))
     assert htmldate.load_html('https://example.org/') is not None
 
 
@@ -365,6 +369,7 @@ if __name__ == '__main__':
     test_search_pattern()
     test_try_ymd_date()
     test_convert_date()
+    test_compare_reference()
     test_regex_parse_en()
 
     # module-level
