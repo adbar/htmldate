@@ -14,3 +14,7 @@ build/
 .tox/
 .cache/
 .coverage
+
+# profiling
+*.tmp
+*.lprof

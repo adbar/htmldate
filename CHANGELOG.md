@@ -1,5 +1,8 @@
 ## Changelog
 
+### version 0.5.0
+- significant speed-up after code profiling
+- better support of free text detection (DE/EN)
 
 ### version 0.4.1
 - fixed lxml dependency
