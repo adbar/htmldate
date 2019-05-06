@@ -271,7 +271,7 @@ def test_try_ymd_date():
 def test_compare_reference():
     '''test comparison function'''
     assert htmldate.compare_reference(0, 'AAAA', OUTPUTFORMAT) == 0
-    assert htmldate.compare_reference(0, '2018-02-01', OUTPUTFORMAT) == 1517439600.0
+    assert 1517400000 < htmldate.compare_reference(0, '2018-02-01', OUTPUTFORMAT) < 1517500000
 
 
 def test_regex_parse_en():
