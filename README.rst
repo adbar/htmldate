@@ -57,6 +57,8 @@ A basic command-line interface is included:
 
 .. code-block:: bash
 
+    $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
+    '2016-12-23'
     $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
     '2016-12-23'
 

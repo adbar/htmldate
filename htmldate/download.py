@@ -16,21 +16,17 @@ import requests
 
 
 
-
 ## INIT
 logger = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 
 
 def fetch_url(url): # custombool?
     """ Fetch page using requests/urllib3
     Args:
         URL: URL of the page to fetch
-
     Returns:
         request object (headers + body).
-
     Raises:
         Nothing.
     """
@@ -64,6 +60,6 @@ def fetch_url(url): # custombool?
         elif len(rget.text) > 20000000:
             logging.error('file too large: %s %s', url, len(rget.text))
         else:
-            return rget
+            return rget.text
     # catchall
     return None

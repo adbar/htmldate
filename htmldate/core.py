@@ -824,9 +824,9 @@ def load_html(htmlobject):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
             logger.info('URL detected, downloading: %s', htmlobject)
-            rget = fetch_url(htmlobject)
-            if rget is not None:
-                htmlstring = rget.text
+            htmltext = fetch_url(htmlobject)
+            if htmltext is not None:
+                htmlstring = htmltext
         # copy string
         else:
             htmlstring = htmlobject

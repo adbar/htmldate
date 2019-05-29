@@ -38,6 +38,7 @@ def main():
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     argsparser.add_argument("-s", "--safe", help="safe mode: markup search only", action="store_true")
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)")
+    argsparser.add_argument("-u", "--URL", help="custom URL download")
     args = argsparser.parse_args()
 
     if args.verbose:
@@ -45,13 +46,20 @@ def main():
 
     # process input on STDIN
     if not args.inputfile:
+        # URL as input
+        if args.URL:
+            htmlstring = fetch_url(args.URL)
+            if htmlstring is None:
+                sys.stderr.write('# ERROR no valid result for url: ' + args.URL + '\n')
+                sys.exit(1)
         # unicode check
-        try:
-            htmlstring = sys.stdin.read()
-        except UnicodeDecodeError as err:
-            # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
-            sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
-            sys.exit(1)
+        else:
+            try:
+                htmlstring = sys.stdin.read()
+            except UnicodeDecodeError as err:
+                # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
+                sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
+                sys.exit(1)
 
         result = examine(htmlstring, args.safe)
         if result is not None:
@@ -62,9 +70,9 @@ def main():
         with open(args.inputfile, 'r', 'utf-8') as inputfile:
             for line in inputfile:
                 url = line.strip()
-                rget = fetch_url(url)
+                htmltext = fetch_url(url)
                 if rget is not None:
-                    result = examine(rget.text, args.safe)
+                    result = examine(htmltext, args.safe)
                     if result is not None:
                         sys.stdout.write(result + '\t' + url + '\n')
                     else:
