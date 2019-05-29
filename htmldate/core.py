@@ -237,7 +237,10 @@ def custom_parse(string, outputformat):
     logger.debug('custom parse test: %s', string)
     # '201709011234' not covered by dateparser # regex was too slow
     if string[0:8].isdigit():
-        candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
+        try:
+            candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
+        except ValueError:
+            return None
         if date_validator(candidate, '%Y-%m-%d') is True:
             logger.debug('ymd match: %s', candidate)
             converted = convert_date(candidate, '%Y-%m-%d', outputformat)
@@ -245,23 +248,31 @@ def custom_parse(string, outputformat):
     # %Y-%m-%d search
     match = ymd_pattern.search(string)
     if match:
-        candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('ymd match: %s', candidate)
-            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-            return converted
+        try:
+            candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+        except ValueError:
+            logger.debug('value error: %s', match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                logger.debug('ymd match: %s', candidate)
+                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+                return converted
     # faster than fire dateparser at once
     datestub = datestub_pattern.search(string)
     if datestub and len(datestub.group(3)) in (2, 4):
-        if len(datestub.group(3)) == 2:
-            candidate = datetime.date(int('20' + datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
-        elif len(datestub.group(3)) == 4:
-            candidate = datetime.date(int(datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
-        # test candidate
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('D.M.Y match: %s', candidate)
-            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-            return converted
+        try:
+            if len(datestub.group(3)) == 2:
+                candidate = datetime.date(int('20' + datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
+            elif len(datestub.group(3)) == 4:
+                candidate = datetime.date(int(datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
+        except ValueError:
+            logger.debug('value error: %s', datestub.group(0))
+        else:
+            # test candidate
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                logger.debug('D.M.Y match: %s', candidate)
+                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
+                return converted
     # text match
     dateobject = regex_parse_de(string)
     if dateobject is None:
@@ -987,13 +998,17 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=No
     # precise German patterns
     de_match = german_pattern.search(htmlstring)
     if de_match and len(de_match.group(3)) in (2, 4):
-        if len(de_match.group(3)) == 2:
-            candidate = datetime.date(int('20' + de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+        try:
+            if len(de_match.group(3)) == 2:
+                candidate = datetime.date(int('20' + de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+            else:
+                candidate = datetime.date(int(de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+        except ValueError:
+            logger.debug('value error: %s', de_match.group(0))
         else:
-            candidate = datetime.date(int(de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            logger.debug('precise pattern found: %s', de_match.group(0))
-            return convert_date(candidate, '%Y-%m-%d', outputformat)
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                logger.debug('precise pattern found: %s', de_match.group(0))
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # last resort
     if extensive_search is True:
