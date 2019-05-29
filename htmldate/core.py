@@ -184,7 +184,10 @@ def regex_parse_de(string):
     # second element
     secondelem = TEXT_MONTHS[match.group(2)]
     # process and return
-    dateobject = datetime.date(int(match.group(3)), int(secondelem), int(match.group(1)))
+    try:
+        dateobject = datetime.date(int(match.group(3)), int(secondelem), int(match.group(1)))
+    except ValueError:
+        return None
     logger.debug('German text parse: %s', dateobject)
     return dateobject
 
@@ -220,7 +223,10 @@ def regex_parse_en(string):
     # process and return
     if len(year) == 2:
         year = '20' + year
-    dateobject = datetime.date(int(year), int(month), int(day))
+    try:
+        dateobject = datetime.date(int(year), int(month), int(day))
+    except ValueError:
+        return None
     logger.debug('English text parse: %s', dateobject)
     return dateobject
 
