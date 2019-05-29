@@ -11,16 +11,13 @@ import argparse
 import logging
 import sys
 
-from codecs import open # python2
-
 from htmldate import find_date, fetch_url
-
 
 
 def examine(htmlstring, safebool):
     """ Generic safeguards and triggers """
     # safety check
-    if len(htmlstring) > 20000000:
+    if len(htmlstring) > 10000000:
         sys.stderr.write('# ERROR: file too large\n')
     elif len(htmlstring) < 10:
         sys.stderr.write('# ERROR: file too small\n')
@@ -32,7 +29,6 @@ def examine(htmlstring, safebool):
             result = find_date(htmlstring)
         return result
     return None
-
 
 
 def main():

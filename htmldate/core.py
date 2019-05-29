@@ -829,7 +829,6 @@ def load_html(htmlobject):
             # parse
             tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
-            # <svg>
         except UnicodeDecodeError as err:
             logger.error('unicode %s', err)
             tree = None
