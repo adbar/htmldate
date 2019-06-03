@@ -126,7 +126,10 @@ def test_exact_date():
     assert htmldate.find_date('<html><head><meta itemprop="datecreated" datetime="2018-02-02"/></head><body></body></html>') == '2018-02-02'
     assert htmldate.find_date('<html><head><meta itemprop="datemodified" content="2018-02-04"/></head><body></body></html>') == '2018-02-04'
     assert htmldate.find_date('<html><head><meta http-equiv="last-modified" content="2018-02-05"/></head><body></body></html>') == '2018-02-05'
+    assert htmldate.find_date('<html><head><meta name="Publish_Date" content="02.02.2004"/></head><body></body></html>') == '2004-02-02'
     assert htmldate.find_date('<html><head><meta name="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
+    assert htmldate.find_date('<html><head><meta pubdate="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
+    assert htmldate.find_date('<html><head><meta itemprop="DateModified" datetime="2018-02-06"/></head><body></body></html>') == '2018-02-06'
     # other format
     assert htmldate.find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
 
@@ -161,11 +164,15 @@ def test_exact_date():
     assert htmldate.find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
     assert htmldate.find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>') == '2016-11-12'
     assert htmldate.find_date('<html><body><abbr class="date-published">8.11.2016</abbr></body></html>') == '2016-11-08'
+    # valid vs. invalid data-utime
+    assert htmldate.find_date('<html><body><abbr data-utime="1438091078" class="something">A date</abbr></body></html>') == '2015-07-28'
+    assert htmldate.find_date('<html><body><abbr data-utime="143809-1078" class="something">A date</abbr></body></html>') is None
     # other format
     assert htmldate.find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), outputformat='%d %B %Y') == '09 August 2013'
 
     ## other expressions in document body
     assert htmldate.find_date('<html><body>"datePublished":"2018-01-04"</body></html>') == '2018-01-04'
+    assert htmldate.find_date('<html><body><time>2018-01-04</time></body></html>') == '2018-01-04'
     assert htmldate.find_date('<html><body>Stand: 1.4.18</body></html>') == '2018-04-01'
     assert htmldate.find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-09'
 
@@ -192,6 +199,7 @@ def test_exact_date():
     # free text
     assert htmldate.find_date('<html><body>&copy; 2017</body></html>') == '2017-01-01'
     assert htmldate.find_date('<html><body>© 2017</body></html>') == '2017-01-01'
+    assert htmldate.find_date('<html><body><p>Dieses Datum ist leider ungültig: 30. Februar 2018.</p></body></html>', extensive_search=False) is None
 
 
 def test_approximate_date():
@@ -263,22 +271,32 @@ def test_try_ymd_date():
     assert htmldate.try_ymd_date('12:00 h', OUTPUTFORMAT, PARSER) is None
 
 
-# TODO
-# def test_header():
-#     assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
+#def test_header():
+#    assert htmldate.examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
 def test_compare_reference():
     '''test comparison function'''
     assert htmldate.compare_reference(0, 'AAAA', OUTPUTFORMAT) == 0
+    assert htmldate.compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT) == 1517500000
     assert 1517400000 < htmldate.compare_reference(0, '2018-02-01', OUTPUTFORMAT) < 1517500000
+    assert htmldate.compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT) == 1517500000
 
 
-def test_regex_parse_en():
+def test_regex_parse():
     '''test date extraction using rules and regular expressions'''
+    assert htmldate.regex_parse_de('3. Dezember 2008') is not None
+    assert htmldate.regex_parse_de('33. Dezember 2008') is None
     assert htmldate.regex_parse_en('Tuesday, March 26th, 2019') is not None
     assert htmldate.regex_parse_en('3rd Tuesday in March') is None
     assert htmldate.regex_parse_en('3/14/2016') is not None
+    assert htmldate.regex_parse_en('36/14/2016') is None
+    assert htmldate.custom_parse('12122004', OUTPUTFORMAT) is None
+    assert htmldate.custom_parse('20041212', OUTPUTFORMAT) is not None
+    assert htmldate.custom_parse('1212-20-04', OUTPUTFORMAT) is None
+    assert htmldate.custom_parse('2004-12-12', OUTPUTFORMAT) is not None
+    assert htmldate.custom_parse('33.20.2004', OUTPUTFORMAT) is None
+    assert htmldate.custom_parse('12.12.2004', OUTPUTFORMAT) is not None
 
 
 def test_url():
@@ -288,6 +306,8 @@ def test_url():
     assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/2012-11-29/keine-kurzung-bei-der-jugend-klubs-konnen-vorerst-aufatmen-bvv-beschliest-haushaltsplan/') == '2012-11-29'
     assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/2012-11/keine-kurzung-bei-der-jugend-klubs-konnen-vorerst-aufatmen-bvv-beschliest-haushaltsplan/') is None
     assert htmldate.find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/6666-42-87/') is None
+    assert htmldate.extract_partial_url_date('https://testsite.org/2018/01/test', '%Y-%m-%d') == '2018-01-01'
+    assert htmldate.extract_partial_url_date('https://testsite.org/2018/33/test', '%Y-%m-%d') is None
 
 
 def test_approximate_url():
@@ -338,7 +358,6 @@ def test_search_html():
     assert htmldate.search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
     assert htmldate.search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-01-01'
     assert htmldate.search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT) == '2018-01-01'
-    # assert htmldate.search_page('<html><body><p>Next © Copyright 2019</p></body></html>', OUTPUTFORMAT) == '2019-01-01'
 
 
 
@@ -370,7 +389,8 @@ if __name__ == '__main__':
     test_try_ymd_date()
     test_convert_date()
     test_compare_reference()
-    test_regex_parse_en()
+    test_regex_parse()
+    #test_header()
 
     # module-level
     test_no_date()
