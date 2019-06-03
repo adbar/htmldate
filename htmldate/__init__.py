@@ -8,7 +8,7 @@ __title__ = 'htmldate'
 __author__ = 'Adrien Barbaresi'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2019, Adrien Barbaresi'
-__version__ = '0.4.1'
+__version__ = '0.5.1'
 
 ## imports
 from .core import *

@@ -25,8 +25,8 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.5.0',
-    description='This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns, text-based heuristics and robust date extraction. It takes URLs, HTML files or trees as input and outputs a date.',
+    version='0.5.1',
+    description='Find the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -61,7 +61,7 @@ setup(
     install_requires=[
         'ciso8601 >= 2.1.0',
         'dateparser == 0.7.1', # 0.5.0 is the fastest
-        'lxml == 4.3.0', # CPython parser issue with version 4.3.1
+        'lxml >= 4.3.3', # CPython parser issue with version 4.3.1
         'regex',
         'requests >= 2.19.0',
     ],
