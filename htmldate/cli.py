@@ -36,7 +36,7 @@ def main():
     # arguments
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    argsparser.add_argument("-s", "--safe", help="safe mode: markup search only", action="store_true")
+    argsparser.add_argument("-s", "--safe", help="safe mode: disable extensive search", action="store_true")
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)")
     argsparser.add_argument("-u", "--URL", help="custom URL download")
     args = argsparser.parse_args()

@@ -17,7 +17,7 @@ htmldate: find the creation date of HTML pages
     :target: https://codecov.io/gh/adbar/htmldate
 
 
-This module can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. Its goal is to find the creation date of a page all common structural patterns, text-based heuristics and robust date extraction. It takes URLs, HTML files or trees as input and outputs a date.
+This library finds the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. It can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. It takes URLs, HTML files or HTML trees as input and outputs a date.
 
 
 .. contents:: **Contents**
@@ -27,17 +27,22 @@ This module can handle all the steps needed from web page download to HTML parsi
 Features
 --------
 
-Seamless extraction of the creation or modification date of web pages. *htmldate* provides following ways to date documents, based on HTML parsing and scraping functions and on robust date parsing:
+Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing:
 
-1. Starting from the header of the page, it uses common patterns to identify date fields: ``link`` and ``meta`` elements, including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
+1. Starting from the header of the page, it uses common patterns to identify date fields (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
-3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup).
+3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup):
+  * in "safe" mode, the HTML page is cleaned and precise expressions are searched for
+  * in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
-The module takes the HTML document as input (string format) and returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module then returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
--  Should be compatible with all common versions of Python (see tests and coverage)
+-  Should be compatible with all common versions of Python 3 (see tests and coverage)
 -  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
 -  Designed to be computationally efficient and is used in production on millions of documents
+-  Handles batch processing of a list of URLs
+
+The library currently focuses on texts in written English or German.
 
 
 Installation
@@ -71,11 +76,13 @@ For usage instructions see ``htmldate -h``:
     optional arguments:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
-        -s, --safe     safe mode: markup search only
+        -s, --safe     safe mode: disable extensive search
         -i INPUTFILE, --inputfile INPUTFILE
-                       name of input file for batch processing
+                             name of input file for batch processing (similar to
+                             wget -i)
+        -u URL, --URL URL     custom URL download
 
-The batch mode ``-i`` is similar to ``wget -i``, it takes one URL per line as input and returns one result per line in tab-separated format:
+The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:
 
 .. code-block:: bash
 
@@ -96,7 +103,7 @@ In case the web page features easily readable metadata in the header, the extrac
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
-In the worst case, the module resorts to a guess based on an extensive search, which can be deactivated:
+In the worst case, the module resorts to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
 
 .. code-block:: python
 
@@ -142,19 +149,13 @@ The output format of the dates found can be set in a format known to Python's ``
 Language-specific analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The expected date format can be tweaked to suit particular needs, especially language-specific date expressions:
-
-.. code-block:: python
-
-    >>> htmldate.find_date(r.text, dparser=dateparser_object) # like dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-
-See the init part of ``core.py`` as well as `the dateparser docs <https://dateparser.readthedocs.io/en/latest/>`_ for more information.
+The expected date format can be tweaked to suit particular needs, especially language-specific date expressions, beyond the current scope (English and German): see the init part of ``core.py`` as well as `the dateparser docs <https://dateparser.readthedocs.io/en/latest/>`_ for more information (``dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}``).
 
 
 Known caveats
 ~~~~~~~~~~~~~
 
-The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of July.
+The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of January.
 
 Besides, there are pages for which no date can be found, ever:
 
