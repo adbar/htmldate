@@ -32,8 +32,8 @@ Seamless extraction of the creation or modification date of web pages: given a H
 1. Starting from the header of the page, it uses common patterns to identify date fields (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup):
-  * in "safe" mode, the HTML page is cleaned and precise expressions are searched for
-  * in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
+  1. in "safe" mode, the HTML page is cleaned and precise expressions are searched for
+  2. in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
 The module then returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
@@ -149,7 +149,7 @@ The output format of the dates found can be set in a format known to Python's ``
 Language-specific analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The expected date format can be tweaked to suit particular needs, especially language-specific date expressions, beyond the current scope (English and German): see the init part of ``core.py`` as well as `the dateparser docs <https://dateparser.readthedocs.io/en/latest/>`_ for more information (``dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}``).
+The expected date format can be tweaked to suit particular needs, especially language-specific date expressions, beyond the current scope (English and German): see the init part of ``core.py`` as well as `the dateparser docs <https://dateparser.readthedocs.io/en/latest/>`_ for more information (example setting: ``dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}``).
 
 
 Known caveats
