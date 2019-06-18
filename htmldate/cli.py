@@ -14,19 +14,18 @@ import sys
 from htmldate import find_date, fetch_url
 
 
-def examine(htmlstring, safebool):
+def examine(htmlstring, extensive=True):
     """ Generic safeguards and triggers """
     # safety check
-    if len(htmlstring) > 10000000:
+    if htmlstring is None:
+        sys.stderr.write('# ERROR: empty document\n')
+    elif len(htmlstring) > 10000000:
         sys.stderr.write('# ERROR: file too large\n')
     elif len(htmlstring) < 10:
         sys.stderr.write('# ERROR: file too small\n')
     # proceed
     else:
-        if safebool:
-            result = find_date(htmlstring, extensive_search=False)
-        else:
-            result = find_date(htmlstring)
+        result = find_date(htmlstring, extensive)
         return result
     return None
 
@@ -36,7 +35,7 @@ def main():
     # arguments
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    argsparser.add_argument("-s", "--safe", help="safe mode: disable extensive search", action="store_true")
+    argsparser.add_argument("-s", "--safe", help="safe mode: disable extensive search", action="store_false")
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)")
     argsparser.add_argument("-u", "--URL", help="custom URL download")
     args = argsparser.parse_args()
