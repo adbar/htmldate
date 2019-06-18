@@ -1,5 +1,9 @@
 ## Changelog
 
+### version 0.5.1
+- bugs corrected and cleaner code
+- more errors caught and better test coverage
+
 ### version 0.5.0
 - significant speed-up after code profiling
 - better support of free text detection (DE/EN)

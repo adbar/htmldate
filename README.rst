@@ -32,6 +32,7 @@ Seamless extraction of the creation or modification date of web pages: given a H
 1. Starting from the header of the page, it uses common patterns to identify date fields (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup):
+
   1. in "safe" mode, the HTML page is cleaned and precise expressions are searched for
   2. in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
