@@ -14,7 +14,6 @@ import re
 import time
 
 from collections import Counter
-from io import StringIO # Python 3
 
 # third-party
 import ciso8601
@@ -25,7 +24,7 @@ import regex
 
 # own
 from .download import fetch_url
-# import settings
+from .utils import *
 
 
 ## TODO:
@@ -72,9 +71,6 @@ PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DA
 
 logger.debug('settings: %s %s %s', MIN_YEAR, TODAY, MAX_YEAR)
 logger.debug('dateparser configuration: %s', PARSERCONFIG)
-
-# LXML
-HTML_PARSER = html.HTMLParser() # encoding='utf8'
 
 cleaner = Cleaner()
 cleaner.comments = False
@@ -824,45 +820,6 @@ def search_page(htmlstring, outputformat):
 
 
 #@profile
-def load_html(htmlobject):
-    """Load object given as input and validate its type (accepted: LXML tree and string)"""
-    if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
-        # copy tree
-        tree = htmlobject
-        # derive string
-        htmlstring = html.tostring(htmlobject, encoding='unicode')
-    elif isinstance(htmlobject, str):
-        # the string is a URL, download it
-        if re.match(r'https?://', htmlobject):
-            logger.info('URL detected, downloading: %s', htmlobject)
-            htmltext = fetch_url(htmlobject)
-            if htmltext is not None:
-                htmlstring = htmltext
-        # copy string
-        else:
-            htmlstring = htmlobject
-        ## robust parsing
-        try:
-            # parse
-            tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
-            # tree = html.fromstring(html.encode('utf8'), parser=parser)
-        except UnicodeDecodeError as err:
-            logger.error('unicode %s', err)
-            tree = None
-        except UnboundLocalError as err:
-            logger.error('parsed string %s', err)
-            tree = None
-        except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
-            logger.error('parser %s', err)
-            tree = None
-    else:
-        logger.error('this type cannot be processed: %s', type(htmlobject))
-        tree = None
-        htmlstring = None
-    return (tree, htmlstring)
-
-
-#@profile
 def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
@@ -979,7 +936,10 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=No
             return dateresult
 
     # clean before string search
-    cleaned_html = cleaner.clean_html(tree)
+    try:
+        cleaned_html = cleaner.clean_html(tree)
+    except ValueError: # rare LXML error: no NULL bytes or control characters
+        cleaned_html = tree
     htmlstring = html.tostring(cleaned_html, encoding='unicode')
     # remove comments by hand as faulty in lxml
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)

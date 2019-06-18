@@ -1,24 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-Download web pages.
+Module bundling functions related to HTML processing.
 """
 
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
+
 # standard
 import logging
 import socket
+import re
 import urllib3
 
 # libraries
 import requests
 
+from io import StringIO # Python 3
+from lxml import etree, html
 
 
-## INIT
 logger = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# LXML
+HTML_PARSER = html.HTMLParser() # encoding='utf8'
+
 
 
 def fetch_url(url): # custombool?
@@ -63,3 +70,42 @@ def fetch_url(url): # custombool?
             return rget.text
     # catchall
     return None
+
+
+#@profile
+def load_html(htmlobject):
+    """Load object given as input and validate its type (accepted: LXML tree and string)"""
+    if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
+        # copy tree
+        tree = htmlobject
+        # derive string
+        htmlstring = html.tostring(htmlobject, encoding='unicode')
+    elif isinstance(htmlobject, str):
+        # the string is a URL, download it
+        if re.match(r'https?://', htmlobject):
+            logger.info('URL detected, downloading: %s', htmlobject)
+            htmltext = fetch_url(htmlobject)
+            if htmltext is not None:
+                htmlstring = htmltext
+        # copy string
+        else:
+            htmlstring = htmlobject
+        ## robust parsing
+        try:
+            # parse
+            tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
+            # tree = html.fromstring(html.encode('utf8'), parser=parser)
+        except UnicodeDecodeError as err:
+            logger.error('unicode %s', err)
+            tree = None
+        except UnboundLocalError as err:
+            logger.error('parsed string %s', err)
+            tree = None
+        except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
+            logger.error('parser %s', err)
+            tree = None
+    else:
+        logger.error('this type cannot be processed: %s', type(htmlobject))
+        tree = None
+        htmlstring = None
+    return (tree, htmlstring)

@@ -12,7 +12,7 @@ __version__ = '0.5.1'
 
 ## imports
 from .core import *
-from .download import fetch_url
+from .utils import *
 
 ## logging best practices
 # http://docs.python-guide.org/en/latest/writing/logging/
