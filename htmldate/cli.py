@@ -7,7 +7,6 @@ Implementing a basic command-line interface.
 ## under GNU GPL v3 license
 
 import argparse
-# import io
 import logging
 import sys
 
@@ -70,7 +69,7 @@ def main():
             for line in inputfile:
                 url = line.strip()
                 htmltext = fetch_url(url)
-                if rget is not None:
+                if htmltext is not None:
                     result = examine(htmltext, args.safe)
                     if result is not None:
                         sys.stdout.write(result + '\t' + url + '\n')

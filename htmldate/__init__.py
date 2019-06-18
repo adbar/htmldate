@@ -10,15 +10,15 @@ __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2019, Adrien Barbaresi'
 __version__ = '0.5.1'
 
-## imports
-from .core import *
-from .utils import *
 
+import logging
 ## logging best practices
 # http://docs.python-guide.org/en/latest/writing/logging/
 # https://github.com/requests/requests/blob/master/requests/__init__.py
 
-import logging
+from .core import *
+from .utils import *
+
 try:  # Python 2.7+
     from logging import NullHandler
 except ImportError:

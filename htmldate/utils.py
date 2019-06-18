@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable-msg=E0611,I1101
 """
 Module bundling functions related to HTML processing.
 """
@@ -11,16 +12,16 @@ Module bundling functions related to HTML processing.
 import logging
 import socket
 import re
-import urllib3
+from io import StringIO # Python 3
 
 # libraries
 import requests
+import urllib3
 
-from io import StringIO # Python 3
 from lxml import etree, html
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # LXML
@@ -48,24 +49,24 @@ def fetch_url(url): # custombool?
     try:
         rget = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
     except (requests.exceptions.MissingSchema, requests.exceptions.InvalidURL):
-        logging.error('malformed URL: %s', url)
+        LOGGER.error('malformed URL: %s', url)
     except requests.exceptions.TooManyRedirects:
-        logging.error('redirects: %s', url)
+        LOGGER.error('redirects: %s', url)
     except requests.exceptions.SSLError as err:
-        logging.error('SSL: %s %s', url, err)
+        LOGGER.error('SSL: %s %s', url, err)
     except (socket.timeout, requests.exceptions.ConnectionError, requests.exceptions.Timeout, socket.error, socket.gaierror) as err:
-        logging.error('connection: %s %s', url, err)
+        LOGGER.error('connection: %s %s', url, err)
     #except Exception as err:
     #    logging.error('unknown: %s %s', url, err) # sys.exc_info()[0]
     # if no error
     else:
         # safety checks
         if int(rget.status_code) != 200:
-            logging.error('not a 200 response: %s', rget.status_code)
+            LOGGER.error('not a 200 response: %s', rget.status_code)
         elif rget.text is None or len(rget.text) < 100:
-            logging.error('file too small/incorrect response: %s %s', url, len(rget.text))
+            LOGGER.error('file too small/incorrect response: %s %s', url, len(rget.text))
         elif len(rget.text) > 20000000:
-            logging.error('file too large: %s %s', url, len(rget.text))
+            LOGGER.error('file too large: %s %s', url, len(rget.text))
         else:
             return rget.text
     # catchall
@@ -83,7 +84,7 @@ def load_html(htmlobject):
     elif isinstance(htmlobject, str):
         # the string is a URL, download it
         if re.match(r'https?://', htmlobject):
-            logger.info('URL detected, downloading: %s', htmlobject)
+            LOGGER.info('URL detected, downloading: %s', htmlobject)
             htmltext = fetch_url(htmlobject)
             if htmltext is not None:
                 htmlstring = htmltext
@@ -96,16 +97,16 @@ def load_html(htmlobject):
             tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
         except UnicodeDecodeError as err:
-            logger.error('unicode %s', err)
+            LOGGER.error('unicode %s', err)
             tree = None
         except UnboundLocalError as err:
-            logger.error('parsed string %s', err)
+            LOGGER.error('parsed string %s', err)
             tree = None
         except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
-            logger.error('parser %s', err)
+            LOGGER.error('parser %s', err)
             tree = None
     else:
-        logger.error('this type cannot be processed: %s', type(htmlobject))
+        LOGGER.error('this type cannot be processed: %s', type(htmlobject))
         tree = None
         htmlstring = None
     return (tree, htmlstring)
