@@ -457,7 +457,7 @@ def examine_header(tree, outputformat):
     reserve = None
     try:
         # loop through all meta elements
-        for elem in tree.xpath('//meta'): # was //head/meta
+        for elem in tree.xpath('//meta'): # was //head/meta # "og:" for OpenGraph http://ogp.me/
             # safeguard
             if len(elem.attrib) < 1:
                 continue
@@ -466,18 +466,18 @@ def examine_header(tree, outputformat):
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
-                # "og:" for OpenGraph http://ogp.me/
-                if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
                 # modified: override published_time
-                elif elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
+                if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     attempt = try_ymd_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
                         # avoid looking for further information
                         break
+                # standard publish time: switch needed
+                elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
+                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
             # name attribute
             elif headerdate is None and 'name' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
