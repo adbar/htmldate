@@ -35,8 +35,8 @@ def main():
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     argsparser.add_argument("-s", "--safe", help="safe mode: disable extensive search", action="store_false")
-    argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)")
-    argsparser.add_argument("-u", "--URL", help="custom URL download")
+    argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)", type=str)
+    argsparser.add_argument("-u", "--URL", help="custom URL download", type=str)
     args = argsparser.parse_args()
 
     if args.verbose:
@@ -65,7 +65,7 @@ def main():
 
     # process input file line by line
     else:
-        with open(args.inputfile, 'r', 'utf-8') as inputfile:
+        with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
                 url = line.strip()
                 htmltext = fetch_url(url)
@@ -75,7 +75,6 @@ def main():
                         sys.stdout.write(result + '\t' + url + '\n')
                     else:
                         sys.stdout.write('\t' + url + '\n')
-
 
 
 if __name__ == '__main__':
