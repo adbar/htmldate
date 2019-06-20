@@ -476,6 +476,8 @@ def examine_header(tree, outputformat):
                     attempt = try_ymd_date(elem.get('content'), outputformat)
                     if attempt is not None:
                         headerdate = attempt
+                        # avoid looking for further information
+                        break
             # name attribute
             elif headerdate is None and 'name' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
