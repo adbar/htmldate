@@ -10,7 +10,8 @@ import argparse
 import logging
 import sys
 
-from htmldate import find_date, fetch_url
+from .core import find_date
+from .utils import fetch_url
 
 
 def examine(htmlstring, extensive=True):
