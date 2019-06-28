@@ -87,7 +87,7 @@ def load_mock_page(url):
 
 def test_input():
     '''test if loaded strings/trees are handled properly'''
-    assert load_html(123) == (None, None)
+    assert load_html(123) is None
     assert load_html('<html><body>XYZ</body></html>') is not None
     assert find_date(None) is None
 
