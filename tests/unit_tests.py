@@ -9,6 +9,8 @@ import os
 import re
 import sys
 
+from collections import Counter
+
 import dateparser
 
 from htmldate.core import *
@@ -177,7 +179,7 @@ def test_exact_date():
     assert find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-09'
 
     ## in document body
-    assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2017-08-25'
+    assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
     assert find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
     assert find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
@@ -281,6 +283,20 @@ def test_compare_reference():
     assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT) == 1517500000
     assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT) < 1517500000
     assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT) == 1517500000
+
+
+def test_candidate_selection():
+    '''test the algorithm for several candidates'''
+    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+    yearpat = re.compile(r'^([0-9]{4})')
+    allmatches = ['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28']
+    occurrences = Counter(allmatches)
+    result = select_candidate(occurrences, catch, yearpat)
+    assert result is not None
+    allmatches = ['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28']
+    occurrences = Counter(allmatches)
+    result = select_candidate(occurrences, catch, yearpat)
+    assert result is None
 
 
 def test_regex_parse():
@@ -406,6 +422,7 @@ if __name__ == '__main__':
     test_try_ymd_date()
     test_convert_date()
     test_compare_reference()
+    test_candidate_selection()
     test_regex_parse()
     #test_header()
 
