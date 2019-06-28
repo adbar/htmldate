@@ -1,5 +1,9 @@
 ## Changelog
 
+### version 0.5.2
+- small bugs and coverage issues removed
+- streamlined utils
+
 ### version 0.5.1
 - bugs corrected and cleaner code
 - more errors caught and better test coverage
@@ -35,7 +39,7 @@
 - more tests and test files
 - extensive search can be disabled
 
-### version 0.2.0 (first alpha)
+### version 0.2.0
 - refined targeting of HTML structure
 - better extraction logic for plain text cases
 - further tests
