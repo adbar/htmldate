@@ -810,7 +810,7 @@ def search_page(htmlstring, outputformat):
 def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
-    tree, htmlstring = load_html(htmlobject)
+    tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
     LOGGER.debug('starting')
 

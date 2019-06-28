@@ -15,9 +15,9 @@ import re
 from io import StringIO # Python 3
 
 # libraries
+import cchardet as chardet
 import requests
 import urllib3
-
 from lxml import etree, html
 
 
@@ -29,7 +29,7 @@ HTML_PARSER = html.HTMLParser() # encoding='utf8'
 
 
 
-def fetch_url(url): # custombool?
+def fetch_url(url):
     """ Fetch page using requests/urllib3
     Args:
         URL: URL of the page to fetch
@@ -47,7 +47,7 @@ def fetch_url(url): # custombool?
     })
     # send
     try:
-        rget = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
+        response = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
     except (requests.exceptions.MissingSchema, requests.exceptions.InvalidURL):
         LOGGER.error('malformed URL: %s', url)
     except requests.exceptions.TooManyRedirects:
@@ -61,14 +61,24 @@ def fetch_url(url): # custombool?
     # if no error
     else:
         # safety checks
-        if int(rget.status_code) != 200:
-            LOGGER.error('not a 200 response: %s', rget.status_code)
-        elif rget.text is None or len(rget.text) < 100:
-            LOGGER.error('file too small/incorrect response: %s %s', url, len(rget.text))
-        elif len(rget.text) > 20000000:
-            LOGGER.error('file too large: %s %s', url, len(rget.text))
+        if int(response.status_code) != 200:
+            LOGGER.error('not a 200 response: %s', response.status_code)
+        elif response.text is None or len(response.text) < 100:
+            LOGGER.error('file too small/incorrect response: %s %s', url, len(response.text))
+        elif len(response.text) > 20000000:
+            LOGGER.error('file too large: %s %s', url, len(response.text))
         else:
-            return rget.text
+            guessed_encoding = chardet.detect(response.content)['encoding']
+            LOGGER.debug('response/guessed encoding: %s / %s', response.encoding, guessed_encoding)
+            if guessed_encoding is not None:
+                try:
+                    htmltext = response.content.decode(guessed_encoding)
+                except UnicodeDecodeError:
+                    htmltext = response.text
+            else:
+                htmltext = response.text
+            # return here
+            return htmltext
     # catchall
     return None
 
@@ -79,22 +89,11 @@ def load_html(htmlobject):
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         # copy tree
         tree = htmlobject
-        # derive string
-        htmlstring = html.tostring(htmlobject, encoding='unicode')
     elif isinstance(htmlobject, str):
-        # the string is a URL, download it
-        if re.match(r'https?://', htmlobject):
-            LOGGER.info('URL detected, downloading: %s', htmlobject)
-            htmltext = fetch_url(htmlobject)
-            if htmltext is not None:
-                htmlstring = htmltext
-        # copy string
-        else:
-            htmlstring = htmlobject
         ## robust parsing
         try:
             # parse
-            tree = html.parse(StringIO(htmlstring), parser=HTML_PARSER)
+            tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)
             # tree = html.fromstring(html.encode('utf8'), parser=parser)
         except UnicodeDecodeError as err:
             LOGGER.error('unicode %s', err)
@@ -108,5 +107,4 @@ def load_html(htmlobject):
     else:
         LOGGER.error('this type cannot be processed: %s', type(htmlobject))
         tree = None
-        htmlstring = None
-    return (tree, htmlstring)
+    return (tree)
