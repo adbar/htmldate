@@ -95,8 +95,8 @@ british_english = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|Februar
 english_date = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 general_textsearch = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
 german_textsearch = re.compile(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})')
-complete_url = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
-partial_url = re.compile(r'/([0-9]{4})/([0-9]{2})/')
+COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
+PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 ymd_pattern = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 datestub_pattern = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 json_pattern = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
@@ -362,7 +362,7 @@ def compare_reference(reference, expression, outputformat):
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
-    match = complete_url.search(testurl)
+    match = COMPLETE_URL.search(testurl)
     if match:
         dateresult = match.group(0)
         LOGGER.debug('found date in URL: %s', dateresult)
@@ -374,20 +374,6 @@ def extract_url_date(testurl, outputformat):
                 return converted
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', dateresult, err)
-    # test another pattern
-    else:
-        match = re.search(r'([0-9]{4})-([0-9]{2})-([0-9]{2})', testurl)
-        if match:
-            dateresult = match.group(0)
-            LOGGER.debug('found date in URL: %s', dateresult)
-            try:
-                # converted = convert_date(dateresult, '%Y-%m-%d', outputformat)
-                dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-                if date_validator(dateobject, outputformat) is True:
-                    converted = dateobject.strftime(outputformat)
-                    return converted
-            except ValueError as err:
-                LOGGER.debug('value error during conversion: %s %s', dateresult, err)
     # catchall
     return None
 
@@ -396,7 +382,7 @@ def extract_url_date(testurl, outputformat):
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
     # easy extract in Y-M format
-    match = partial_url.search(testurl)
+    match = PARTIAL_URL.search(testurl)
     if match:
         dateresult = match.group(0) + '/01'
         LOGGER.debug('found date in URL: %s', dateresult)
