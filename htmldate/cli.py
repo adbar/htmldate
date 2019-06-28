@@ -49,16 +49,14 @@ def main():
         if args.URL:
             htmlstring = fetch_url(args.URL)
             if htmlstring is None:
-                sys.stderr.write('# ERROR no valid result for url: ' + args.URL + '\n')
-                sys.exit(1)
+                sys.exit('# ERROR no valid result for url: ' + args.URL + '\n') # exit code: 1
         # unicode check
         else:
             try:
                 htmlstring = sys.stdin.read()
             except UnicodeDecodeError as err:
                 # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
-                sys.stderr.write('# ERROR system/buffer encoding: ' + str(err) + '\n')
-                sys.exit(1)
+                sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n') # exit code: 1
 
         result = examine(htmlstring, args.safe)
         if result is not None:
@@ -68,14 +66,9 @@ def main():
     else:
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
-                url = line.strip()
-                htmltext = fetch_url(url)
-                if htmltext is not None:
-                    result = examine(htmltext, args.safe)
-                    if result is not None:
-                        sys.stdout.write(result + '\t' + url + '\n')
-                    else:
-                        sys.stdout.write('\t' + url + '\n')
+                htmltext = fetch_url(line.strip())
+                result = examine(htmltext, args.safe)
+                sys.stdout.write(url + '\t' + result + '\n')
 
 
 if __name__ == '__main__':
