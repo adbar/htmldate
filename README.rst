@@ -36,7 +36,7 @@ Seamless extraction of the creation or modification date of web pages: given a H
   1. in ``fast`` mode, the HTML page is cleaned and precise expressions are searched for
   2. in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
-The module then returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module then returns a date if a valid cue could be found in the document, per default the updated date w.r.t. the original publishing statement.  The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 -  Should be compatible with all common versions of Python 3 (see tests and coverage)
 -  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
@@ -78,6 +78,7 @@ For usage instructions see ``htmldate -h``:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
         -f, --fast     fast mode: disable extensive search
+        --original     original date prioritized
         -i INPUTFILE, --inputfile INPUTFILE
                              name of input file for batch processing (similar to
                              wget -i)
@@ -145,6 +146,19 @@ The output format of the dates found can be set in a format known to Python's ``
 
     >>> htmldate.find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016' # may have changed since
+
+
+Original date
+~~~~~~~~~~~~~
+
+Although the time delta between the original publication and the "last modified" statement is usually a matter of hours or days at most, it can be useful in some contexts to prioritize the original publication date during extraction:
+
+.. code-block:: python
+
+    >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
+    '2019-06-24'
+    >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
+    '2016-06-23'
 
 
 Language-specific analysis
