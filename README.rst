@@ -33,7 +33,7 @@ Seamless extraction of the creation or modification date of web pages: given a H
 2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
 3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup):
 
-  1. in "safe" mode, the HTML page is cleaned and precise expressions are searched for
+  1. in ``fast`` mode, the HTML page is cleaned and precise expressions are searched for
   2. in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
 The module then returns a date if a valid cue could be found in the document. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
@@ -73,11 +73,11 @@ For usage instructions see ``htmldate -h``:
 .. code-block:: bash
 
     $ htmldate --help
-    htmldate [-h] [-v] [-s]
+    htmldate [-h] [-v] [-f] [-i INPUTFILE] [-u URL]
     optional arguments:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
-        -s, --safe     safe mode: disable extensive search
+        -f, --fast     fast mode: disable extensive search
         -i INPUTFILE, --inputfile INPUTFILE
                              name of input file for batch processing (similar to
                              wget -i)
@@ -87,7 +87,7 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 
 .. code-block:: bash
 
-    $ htmldate -sv -i list-of-urls.txt
+    $ htmldate -fv -i list-of-urls.txt
 
 
 With Python

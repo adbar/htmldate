@@ -35,7 +35,7 @@ def main():
     # arguments
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    argsparser.add_argument("-s", "--safe", help="safe mode: disable extensive search", action="store_false")
+    argsparser.add_argument("-f", "--fast", help="fast mode: disable extensive search", action="store_false")
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)", type=str)
     argsparser.add_argument("-u", "--URL", help="custom URL download", type=str)
     args = argsparser.parse_args()
@@ -58,7 +58,7 @@ def main():
                 # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
                 sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n') # exit code: 1
 
-        result = examine(htmlstring, args.safe)
+        result = examine(htmlstring, args.fast)
         if result is not None:
             sys.stdout.write(result + '\n')
 
@@ -67,7 +67,7 @@ def main():
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = examine(htmltext, args.safe)
+                result = examine(htmltext, args.fast)
                 sys.stdout.write(url + '\t' + result + '\n')
 
 
