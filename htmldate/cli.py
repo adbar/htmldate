@@ -14,7 +14,7 @@ from .core import find_date
 from .utils import fetch_url
 
 
-def examine(htmlstring, extensive_bool=True, original_bool):
+def examine(htmlstring, extensive_bool=True, original_bool=False):
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:

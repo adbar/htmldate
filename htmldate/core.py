@@ -339,7 +339,7 @@ def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings
 
 
 #@profile
-def compare_reference(reference, expression, outputformat):
+def compare_reference(reference, expression, outputformat, original_bool=False):
     """Compare the date expression to a reference"""
     # trim
     temptext = expression.strip()
@@ -353,9 +353,12 @@ def compare_reference(reference, expression, outputformat):
     attempt = try_ymd_date(textcontent, outputformat)
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-        if timestamp > reference:
-            return timestamp
-        return reference
+        if original_bool is True:
+            if timestamp < reference:
+                return timestamp
+        else:
+            if timestamp > reference:
+                return timestamp
     # else:
     return reference
 
@@ -457,10 +460,10 @@ def examine_header(tree, outputformat, original_bool=False):
                 # original: 
                 if original_bool is True:
                     if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
-                    if headerdate is not None:
-                        break
+                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                        headerdate = try_ymd_date(elem.get('content'), outputformat)
+                        if headerdate is not None:
+                            break
                 # modified: override published_time
                 else:
                     if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
@@ -468,12 +471,10 @@ def examine_header(tree, outputformat, original_bool=False):
                         attempt = try_ymd_date(elem.get('content'), outputformat)
                         if attempt is not None:
                             headerdate = attempt
-                            # avoid looking for further information
-                            break
-                # standard publish time: switch needed
-                elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                            break # avoid looking further
+                    elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
+                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                        headerdate = try_ymd_date(elem.get('content'), outputformat)
             # name attribute
             elif headerdate is None and 'name' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
@@ -875,12 +876,12 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         LOGGER.debug('abbr published-title found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat)
+                        reference = compare_reference(reference, trytext, outputformat, original_bool)
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
                         LOGGER.debug('abbr published found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat)
+                        reference = compare_reference(reference, trytext, outputformat, original_bool)
         # convert and return
         if reference > 0:
             dateobject = datetime.datetime.fromtimestamp(reference)
@@ -912,17 +913,17 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
                 if 'class' in elem.attrib:
                     if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
                         LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                        reference = compare_reference(reference, elem.get('datetime'), outputformat)
+                        reference = compare_reference(reference, elem.get('datetime'), outputformat, original_bool)
                         if reference > 0:
                             break
                 # datetime attribute
                 else:
                     LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat)
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, original_bool)
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug('time/datetime found: %s', elem.text)
-                reference = compare_reference(reference, elem.text, outputformat)
+                reference = compare_reference(reference, elem.text, outputformat, original_bool)
             # else...
         # return
         if reference > 0:
