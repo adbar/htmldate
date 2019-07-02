@@ -354,15 +354,11 @@ def compare_reference(reference, expression, outputformat, original_bool=False):
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         if original_bool is True:
-            if reference == 0:
-                return timestamp
-            else:
-                if timestamp < reference:
-                    return timestamp
+            if reference == 0 or timestamp < reference:
+                reference = timestamp
         else:
             if timestamp > reference:
-                return timestamp
-    # else:
+                reference = timestamp
     return reference
 
 
@@ -460,14 +456,14 @@ def examine_header(tree, outputformat, original_bool=False):
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
-                # original: 
+                # original date
                 if original_bool is True:
                     if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                         headerdate = try_ymd_date(elem.get('content'), outputformat)
                         if headerdate is not None:
                             break
-                # modified: override published_time
+                # modified date: override published_time
                 else:
                     if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
@@ -583,7 +579,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 
 
 #@profile
-def select_candidate(occurrences, catch, yearpat):
+def select_candidate(occurrences, catch, yearpat, original_bool=False):
     """Select a candidate among the most frequent matches"""
     # LOGGER.debug('occurrences: %s', occurrences)
     if len(occurrences) == 0:
@@ -596,13 +592,16 @@ def select_candidate(occurrences, catch, yearpat):
     firstselect = occurrences.most_common(10)
     LOGGER.debug('firstselect: %s', firstselect)
     # sort and find probable candidates
-    bestones = sorted(firstselect, reverse=True)[:2]
+    if original_bool is False:
+        bestones = sorted(firstselect, reverse=True)[:2]
+    else:
+        bestones = sorted(firstselect)[:2]
     first_pattern = bestones[0][0]
     first_count = bestones[0][1]
     second_pattern = bestones[1][0]
     second_count = bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
-    # same number of occurrences: always take most recent
+    # same number of occurrences: always take top of the pile
     if first_count == second_count:
         match = catch.search(first_pattern)
     else:
@@ -617,7 +616,7 @@ def select_candidate(occurrences, catch, yearpat):
                 LOGGER.debug('no suitable candidate: %s %s', year1, year2)
                 return None
         # safety net: newer date but up to 50% less frequent
-        if year2 > year1 and second_count/first_count > 0.5:
+        if year2 != year1 and second_count/first_count > 0.5:
             match = catch.match(second_pattern)
         # not newer or hopefully not significant
         else:
@@ -640,14 +639,14 @@ def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
 
 
 #@profile
-def search_pattern(htmlstring, pattern, catch, yearpat):
+def search_pattern(htmlstring, pattern, catch, yearpat, original_bool=False):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    return select_candidate(candidates, catch, yearpat)
+    return select_candidate(candidates, catch, yearpat, original_bool)
 
 
 #@profile
-def search_page(htmlstring, outputformat):
+def search_page(htmlstring, outputformat, original_bool=False):
     """Search the page for common patterns (can lead to flawed results!)"""
     # init
     # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
@@ -659,9 +658,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'(?:©|&copy;|Copyright|\(c\))\D+([12][0-9]{3})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'^\D?([12][0-9]{3})')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    #bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     if bestmatch is not None:
         LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
@@ -676,9 +673,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
         return result
@@ -687,9 +682,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
         return result
@@ -716,7 +709,7 @@ def search_page(htmlstring, outputformat):
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     # select
-    bestmatch = select_candidate(candidates, catch, yearpat)
+    bestmatch = select_candidate(candidates, catch, yearpat, original_bool)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
         return result
@@ -725,9 +718,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([12][0-9]{3})([01][0-9])([0-3][0-9])')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
         return result
@@ -757,7 +748,7 @@ def search_page(htmlstring, outputformat):
     candidates = Counter(replacement)
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
-    bestmatch = select_candidate(candidates, catch, yearpat)
+    bestmatch = select_candidate(candidates, catch, yearpat, original_bool)
     result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
     if result is not None:
         return result
@@ -768,9 +759,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
@@ -780,7 +769,7 @@ def search_page(htmlstring, outputformat):
     #
     pattern = re.compile(r'\D([0-3]?[0-9][/.-][0-9]{4})\D')
     yearpat = re.compile(r'([12][0-9]{3})\D?$')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
+    candidates = plausible_year_filter(htmlstring, pattern, yearpat, original_bool)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
     for item in candidates:
@@ -795,7 +784,7 @@ def search_page(htmlstring, outputformat):
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     # select
-    bestmatch = select_candidate(candidates, catch, yearpat)
+    bestmatch = select_candidate(candidates, catch, yearpat, original_bool)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
         if date_validator(pagedate, '%Y-%m-%d') is True:
@@ -810,9 +799,7 @@ def search_page(htmlstring, outputformat):
     pattern = re.compile(r'\D([12][0-9]{3})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'^\D?([12][0-9]{3})')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    bestmatch = select_candidate(candidates, catch, yearpat)
-    # bestmatch = search_pattern(htmlstring, pattern, catch, yearpat)
+    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_bool)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d') is True:
@@ -994,7 +981,7 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
-        pagedate = search_page(htmlstring, outputformat)
+        pagedate = search_page(htmlstring, outputformat, original_bool)
         return pagedate
 
     return None
