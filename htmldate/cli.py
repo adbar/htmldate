@@ -14,7 +14,7 @@ from .core import find_date
 from .utils import fetch_url
 
 
-def examine(htmlstring, extensive=True):
+def examine(htmlstring, extensive_bool=True, original_bool):
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:
@@ -25,7 +25,7 @@ def examine(htmlstring, extensive=True):
         sys.stderr.write('# ERROR: file too small\n')
     # proceed
     else:
-        result = find_date(htmlstring, extensive)
+        result = find_date(htmlstring, extensive_bool, original_bool)
         return result
     return None
 
@@ -36,6 +36,7 @@ def main():
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     argsparser.add_argument("-f", "--fast", help="fast mode: disable extensive search", action="store_false")
+    argsparser.add_argument("--original", help="original date chosen", action="store_true")
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)", type=str)
     argsparser.add_argument("-u", "--URL", help="custom URL download", type=str)
     args = argsparser.parse_args()
@@ -58,7 +59,7 @@ def main():
                 # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
                 sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n') # exit code: 1
 
-        result = examine(htmlstring, args.fast)
+        result = examine(htmlstring, args.fast, args.original)
         if result is not None:
             sys.stdout.write(result + '\n')
 
@@ -67,7 +68,7 @@ def main():
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = examine(htmltext, args.fast)
+                result = examine(htmltext, args.fast, args.original)
                 sys.stdout.write(url + '\t' + result + '\n')
 
 

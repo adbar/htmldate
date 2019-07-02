@@ -439,7 +439,7 @@ def examine_date_elements(tree, expression, outputformat):
 
 
 #@profile
-def examine_header(tree, outputformat):
+def examine_header(tree, outputformat, original_bool=False):
     """Parse header elements to find date cues"""
     headerdate = None
     reserve = None
@@ -454,14 +454,22 @@ def examine_header(tree, outputformat):
                 # safeguard
                 if elem.get('content') is None or len(elem.get('content')) < 1:
                     continue
-                # modified: override published_time
-                if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
+                # original: 
+                if original_bool is True:
+                    if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_ymd_date(elem.get('content'), outputformat)
-                    if attempt is not None:
-                        headerdate = attempt
-                        # avoid looking for further information
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                    if headerdate is not None:
                         break
+                # modified: override published_time
+                else:
+                    if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
+                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                        attempt = try_ymd_date(elem.get('content'), outputformat)
+                        if attempt is not None:
+                            headerdate = attempt
+                            # avoid looking for further information
+                            break
                 # standard publish time: switch needed
                 elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
@@ -475,7 +483,11 @@ def examine_header(tree, outputformat):
                 elif elem.get('name').lower() == 'og:url':
                     headerdate = extract_url_date(elem.get('content'), outputformat)
                 # date
-                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'lastmodified', 'last-modified', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
+                    LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                # modified
+                elif elem.get('name').lower() in ('lastmodified', 'last-modified') and original_bool is False:
                     LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat)
             elif headerdate is None and 'pubdate' in elem.attrib:
@@ -491,7 +503,7 @@ def examine_header(tree, outputformat):
                     elif 'content' in elem.attrib:
                         headerdate = try_ymd_date(elem.get('content'), outputformat)
                 # override
-                elif elem.get('itemprop').lower() == 'datemodified':
+                elif elem.get('itemprop').lower() == 'datemodified' and original_bool is False:
                     LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     if 'datetime' in elem.attrib:
                         attempt = try_ymd_date(elem.get('datetime'), outputformat)
@@ -508,7 +520,10 @@ def examine_header(tree, outputformat):
                             reserve = attempt
             # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
             elif headerdate is None and 'http-equiv' in elem.attrib:
-                if elem.get('http-equiv').lower() in ('date', 'last-modified') and headerdate is None:
+                if original_bool is True and elem.get('http-equiv').lower() == 'date':
+                    LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    headerdate = try_ymd_date(elem.get('content'), outputformat)
+                if elem.get('http-equiv').lower() in ('date', 'last-modified'):
                     LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat)
             #else:
@@ -809,7 +824,7 @@ def search_page(htmlstring, outputformat):
 
 
 #@profile
-def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=None):
+def find_date(htmlobject, extensive_search=True, original_bool=False, outputformat='%Y-%m-%d', url=None):
     """Main function: apply a series of techniques to date the document, from safe to adventurous"""
     # init
     tree = load_html(htmlobject)
@@ -834,8 +849,8 @@ def find_date(htmlobject, extensive_search=True, outputformat='%Y-%m-%d', url=No
             return dateresult
 
     # first, try header
-    pagedate = examine_header(tree, outputformat)
-    if pagedate is not None and date_validator(pagedate, outputformat) is True:
+    pagedate = examine_header(tree, outputformat, original_bool)
+    if pagedate is not None: # and date_validator(pagedate, outputformat) is True: # already validated
         return pagedate
 
     # <abbr>
