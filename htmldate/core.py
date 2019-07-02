@@ -354,8 +354,11 @@ def compare_reference(reference, expression, outputformat, original_bool=False):
     if attempt is not None:
         timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
         if original_bool is True:
-            if timestamp < reference:
+            if reference == 0:
                 return timestamp
+            else:
+                if timestamp < reference:
+                    return timestamp
         else:
             if timestamp > reference:
                 return timestamp
@@ -866,9 +869,16 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
                 except ValueError:
                     continue
                 LOGGER.debug('data-utime found: %s', candidate)
+                # look for original date
+                if original_bool is True:
+                    if reference == 0:
+                        reference = candidate
+                    elif candidate < reference:
+                        reference = candidate
                 # look for newest (i.e. largest time delta)
-                if candidate > reference:
-                    reference = candidate
+                else:
+                    if candidate > reference:
+                        reference = candidate
             # class
             if 'class' in elem.attrib:
                 if elem.get('class') == 'published' or elem.get('class') == 'date-published':
@@ -911,8 +921,14 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
             if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
                 # first choice: entry-date + datetime attribute
                 if 'class' in elem.attrib:
-                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time') or elem.get('class') == 'updated':
+                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
                         LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
+                        reference = compare_reference(reference, elem.get('datetime'), outputformat, original_bool)
+                        if reference > 0:
+                            break
+                    # updated time
+                    if elem.get('class') == 'updated' and original_bool is False:
+                        LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
                         reference = compare_reference(reference, elem.get('datetime'), outputformat, original_bool)
                         if reference > 0:
                             break
