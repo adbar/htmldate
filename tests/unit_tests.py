@@ -120,6 +120,10 @@ def test_exact_date():
     assert find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-01-01'
     assert find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
 
+    # original date
+    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_bool=True) == '2017-07-02'
+    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_bool=False) == '2017-09-01'
+
     ## link in header
     assert find_date(load_mock_page('http://www.jovelstefan.de/2012/05/11/parken-in-paris/')) == '2012-05-11'
 
@@ -139,7 +143,8 @@ def test_exact_date():
     assert find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
 
     ## time in document body
-    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/')) == '2017-10-08'
+    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_bool=True) == '2017-10-06'
+    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_bool=False) == '2017-10-08'
     assert find_date(load_mock_page('http://absegler.de/')) == '2017-08-06'
     assert find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
     assert find_date('<html><body><time datetime="08:00"></body></html>') is None
@@ -156,7 +161,7 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03' # JSON dateModified
 
     ## meta in document body
-    assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504')) == '2013-08-09'
+    assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), original_bool=True) == '2013-08-09'
     assert find_date(load_mock_page('https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean')) == '2017-12-15'
     assert find_date(load_mock_page('https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529')) == '2019-01-29'
     assert find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
@@ -213,18 +218,24 @@ def test_approximate_date():
     # copyright text
     assert find_date(load_mock_page('http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung')) == '2016-01-01' # somewhere in 2016
     # other
-    assert find_date(load_mock_page('https://creativecommons.org/about/')) == '2017-08-11' # or '2017-08-03'
+    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_bool=False) == '2017-08-11' # or '2017-08-03'
+    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_bool=True) == '2016-05-22' # or '2017-08-03'
     assert find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
     assert find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-04-28'
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/')) == '2017-07-01'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_bool=False) == '2017-07-01'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_bool=True) == '2017-01-01'
     assert find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-07-24'
     assert find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-01-01' # actually 2017-08-09
-    assert find_date(load_mock_page('https://bayern.de/')) == '2017-10-06' # most probably 2017-10-06
+    assert find_date(load_mock_page('https://bayern.de/'),) == '2017-10-06' # most probably 2017-10-06
     assert find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50')) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
-    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/')) == '2011-12-01'
+    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_bool=False) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
+    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_bool=True) == '2010-11-01' # 2010-11-01 in meta, 2016 more plausible
+    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_bool=False) == '2011-12-01'
+    ## TODO: problem, take URL instead
+    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_bool=True) == '2010-06-01'
     # other format
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y') == '01 July 2017'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_bool=False) == '01 July 2017'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_bool=True) == '01 January 2017'
     # dates in table
     # assert find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
 
@@ -368,6 +379,7 @@ def test_search_html(original_bool=False):
     # file input + output format
     assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_bool) == '06 April 2019'
     # tree input
+    ## TODO: bug here
     assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-01'
     assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-05'
     assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_bool) == '1999-10-11'
