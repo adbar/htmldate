@@ -6,14 +6,20 @@
 *.txt
 
 # packaging
-dist/
 build/
+dist/
 *.egg-info/
 
 # tests
 .tox/
 .cache/
 .coverage
+
+# docs
+docs/_autosummary/
+docs/_build/
+docs/_static/
+docs/_template/
 
 # profiling
 *.tmp
