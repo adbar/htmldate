@@ -69,7 +69,7 @@ def main():
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
                 result = examine(htmltext, args.fast, args.original)
-                sys.stdout.write(url + '\t' + result + '\n')
+                sys.stdout.write(line.strip() + '\t' + result + '\n')
 
 
 if __name__ == '__main__':

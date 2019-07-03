@@ -15,7 +15,6 @@ import re
 from collections import Counter
 
 # third-party
-import dateparser # slow
 import regex
 
 from ciso8601 import parse_datetime_as_naive
@@ -24,6 +23,7 @@ from lxml.html.clean import Cleaner
 
 # own
 from .parsers import custom_parse, external_date_parser, extract_url_date, extract_partial_url_date
+from .settings import PARSER, PARSERCONFIG
 from .utils import load_html
 from .validators import compare_values, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
 
@@ -39,9 +39,6 @@ from .validators import compare_values, convert_date, date_validator, filter_ymd
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-## DateDataParser object
-PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
 LOGGER.debug('dateparser configuration: %s %s', PARSER, PARSERCONFIG)
 
 DATE_EXPRESSIONS = [
@@ -483,12 +480,9 @@ def search_page(htmlstring, outputformat, original_bool):
     yearpat = re.compile(r'^([0-9]{4})')
     # select
     bestmatch = select_candidate(candidates, catch, yearpat, original_bool)
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    if result is not None:
+        return result
 
     ## 1 component
     LOGGER.debug('switching to one component')

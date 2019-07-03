@@ -14,16 +14,11 @@ import time
 
 from collections import Counter
 
+from .settings import MIN_YEAR, TODAY, MAX_YEAR
+
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-## Plausible dates
-# earliest possible year to take into account (inclusive)
-MIN_YEAR = 1995
-# latest possible date
-TODAY = datetime.date.today()
-# latest possible year
-MAX_YEAR = datetime.date.today().year
 LOGGER.debug('date settings: %s %s %s', MIN_YEAR, TODAY, MAX_YEAR)
 
 

@@ -11,7 +11,6 @@ Module bundling functions related to HTML processing.
 # standard
 import logging
 import socket
-import re
 from io import StringIO # Python 3
 
 # libraries
@@ -107,4 +106,4 @@ def load_html(htmlobject):
     else:
         LOGGER.error('this type cannot be processed: %s', type(htmlobject))
         tree = None
-    return (tree)
+    return tree

@@ -12,9 +12,7 @@ import datetime
 import logging
 import re
 
-# third-party
-import dateparser # slow
-
+from .settings import PARSER
 from .validators import convert_date, date_validator
 
 
@@ -32,9 +30,6 @@ GERMAN_TEXTSEARCH = re.compile(r'([0-9]{1,2})\. (Januar|J채nner|Februar|Feber|M�
 GENERAL_TEXTSEARCH = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|J채nner|Februar|Feber|M채rz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
 # German dates cache
 TEXT_MONTHS = {'Januar':'01', 'J채nner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'M채rz':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
-## DateDataParser object
-PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-LOGGER.debug('dateparser configuration: %s', PARSERCONFIG)
 
 
 #@profile
@@ -193,7 +188,7 @@ def custom_parse(string, outputformat):
 
 
 #@profile
-def external_date_parser(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
+def external_date_parser(string, outputformat, parser=PARSER):
     """Use the dateparser module"""
     LOGGER.debug('send to dateparser: %s', string)
     try:
