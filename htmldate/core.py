@@ -41,7 +41,8 @@ from .validators import compare_values, convert_date, date_validator, filter_ymd
 LOGGER = logging.getLogger(__name__)
 ## DateDataParser object
 PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-LOGGER.debug('dateparser configuration: %s', PARSERCONFIG)
+PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
+LOGGER.debug('dateparser configuration: %s %s', PARSER, PARSERCONFIG)
 
 DATE_EXPRESSIONS = [
     "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
@@ -283,7 +284,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_bool):
 
 
 #@profile
-def try_ymd_date(string, outputformat, extensive_search, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
+def try_ymd_date(string, outputformat, extensive_search, parser=PARSER):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
     if string is None or len(list(filter(str.isdigit, string))) < 4:
