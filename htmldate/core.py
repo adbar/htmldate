@@ -11,21 +11,19 @@ Module bundling all functions needed to determine the date of HTML strings or LX
 import datetime
 import logging
 import re
-import time
 
 from collections import Counter
 
 # third-party
-import dateparser # slow
 import regex
 
-from ciso8601 import parse_datetime_as_naive
 from lxml import etree, html
 from lxml.html.clean import Cleaner
 
-
 # own
+from .parsers import extract_url_date, extract_partial_url_date, try_ymd_date
 from .utils import load_html
+from .validators import compare_reference, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
 
 
 ## TODO:
@@ -59,19 +57,6 @@ DATE_EXPRESSIONS = [
 # "//*[contains(@class, 'fa-clock-o')]",
 # "//*[contains(@id, 'metadata')]",
 
-## Plausible dates
-# earliest possible year to take into account (inclusive)
-MIN_YEAR = 1995
-# latest possible date
-TODAY = datetime.date.today()
-# latest possible year
-MAX_YEAR = datetime.date.today().year
-
-## DateDataParser object
-PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-
-LOGGER.debug('settings: %s %s %s', MIN_YEAR, TODAY, MAX_YEAR)
-LOGGER.debug('dateparser configuration: %s', PARSERCONFIG)
 
 CLEANER = Cleaner()
 CLEANER.comments = False
@@ -89,317 +74,11 @@ CLEANER.scripts = False
 CLEANER.style = True
 CLEANER.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'video'] # 'embed', 'figure', 'img', 'table'
 
-TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
-
 ## REGEX cache
-AMERICAN_ENGLISH = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
-BRITISH_ENGLISH = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})') # ([0-9]{2,4})
-ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
-GENERAL_TEXTSEARCH = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
-GERMAN_TEXTSEARCH = re.compile(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})')
-COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
-PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
-YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
-DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 JSON_PATTERN = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 # use of regex module for speed
 GERMAN_PATTERN = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
-
-
-#@profile
-def date_validator(date_input, outputformat):
-    """Validate a string with respect to the chosen outputformat and basic heuristics"""
-    # try if date can be parsed using chosen outputformat
-    if not isinstance(date_input, datetime.date):
-        # speed-up
-        try:
-            if outputformat == '%Y-%m-%d':
-                dateobject = datetime.datetime(int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10]))
-            # default
-            else:
-                dateobject = datetime.datetime.strptime(date_input, outputformat)
-        except ValueError:
-            return False
-    else:
-        dateobject = date_input
-    # basic year validation
-    year = int(datetime.date.strftime(dateobject, '%Y'))
-    if MIN_YEAR <= year <= MAX_YEAR:
-        # not newer than today
-        try:
-            if dateobject.date() <= TODAY:
-                return True
-        except AttributeError:
-            if dateobject <= TODAY:
-                return True
-    LOGGER.debug('date not valid: %s', date_input)
-    return False
-
-
-#@profile
-def output_format_validator(outputformat):
-    """Validate the output format in the settings"""
-    # test in abstracto
-    if not isinstance(outputformat, str) or not '%' in outputformat:
-        logging.error('malformed output format: %s', outputformat)
-        return False
-    # test with date object
-    dateobject = datetime.datetime(2017, 9, 1, 0, 0)
-    try:
-        # datetime.datetime.strftime(dateobject, outputformat)
-        dateobject.strftime(outputformat)
-    except (NameError, TypeError, ValueError) as err:
-        logging.error('wrong output format or format type: %s %s', outputformat, err)
-        return False
-    return True
-
-
-#@profile
-def convert_date(datestring, inputformat, outputformat):
-    """Parse date and return string in desired format"""
-    # speed-up (%Y-%m-%d)
-    if inputformat == outputformat:
-        return str(datestring)
-    # date object (speedup)
-    if isinstance(datestring, datetime.date):
-        converted = datestring.strftime(outputformat)
-        return converted
-    # normal
-    dateobject = datetime.datetime.strptime(datestring, inputformat)
-    converted = dateobject.strftime(outputformat)
-    return converted
-
-
-#@profile
-def regex_parse_de(string):
-    """Try full-text parse for German date elements"""
-    # text match
-    match = GERMAN_TEXTSEARCH.search(string)
-    if not match:
-        return None
-    # second element
-    secondelem = TEXT_MONTHS[match.group(2)]
-    # process and return
-    try:
-        dateobject = datetime.date(int(match.group(3)), int(secondelem), int(match.group(1)))
-    except ValueError:
-        return None
-    LOGGER.debug('German text parse: %s', dateobject)
-    return dateobject
-
-#@profile
-def regex_parse_en(string):
-    """Try full-text parse for English date elements"""
-    # https://github.com/vi3k6i5/flashtext ?
-    # numbers
-    match = ENGLISH_DATE.search(string)
-    if match:
-        day = match.group(2)
-        month = match.group(1)
-        year = match.group(3)
-    else:
-        # general search
-        if not GENERAL_TEXTSEARCH.search(string):
-            return None
-        # American English
-        match = AMERICAN_ENGLISH.search(string)
-        if match:
-            day = match.group(2)
-            month = TEXT_MONTHS[match.group(1)]
-            year = match.group(4)
-        # British English
-        else:
-            match = BRITISH_ENGLISH.search(string)
-            if match:
-                day = match.group(1)
-                month = TEXT_MONTHS[match.group(4)]
-                year = match.group(5)
-            else:
-                return None
-    # process and return
-    if len(year) == 2:
-        year = '20' + year
-    try:
-        dateobject = datetime.date(int(year), int(month), int(day))
-    except ValueError:
-        return None
-    LOGGER.debug('English text parse: %s', dateobject)
-    return dateobject
-
-
-#@profile
-def custom_parse(string, outputformat):
-    """Try to bypass the slow dateparser"""
-    LOGGER.debug('custom parse test: %s', string)
-    # '201709011234' not covered by dateparser # regex was too slow
-    if string[0:8].isdigit():
-        try:
-            candidate = datetime.date(int(string[:4]), int(string[4:6]), int(string[6:8]))
-        except ValueError:
-            return None
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            LOGGER.debug('ymd match: %s', candidate)
-            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-            return converted
-    # %Y-%m-%d search
-    match = YMD_PATTERN.search(string)
-    if match:
-        try:
-            candidate = datetime.date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-        except ValueError:
-            LOGGER.debug('value error: %s', match.group(0))
-        else:
-            if date_validator(candidate, '%Y-%m-%d') is True:
-                LOGGER.debug('ymd match: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
-    # faster than fire dateparser at once
-    datestub = DATESTUB_PATTERN.search(string)
-    if datestub and len(datestub.group(3)) in (2, 4):
-        try:
-            if len(datestub.group(3)) == 2:
-                candidate = datetime.date(int('20' + datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
-            elif len(datestub.group(3)) == 4:
-                candidate = datetime.date(int(datestub.group(3)), int(datestub.group(2)), int(datestub.group(1)))
-        except ValueError:
-            LOGGER.debug('value error: %s', datestub.group(0))
-        else:
-            # test candidate
-            if date_validator(candidate, '%Y-%m-%d') is True:
-                LOGGER.debug('D.M.Y match: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
-    # text match
-    dateobject = regex_parse_de(string)
-    if dateobject is None:
-        dateobject = regex_parse_en(string)
-    # examine
-    if dateobject is not None:
-        try:
-            if date_validator(dateobject, outputformat) is True:
-                LOGGER.debug('custom parse result: %s', dateobject)
-                converted = dateobject.strftime(outputformat)
-                return converted
-        except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', string, err)
-    return None
-
-
-#@profile
-def external_date_parser(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
-    """Use the dateparser module"""
-    LOGGER.debug('send to dateparser: %s', string)
-    try:
-        target = parser.get_date_data(string)['date_obj']
-    # tzinfo.py line 323: loc_dt = dt + delta
-    except OverflowError:
-        target = None
-    if target is not None:
-        LOGGER.debug('dateparser result: %s', target)
-        # datestring = datetime.date.strftime(target, outputformat)
-        if date_validator(target, outputformat) is True:
-            datestring = datetime.date.strftime(target, outputformat)
-            return datestring
-    return None
-
-
-#@profile
-def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
-    """Use a series of heuristics and rules to parse a potential date expression"""
-    # discard on formal criteria
-    if string is None or len(list(filter(str.isdigit, string))) < 4:
-        return None
-    # just time/single year, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
-        return None
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601
-        try:
-            result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat) is True:
-                LOGGER.debug('ciso8601 result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
-        except ValueError:
-            LOGGER.debug('ciso8601 error: %s', string)
-    # faster
-    customresult = custom_parse(string, outputformat)
-    if customresult is not None:
-        return customresult
-    # slow but extensive search
-    if find_date.extensive_search is True:
-        # send to dateparser
-        dateparser_result = external_date_parser(string, outputformat, parser)
-        if dateparser_result is not None:
-            return dateparser_result
-    # catchall
-    return None
-
-
-#@profile
-def compare_reference(reference, expression, outputformat, original_bool=False):
-    """Compare the date expression to a reference"""
-    # trim
-    temptext = expression.strip()
-    temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
-    textcontent = temptext.strip()
-    # simple length heuristics
-    if not textcontent or len(list(filter(str.isdigit, textcontent))) < 4:
-        return reference
-    # try the beginning of the string
-    textcontent = textcontent[:48]
-    attempt = try_ymd_date(textcontent, outputformat)
-    if attempt is not None:
-        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-        if original_bool is True:
-            if reference == 0 or timestamp < reference:
-                reference = timestamp
-        else:
-            if timestamp > reference:
-                reference = timestamp
-    return reference
-
-
-#@profile
-def extract_url_date(testurl, outputformat):
-    """Extract the date out of an URL string"""
-    # easy extract in Y-M-D format
-    match = COMPLETE_URL.search(testurl)
-    if match:
-        dateresult = match.group(0)
-        LOGGER.debug('found date in URL: %s', dateresult)
-        try:
-            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
-            dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-            if date_validator(dateobject, outputformat) is True:
-                converted = dateobject.strftime(outputformat)
-                return converted
-        except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', dateresult, err)
-    # catchall
-    return None
-
-
-#@profile
-def extract_partial_url_date(testurl, outputformat):
-    """Extract an approximate date out of an URL string"""
-    # easy extract in Y-M format
-    match = PARTIAL_URL.search(testurl)
-    if match:
-        dateresult = match.group(0) + '/01'
-        LOGGER.debug('found date in URL: %s', dateresult)
-        try:
-            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
-            dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), 1)
-            if date_validator(dateobject, outputformat) is True:
-                converted = dateobject.strftime(outputformat)
-                return converted
-        except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', dateresult, err)
-    # catchall
-    return None
 
 
 #@profile
@@ -545,40 +224,6 @@ def examine_header(tree, outputformat, original_bool=False):
 
 
 #@profile
-def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
-    """Filter the date patterns to find plausible years only"""
-    ## slow
-    allmatches = pattern.findall(htmlstring)
-    occurrences = Counter(allmatches)
-    toremove = set()
-    # LOGGER.debug('occurrences: %s', occurrences)
-    for item in occurrences.keys():
-        # scrap implausible dates
-        try:
-            if tocomplete is False:
-                potential_year = int(yearpat.search(item).group(1))
-            else:
-                lastdigits = yearpat.search(item).group(1)
-                if lastdigits[0] == '9':
-                    potential_year = int('19' + lastdigits)
-                else:
-                    potential_year = int('20' + lastdigits)
-        except AttributeError:
-            LOGGER.debug('not a year pattern: %s', item)
-            toremove.add(item)
-        else:
-            if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
-                LOGGER.debug('no potential year: %s', item)
-                toremove.add(item)
-            # occurrences.remove(item)
-            # continue
-    # record
-    for item in toremove:
-        del occurrences[item]
-    return occurrences
-
-
-#@profile
 def select_candidate(occurrences, catch, yearpat, original_bool=False):
     """Select a candidate among the most frequent matches"""
     # LOGGER.debug('occurrences: %s', occurrences)
@@ -623,18 +268,6 @@ def select_candidate(occurrences, catch, yearpat, original_bool=False):
             match = catch.match(first_pattern)
     if match:
         return match
-    return None
-
-
-#@profile
-def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
-    """Filter free text candidates in the YMD format"""
-    if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 
