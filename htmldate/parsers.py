@@ -14,16 +14,12 @@ import re
 
 # third-party
 import dateparser # slow
-from ciso8601 import parse_datetime_as_naive
 
 from .validators import convert_date, date_validator
 
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-## DateDataParser object
-PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-LOGGER.debug('dateparser configuration: %s', PARSERCONFIG)
 # Regex cache
 AMERICAN_ENGLISH = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|J채nner|Februar|Feber|M채rz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
 BRITISH_ENGLISH = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|J채nner|Februar|Feber|M채rz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})') # ([0-9]{2,4})
@@ -36,7 +32,9 @@ GERMAN_TEXTSEARCH = re.compile(r'([0-9]{1,2})\. (Januar|J채nner|Februar|Feber|M�
 GENERAL_TEXTSEARCH = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|J채nner|Februar|Feber|M채rz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
 # German dates cache
 TEXT_MONTHS = {'Januar':'01', 'J채nner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'M채rz':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
-
+## DateDataParser object
+PARSERCONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
+LOGGER.debug('dateparser configuration: %s', PARSERCONFIG)
 
 
 #@profile
@@ -209,38 +207,4 @@ def external_date_parser(string, outputformat, parser=dateparser.DateDataParser(
         if date_validator(target, outputformat) is True:
             datestring = datetime.date.strftime(target, outputformat)
             return datestring
-    return None
-
-
-#@profile
-def try_ymd_date(string, outputformat, parser=dateparser.DateDataParser(settings=PARSERCONFIG)):
-    """Use a series of heuristics and rules to parse a potential date expression"""
-    # discard on formal criteria
-    if string is None or len(list(filter(str.isdigit, string))) < 4:
-        return None
-    # just time/single year, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
-        return None
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601
-        try:
-            result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat) is True:
-                LOGGER.debug('ciso8601 result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
-        except ValueError:
-            LOGGER.debug('ciso8601 error: %s', string)
-    # faster
-    customresult = custom_parse(string, outputformat)
-    if customresult is not None:
-        return customresult
-    # slow but extensive search
-    if extensive_search is True:
-        # send to dateparser
-        dateparser_result = external_date_parser(string, outputformat, parser)
-        if dateparser_result is not None:
-            return dateparser_result
-    # catchall
     return None

@@ -16,9 +16,10 @@ import logging
 # http://docs.python-guide.org/en/latest/writing/logging/
 # https://github.com/requests/requests/blob/master/requests/__init__.py
 
-from .core import *
-from .utils import *
-from .validators import *
+#from .core import *
+#from .parsers import *
+#from .utils import *
+#from .validators import *
 
 
 try:  # Python 2.7+

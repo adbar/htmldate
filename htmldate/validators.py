@@ -10,12 +10,9 @@ Filters for date parsing and date validators.
 # standard
 import datetime
 import logging
-import re
 import time
 
 from collections import Counter
-
-from .parsers import try_ymd_date
 
 
 ## INIT
@@ -113,26 +110,15 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 
 
 #@profile
-def compare_reference(reference, expression, outputformat, original_bool=False):
+def compare_values(reference, attempt, outputformat, original_bool):
     """Compare the date expression to a reference"""
-    # trim
-    temptext = expression.strip()
-    temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
-    textcontent = temptext.strip()
-    # simple length heuristics
-    if not textcontent or len(list(filter(str.isdigit, textcontent))) < 4:
-        return reference
-    # try the beginning of the string
-    textcontent = textcontent[:48]
-    attempt = try_ymd_date(textcontent, outputformat)
-    if attempt is not None:
-        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-        if original_bool is True:
-            if reference == 0 or timestamp < reference:
-                reference = timestamp
-        else:
-            if timestamp > reference:
-                reference = timestamp
+    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+    if original_bool is True:
+        if reference == 0 or timestamp < reference:
+            reference = timestamp
+    else:
+        if timestamp > reference:
+            reference = timestamp
     return reference
 
 
@@ -146,6 +132,7 @@ def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
                 LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
+
 
 #@profile
 def convert_date(datestring, inputformat, outputformat):
