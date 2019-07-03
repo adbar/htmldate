@@ -13,8 +13,11 @@ from collections import Counter
 
 import dateparser
 
-from htmldate.core import *
-from htmldate import cli, utils
+from htmldate.cli import examine
+from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
+from htmldate.parsers import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
+from htmldate.utils import fetch_url, load_html
+from htmldate.validators import convert_date, date_validator, output_format_validator
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -202,6 +205,7 @@ def test_exact_date():
     assert find_date('<html><body>&copy; 2017</body></html>') == '2017-01-01'
     assert find_date('<html><body>© 2017</body></html>') == '2017-01-01'
     assert find_date('<html><body><p>Dieses Datum ist leider ungültig: 30. Februar 2018.</p></body></html>', extensive_search=False) is None
+    assert find_date('<html><body><p>Dieses Datum ist leider ungültig: 30. Februar 2018.</p></body></html>') == '2018-01-01'
 
 
 def test_approximate_date():
@@ -258,7 +262,7 @@ def test_try_ymd_date():
     assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) is None
     find_date.extensive_search = True
     assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    # assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER) == '2017-09-01'
     assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     # assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
@@ -277,25 +281,25 @@ def test_try_ymd_date():
 #    assert examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
-def test_compare_reference():
+def test_compare_reference(extensive_search=False, original_bool=False):
     '''test comparison function'''
-    assert compare_reference(0, 'AAAA', OUTPUTFORMAT) == 0
-    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT) == 1517500000
-    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT) < 1517500000
-    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT) == 1517500000
+    assert compare_reference(0, 'AAAA', OUTPUTFORMAT, extensive_search, original_bool) == 0
+    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT, extensive_search, original_bool) == 1517500000
+    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT, extensive_search, original_bool) < 1517500000
+    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT, extensive_search, original_bool) == 1517500000
 
 
-def test_candidate_selection():
+def test_candidate_selection(original_bool=False):
     '''test the algorithm for several candidates'''
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     allmatches = ['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat)
+    result = select_candidate(occurrences, catch, yearpat, original_bool)
     assert result is not None
     allmatches = ['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat)
+    result = select_candidate(occurrences, catch, yearpat, original_bool)
     assert result is None
 
 
@@ -333,81 +337,81 @@ def test_approximate_url():
     assert find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/category/2016/') is None
 
 
-def test_search_pattern():
+def test_search_pattern(original_bool=False):
     '''test pattern search in strings'''
     #
     pattern = re.compile('\D([0-9]{4}[/.-][0-9]{2})\D')
     catch = re.compile('([0-9]{4})[/.-]([0-9]{2})')
     yearpat = re.compile('^([12][0-9]{3})')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
-    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat) is not None
-    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat) is None
-    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_bool) is None
+    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_bool) is not None
+    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_bool) is None
+    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_bool) is not None
     #
     pattern = re.compile('\D([0-9]{2}[/.-][0-9]{4})\D')
     catch = re.compile('([0-9]{2})[/.-]([0-9]{4})')
     yearpat = re.compile('([12][0-9]{3})$')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat) is None
-    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_bool) is None
+    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_bool) is not None
     #
     pattern = re.compile('\D(2[01][0-9]{2})\D')
     catch = re.compile('(2[01][0-9]{2})')
     yearpat = re.compile('^(2[01][0-9]{2})')
-    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat) is None
-    assert search_pattern('It happened in 2002.', pattern, catch, yearpat) is not None
+    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_bool) is None
+    assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_bool) is not None
 
 
-def test_search_html():
+def test_search_html(original_bool=False):
     '''test pattern search in HTML'''
     # file input
-    assert search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT) == '2017-07-12'
+    assert search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT, original_bool) == '2017-07-12'
     # file input + output format
-    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y') == '06 April 2019'
+    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_bool) == '06 April 2019'
     # tree input
-    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT) == '2010-05-01'
-    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT) == '2010-05-05'
-    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT) == '1999-10-11'
-    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT) == '2011-03-03'
-    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT) == '2006-12-06'
-    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT) == '2014-09-15'
-    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT) == '2015-04-30'
-    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT) == '2013-03-03'
-    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT) is None
-    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT) == '2013-01-01'
-    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT) == '2018-01-01'
+    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-01'
+    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-05'
+    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_bool) == '1999-10-11'
+    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT, original_bool) == '2011-03-03'
+    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT, original_bool) == '2006-12-06'
+    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT, original_bool) == '2014-09-15'
+    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT, original_bool) == '2015-04-30'
+    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT, original_bool) == '2013-03-03'
+    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_bool) is None
+    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_bool) == '2013-01-01'
+    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_bool) == '2018-01-01'
 
 
 def test_cli():
     '''test the command-line interface'''
-    assert cli.examine(' ', True) is None
-    assert cli.examine('0'*int(10e7), True) is None
-    assert cli.examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
-    assert cli.examine('<html><body>2016-07-12</body></html>', True) == '2016-07-12'
+    assert examine(' ', True) is None
+    assert examine('0'*int(10e7), True) is None
+    assert examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
+    assert examine('<html><body>2016-07-12</body></html>', True) == '2016-07-12'
 
 
 def test_load():
     '''test the download utility'''
-    assert utils.fetch_url('https://www.iana.org/404') is None
-    assert utils.fetch_url('https://www.google.com/blank.html') is None
+    assert fetch_url('https://www.iana.org/404') is None
+    assert fetch_url('https://www.google.com/blank.html') is None
     # print(len(download.fetch_url('https://blank.org').text))
-    assert utils.load_html('https://example.org/') is not None
+    assert load_html('https://example.org/') is not None
 
 
 def test_download():
     '''test page download'''
-    assert utils.fetch_url('https://httpbin.org/status/404') is None
+    assert fetch_url('https://httpbin.org/status/404') is None
     url = 'https://httpbin.org/status/200'
-    teststring = utils.fetch_url(url)
+    teststring = fetch_url(url)
     assert teststring is None
-    assert cli.examine(teststring) is None
+    assert examine(teststring) is None
     url = 'https://httpbin.org/links/2/2'
-    teststring = utils.fetch_url(url)
+    teststring = fetch_url(url)
     assert teststring is not None
-    assert cli.examine(teststring) is None
+    assert examine(teststring) is None
     url = 'https://httpbin.org/html'
-    teststring = utils.fetch_url(url)
+    teststring = fetch_url(url)
     assert teststring is not None
-    assert cli.examine(teststring, False) is None
+    assert examine(teststring, False) is None
 
 
 if __name__ == '__main__':
