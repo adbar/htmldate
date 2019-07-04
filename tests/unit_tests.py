@@ -95,13 +95,11 @@ def load_mock_page(url):
         htmlstring = inputf.read()
     return htmlstring
 
+
 def new_pages():
     '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
-    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2016-06-23'
-    assert find_date(load_mock_page('http://carta.info/der-neue-trend-muss-statt-wunschkoalition/')) == '2012-05-08'
-    assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-06-17'
-    assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
+
     
 def test_input():
     '''test if loaded strings/trees are handled properly'''
@@ -201,7 +199,6 @@ def test_exact_date():
     ## in document body
     assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
     assert find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
-    assert find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html')) == '2016-11-18'
     assert find_date(load_mock_page('https://opensource.org/')) == '2017-09-05'
     assert find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
     assert find_date(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3')) == '2017-07-12'
@@ -223,6 +220,12 @@ def test_exact_date():
     assert find_date('<html><body>© 2017</body></html>') == '2017-01-01'
     assert find_date('<html><body><p>Dieses Datum ist leider ungültig: 30. Februar 2018.</p></body></html>', extensive_search=False) is None
     assert find_date('<html><body><p>Dieses Datum ist leider ungültig: 30. Februar 2018.</p></body></html>') == '2018-01-01'
+
+    # additional list
+    assert find_date(load_mock_page('http://carta.info/der-neue-trend-muss-statt-wunschkoalition/')) == '2012-05-08'
+    assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
+    # TODO:
+    # assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-06-17'
 
 
 def test_approximate_date():
@@ -446,9 +449,9 @@ def readme_examples():
     assert find_date(htmldoc) == '2016-07-12'
     mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
     assert find_date(mytree) == '2016-07-12'
-    assert find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y') == '18 November 2016'
-    assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') == '2019-06-24'
-    assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) == '2016-06-23'
+    assert find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html'), outputformat='%d %B %Y') == '18 November 2016'
+    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2019-06-24'
+    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/'), original_bool=True) == '2016-06-23'
     assert find_date('https://example.com') is None
     assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
 
