@@ -30,9 +30,9 @@ Features
 
 Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing.
 
-1. Markup in header: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
-2. HTML code: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
-3. Bare HTML content: A series of heuristics is run on text and markup:
+1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
+2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
+3. **Bare HTML content**: A series of heuristics is run on text and markup:
 
   1. in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
   2. in ``extensive`` mode date expressions are collected and the best one is chosen based on a disambiguation algorithm
@@ -175,9 +175,9 @@ Going further
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
 
-In addition, `datefinder <https://github.com/akoumjian/datefinder>_` features pattern-based date extraction for texts written in English.
+In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 
-Pull requests are welcome.
+`Pull requests <https://help.github.com/en/articles/about-pull-requests>`_ are welcome.
 
 
 Contact
