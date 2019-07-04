@@ -14,7 +14,7 @@ from .core import find_date
 from .utils import fetch_url
 
 
-def examine(htmlstring, extensive_bool=True, original_bool=False):
+def examine(htmlstring, extensive_bool=True, original_date=False):
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:
@@ -25,7 +25,7 @@ def examine(htmlstring, extensive_bool=True, original_bool=False):
         sys.stderr.write('# ERROR: file too small\n')
     # proceed
     else:
-        result = find_date(htmlstring, extensive_bool, original_bool)
+        result = find_date(htmlstring, extensive_bool, original_date)
         return result
     return None
 

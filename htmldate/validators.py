@@ -105,10 +105,10 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 
 
 #@profile
-def compare_values(reference, attempt, outputformat, original_bool):
+def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-    if original_bool is True:
+    if original_date is True:
         if reference == 0 or timestamp < reference:
             reference = timestamp
     else:
