@@ -17,12 +17,9 @@ htmldate: find the creation date of HTML pages
     :target: https://codecov.io/gh/adbar/htmldate
 
 
-This library finds the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. It can handle all the steps needed from web page download to HTML parsing, including scraping and textual analysis. It takes URLs, HTML files or HTML trees as input and outputs a date.
-
-:Code:           https://github.com/adbar/trafilatura
+:Code:           https://github.com/adbar/htmldate
 :Documentation:  https://htmldate.readthedocs.io
-:Issue tracker:  https://github.com/adbar/trafilatura/issues
-:License:        GNU GPL v3; see LICENSE file
+:Issue tracker:  https://github.com/adbar/htmldate/issues
 
 .. contents:: **Contents**
     :backlinks: none
@@ -31,7 +28,9 @@ This library finds the creation date of web pages using a combination of tree tr
 Features
 --------
 
-Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing.
+*htmldate* finds the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. All the steps needed from web page download to HTML parsing, including scraping and textual analysis are handled. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
+
+*htmldate* provides following ways to date a HTML document:
 
 1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
@@ -55,18 +54,11 @@ Installation
 
 Install from package repository: ``pip install htmldate``
 
-Direct installation of the latest version over pip is possible (see `build status <https://travis-ci.org/adbar/htmldate>`_):
-
-``pip install git+https://github.com/adbar/htmldate.git``
+For the latest version (check `build status <https://travis-ci.org/adbar/htmldate>`_): ``pip install git+https://github.com/adbar/htmldate.git``
 
 
 With Python
 -----------
-
-All the functions of the module are currently bundled in *htmldate*.
-
-In case the web page features easily readable metadata in the header, the extraction is straightforward. A more advanced analysis of the document structure is sometimes needed:
-
 
 .. code-block:: python
 
@@ -76,7 +68,7 @@ In case the web page features easily readable metadata in the header, the extrac
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
-In the worst case, the module resorts to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
+The module can resort to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
 
 .. code-block:: python
 
@@ -118,7 +110,7 @@ The output format of the dates found can be set in a format known to Python's ``
 Original date
 ~~~~~~~~~~~~~
 
-Although the time delta between the original publication and the "last modified" statement is usually a matter of hours or days at most, it can be useful in some contexts to prioritize the original publication date during extraction:
+Although the time delta between the original publication and the *last modified* statement is usually a matter of hours or days at most, it can be useful in some contexts to prioritize the original publication date during extraction:
 
 .. code-block:: python
 
@@ -126,19 +118,6 @@ Although the time delta between the original publication and the "last modified"
     '2019-06-24'
     >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
     '2016-06-23'
-
-
-Known caveats
-~~~~~~~~~~~~~
-
-The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of January.
-
-Besides, there are pages for which no date can be found, ever:
-
-.. code-block:: python
-
-    >>> htmldate.find_date('https://example.com')
-    >>>
 
 
 On the command-line
