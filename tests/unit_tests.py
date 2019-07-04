@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable-msg=W1401
 """
 Unit tests for the htmldate library.
 """
@@ -81,7 +82,6 @@ MOCK_PAGES = { \
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
-# PARSER = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
 PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
 
 
@@ -429,16 +429,16 @@ def test_download():
 
 
 def readme_examples():
-     '''Test README example for consistency'''
-     assert find_date('http://blog.python.org/2016/12/python-360-is-now-available.html') == '2016-12-23'
-     assert find_date('https://creativecommons.org/about/', extensive_search=False) is None
-     mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
-     assert find_date(mytree) == '2016-07-12'
-     assert find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y') == '18 November 2016'
-     assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') == '2019-06-24'
-     assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) == '2016-06-23'
-     assert find_date('https://example.com') is None
-     assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
+    '''Test README example for consistency'''
+    assert find_date('http://blog.python.org/2016/12/python-360-is-now-available.html') == '2016-12-23'
+    assert find_date('https://creativecommons.org/about/', extensive_search=False) is None
+    mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
+    assert find_date(mytree) == '2016-07-12'
+    assert find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y') == '18 November 2016'
+    assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') == '2019-06-24'
+    assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) == '2016-06-23'
+    assert find_date('https://example.com') is None
+    assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
 
 
 if __name__ == '__main__':
