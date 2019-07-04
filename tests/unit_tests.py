@@ -26,60 +26,60 @@ from htmldate.validators import convert_date, date_validator, output_format_vali
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 MOCK_PAGES = { \
+'http://absegler.de/': 'absegler.de.html', \
+'http://blog.kinra.de/?p=959/': 'kinra.de.html', \
 'http://blog.python.org/2016/12/python-360-is-now-available.html': 'blog.python.org.html', \
-'https://example.com': 'example.com.html', \
-'https://github.com/adbar/htmldate': 'github.com.html', \
-'https://creativecommons.org/about/': 'creativecommons.org.html', \
-'https://en.support.wordpress.com/': 'support.wordpress.com.html', \
-'https://en.blog.wordpress.com/': 'blog.wordpress.com.html', \
-'https://www.deutschland.de/en': 'deutschland.de.en.html', \
-'https://www.gnu.org/licenses/gpl-3.0.en.html': 'gnu.org.gpl.html', \
-'https://opensource.org/': 'opensource.org.html', \
-'https://www.austria.info/': 'austria.info.html', \
-'https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3': 'uni-koeln.de.ocean.html', \
-'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': 'intel.com.tos.html', \
-'http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/': 'greenpeace.org.forests.html', \
-'https://www.amnesty.org/en/what-we-do/corporate-accountability/': 'amnesty.org.corporate.html', \
-'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html', \
-'https://www.rosneft.com/business/Upstream/Licensing/': 'rosneft.com.licensing.html', \
-'https://www.creativecommons.at/faircoin-hackathon': 'creativecommons.at.faircoin.html', \
-'https://pixabay.com/en/service/terms/': 'pixabay.com.tos.html', \
-'https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504': 'futurezone.at.cc.html', \
+'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html', \
+'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html', \
 'https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov': '500px.com.spring.html', \
-'https://www.eff.org/files/annual-report/2015/index.html': 'eff.org.2015.html', \
-'http://unexpecteduser.blogspot.de/2011/': 'unexpecteduser.2011.html', \
+'https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean': 'aboutpam.com.html', \
 'https://bayern.de/': 'bayern.de.html', \
-'https://www.facebook.com/visitaustria/': 'facebook.com.visitaustria.html', \
-'http://www.stuttgart.de/': 'stuttgart.de.html', \
-'https://www.gruene-niedersachsen.de': 'gruene-niedersachsen.de.html', \
+'https://creativecommons.org/about/': 'creativecommons.org.html', \
 'https://die-partei.net/sh/': 'die-partei.net.sh.html', \
+'https://en.blog.wordpress.com/': 'blog.wordpress.com.html', \
+'https://en.support.wordpress.com/': 'support.wordpress.com.html', \
+'https://example.com': 'example.com.html', \
+'https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504': 'futurezone.at.cc.html', \
+'https://github.com/adbar/htmldate': 'github.com.html', \
+'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
+'https://opensource.org/': 'opensource.org.html', \
+'https://pixabay.com/en/service/terms/': 'pixabay.com.tos.html', \
+'https://www.amnesty.org/en/what-we-do/corporate-accountability/': 'amnesty.org.corporate.html', \
+'https://www.austria.info/': 'austria.info.html', \
+'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html', \
+'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
+'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html', \
+'https://www.creativecommons.at/faircoin-hackathon': 'creativecommons.at.faircoin.html', \
+'https://www.deutschland.de/en': 'deutschland.de.en.html', \
+'https://www.eff.org/files/annual-report/2015/index.html': 'eff.org.2015.html', \
+'https://www.facebook.com/visitaustria/': 'facebook.com.visitaustria.html', \
+'https://www.gnu.org/licenses/gpl-3.0.en.html': 'gnu.org.gpl.html', \
+'https://www.goodform.ch/blog/schattiges_plaetzchen': 'goodform.ch.blog.html', \
+'https://www.gruene-niedersachsen.de': 'gruene-niedersachsen.de.html', \
+'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html', \
+'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': 'intel.com.tos.html', \
 'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
+'https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3': 'uni-koeln.de.ocean.html', \
+'https://www.rosneft.com/business/Upstream/Licensing/': 'rosneft.com.licensing.html', \
+'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': 'scs78.de.html', \
+'https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html': 'tagesausblick.de.dow.html', \
+'https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html': 'transgen.de.aktuell.html', \
+'https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html': 'weltwoche.ch.html', \
+'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html', \
+'http://unexpecteduser.blogspot.de/2011/': 'unexpecteduser.2011.html', \
+'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
+'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html', \
+'http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/': 'freundeskreis-videoclips.de.html', \
+'http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/': 'greenpeace.org.forests.html', \
+'http://www.heimicke.de/chronik/zahlen-und-daten/': 'heimicke.de.zahlen.html', \
+'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': 'hobby-werkstatt-blog.de.roomba.html', \
 'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
 'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
-'http://absegler.de/': 'absegler.de.html', \
-'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
 'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': 'jovelstefan.de.parken.html', \
-'http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/': 'freundeskreis-videoclips.de.html', \
-'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': 'scs78.de.html', \
-'https://www.goodform.ch/blog/schattiges_plaetzchen': 'goodform.ch.blog.html', \
-'https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html': 'transgen.de.aktuell.html', \
-'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html', \
-'https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean': 'aboutpam.com.html', \
-'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html', \
 'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html', \
-'http://blog.kinra.de/?p=959/': 'kinra.de.html', \
-'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': 'hobby-werkstatt-blog.de.roomba.html', \
-'https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html': 'tagesausblick.de.dow.html', \
-'http://www.heimicke.de/chronik/zahlen-und-daten/': 'heimicke.de.zahlen.html', \
-'https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html': 'weltwoche.ch.html', \
-'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html', \
-'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html', \
-'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
+'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html', \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
-'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
-'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html', \
-'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html', \
-'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html', \
+'http://www.stuttgart.de/': 'stuttgart.de.html', \
 }
 # '': '', \
 
@@ -100,7 +100,7 @@ def new_pages():
     '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
 
-    
+
 def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
@@ -132,8 +132,8 @@ def test_exact_date():
     assert find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-01-01'
 
     # original date
-    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_bool=True) == '2017-07-02'
-    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_bool=False) == '2017-09-01'
+    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_date=True) == '2017-07-02'
+    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_date=False) == '2017-09-01'
 
     ## link in header
     assert find_date(load_mock_page('http://www.jovelstefan.de/2012/05/11/parken-in-paris/')) == '2012-05-11'
@@ -153,8 +153,8 @@ def test_exact_date():
     assert find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html'), outputformat='%d %B %Y') == '23 December 2016'
 
     ## time in document body
-    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_bool=True) == '2017-10-06'
-    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_bool=False) == '2017-10-08'
+    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_date=True) == '2017-10-06'
+    assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_date=False) == '2017-10-08'
     assert find_date(load_mock_page('http://absegler.de/')) == '2017-08-06'
     assert find_date(load_mock_page('http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages')) == '2017-09-01'
     assert find_date('<html><body><time datetime="08:00"></body></html>') is None
@@ -171,7 +171,7 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03' # JSON dateModified
 
     ## meta in document body
-    assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), original_bool=True) == '2013-08-09'
+    assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), original_date=True) == '2013-08-09'
     assert find_date(load_mock_page('https://aboutpam.com/fitness/the-%22right%22-diet-what-does-that-even-mean')) == '2017-12-15'
     assert find_date(load_mock_page('https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529')) == '2019-01-29'
     assert find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
@@ -233,24 +233,24 @@ def test_approximate_date():
     # copyright text
     assert find_date(load_mock_page('http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung')) == '2016-01-01' # somewhere in 2016
     # other
-    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_bool=False) == '2017-08-11' # or '2017-08-03'
-    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_bool=True) == '2016-05-22' # or '2017-08-03'
+    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_date=False) == '2017-08-11' # or '2017-08-03'
+    assert find_date(load_mock_page('https://creativecommons.org/about/'), original_date=True) == '2016-05-22' # or '2017-08-03'
     assert find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
     assert find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-04-28'
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_bool=False) == '2017-07-01'
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_bool=True) == '2017-01-01'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_date=False) == '2017-07-01'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), original_date=True) == '2017-01-01'
     assert find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-07-24'
     assert find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-01-01' # actually 2017-08-09
     assert find_date(load_mock_page('https://bayern.de/'),) == '2017-10-06' # most probably 2017-10-06
     assert find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_bool=False) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
-    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_bool=True) == '2010-11-01' # 2010-11-01 in meta, 2016 more plausible
-    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_bool=False) == '2011-12-01'
+    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=False) == '2016-05-01' # 2010-11-01 in meta, 2016 more plausible
+    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=True) == '2010-11-01' # 2010-11-01 in meta, 2016 more plausible
+    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_date=False) == '2011-12-01'
     ## TODO: problem, take URL instead
-    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_bool=True) == '2010-06-01'
+    assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_date=True) == '2010-06-01'
     # other format
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_bool=False) == '01 July 2017'
-    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_bool=True) == '01 January 2017'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_date=False) == '01 July 2017'
+    assert find_date(load_mock_page('https://www.amnesty.org/en/what-we-do/corporate-accountability/'), outputformat='%d %B %Y', original_date=True) == '01 January 2017'
     # dates in table
     # assert find_date(load_mock_page('http://www.hundeverein-kreisunna.de/termine.html')) == '2017-03-29' # probably newer
 
@@ -307,25 +307,25 @@ def test_try_ymd_date():
 #    assert examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
-def test_compare_reference(extensive_search=False, original_bool=False):
+def test_compare_reference(extensive_search=False, original_date=False):
     '''test comparison function'''
-    assert compare_reference(0, 'AAAA', OUTPUTFORMAT, extensive_search, original_bool) == 0
-    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT, extensive_search, original_bool) == 1517500000
-    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT, extensive_search, original_bool) < 1517500000
-    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT, extensive_search, original_bool) == 1517500000
+    assert compare_reference(0, 'AAAA', OUTPUTFORMAT, extensive_search, original_date) == 0
+    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT, extensive_search, original_date) == 1517500000
+    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date) < 1517500000
+    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date) == 1517500000
 
 
-def test_candidate_selection(original_bool=False):
+def test_candidate_selection(original_date=False):
     '''test the algorithm for several candidates'''
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     allmatches = ['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat, original_bool)
+    result = select_candidate(occurrences, catch, yearpat, original_date)
     assert result is not None
     allmatches = ['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat, original_bool)
+    result = select_candidate(occurrences, catch, yearpat, original_date)
     assert result is None
 
 
@@ -363,49 +363,49 @@ def test_approximate_url():
     assert find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/category/2016/') is None
 
 
-def test_search_pattern(original_bool=False):
+def test_search_pattern(original_date=False):
     '''test pattern search in strings'''
     #
     pattern = re.compile('\D([0-9]{4}[/.-][0-9]{2})\D')
     catch = re.compile('([0-9]{4})[/.-]([0-9]{2})')
     yearpat = re.compile('^([12][0-9]{3})')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_bool) is None
-    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_bool) is not None
-    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_bool) is None
-    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_bool) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date) is None
+    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_date) is not None
+    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_date) is None
+    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_date) is not None
     #
     pattern = re.compile('\D([0-9]{2}[/.-][0-9]{4})\D')
     catch = re.compile('([0-9]{2})[/.-]([0-9]{4})')
     yearpat = re.compile('([12][0-9]{3})$')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_bool) is None
-    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_bool) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date) is None
+    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_date) is not None
     #
     pattern = re.compile('\D(2[01][0-9]{2})\D')
     catch = re.compile('(2[01][0-9]{2})')
     yearpat = re.compile('^(2[01][0-9]{2})')
-    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_bool) is None
-    assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_bool) is not None
+    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_date) is None
+    assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_date) is not None
 
 
-def test_search_html(original_bool=False):
+def test_search_html(original_date=False):
     '''test pattern search in HTML'''
     # file input
-    assert search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT, original_bool) == '2017-07-12'
+    assert search_page(load_mock_page('https://www.portal.uni-koeln.de/9015.html?&L=1&tx_news_pi1%5Bnews%5D=4621&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=7bc78dfe3712855026fc717c2ea8e0d3'), OUTPUTFORMAT, original_date) == '2017-07-12'
     # file input + output format
-    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_bool) == '06 April 2019'
+    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_date) == '06 April 2019'
     # tree input
     ## TODO: bug here
-    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-01'
-    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_bool) == '2010-05-05'
-    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_bool) == '1999-10-11'
-    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT, original_bool) == '2011-03-03'
-    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT, original_bool) == '2006-12-06'
-    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT, original_bool) == '2014-09-15'
-    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT, original_bool) == '2015-04-30'
-    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT, original_bool) == '2013-03-03'
-    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_bool) is None
-    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_bool) == '2013-01-01'
-    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_bool) == '2018-01-01'
+    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date) == '2010-05-01'
+    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_date) == '2010-05-05'
+    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_date) == '1999-10-11'
+    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT, original_date) == '2011-03-03'
+    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT, original_date) == '2006-12-06'
+    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT, original_date) == '2014-09-15'
+    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT, original_date) == '2015-04-30'
+    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT, original_date) == '2013-03-03'
+    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_date) is None
+    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date) == '2013-01-01'
+    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date) == '2018-01-01'
 
 
 def test_cli():
@@ -451,7 +451,7 @@ def readme_examples():
     assert find_date(mytree) == '2016-07-12'
     assert find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html'), outputformat='%d %B %Y') == '18 November 2016'
     assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2019-06-24'
-    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/'), original_bool=True) == '2016-06-23'
+    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/'), original_date=True) == '2016-06-23'
     assert find_date('https://example.com') is None
     assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
 
