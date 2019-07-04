@@ -13,6 +13,8 @@ from collections import Counter
 
 import dateparser
 
+from lxml import html
+
 from htmldate.cli import examine
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.parsers import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
@@ -119,7 +121,6 @@ def test_exact_date():
     assert find_date('<html><head><Meta Property="og:updated_time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
     assert find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
     assert find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-01-01'
-    assert find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'
 
     # original date
     assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>', original_bool=True) == '2017-07-02'
@@ -427,10 +428,24 @@ def test_download():
     assert examine(teststring, False) is None
 
 
+def readme_examples():
+     '''Test README example for consistency'''
+     assert find_date('http://blog.python.org/2016/12/python-360-is-now-available.html') == '2016-12-23'
+     assert find_date('https://creativecommons.org/about/', extensive_search=False) is None
+     mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
+     assert find_date(mytree) == '2016-07-12'
+     assert find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y') == '18 November 2016'
+     assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') == '2019-06-24'
+     assert find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) == '2016-06-23'
+     assert find_date('https://example.com') is None
+     assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
+
+
 if __name__ == '__main__':
 
     # meta
     test_output_format_validator()
+    readme_examples()
 
     # function-level
     test_input()
