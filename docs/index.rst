@@ -1,7 +1,6 @@
 htmldate: find the creation date of HTML pages
 ==============================================
 
-
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
 
@@ -28,7 +27,9 @@ This library finds the creation date of web pages using a combination of tree tr
 Features
 --------
 
-Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing.
+*htmldate* finds the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. All the steps needed from web page download to HTML parsing, including scraping and textual analysis are handled. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
+
+*htmldate* provides following ways to date a HTML document:
 
 1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
@@ -52,9 +53,7 @@ Installation
 
 Install from package repository: ``pip install htmldate``
 
-Direct installation of the latest version over pip is possible (see `build status <https://travis-ci.org/adbar/htmldate>`_):
-
-``pip install git+https://github.com/adbar/htmldate.git``
+For the latest version (check `build status <https://travis-ci.org/adbar/htmldate>`_): ``pip install git+https://github.com/adbar/htmldate.git``
 
 
 With Python
@@ -66,18 +65,19 @@ In case the web page features easily readable metadata in the header, the extrac
 
 .. code-block:: python
 
-    >>> htmldate.find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
+    >>> from htmldate.core import find_date
+    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
-In the worst case, the module resorts to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
+The module can resort to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
 
 .. code-block:: python
 
-    >>> htmldate.find_date('https://creativecommons.org/about/')
+    >>> find_date('https://creativecommons.org/about/')
     '2017-08-11' # has been updated since
-    >>> htmldate.find_date('https://creativecommons.org/about/', extensive_search=False)
+    >>> find_date('https://creativecommons.org/about/', extensive_search=False)
     >>>
 
 

@@ -19,7 +19,7 @@ The module expects strings as shown above, it is also possible to use already pa
     >>> from htmldate.core import find_date
     >>> from lxml import html
     >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
-    >>> htmldate.find_date(mytree)
+    >>> find_date(mytree)
     '2016-07-12'
 
 An external module can be used for download, as described in versions anterior to 0.3. This example uses the legacy mode with `requests <http://docs.python-requests.org/>`_ as external module.
@@ -30,7 +30,7 @@ An external module can be used for download, as described in versions anterior t
     # using requests
     >>> import requests
     >>> r = requests.get('https://creativecommons.org/about/')
-    >>> htmldate.find_date(r.text)
+    >>> find_date(r.text)
     '2017-11-28' # may have changed since
     # using htmldate's own fetch_url function
     >>> from htmldate.utils import fetch_url

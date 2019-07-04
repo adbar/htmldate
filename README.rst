@@ -64,8 +64,6 @@ With Python
 
     >>> from htmldate.core import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
-    '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
 The module can resort to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
@@ -103,7 +101,7 @@ The output format of the dates found can be set in a format known to Python's ``
 
 .. code-block:: python
 
-    >>> htmldate.find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
+    >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016' # may have changed since
 
 
@@ -114,9 +112,9 @@ Although the time delta between the original publication and the *last modified*
 
 .. code-block:: python
 
-    >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
     '2019-06-24'
-    >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
     '2016-06-23'
 
 
@@ -142,6 +140,15 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 Additional information
 ----------------------
 
+Going further
+~~~~~~~~~~~~~
+
+For more details check the online documentation: `htmldate.readthedocs.io <https://htmldate.readthedocs.io/>`_
+
+If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
+
+`Pull requests <https://help.github.com/en/articles/about-pull-requests>`_ are welcome.
+
 Context
 ~~~~~~~
 
@@ -149,28 +156,11 @@ This module is part of methods to derive metadata from web documents in order to
 
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
-
 Kudos to...
 ~~~~~~~~~~~
 
--  `cchardet <https://github.com/PyYoshi/cChardet>`_
--  `ciso8601 <https://github.com/closeio/ciso8601>`_
--  `lxml <http://lxml.de/>`_
--  `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it is a bit slow)
+-  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it is a bit slow)
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
-
-
-Going further
-~~~~~~~~~~~~~
-
-For more details check the online documentation: `htmldate.readthedocs.io <https://htmldate.readthedocs.io/>`_
-
-If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
-
-In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
-
-`Pull requests <https://help.github.com/en/articles/about-pull-requests>`_ are welcome.
-
 
 Contact
 ~~~~~~~
