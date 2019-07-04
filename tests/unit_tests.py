@@ -73,6 +73,7 @@ MOCK_PAGES = { \
 'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html', \
 'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
+'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
 }
 # '': '', \
 
@@ -88,6 +89,12 @@ def load_mock_page(url):
     with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'r') as inputf:
         htmlstring = inputf.read()
     return htmlstring
+
+def new_pages():
+    '''New pages, to be sorted'''
+    # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
+    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2016-06-23'
+
 
 
 def test_input():
@@ -437,6 +444,7 @@ if __name__ == '__main__':
     test_search_html()
     test_url()
     test_approximate_url()
+    new_pages()
 
     # cli
     test_cli()
