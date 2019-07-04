@@ -313,7 +313,7 @@ def try_ymd_date(string, outputformat, extensive_search, parser=PARSER):
 
 #@profile
 def try_expression(expression, outputformat, extensive_search):
-    '''to complete'''
+    '''Check if the text string could be a valid date expression'''
     # trim
     temptext = expression.strip()
     temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
@@ -328,7 +328,7 @@ def try_expression(expression, outputformat, extensive_search):
 
 
 def compare_reference(reference, expression, outputformat, extensive_search, original_bool):
-    '''to complete'''
+    '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_expression(expression, outputformat, extensive_search)
     if attempt is not None:
         new_reference = compare_values(reference, attempt, outputformat, original_bool)
@@ -339,7 +339,23 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 
 #@profile
 def search_page(htmlstring, outputformat, original_bool):
-    """Search the page for common patterns (can lead to flawed results!)"""
+    """Opportunistic search the page for common patterns"""
+    """
+    Opportunistically search the HTML text for common text patterns
+    :param htmlstring:
+        The HTML document in string format, potentially cleaned and stripped to
+        the core (much faster)
+    :type htmlstring: string
+    :param outputformat:
+        Provide a valid datetime format for the returned string
+        (see datetime.strftime())
+    :type outputformat: string
+    :param original_bool:
+        Look for original date (e.g. publication date) instead of most recent
+        one (e.g. last modified, updated time)
+    :type original_bool: boolean
+    :return: Returns a valid date expression as a string, or None
+    """
     # init
     # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
@@ -505,7 +521,29 @@ def search_page(htmlstring, outputformat, original_bool):
 
 #@profile
 def find_date(htmlobject, extensive_search=True, original_bool=False, outputformat='%Y-%m-%d', url=None):
-    """Main function: apply a series of techniques to date the document, from safe to adventurous"""
+    """
+    Extract dates from HTML documents using markup analysis and text patterns
+    :param htmlobject:
+        HTML document (e.g. body of HTTP request or .html-file) in text string
+        form or LXML parsed tree
+    :type htmlobject: string|lxml tree
+    :param extensive_search:
+        Activate pattern-based opportunistic text search
+    :type extensive_search: boolean
+    :param original_bool:
+        Look for original date (e.g. publication date) instead of most recent
+        one (e.g. last modified, updated time)
+    :type original_bool: boolean
+    :param outputformat:
+        Provide a valid datetime format for the returned string
+        (see datetime.strftime())
+    :type outputformat: string
+    :param url:
+        Provide an URL manually for pattern-searching in URL
+        (in some cases much faster)
+    :type url: string
+    :return: Returns a valid date expression as a string, or None
+    """
     # init
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search

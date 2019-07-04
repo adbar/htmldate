@@ -28,20 +28,20 @@ This library finds the creation date of web pages using a combination of tree tr
 Features
 --------
 
-Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing:
+Seamless extraction of the creation or modification date of web pages: given a HTML document, *htmldate* provides following ways to date it, based on HTML parsing, scraping functions, and robust date parsing.
 
-1. Starting from the header of the page, it uses common patterns to identify date fields (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
-2. If this is not successful, it scans the whole document looking for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
-3. If no date cue could be found, it finally runs a series of heuristics on the content (text and markup):
+1. Markup in header: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
+2. HTML code: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
+3. Bare HTML content: A series of heuristics is run on text and markup:
 
-  1. in ``fast`` mode, the HTML page is cleaned and precise expressions are searched for
-  2. in the more opportunistic default setting, date expressions are collected and the best one is chosen based on a disambiguation algorithm
+  1. in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
+  2. in ``extensive`` mode date expressions are collected and the best one is chosen based on a disambiguation algorithm
 
-The module then returns a date if a valid cue could be found in the document, per default the updated date w.r.t. the original publishing statement.  The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module then returns a date if a valid cue could be found in the document, per default the updated date w.r.t. the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 -  Should be compatible with all common versions of Python 3 (see tests and coverage)
 -  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
--  Designed to be computationally efficient and is used in production on millions of documents
+-  Designed to be computationally efficient and used in production on millions of documents
 -  Handles batch processing of a list of URLs
 
 The library currently focuses on texts in written English or German.
@@ -116,7 +116,6 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
     $ htmldate -fv -i list-of-urls.txt
 
 
-
 Additional information
 ----------------------
 
@@ -171,10 +170,12 @@ Going further
    :maxdepth: 2
 
    corefunctions
-   settings
+   options
 
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive.
+
+In addition, `datefinder <https://github.com/akoumjian/datefinder>_` features pattern-based date extraction for texts written in English.
 
 Pull requests are welcome.
 

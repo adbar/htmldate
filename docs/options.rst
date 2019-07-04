@@ -1,5 +1,12 @@
-Settings
-========
+Options
+=======
+
+.. contents:: **Contents**
+    :backlinks: none
+
+
+Configuration
+-------------
 
 
 Input format
@@ -18,7 +25,7 @@ An external module can be used for download, as described in versions anterior t
 
 .. code-block:: python
 
-    >>> import htmldate, requests
+    >>> import requests
     >>> r = requests.get('https://creativecommons.org/about/')
     >>> htmldate.find_date(r.text)
     '2017-11-28' # may have changed since
@@ -35,6 +42,9 @@ The output format of the dates found can be set in a format known to Python's ``
     '18 November 2016' # may have changed since
 
 
+.. autofunction:: htmldate.validators.output_format_validator
+
+
 Original date
 ~~~~~~~~~~~~~
 
@@ -46,3 +56,14 @@ Although the time delta between the original publication and the "last modified"
     '2019-06-24'
     >>> htmldate.find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
     '2016-06-23'
+
+
+Settings
+--------
+
+See ``settings.py`` file.
+
+.. automodule:: htmldate.settings
+   :members:
+   :show-inheritance:
+   :undoc-members:
