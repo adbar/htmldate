@@ -120,7 +120,26 @@ def examine_date_elements(tree, expression, outputformat, extensive_search):
 
 #@profile
 def examine_header(tree, outputformat, extensive_search, original_bool):
-    """Parse header elements to find date cues"""
+    """
+    Parse header elements to find date cues
+
+    :param tree:
+        LXML parsed tree object
+    :type htmlstring: LXML tree
+    :param outputformat:
+        Provide a valid datetime format for the returned string
+        (see datetime.strftime())
+    :type outputformat: string
+    :param extensive_search:
+        Activate pattern-based opportunistic text search
+    :type extensive_search: boolean
+    :param original_bool:
+        Look for original date (e.g. publication date) instead of most recent
+        one (e.g. last modified, updated time)
+    :type original_bool: boolean
+    :return: Returns a valid date expression as a string, or None
+
+    """
     headerdate = None
     reserve = None
     try:
@@ -341,7 +360,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 def search_page(htmlstring, outputformat, original_bool):
     """
     Opportunistically search the HTML text for common text patterns
-    
+
     :param htmlstring:
         The HTML document in string format, potentially cleaned and stripped to
         the core (much faster)
