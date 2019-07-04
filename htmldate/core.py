@@ -339,9 +339,9 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 
 #@profile
 def search_page(htmlstring, outputformat, original_bool):
-    """Opportunistic search the page for common patterns"""
     """
     Opportunistically search the HTML text for common text patterns
+    
     :param htmlstring:
         The HTML document in string format, potentially cleaned and stripped to
         the core (much faster)
@@ -355,6 +355,7 @@ def search_page(htmlstring, outputformat, original_bool):
         one (e.g. last modified, updated time)
     :type original_bool: boolean
     :return: Returns a valid date expression as a string, or None
+
     """
     # init
     # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
@@ -523,6 +524,7 @@ def search_page(htmlstring, outputformat, original_bool):
 def find_date(htmlobject, extensive_search=True, original_bool=False, outputformat='%Y-%m-%d', url=None):
     """
     Extract dates from HTML documents using markup analysis and text patterns
+
     :param htmlobject:
         HTML document (e.g. body of HTTP request or .html-file) in text string
         form or LXML parsed tree
@@ -543,6 +545,7 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
         (in some cases much faster)
     :type url: string
     :return: Returns a valid date expression as a string, or None
+
     """
     # init
     tree = load_html(htmlobject)
