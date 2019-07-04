@@ -29,10 +29,7 @@ from .validators import compare_values, convert_date, date_validator, filter_ymd
 
 
 ## TODO:
-# manually set latestdate, latestdate != TODAY
 # from og:image or <img>?
-# MODIFIED vs CREATION date switch?
-# .lower() in tags and attributes?
 # time-ago datetime= relative-time datetime=
 # German/English switch
 
@@ -133,10 +130,10 @@ def examine_header(tree, outputformat, extensive_search, original_bool):
             if len(elem.attrib) < 1:
                 continue
             # property attribute
-            if 'property' in elem.attrib: # elem.get('property') is not None:
+            if 'property' in elem.attrib and 'content' in elem.attrib: # elem.get('property') is not None:
                 # safeguard
-                if elem.get('content') is None or len(elem.get('content')) < 1:
-                    continue
+                #if elem.get('content') is None or len(elem.get('content')) < 1:
+                #    continue
                 # original date
                 if original_bool is True:
                     if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
@@ -156,12 +153,12 @@ def examine_header(tree, outputformat, extensive_search, original_bool):
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                         headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search)
             # name attribute
-            elif headerdate is None and 'name' in elem.attrib: # elem.get('name') is not None:
+            elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib: # elem.get('name') is not None:
                 # safeguard
-                if elem.get('content') is None or len(elem.get('content')) < 1:
-                    continue
+                #if elem.get('content') is None or len(elem.get('content')) < 1:
+                #    continue
                 # url
-                elif elem.get('name').lower() == 'og:url':
+                if elem.get('name').lower() == 'og:url':
                     headerdate = extract_url_date(elem.get('content'), outputformat)
                 # date
                 elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):

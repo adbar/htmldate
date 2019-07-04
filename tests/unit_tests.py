@@ -115,7 +115,8 @@ def test_exact_date():
     '''these pages should return an exact date'''
     ## HTML tree
     assert find_date('<html><head><meta property="dc:created" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
-    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
+    assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
+    assert find_date('<html><head><Meta Property="og:updated_time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
     assert find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
     assert find_date('<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>') == '2017-01-01'
     assert find_date('<html><body><span class="entry-date">July 12th, 2016</span></body></html>') == '2016-07-12'

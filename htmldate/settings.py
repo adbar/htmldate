@@ -19,7 +19,7 @@ MIN_FILE_SIZE = 10
 # earliest possible year to take into account (inclusive)
 MIN_YEAR = 1995
 # latest possible date
-TODAY = datetime.date.today()
+LATEST_POSSIBLE = datetime.date.today()
 # latest possible year
 MAX_YEAR = datetime.date.today().year
 

@@ -14,12 +14,12 @@ import time
 
 from collections import Counter
 
-from .settings import MIN_YEAR, TODAY, MAX_YEAR
+from .settings import MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
 
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-LOGGER.debug('date settings: %s %s %s', MIN_YEAR, TODAY, MAX_YEAR)
+LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 #@profile
@@ -43,10 +43,10 @@ def date_validator(date_input, outputformat):
     if MIN_YEAR <= year <= MAX_YEAR:
         # not newer than today
         try:
-            if dateobject.date() <= TODAY:
+            if dateobject.date() <= LATEST_POSSIBLE:
                 return True
         except AttributeError:
-            if dateobject <= TODAY:
+            if dateobject <= LATEST_POSSIBLE:
                 return True
     LOGGER.debug('date not valid: %s', date_input)
     return False
