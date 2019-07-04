@@ -74,6 +74,9 @@ MOCK_PAGES = { \
 'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
 'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
+'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html', \
+'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html', \
+'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html', \
 }
 # '': '', \
 
@@ -94,9 +97,10 @@ def new_pages():
     '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
     assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2016-06-23'
-
-
-
+    assert find_date(load_mock_page('http://carta.info/der-neue-trend-muss-statt-wunschkoalition/')) == '2012-05-08'
+    assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-06-17'
+    assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
+    
 def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
