@@ -131,7 +131,6 @@ def test_exact_date():
 
     ## meta in header
     assert find_date('<html><head><meta/></head><body></body></html>') is None
-    assert find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     assert find_date(load_mock_page('https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov')) == '2013-02-16'
     assert find_date('<html><head><meta name="og:url" content="http://www.example.com/2018/02/01/entrytitle"/></head><body></body></html>') == '2018-02-01'
     assert find_date('<html><head><meta itemprop="datecreated" datetime="2018-02-02"/></head><body></body></html>') == '2018-02-02'
@@ -430,8 +429,10 @@ def test_download():
 
 def readme_examples():
     '''Test README example for consistency'''
-    assert find_date('http://blog.python.org/2016/12/python-360-is-now-available.html') == '2016-12-23'
-    assert find_date('https://creativecommons.org/about/', extensive_search=False) is None
+    assert find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
+    assert find_date(load_mock_page('https://creativecommons.org/about/'), extensive_search=False) is None
+    htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
+    assert find_date(htmldoc) == '2016-07-12'
     mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
     assert find_date(mytree) == '2016-07-12'
     assert find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y') == '18 November 2016'

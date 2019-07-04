@@ -10,13 +10,14 @@ Module bundling functions related to HTML processing.
 
 # standard
 import logging
+import re
 import socket
+import urllib3
 from io import StringIO # Python 3
 
 # libraries
 import cchardet as chardet
 import requests
-import urllib3
 from lxml import etree, html
 
 
@@ -84,11 +85,19 @@ def fetch_url(url):
 
 #@profile
 def load_html(htmlobject):
-    """Load object given as input and validate its type (accepted: LXML tree and string)"""
+    """Load object given as input and validate its type (accepted: LXML tree and string, HTML document or URL)"""
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         # copy tree
         tree = htmlobject
     elif isinstance(htmlobject, str):
+        # the string is a URL, download it
+        if re.search(r'^https?://[^ ]+$', htmlobject):
+            LOGGER.info('URL detected, downloading: %s', htmlobject)
+            htmltext = fetch_url(htmlobject)
+            if htmltext is not None:
+                htmlobject = htmltext
+            else:
+                return None
         ## robust parsing
         try:
             # parse

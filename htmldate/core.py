@@ -545,9 +545,9 @@ def find_date(htmlobject, extensive_search=True, original_bool=False, outputform
     Extract dates from HTML documents using markup analysis and text patterns
 
     :param htmlobject:
-        HTML document (e.g. body of HTTP request or .html-file) in text string
-        form or LXML parsed tree
-    :type htmlobject: string|lxml tree
+        Two possibilities: 1. HTML document (e.g. body of HTTP request or .html-file) in text string
+        form or LXML parsed tree or 2. URL string (gets detected automatically)
+    :type htmlobject: string or lxml tree
     :param extensive_search:
         Activate pattern-based opportunistic text search
     :type extensive_search: boolean
