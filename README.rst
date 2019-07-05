@@ -21,6 +21,19 @@ htmldate: find the creation date of HTML pages
 :Documentation:  https://htmldate.readthedocs.io
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
+
+.. code-block:: python
+
+    >>> from htmldate import find_date
+    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
+    '2016-12-23'
+
+.. code-block:: bash
+
+    $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
+    '2016-12-23'
+
+
 .. contents:: **Contents**
     :backlinks: none
 

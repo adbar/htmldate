@@ -52,7 +52,7 @@ DATE_EXPRESSIONS = [
     "//*[@class='post-footer']",
     "//*[@class='footer' or @id='footer']",
     "//small",
-    "//*[contains(@class, 'author') or contains(@class, 'field-content')]",
+    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta']",
 ]
 # "//*[contains(@class, 'fa-clock-o')]",
 # "//*[contains(@id, 'metadata')]",
@@ -617,7 +617,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                         reference = candidate
             # class
             if 'class' in elem.attrib:
-                if elem.get('class') == 'published' or elem.get('class') == 'date-published':
+                if elem.get('class') in ('published', 'date-published', 'time published'):
                     # other attributes
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
@@ -689,12 +689,6 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             if date_validator(converted, outputformat) is True:
                 return converted
 
-    # URL 2
-    if url is not None:
-        dateresult = extract_partial_url_date(url, outputformat)
-        if dateresult is not None:
-            return dateresult
-
     # clean before string search
     try:
         cleaned_html = CLEANER.clean_html(tree)
@@ -729,6 +723,12 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             if date_validator(candidate, '%Y-%m-%d') is True:
                 LOGGER.debug('precise pattern found: %s', de_match.group(0))
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
+
+    # last try: URL 2
+    if url is not None:
+        dateresult = extract_partial_url_date(url, outputformat)
+        if dateresult is not None:
+            return dateresult
 
     # last resort
     if extensive_search is True:

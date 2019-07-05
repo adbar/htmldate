@@ -59,7 +59,7 @@ def extract_partial_url_date(testurl, outputformat):
     match = PARTIAL_URL.search(testurl)
     if match:
         dateresult = match.group(0) + '/01'
-        LOGGER.debug('found date in URL: %s', dateresult)
+        LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
             # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
             dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), 1)
