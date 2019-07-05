@@ -134,7 +134,7 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 
 .. code-block:: bash
 
-    $ htmldate -fv -i list-of-urls.txt
+    $ htmldate -i list-of-urls.txt
 
 
 Additional information

@@ -109,7 +109,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search):
             # more than 4 digits required
             if len(toexamine) < 7 or len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip()[:100])
+            LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ ord(c):None for c in '\n\t\r' }).strip()[:100])
             LOGGER.debug('analyzing (string): %s', toexamine)
             attempt = try_ymd_date(toexamine, outputformat, extensive_search)
             if attempt is not None:
@@ -623,6 +623,9 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                         trytext = elem.get('title')
                         LOGGER.debug('abbr published-title found: %s', trytext)
                         reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date)
+                        # faster execution
+                        if reference > 0:
+                            break
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
