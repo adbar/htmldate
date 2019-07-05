@@ -62,7 +62,7 @@ With Python
 
 .. code-block:: python
 
-    >>> from htmldate.core import find_date
+    >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
 

@@ -69,6 +69,8 @@ def main():
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
                 result = examine(htmltext, args.fast, args.original)
+                if result is None:
+                    result = 'None'
                 sys.stdout.write(line.strip() + '\t' + result + '\n')
 
 

@@ -65,7 +65,7 @@ In case the web page features easily readable metadata in the header, the extrac
 
 .. code-block:: python
 
-    >>> from htmldate.core import find_date
+    >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
     '# DEBUG result: 2016-12-23'

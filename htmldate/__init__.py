@@ -16,7 +16,7 @@ import logging
 # http://docs.python-guide.org/en/latest/writing/logging/
 # https://github.com/requests/requests/blob/master/requests/__init__.py
 
-#from .core import *
+from .core import find_date
 #from .parsers import *
 #from .utils import *
 #from .validators import *

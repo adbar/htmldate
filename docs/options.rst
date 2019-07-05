@@ -16,7 +16,7 @@ The module expects strings as shown above, it is also possible to use already pa
 
 .. code-block:: python
 
-    >>> from htmldate.core import find_date
+    >>> from htmldate import find_date
     >>> from lxml import html
     >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
     >>> find_date(mytree)
