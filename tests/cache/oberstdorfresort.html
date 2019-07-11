@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de" >
+<head>
+	<title>Unser frischer Kräutergarten der Wannenkopfhütte in den Allgäuer Alpen</title>
+	
+	<meta name="description" content="Inmitten der Allgäuer Alpen auf der Wannenkopfhütte wachsen viele verschiedene Kräuter im hütteneigenen Kräutergraten: Oregano, Thymian, Minze, Schnittlauch uvm" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta name="content-language" content="de" />
+	<meta name="robots" content="index, follow" />
+	<meta name="google-site-verification" content="i0SSYQdxftph_yAykBlO9TFeAFhwSYavRhnpFUMsM34" />
+	<meta name="tramino-cache" content="11.07.2019 17:32:49" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<link rel="shortcut icon" href="https://tramino.s3.amazonaws.com/s/oberstdorf-resort/674685/oberstdorf-resort.png" type="image/x-icon" />
+
+	<link rel="alternate" type="application/rss+xml" title="Oberstdorf Resort (Updates)" href="/feed.xml" />
+	<link rel="alternate" type="application/rss+xml" title="Oberstdorf Resort &rsaquo; Blog (Updates)" href="/interaktiv/blog/feed.xml" />
+
+
+	<link rel="stylesheet" href="/tramino/css/base.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="/tramino/css/form.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="/tramino/css/datepicker.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="/tramino/js/fancybox/jquery.fancybox-1.3.1.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1227_505.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1231_40.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1232_347.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1270_37.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1234_11.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1235_134.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1239_92.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/1379_2.css?r=9022" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://tramino.s3.amazonaws.com/css/4060_9.css?r=9022" type="text/css" media="all" />
+
+	<script type="text/javascript">var Tramino = {"base":"","client":"112","page":"108884","lang":"de"};</script>
+	<script type="text/javascript">window.TraminoReady=function(f){$(document).ready(f)}</script>
+	<script  src="/tramino/js/imagescroll.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/jquery.min.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/css3-mediaqueries.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/jquery-ui.min.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/jquery.memory.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/datumfix.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/jquery.scrollto.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/fancybox/jquery.easing-1.3.pack.js?r=9022" type="text/javascript" ></script>
+	<script  src="/tramino/js/fancybox/jquery.fancybox-1.3.1.pack.js?r=9022" type="text/javascript" ></script>
+<link rel="canonical" href="https://.tramino.de" />
+<style type="text/css">
+	
+</style>
+
+<script type="text/javascript">
+	$(document).ready( function(){
+		
+		$("#lang").mouseover(function(){
+			$(this).addClass('open');
+		}).mouseout(function(){
+			$(this).removeClass('open');
+		});
+		
+		
+		$('#mobile_nav_icon').bind('click', function(){
+			
+			if ( $('#header .mobile_wrap').hasClass('open') ) {
+				$('#header .mobile_wrap').slideUp(200);
+			} else {
+				$('#header .mobile_wrap').slideDown(250);
+			}
+			
+			$('#header .mobile_wrap').toggleClass('open');
+		});
+		
+		
+		// Rubrik Buchung Orange in der Navigation
+		$('#nav .ul .nav li').each(function() {
+			var link = $(this).find('a').attr('href');
+			
+			if ( link == "/buchung/" || link == "/en/booking/" || link == "/no/booking/" ) {
+				$(this).addClass('orange');
+			}
+		});		
+		
+		
+		
+		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+			
+			$(".datum").prop("readonly",true);
+			
+			$("#nav > .ul > ul.nav > li > a").bind("click", function(e){
+				if ( $(this).parent().find('.ul').length > 0 ) {
+					
+					var $this = $(this);
+    				if ( $this.hasClass("clicked-once") ) {
+        				// zweiter click
+						return true;
+						
+					} else {
+        				// erster click
+        				
+						$this.addClass("clicked-once");
+						
+						$("#nav ul ul.nav").slideUp();
+						$(this).parent().find('ul.nav').slideDown();
+						return false;
+    				}
+				}
+			});
+			
+		}
+		
+	});
+	
+	
+</script>
+
+
+<style type="text/css">
+	
+	#motiv { 
+		background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1125x400.jpg); 
+		height: 440px;
+	}
+	
+	
+	
+	@media all and (max-width: 767px) {
+		#motiv { 
+			background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/767x150.jpg); 
+			height: 150px;
+		}
+		
+	}
+	
+	@media all and (min-width: 768px) and (max-width: 999px) {
+		
+		#motiv { 
+			background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1000x350.jpg); 
+			height: 350px !important;
+		}
+		
+	}
+	
+	
+	@media all and (min-width: 1000px) and (max-width: 1250px) {	
+		
+		#motiv { 
+			background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1250x400.jpg); 
+			height: 440px;
+		}
+		
+	}
+	
+	@media all and (min-width: 1251px) and (max-width: 1550px) {
+		#motiv { background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1400x440.jpg) !important; } 
+	}
+	
+	@media all and (min-width: 1551px) {
+		#motiv { background-image: url(https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1800x440.jpg) !important; } 
+	}
+	
+	
+</style>
+
+<style type="text/css">
+	@media all and (min-width: 700px) and (max-width: 1250px){
+		#footer .col.right { display: none;}
+	}
+	
+	@media all and (min-width: 1250px) {
+		#footer .col.first { width: 270px; }
+		#copyright .left.first {  width: 295px; }
+	}
+</style>
+
+	
+	
+	
+	
+	
+	
+
+	<!--[if lt IE 9]><script src="https://tramino.s3.amazonaws.com/tramino/js/html5shiv/dist/html5shiv.js"></script><![endif]-->
+
+	<style type="text/css">
+		
+	</style>
+	<script type="text/javascript">
+		
+			$(document).ready( function(){
+				
+				
+				//FastClick.attach(document.body);				
+				
+				$('table').wrap("<div class='tablewrap'></div>");
+				
+				
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+					$('#MiniCart').remove();
+				}
+					
+					
+				
+				$.each ( $(".file .bild a[rel^=http], .File.Bild a[rel^=http]") , function(i,item) {
+					if ($(this).parent().hasClass("nofancy") || $(this).hasClass("nofancy") ) {return false;} else {
+						$(item).attr("href2", $(item).attr("href") );
+						$(item).attr("href", $(item).attr("rel") );
+						$(item).attr("rel", "fancypicture" );
+					}
+				});
+
+				$("a[rel=fancypicture]").fancybox( { titlePosition:"inside", 'titleFormat': formatTitle });
+				
+				
+			});
+
+
+			function formatTitle(title, currentArray, currentIndex, currentOpts) {
+			title = title.replace(/\n/g, "<br/>");
+			return (title && title.length ?
+				"<a href='" + $(currentArray[currentIndex]).attr("href2") +
+				"'>" + title + "</a>" : '' ) + ' Bild ' + (currentIndex + 1) +
+				' von ' + currentArray.length + '';
+			}
+		
+		
+		//$(window).load(function() {
+		$(document).ready(function(){
+			// Höhe abfragen
+			var heightheadline =  $("#inhalt .Headlines").height();
+			// console.log(heightheadline);
+			var marginvalue = heightheadline - 83;
+			// console.log(paddingvalue);
+			$("#TraminoArtikel .Files").css("margin-top", marginvalue + "px" );
+			
+		});
+		
+
+	</script>
+
+
+
+
+
+<style type="text/css">
+	
+	@import url(https://fonts.googleapis.com/css?family=Signika+Negative:700,400);
+	@import url(https://fonts.googleapis.com/css?family=Maven+Pro:400);
+	@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+	
+	
+	
+	
+	
+</style>
+
+			<!-- Google Analytics -->
+
+			<script>
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			  ga('create', 'UA-7427311-1', 'auto');
+			  ga('set', 'anonymizeIp', true);
+			  ga('send', 'pageview');
+			</script>
+
+			<!-- End Google Analytics -->
+
+			<!-- Disable tracking if the opt-out cookie exists. -->
+			<script>
+				var disableStr = 'ga-disable-UA-7427311-1';
+				if (document.cookie.indexOf(disableStr + '=true') > -1) {
+					window[disableStr] = true;
+				}
+			</script>
+			<!-- End Disable Tracking -->
+			
+			
+</head>
+<body  id="body" class=" Mandant_112 Rubrik_4532"  >
+
+
+<div id="page">
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="folder">
+	<div class="closed">
+		<div class="kuh"></div>
+	</div>
+	
+</div>
+
+
+
+<div id="canvas">
+	<header id="header">
+	
+	
+
+	<div id="logo" onclick="location.href='/'"></div>
+	
+	<div class="mobile_wrap">
+		
+		<div class="mobile_wrap_inner">
+				
+			
+
+
+
+
+<div id="quickbooking">
+	
+	
+	
+
+	<form action="/buchung/">
+		<div>
+			<input type="hidden" name="from" id="form_from"/>
+			<input style="margin: 0px;" type="text" class="datum" maxlength="10" size="10" name="von" id="form_von" 
+			onchange="checkDatum(this);$('#form_von').datepicker('setDate', $('#form_von').datepicker('getDate'));$('#form_bis').datepicker('option', 'minDate', $('#form_von').datepicker('getDate'));var day = new Date( Date.parse($('#form_von').datepicker('getDate')) + ( $('#form_bis').attr('rel') * (1000 * 60 * 60 * 24)));$('#form_bis').datepicker('setDate', day);" />		
+			<input type="hidden" name="to" id="form_to"/>
+			<input type="text" class="datum" maxlength="10" size="10" name="bis" value="" id="form_bis" rel="3"
+			onchange="checkDatum(this);$('#form_von').datepicker('setDate', $('#form_von').datepicker('getDate'));$('#form_bis').attr('rel', parseInt((Date.parse($('#form_bis').datepicker('getDate'))-Date.parse($('#form_von').datepicker('getDate'))+3600000)/(60*60*24*1000),10));" />
+			<input type="hidden" name="erwachsene" value=2 />
+			<input type="submit" name="action" value="Buchen" />
+		</div>
+	</form>
+	
+	<script type="text/javascript">
+		<!--//--><![CDATA[//><!--
+			
+			$(document).ready(function() {
+				$("#form_von").datepicker({
+					showOn: 'focus',
+					dateFormat: 'dd.mm.yy',
+					altFormat: 'yy-mm-dd',
+					altField: '#form_from',
+					dayNames: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+					dayNamesMin:['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+					dayNamesShort:['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+					duration: '',
+					defaultDate: 1,
+					numberOfMonths: 1,
+					monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+					monthNamesShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+					firstDay: 1,
+					minDate: new Date()
+					
+					
+				});
+				
+				$("#form_bis").datepicker({
+					showOn: 'focus',
+					dateFormat: 'dd.mm.yy',
+					altFormat: 'yy-mm-dd',
+					altField: '#form_to',
+					dayNames: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+					dayNamesMin:['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+					dayNamesShort:['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+					duration: '',
+					defaultDate: 1,
+					numberOfMonths: 1,
+					monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+					monthNamesShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+					firstDay: 1,
+					minDate: new Date()
+					
+				});
+				
+				
+					
+					
+					
+				
+				 
+				// 0 :  : 2019-07-11
+
+				
+				
+				
+				 
+				
+				if($('#form_von').attr("value") == "" ){ $('#form_von').datepicker('setDate', new Date(1565258400000) ); }
+				if($('#form_bis').attr("value") == "" ){ $('#form_bis').datepicker('setDate', new Date(1565517600000) ); }
+				$('#form_bis').datepicker('option', 'minDate', $('#form_von').datepicker('getDate'));
+
+				if($('#form_from').attr("value") == "" ){ $('#form_from').datepicker('setDate', new Date(1565258400000) ); }
+				if($('#form_to').attr("value") == "" ){ $('#form_to').datepicker('setDate', new Date(1565517600000) ); }
+				$('#form_to').datepicker('option', 'minDate', $('#form_from').datepicker('getDate'));
+
+			});
+		
+		//--><!]]>
+	</script>
+	
+	
+</div>
+
+			
+			<div id="nav">
+				
+	<div class="ul"><ul class="nav">
+	<li class="nav_1 nav__buchung nav__47120 nav___1 first"><a href="https://www.oberstdorf-resort.de/buchung/"    ><span>Buchung</span><span class="extra"></span></a></li>
+	<li class="nav_2 nav__hotels nav__2243 nav___2"><a href="https://www.oberstdorf-resort.de/hotels/alle-haeuser-einen-blick/"    ><span>Hotels</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_2_1 nav__alle-haeuser-einen-blick nav__44316 nav___1 first"><a href="https://www.oberstdorf-resort.de/hotels/alle-haeuser-einen-blick/"    ><span>Alle Häuser auf einen Blick</span><span class="extra"></span></a></li>
+		<li class="nav_2_2 nav__hotel-oberstdorf nav__2456 nav___2"><a href="https://www.oberstdorf-resort.de/hotels/hotel-oberstdorf/"    ><span>Hotel Oberstdorf</span><span class="extra"></span></a></li>
+		<li class="nav_2_3 nav__hotel-mohren nav__2457 nav___3"><a href="https://www.oberstdorf-resort.de/hotels/hotel-mohren/"    ><span>Hotel Mohren</span><span class="extra"></span></a></li>
+		<li class="nav_2_4 nav__explorer-hotel-oberstdorf nav__15304 nav___4"><a href="https://www.oberstdorf-resort.de/hotels/explorer-hotel-oberstdorf/"    ><span>Explorer Hotel Oberstdorf</span><span class="extra"></span></a></li>
+		<li class="nav_2_5 nav__oberstdorf-hostel nav__44290 nav___5"><a href="https://www.oberstdorf-resort.de/hotels/oberstdorf-hostel/"    ><span>Oberstdorf Hostel</span><span class="extra"></span></a></li>
+		<li class="nav_2_6 nav__wannenkopfhuette nav__2460 nav___6"><a href="https://www.oberstdorf-resort.de/hotels/wannenkopfhuette/"    ><span>Wannenkopfhütte</span><span class="extra"></span></a></li>
+		<li class="nav_2_7 nav__sonnenhof nav__2458 nav___7"><a href="https://www.oberstdorf-resort.de/hotels/sonnenhof/"    ><span>Sonnenhof Oberstdorf</span><span class="extra"></span></a></li>
+		<li class="nav_2_8 nav__alpe-oberstdorf nav__42565 nav___8"><a href="https://www.oberstdorf-resort.de/hotels/alpe-oberstdorf/"    ><span>Alpe Oberstdorf</span><span class="extra"></span></a></li>
+		<li class="nav_2_9 nav__ferienwohnung-mohren nav__26093 nav___9"><a href="https://www.oberstdorf-resort.de/hotels/ferienwohnung-mohren/"    ><span>Ferienwohnung Mohren</span><span class="extra"></span></a></li>
+		<li class="nav_2_10 nav__service nav__36301 nav___10"><a href="https://www.oberstdorf-resort.de/hotels/service/"    ><span>Service</span><span class="extra"></span></a></li>
+		<li class="nav_2_11 nav__fotogalerie nav__18545 nav___11"><a href="https://www.oberstdorf-resort.de/hotels/fotogalerie/"    ><span>Fotogalerie</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	<li class="nav_3 nav__angebote nav__2242 nav___3"><a href="https://www.oberstdorf-resort.de/angebote/"    ><span>Angebote</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_3_1 nav__familien-ski nav__44002 nav___1 first"><a href="https://www.oberstdorf-resort.de/angebote/familien-ski/"    ><span>Skiurlaub mit SKI-GARANTIE</span><span class="extra"></span></a></li>
+		<li class="nav_3_2 nav__winter-angebote nav__32096 nav___2"><a href="https://www.oberstdorf-resort.de/angebote/winter-angebote/"    ><span>Winter-Angebote</span><span class="extra"></span></a></li>
+		<li class="nav_3_3 nav__familien-angebote nav__40905 nav___3"><a href="https://www.oberstdorf-resort.de/angebote/familien-angebote/"    ><span>Familien-Angebote</span><span class="extra"></span></a></li>
+		<li class="nav_3_4 nav__sommer-angebote nav__32095 nav___4"><a href="https://www.oberstdorf-resort.de/angebote/sommer-angebote/"    ><span>Sommer-Angebote</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	<li class="nav_4 nav__kulinarik nav__50159 nav___4"><a href="https://www.oberstdorf-resort.de/kulinarik/"    ><span>Kulinarik</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_4_1 nav__fruehstueck nav__50165 nav___1 first"><a href="https://www.oberstdorf-resort.de/kulinarik/fruehstueck/"    ><span>Frühstück</span><span class="extra"></span></a></li>
+		<li class="nav_4_2 nav__cafe-eis-kuchen nav__50178 nav___2"><a href="https://www.oberstdorf-resort.de/kulinarik/cafe-eis-kuchen/"    ><span>Café, Eis &amp; Kuchen</span><span class="extra"></span></a></li>
+		<li class="nav_4_3 nav__zuenftig-guat nav__50171 nav___3"><a href="https://www.oberstdorf-resort.de/kulinarik/zuenftig-guat/"    ><span>"Zünftig &amp; Guat"</span><span class="extra"></span></a></li>
+		<li class="nav_4_4 nav__whisky nav__50176 nav___4"><a href="https://www.oberstdorf-resort.de/kulinarik/whisky/"    ><span>Whisky</span><span class="extra"></span></a></li>
+		<li class="nav_4_5 nav__genuss-abend nav__50177 nav___5"><a href="https://www.oberstdorf-resort.de/kulinarik/genuss-abend/"    ><span>Genuss am Abend</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	<li class="nav_5 nav__freizeit nav__4349 nav___5"><a href="https://www.oberstdorf-resort.de/freizeit/"    ><span>Freizeit</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_5_1 nav__skigebiete nav__15574 nav___1 first"><a href="https://www.oberstdorf-resort.de/freizeit/skigebiete/"    ><span>Skigebiete</span><span class="extra"></span></a></li>
+		<li class="nav_5_2 nav__sehenswuerdigkeiten-rund-um-oberstdorf nav__4341 nav___2"><a href="https://www.oberstdorf-resort.de/freizeit/sehenswuerdigkeiten-rund-um-oberstdorf/"    ><span>Sehenswürdigkeiten &amp; Highlights</span><span class="extra"></span></a></li>
+		<li class="nav_5_3 nav__veranstaltungskalender nav__52474 nav___3"><a href="https://www.oberstdorf-resort.de/freizeit/veranstaltungskalender/"    ><span>Veranstaltungskalender</span><span class="extra"></span></a></li>
+		<li class="nav_5_4 nav__wandergebiete nav__21547 nav___4"><a href="https://www.oberstdorf-resort.de/freizeit/wandergebiete/"    ><span>Grenzenloses Wandern</span><span class="extra"></span></a></li>
+		<li class="nav_5_5 nav__mountainbike nav__41378 nav___5"><a href="https://www.oberstdorf-resort.de/freizeit/mountainbike/"    ><span>Mountainbiken</span><span class="extra"></span></a></li>
+		<li class="nav_5_6 nav__sportmoeglichkeiten-allgaeu nav__4339 nav___6"><a href="https://www.oberstdorf-resort.de/freizeit/sportmoeglichkeiten-allgaeu/"    ><span>Sportlich &amp; Aktiv</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	<li class="nav_6 nav__familie nav__11151 nav___6"><a href="https://www.oberstdorf-resort.de/familie/"    ><span>Familie</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_6_1 nav__familien-angebote nav__49867 nav___1 first"><a href="http://www.oberstdorf-resort.de/angebote/familien-angebote/"    target="_blank"><span>Familien-Angebote</span><span class="extra"></span></a></li>
+		<li class="nav_6_2 nav__gratis-familien-ferienprogramm nav__11785 nav___2"><a href="https://www.oberstdorf-resort.de/familie/gratis-familien-ferienprogramm/"    ><span>GRATIS Familien-Ferienprogramm</span><span class="extra"></span></a></li>
+		<li class="nav_6_3 nav__freizeitvorschlaege-familien nav__17715 nav___3"><a href="https://www.oberstdorf-resort.de/familie/freizeitvorschlaege-familien/"    ><span>Freizeitvorschläge für Familien</span><span class="extra"></span></a></li>
+		<li class="nav_6_4 nav__alles-da-fuers-kind nav__17933 nav___4"><a href="https://www.oberstdorf-resort.de/familie/alles-da-fuers-kind/"    ><span>Alles da für's Kind</span><span class="extra"></span></a></li>
+		<li class="nav_6_5 nav__bilder nav__17714 nav___5 last"><a href="https://www.oberstdorf-resort.de/familie/bilder/"    ><span>Bilder</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	<li class="nav_7 nav__tagungen nav__36345 nav___7"><a href="https://www.oberstdorf-resort.de/tagungen/"    ><span>Tagung</span><span class="extra"></span></a>
+		<div class="ul"><ul class="nav">
+		<li class="nav_7_1 nav__weihnachtsfeier nav__43619 nav___1 first"><a href="https://www.oberstdorf-resort.de/tagungen/weihnachtsfeier/"    ><span>Weihnachtsfeier</span><span class="extra"></span></a></li>
+		<li class="nav_7_2 nav__tagungshotels nav__36346 nav___2"><a href="https://www.oberstdorf-resort.de/tagungen/tagungshotels/"    ><span>Tagungshotels</span><span class="extra"></span></a></li>
+		<li class="nav_7_3 nav__tagungsangebote nav__36347 nav___3"><a href="https://www.oberstdorf-resort.de/tagungen/tagungsangebote/"    ><span>Tagungsangebote</span><span class="extra"></span></a></li>
+		<li class="nav_7_4 nav__abendprogramme nav__36348 nav___4"><a href="https://www.oberstdorf-resort.de/tagungen/abendprogramme/"    ><span>Abendprogramm</span><span class="extra"></span></a></li>
+		<li class="nav_7_5 nav__outdoor nav__41757 nav___5"><a href="https://www.oberstdorf-resort.de/tagungen/outdoor/"    ><span>Outdoorevents</span><span class="extra"></span></a></li>
+		<li class="nav_7_6 nav__anfrage nav__48582 nav___6"><a href="https://www.oberstdorf-resort.de/tagungen/anfrage/"    ><span>Anfrage</span><span class="extra"></span></a></li>
+		</ul></div>
+	</li>
+	</ul></div>
+			</div>
+			
+				
+			<div id="quick">
+				
+				<a href="/hotels/service/anfrage.html"   class="anfrage" title="Schicken Sie uns Ihre Anfrage für einen unvergesslichen Urlaub bei Oberstdorf Resort.">Anfrage</a>
+				
+					
+				
+				<a href="/interaktiv/blog/"   class="blog link_aktiv" title="Erfahren Sie hier mehr über die neusten Informationen und Veranstaltungen der Oberstdorf Resort Betriebe und den Events in Oberstdorf.">Blog</a>
+				<a href="/jobs/karriere/"   class="carreer">Karriere</a>
+				<div class="clear"></div>
+			</div>
+			
+			
+				
+			
+			
+		</div>
+		
+		
+	</div>
+	
+	<div id="mobile_nav_icon"><img src="https://tramino.s3.amazonaws.com/s/oberstdorf-event/594158/mobile-nav.png" alt="Mobile nav"     /><span class="text">Menü</span></div>
+	
+</header>
+
+
+
+	<div id="content">
+
+		
+		
+
+<div id="motiv"></div>
+
+
+		<div id="inhalt">
+			<div id="left">
+	
+	<span class="TraminoMemoryButton" rel="content:108884" ></span>
+	
+	
+	
+	
+	
+	<h4><a href="../">Interaktiv</a></h4><div id="nav2"></div>
+	
+	
+	
+	
+
+
+
+
+
+
+	
+	
+	
+	
+
+
+
+
+
+
+	
+	
+	
+
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+</div>
+
+
+
+			<div id="inhalt2" class=""><div id="TraminoArtikel"><div class="Files" style="">
+			<div class="File_1">
+							<div class="File Bild mark2 " ><a href="/bilder/868788.html"  rel="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1200.jpg"><img 
+								src="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/300.jpg" title="Die Allgäuer Schmankerl der Wannenkopfhütte schmecken schon alleine deswegen so gut, weil sie mit vielen frischen Kräutern verfeinert werden." alt="Schnittlauch, Minze und vieles mehr!" width="300" height="168"  /></a><div class="Name">Schnittlauch, Minze und vieles mehr!</div></div>
+						</div>
+		
+			<div class="File_2">
+							<div class="File Bild mark2 " ><a href="/bilder/868787.html"  rel="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868787/1200.jpg"><img 
+								src="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868787/300.jpg" title="Die wertvollen Kräuter müssen natürlich auch bewacht werden, und diesen Job übernimmt keine besser als Wannenkopfhütten Kuh Gisela." alt="Kuh Gisela im Kräutergarten" width="300" height="168"  /></a><div class="Name">Kuh Gisela im Kräutergarten</div></div>
+						</div>
+		
+			<div class="File_3">
+							<div class="File Bild mark2 " ><a href="/bilder/868791.html"  rel="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868791/1200.jpg"><img 
+								src="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868791/300.jpg" title="Thymian, Schnittlauch und Oregano sind nur ein paar der Kräuter, die direkt vor der Wannenkopfhütte wachsen." alt="Frische Kräuter vom Kräutergarten der Wannenkopfhütte" width="300" height="168"  /></a><div class="Name">Frische Kräuter vom Kräutergarten der Wannenkopfhütte</div></div>
+						</div>
+		
+			<div class="File_4">
+							<div class="File Bild mark2 " ><a href="/bilder/868789.html"  rel="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868789/1200.jpg"><img 
+								src="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868789/300.jpg" title="In den Allgäuer Alpen wachsen nicht nur Wildblumen, sondern auch die mit Liebe und Geduld gezüchteten Kräuter von Hüttenwirt Michael." alt="Kräuter-Liebe auf 1390 Meter" width="300" height="168"  /></a><div class="Name">Kräuter-Liebe auf 1390 Meter</div></div>
+						</div>
+		
+			<div class="File_5">
+							<div class="File Bild mark2 " ><a href="/bilder/868788.html"  rel="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/1200.jpg"><img 
+								src="https://tramino.s3.amazonaws.com/s/wannenkopfhuette/868788/300.jpg" title="Die Allgäuer Schmankerl der Wannenkopfhütte schmecken schon alleine deswegen so gut, weil sie mit vielen frischen Kräutern verfeinert werden." alt="Schnittlauch, Minze und vieles mehr!" width="300" height="168"  /></a><div class="Name">Schnittlauch, Minze und vieles mehr!</div></div>
+						</div>
+		</div><div class="Headlines"><h5><span class="path"><a href="/">Oberstdorf Resort</a> &rsaquo;&nbsp;<a href="/interaktiv/">Interaktiv</a> &rsaquo;&nbsp;<a href="/interaktiv/blog/">Blog</a></span></h5><h4>Der frische Kräutergarten vor der Wannenkopfhütte inmitten der Allgäuer Alpen</h4><h1>Unser Kräutergarten auf der Wannenkopfhütte! </h1>
+			<div class="autor" style="">
+				
+				von <a href="/profile/.html"></a> <span title="20.06.2018">am 20.06.2018</span><br/>
+				
+			</div>
+				<h2>Frischer Thymian, Oregano, Schnittlauch & Co wachsen wieder direkt neben der Wannenkopfhütte in unserem Kräutergarten und können so ganz frisch für unsere Allgäuer Schmankerl genutzt werden.</h2></div>	<div class="TraminoTextile"><h2>Er ist wieder da!</h2>
+
+<p>Es geht doch nichts über den Duft frischer Kräuter, der durch die Berglüfte zieht. Und der Geschmack erst! Sie werten einfach alles auf: Salate, Desserts und natürlich auch Grillfleisch. Als wahrer Gourmet ist es dann auch selbstverständlich, dass Hüttenwirt Michael seinen Kräutergarten mit Liebe und Geduld hegt und pflegt und sich jedes Jahr aufs Neue wie ein kleines Kind über seine Erträge freut. </p>
+
+<h2>Und auf was genau kann er sich da freuen?</h2>
+
+<p><strong>Schnittlauch:</strong> <br />
+Eines der wohl beliebtesten Kräuter der Deutschen. Kein Wunder, frisch gegessen entfaltet er seine stärkste Heilwirkung. Ein bisschen was auf's Brot oder in die Suppe gestreut, erhältst Du nicht nur einen viel besseren Geschmack, sondern hast auch noch was für Deine Gesundheit getan. Denn neben seinen ätherischen Ölen, die harntreibend, schleimlösend und antibakteriell wirken, senkt er den Cholesterin - sowie den Blutdruckspiegel. Auch bei Magen-Darm-Problemen wie einer Magenentzündung oder Blähungen wirkt das Kraut lindernd. Man kann übrigens auch die leicht schärflichen Blüten essen, beispielsweise im Salat.</p>
+
+<p><strong>Thymian:</strong><br />
+Dieses Kraut kannte man bereits in der griechischen Antike, wo es schon damals gegen Atemwegserkrankungen angewandt wurde. Im alten Ägypten, zur Zeit der Pharaonen, diente Thymian zur Einbalsamierung der Toten und auf mittelalterlichen Burgen banden adelige Damen "ihrem" Ritter während eines Turniers Thymianzweige als Symbol für Mut und Tapferkeit auf die Rüstung. Wenn das mal kein Alleskönner ist! Und heute? Heute ist es aus der mediterranen Küche nicht mehr wegzudenken. Besonders die Kombination aus Thymian und Knoblauch schmeckt einwandfrei. Aber auch fruchtigen Desserts gibt das Kraut eine ganz besondere Note. </p>
+
+<p><strong>Oregano:</strong><br />
+Was wäre die italienische Pizza ohne eine gute Prise Oregano? Und tatsächlich wird dieses Kraut hauptsächlich in der mediterranen Küche verwendet, aber bereits im 17. Jh. gibt es Nachweise darüber, dass es ebenfalls bei der Zubereitung von Pfannkuchen Anwendung fand. Geht man etwas weiter in der Zeit zurück, in die Antike, so hatte Oregano noch einen ganz anderen Nutzen: es sollte in Form von Räucherungen Dämonen abwehren. Wenn ein Kind lange nicht zu reden begann, bekam es einen Löffel Oreganowasser. Gegen Epilepsie ließ man den betroffenen am mit dem Finger zerdrückten Kraut riechen und im Mittelalter wurde es sogar als Hexenabwehrpflanze herangezogen. Roch die Hexe daran, konnte sie vom Teufel befreit werden.</p>
+
+<p><strong>Minze:</strong><br />
+Pfefferminze, Marokkanische Minze, Grüne Minze – es gibt unzählige Sorten dieses schon im Jahr 812 von Karl dem Großen heiß begehrten Krautes. Seitdem hat sie mit ihrem guten Geschmack und der erfrischenden Note zu internationaler Berühmtheit gebracht: als Bestandteil der englischen Mintsauce, im indischen Mintchutney und als Basisgewürz der Gerichte vieler arabischer Länder. Wir verwenden sie am liebsten im Tee oder in erfrischenden Desserts. Und auch in der Mythologie galt Minze als verführerisch, denn einst soll Hades, der Gott der Unterwelt, sich in die schöne Nymphe Mintha verliebt haben. Doch dieser war leider Gottes bereits mit einer anderen verheiratet, mit der eifersüchtigen Persephone, die Mintha kurzerhand umbrachte In tiefer Trauer um seine Geliebte soll Hades sie daraufhin in eine Wasser-Minze verwandelt haben. </p>
+
+<p><strong>Zitronenmelisse:</strong><br />
+Wusstest Du, dass Melisse im Griechischen „Honigbiene“ bedeutet? Die Bienen schwirren oft und gerne zu den Blüten, um daraus den aromatischen Melissenblütenhonig zu produzieren. Da diese dann auch noch nach Zitronen riecht, nennt man sie einfach Zitronenmelisse. Und natürlich kann auch sie mit heilenden Kräften aufwarten, „die das Herz freudig macht“. So beschrieb es einstmals Hildegard von Bingen. Auch Mönche nutzten die heilende Wirkung der Zitronenmelisse bereits in früheren Zeiten als Trunk gegen Verdauungsschmerzen.</p>
+
+
+<h3>Erlebe die Kräuter in Aktion</h3>
+
+<p>Du hast Lust auf eine mit frischem Schnittlauch verfeinerte Hochzeitssuppe und anschließenden, typischen Allgäuer Kässpatzen? Dann solltest Du Dir den urigen Hüttenabend bei uns nicht entgehen lassen! </p>
+
+<p>Rufe gleich an unter <strong>Tel.: 08322 978 520</strong> und sichere Dir Plätze für den beliebten Hüttenabend! </p></div>	<div style="clear: right;"></div></div></div>
+			
+			
+			
+		</div>
+		
+	</div>
+	<footer id="footer">
+	<div class="col first">
+		
+		<h4>Suche</h4>
+		<div class="inner">
+			<form action="/suche/" method="get">
+				<div>
+				<input type="text" size="12" maxlength="60" value="" name="query" />&nbsp;<input type="submit" value="Suchen" />
+				</div>
+			</form>
+		</div>
+		
+		<h4>Adresse</h4>
+		<div class="inner">
+			
+				<div class="adresse">Oberstdorf Resort<br/>c/o Oberstdorf Event Gmbh<br/>Katja Leveringhaus<br/>An der Breitach&nbsp;3<br/>87538&nbsp;Fischen <br/><div class="nummer">Tel. <span class='phone-number' data-number='(08322 978 517)'>08322 978 517</span><br/>Fax 08322 978 510<br/></div><div class="email"><a href="mailto:info@oberstdorf-resort.de" style="">info@oberstdorf-resort.de</a></div></div>
+			
+		</div>
+
+		
+			
+			<h4>Geprüfte Qualität</h4>
+		
+
+
+		<div class="inner">
+
+			
+			
+			
+				<a href="http://www.dekra-siegel.de" target="_blank" title="DEKRA Siegel für Sicherheit und Qualität" class="siegel">
+					<img src="https://tramino.s3.amazonaws.com/s/oberstdorf-event/597188/dekra-siegel.png" alt="Dekra-siegel"     />
+				</a>
+			
+
+			
+
+			
+				<a href="https://www.bestplacetolearn.de/qualitaetsaudit/" target="_blank" title="BEST PLACE TO LEARN - Top Ausbilder Bayern" class="siegel">
+					<img src="https://tramino.s3.amazonaws.com/s/oberstdorf-event/765294/siegel-best-place.png" alt="Siegel best place"     />
+				</a>
+			
+			
+
+			
+			
+				<span class="siegel" title="Great Place to Work 2019 Bayern"><div class="Bild File "><img src="https://tramino.s3.amazonaws.com/s/oberstdorf-event/932611/gptwb.png" alt="Gptwb"     /></div></span>
+			
+			
+			
+				<span class="siegel"  title="Great Place to Work 2019 Allgäu"><div class="Bild File "><img src="https://tramino.s3.amazonaws.com/s/oberstdorf-event/932612/gptwa.png" alt="Gptwa"     /></div></span>
+			
+
+			<div class="clear"></div>
+		</div>
+		
+
+
+		
+	</div>
+	
+	<div class="col">
+		<h4>Service</h4>
+		<a href="/hotels/service/newsletter.html"    title="Informiert bleiben und garantiert kein Angebot oder Gewinnspiel verpassen ;-)">Newsletter bestellen</a>
+		<a href="/hotels/service/gutschein-schenken.html"    title="Sie sind noch auf der Suche nach einem passenden Geschenk? Es sollte schnell gehen, unkompliziert sein und den Beschenkten begeistern?">Gutschein schenken</a>
+		
+		<a href="/hotels/service/webcams.html"    title="Sehen Sie hier Live-Bilder aus Oberstdorf. Checken Sie den aktuellen Wetterbericht und beobachten Sie, was in Berg und Tal los ist.">Webcams im Allgäu</a>
+		<a href="/freizeit/skigebiete/schneebericht.html"    title="Informieren Sie sich hier über die schneesicheren Oberstdorfer Skigebiete.">Schneebericht</a>
+		<a href="/freizeit/wandergebiete/bergsportbericht.html"    title="Im Oberstdorfer Bergsportbericht erhalten Sie umfangreiche Informationen über die den Zustand der Wanderwege, Klettersteige über alpine Hütten, Betriebszeiten der Bergbahnen und mehr!">Bergsportbericht</a>
+		<a href="/hotels/service/wetter.html"    title="Hier finden Sie vielfältige Informationen rund um das Wetter in Oberstdorf. Wussten Sie schon, dass Oberstdorf einer der sonnenreichsten Orte in Deutschland ist?">Wetter</a>
+		
+		<a href="/jobs/karriere/">Karriere</a>
+		<a href="/hotels/fotogalerie/"    title="Bilder sagen mehr als tausend Worte...Verschaffen Sie sich einen Überblick über die Oberstdorf Resort Häuser und überzeugen Sie sich von der Vielfalt der einzelnen Hotels.">Fotogalerie</a>
+		
+		
+		<a href="/hotels/service/anfrage.html"    title="Schicken Sie uns Ihre Anfrage für einen unvergesslichen Urlaub bei Oberstdorf Resort.">Anfrage</a>
+	</div>
+	
+	<div class="col">
+	
+		
+		<h4>Social</h4>
+		<a target="_blank" href="http://www.facebook.com/oberstdorfresort"  onclick=" ga('send', 'pageview', '/link/www.facebook.com/oberstdorfresort'); return true;"  title="Externer Link auf facebook.com, Sie verlassen diesen Internetauftritt">Unsere Facebook Seite</a>
+		
+	
+	
+	
+	
+	
+	
+	
+	</div>
+	
+	
+	<div class="col last">
+		<h4>Partner</h4>
+		<a target="_blank" href="http://www.hotel-mohren.de"  onclick=" ga('send', 'pageview', '/link/www.hotel-mohren.de'); return true;"  title="Externer Link auf hotel-mohren.de, Sie verlassen diesen Internetauftritt">Hotel Mohren</a>
+		<a target="_blank" href="http://www.hotel-oberstdorf.de"  onclick=" ga('send', 'pageview', '/link/www.hotel-oberstdorf.de'); return true;"  title="Externer Link auf hotel-oberstdorf.de, Sie verlassen diesen Internetauftritt">Hotel Oberstdorf</a>
+		<a target="_blank" href="http://www.sonnenhof-oberstdorf.de"  onclick=" ga('send', 'pageview', '/link/www.sonnenhof-oberstdorf.de'); return true;"  title="Externer Link auf sonnenhof-oberstdorf.de, Sie verlassen diesen Internetauftritt">Sonnenhof</a>
+		<a target="_blank" href="http://www.wannenkopfhuette.de"  onclick=" ga('send', 'pageview', '/link/www.wannenkopfhuette.de'); return true;"  title="Externer Link auf wannenkopfhuette.de, Sie verlassen diesen Internetauftritt">Wannenkopfhütte</a>
+		<a target="_blank" href="http://www.fewo-mohren.de"  onclick=" ga('send', 'pageview', '/link/www.fewo-mohren.de'); return true;"  title="Externer Link auf fewo-mohren.de, Sie verlassen diesen Internetauftritt">Ferienwohnung Mohren</a>
+		<a target="_blank" href="http://www.explorer-hotels.com/oberstdorf/"  onclick=" ga('send', 'pageview', '/link/www.explorer-hotels.com/oberstdorf/'); return true;"  title="Externer Link auf explorer-hotels.com, Sie verlassen diesen Internetauftritt">Explorer Hotel Oberstdorf</a>
+		<a target="_blank" href="http://www.alpe-oberstdorf.de"  onclick=" ga('send', 'pageview', '/link/www.alpe-oberstdorf.de'); return true;"  title="Externer Link auf alpe-oberstdorf.de, Sie verlassen diesen Internetauftritt">Alpe Oberstdorf</a>		
+		<a target="_blank" href="http://www.oberstdorf-hostel.de"  onclick=" ga('send', 'pageview', '/link/www.oberstdorf-hostel.de'); return true;"  title="Externer Link auf oberstdorf-hostel.de, Sie verlassen diesen Internetauftritt">Oberstdorf Hostel</a>
+		<h4>Netzwerk</h4>
+		<a target="_blank" href="http://www.oberstdorf-event.de"  onclick=" ga('send', 'pageview', '/link/www.oberstdorf-event.de'); return true;"  title="Externer Link auf oberstdorf-event.de, Sie verlassen diesen Internetauftritt">Oberstdorf Event</a>
+		<a target="_blank" href="http://www.oberstdorf-resort.de"  onclick=" ga('send', 'pageview', '/link/www.oberstdorf-resort.de'); return true;"  title="Externer Link auf oberstdorf-resort.de, Sie verlassen diesen Internetauftritt">Oberstdorf Resort</a>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="col right">
+		<h4>Werde Fan bei Facebook</h4>
+		<div class="box">
+			<div class="inner">
+				
+
+
+
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1&amp;appId=217733898278280";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="fb-like-box" data-href="https://www.facebook.com/oberstdorfresort" data-width="250"  data-show-faces="true" data-stream="false" data-header="true"></div>
+
+
+			</div>
+			<div class="shadow"></div>
+		</div>
+	</div>
+	
+	
+	<div class="break"></div>
+	
+</footer>
+
+<div id="copyright">
+	<div class="left first">&copy; 2019 Oberstdorf Resort</div>
+	<div class="left"><a href="/impressum/">Impressum</a></div>	
+	<div class="left"><a href="/datenschutz/">Datenschutz</a></div>
+	<div class='left'><a href="/hotels/service/allgemeine-geschaeftsbedingungen.html">AGB</a></div>
+	<div class="left"><a href="/stichworte/">Glossar</a></div>
+	<div class="left"><a href="/sitemap/">Sitemap</a></div>
+	<div class="left"><a href="/presse/"    title="Herzlich willkommen im Pressebereich von Oberstdorf Resort!">Presse</a></div>
+	<div class="right">Realisiert mit <a target="_blank" href="http://www.tramino.de"  onclick=" ga('send', 'pageview', '/link/www.tramino.de'); return true;"  title="Externer Link auf tramino.de, Sie verlassen diesen Internetauftritt">Tramino</a></div>
+	<div class="break"></div>
+</div>
+
+
+</div>
+
+
+
+
+<script type="text/javascript">
+	/* <![CDATA[ */
+	var traminomemory;
+	$(document).ready( function(){
+		traminomemory = new $.TraminoMemory( {
+			selectorBox: '#TraminoMemory',
+			selectorButton: "span.TraminoMemoryButton",
+			textAdd: "Merken",
+			textDel: "Entfernen",
+			titleAdd: "Zum Urlaubsplaner hinzufügen",
+			titleDel: "Vom Urlaubsplaner entfernen",
+			textTransform: "Markierte Objekte in meinem Urlaubsplaner speichern?",
+			textEmpty: "Ihr Urlaubsplaner ist noch leer. Klicken Sie auf das Ordnersymbol und stellen so Ihren Urlaub zusammen.",
+			textExpand: "Details"
+			
+		});
+	});
+	/* ]]> */
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="cookie_overlay">
+	<div class="inner">
+		<div class="button">
+			<a href="#" class="cookie_close">OK</a>
+			
+		</div>
+		
+		<div class="text">
+			<p>
+				
+				Durch die weitere Nutzung der Webseite stimmen Sie unserer <a href="/datenschutz/">Datenschutzerklärung</a>
+				und der Verwendung von Cookies zu. Wir verwenden Cookies um diese Website optimal gestalten und verbessern zukönnen.
+				
+			</p>
+		</div>
+		<div class="break"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+"use strict";
+(function() {
+	
+	var handler = function() {
+		var c = document.cookie;
+
+		if ( c.search('eucookie=true') == -1 ) {
+			$('#cookie_overlay').show();
+		}
+
+		$('#cookie_overlay .button').on('click', 'a.cookie_close', function(e) {
+			$('#cookie_overlay').hide();
+			
+			var current_date = new Date();
+
+			current_date = current_date.getTime();
+			var new_date = current_date + (365 * 24 * 60 * 60 * 1000);
+
+			var cookie_expires = new Date(new_date);
+			var utc_date = cookie_expires.toUTCString();
+
+			document.cookie="eucookie=true; expires=" + utc_date + "; path=/";
+
+			e.preventDefault();
+		});
+	}
+
+	if ( typeof window.TraminoReady !== "undefined" ) {
+		TraminoReady(handler);
+	} else if ( typeof window.$ !== "undefined" ) {
+		$(document).ready(handler);
+	}
+
+})();
+</script>
+
+</div>
+
+
+
+</body>
+</html>
