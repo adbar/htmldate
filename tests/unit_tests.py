@@ -72,7 +72,18 @@ MOCK_PAGES = { \
 'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html', \
 'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html', \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
+<<<<<<< HEAD
 'http://www.stuttgart.de/': 'stuttgart.de.html', \
+=======
+'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
+'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html', \
+'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html', \
+'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html', \
+'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355?lang=fr': 'paris-luttes.html', \
+'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.riverdale.html', \
+'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.sommertrend.html', \
+'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.fallinlove.html', \
+>>>>>>> 6a2bcb422fcc44094db8e0dcf112c962f81aad64
 }
 # '': '', \
 
@@ -92,8 +103,22 @@ def load_mock_page(url):
 def new_pages():
     '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
+<<<<<<< HEAD
 
 
+=======
+    assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2016-06-23'
+    assert find_date(load_mock_page('http://carta.info/der-neue-trend-muss-statt-wunschkoalition/')) == '2012-05-08'
+    assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-06-17'
+    assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
+    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355?lang=fr')) == '2019-06-29'
+    assert find_date(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html')) == '2019-06-20'
+    assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html'))
+    # kein Datum gefunden in 'cosmopolitan.sommertrend.html'
+    assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/.html')) == '2017-08-08'
+    
+    
+>>>>>>> 6a2bcb422fcc44094db8e0dcf112c962f81aad64
 def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
