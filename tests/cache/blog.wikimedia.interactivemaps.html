@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" id="viewport" />
+	
+	<link rel="shortcut icon" href="https://s2.wp.com/wp-content/themes/vip/wikimedia-v2/images/favicon.ico" />
+	<link rel="pingback" href="https://blog.wikimedia.org/xmlrpc.php" />
+
+	<title>Interactive maps, now in your language &#8211; Wikimedia Blog</title>
+		<script src='https://r-login.wordpress.com/remote-login.php?action=js&amp;host=blog.wikimedia.org&amp;id=67752302&amp;t=1563283862&amp;back=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F' type="text/javascript"></script>
+		<script type="text/javascript">
+		/* <![CDATA[ */
+			if ( 'function' === typeof WPRemoteLogin ) {
+				document.cookie = "wordpress_test_cookie=test; path=/";
+				if ( document.cookie.match( /(;|^)\s*wordpress_test_cookie\=/ ) ) {
+					WPRemoteLogin();
+				}
+			}
+		/* ]]> */
+		</script>
+		<link rel='dns-prefetch' href='//s2.wp.com' />
+<link rel='dns-prefetch' href='//s1.wp.com' />
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//wikimediablog.wordpress.com' />
+<link rel="alternate" type="application/rss+xml" title="Wikimedia Blog &raquo; Feed" href="https://blog.wikimedia.org/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Wikimedia Blog &raquo; Comments Feed" href="https://blog.wikimedia.org/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Wikimedia Blog &raquo; Interactive maps, now in your language Comments Feed" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+			<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s2.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1556893897h&ver=5.2.2"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='all-css-0-1' href='https://s2.wp.com/_static/??-eJyNUVtSwzAMvBCq6Yt+MZzFTlRHjV9jKQ29PUoCBQbI8ONZybuzK8mMBZqcBJOYOEAJg6fEJlCPbC4oxTY9zNWmYX4wSqfUhKHVb22YlliMC3lmuWrrzbDcAm4ipbviF4MmV9R+LFYmRsSWLAaMSluTjdR6lMV6wSD4uiqJ5enDaIKdDsSrFkXZ4FypyAz6RhoiSKfZfuqWtrlS0Tg9zWPAdfe+g/+yp2nOygE7Iuf4ZXlkUhZSPd/BWnaPGfQWViinbwWcg6W6Jq2oV/QK/Rzns/xriu5gfMjOhonwEp+3x+Npd9ie9o+XN5mj3rc=?cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJydj9EKwjAMRX/Irujo8EX8lrllNV2bzqbr1K+3giLicCgE8pBzkhs5DQKpsWMLLE2u0wjh8miF4ZX8BgiHOtQRCof0hBtPESje2cFzdMBca5iZOn9AC2JkCBmgmM90foZ7j4SUEKZFzEAc6qYXARivH9fjEXIumXCQE/booMVapM1rTdFZOLPFFoKY+W3ZN+z/sCBlznqtkfQPdjdSE9ETZ2fvdmultqWqKlWaG6twsu4='></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://wikimediablog.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/" />
+<link rel='shortlink' href='https://wp.me/p4Aht4-eCw' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F&amp;for=wpcom-auto-discovery" /><link rel='openid.server' href='https://wikimediablog.wordpress.com/?openidserver=1' />
+<link rel='openid.delegate' href='https://wikimediablog.wordpress.com/' />
+<link rel="search" type="application/opensearchdescription+xml" href="https://blog.wikimedia.org/osd.xml" title="Wikimedia Blog" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+	<script type="text/javascript">
+		var ajaxurl = "https:\/\/wikimediablog.wordpress.com\/wp-admin\/admin-ajax.php";
+	</script>
+		<script>
+		!function () {
+			function supportsSVG() { return !!document.createElementNS && !! document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect }
+			if (supportsSVG()) document.documentElement.className += ' svg'
+		}();
+
+		var comments_per_page = 20;
+	</script>
+	<meta name="application-name" content="Wikimedia Blog" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="News from Wikipedia and the Wikimedia movement" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://blog.wikimedia.org/feed/;icon-uri=https://secure.gravatar.com/blavatar/eef32d7d5b09256c35970b4ac4263f94?s=16" /><style type="text/css" id="syntaxhighlighteranchor"></style>
+		<link rel="stylesheet" id="custom-css-css" type="text/css" href="https://s1.wp.com/?custom-css=1&#038;csblog=4Aht4&#038;cscache=6&#038;csrev=11" />
+		</head>
+<body class="post-template-default single single-post postid-56204 single-format-standard mp6 customizer-styles-applied highlander-enabled highlander-light">
+
+	<div class="wrapper">
+		<header class="header">
+			<div class="shell cf">
+				<a href="https://blog.wikimedia.org/" class="logo notext">Wikimedia Blog</a>
+				
+				<a href="#" class="nav-toggle">
+					<span></span>
+				</a>
+				
+				<div class="wrap">
+					<div class="header-search collapse">
+						<form action="https://blog.wikimedia.org/" method="get" class="search-form">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		
+		<input type="search" title="Search for:" name="s" value="" class="search-field" />
+	</label>
+	
+	<input type="submit" value="Search" class="search-submit" />
+</form><!-- /.search-form -->					</div><!-- /.header-search -->
+					
+											<nav class="nav">
+							<ul id="menu-main-menu" class="menu"><li id="menu-item-30966" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30966"><a href="https://blog.wikimedia.org/c/community/">Community</a></li>
+<li id="menu-item-40307" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-40307"><a href="https://blog.wikimedia.org/c/wikimedia-wikis/wikipedia/">Wikipedia</a></li>
+<li id="menu-item-40310" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-40310 current-menu-item"><a href="https://blog.wikimedia.org/c/foundation/">Foundation</a></li>
+<li id="menu-item-30922" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-30922 current-menu-item"><a href="https://blog.wikimedia.org/c/technology/">Technology</a></li>
+</ul>						</nav><!-- /.nav -->
+									</div><!-- /.wrap -->
+			</div><!-- /.shell -->
+		</header><!-- /.header -->
+<div class="featured-image">
+		<span class="image" style="background-image: url(https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image1.jpg?w=645&amp;h=164&amp;crop=1);" ></span>
+	
+	<div class="container">
+		<div class="shell">
+			<div class="share">
+	<ul>
+		<li class="label">
+			Share		</li>
+
+		<li>
+			<a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F" target="_blank">
+				<i class="fa fa-facebook"></i>
+			</a>
+		</li>
+
+		<li>
+			<a href="https://plus.google.com/share?url=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F" target="_blank">
+				<i class="fa fa-google-plus"></i>
+			</a>
+		</li>
+
+		<li>
+			<a href="https://twitter.com/home?status=Interactive+maps%2C+now+in+your+language+-+https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F" target="_blank">
+				<i class="fa fa-twitter"></i>
+			</a>
+		</li>
+	</ul>
+</div><!-- /.share -->
+				<div class="author-credentials">
+		<i><small><p><a href="https://commons.wikimedia.org/wiki/File:Historical_map_of_Russian,_1054-1240.gif">Photo</a> by барон Н.Н.Торнау, <a href="https://en.wikipedia.org/wiki/public_domain">public domain</a>.</p>
+</small></i>
+	</div>						
+			</div><!-- /.shell -->
+	</div><!-- /.container -->
+</div><!-- /.featured-image -->
+<div class="main shell cf">
+	<div class="content">
+		<article class="article article-single">
+			<header class="article-head">
+				<p class="article-category"><a href="https://blog.wikimedia.org/c/foundation/" rel="category tag">Foundation</a>, <a href="https://blog.wikimedia.org/c/from-the-archives/" rel="category tag">From the archives</a>, <a href="https://blog.wikimedia.org/c/technology/" rel="category tag">Technology</a></p>
+
+				<h2 class="article-title">Interactive maps, now in your language</h2>				
+				<div class="article-meta">
+					<p class="meta">
+	By <a href="https://blog.wikimedia.org/author/joe-matazzoni/" title="Posts by Joe Matazzoni" class="author url fn" rel="author">Joe Matazzoni</a>, Wikimedia Foundation 	
+			<br />
+		 
+	June 28th, 2018</p>				</div><!-- /.article-meta -->
+
+				<div class="article-description">
+					<p>Newly available on all Wikimedia wikis: embeddable maps that make the world a little easier to understand.</p>
+				</div><!-- /.article-description -->
+				
+			</header><!-- /.article-head -->
+			
+			<div class="article-body">
+				<div class="article-entry">
+					<div id="attachment_56205" class="post-image wp-caption aligncenter" style="width: 590px"><a href="https://commons.wikimedia.org/wiki/File:Historical_map_of_Russian,_1054-1240.gif"><img data-attachment-id="56205" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/historic-map_lead-image/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg" data-orig-size="994,745" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="historic map_lead image" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=580" class="size-large wp-image-56205" src="https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=580&#038;h=435" alt="" width="580" height="435" srcset="https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=580&amp;h=435 580w, https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=150&amp;h=112 150w, https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=300&amp;h=225 300w, https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg?w=768&amp;h=576 768w, https://wikimediablog.files.wordpress.com/2018/06/historic-map_lead-image.jpg 994w" sizes="(max-width: 580px) 100vw, 580px" /></a><p class="wp-caption-text"><a href="https://commons.wikimedia.org/wiki/File:Historical_map_of_Russian,_1054-1240.gif">Photo</a> by барон Н.Н.Торнау, <a href="https://en.wikipedia.org/wiki/public_domain">public domain</a>.</p></div>
+<p>Imagine you needed to learn about a foreign land, but the only map you had was written in a mysterious script you couldn’t read. That might sound like a plot twist from some adventure story, but it’s actually the situation visitors to <a href="https://wikimediafoundation.org/wiki/Our_projects">Wikimedia projects</a>—including Wikipedia—often found themselves in until recently.</p>
+<p>An extension called <a href="https://www.mediawiki.org/wiki/Help:Extension:Kartographer">Kartographer</a> enables Wikimedians to create interactive maps simply by supplying the longitude and latitude of a location. The service is powered by geographic data from the open-source mapping project <a href="https://www.openstreetmap.org/about">OpenStreetMap</a>. These Kartographer maps provide a valuable form of visual information, but until now they’ve suffered from a limitation common to most OpenStreetMap projects: maps were displayed in the language of the territory mapped, rather than in the reader’s language. The <a href="https://maps.wikimedia.org/?lang=local#5/30.632/106.728">map of Asia</a> below demonstrates the issue. To understand it fully, a reader would have to know no less than seven different writing systems.</p>
+<div id="attachment_56206" class="post-image wp-caption aligncenter" style="width: 590px"><a href="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png"><img data-attachment-id="56206" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/asia-in-all-languages-with-circles/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png" data-orig-size="1114,761" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="asia in all languages with circles" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=580" class="wp-image-56206 size-large" src="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=580&#038;h=396" alt="" width="580" height="396" srcset="https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=580&amp;h=396 580w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=150&amp;h=102 150w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=300&amp;h=205 300w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png?w=768&amp;h=525 768w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-all-languages-with-circles.png 1114w" sizes="(max-width: 580px) 100vw, 580px" /></a><p class="wp-caption-text">An example of how wiki maps looked before internationalization. It’s labeled in seven distinct writing systems (from right to left): Japanese, Korean, Latin (for Vietnam), Chinese, Lao, Thai, and Burmese. <a href="https://maps.wikimedia.org/?lang=local#5/30.632/106.728">Visit the dynamic map</a>, and <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use#License_and_copyright">read more about its copyright licenses</a>.</p></div>
+<p>Another problem with Kartographer maps was that until recently, the full service wasn’t available on most Wikipedias. Editors on these wikis could <em>link</em> to interactive maps, but they lacked the “<a href="https://www.mediawiki.org/wiki/Help:Extension:Kartographer#%3Cmapframe%3E_usage">mapframe</a>” feature that lets you embed maps right on a page.</p>
+<h4>A wish fulfilled</h4>
+<p>In 2017, the maps user community rallied behind a proposal in the Community Wishlist Survey that requested <a href="https://meta.wikimedia.org/wiki/2017_Community_Wishlist_Survey/Miscellaneous/Kartographer_improvements">Kartographer Improvements</a>, making this the most voted-for Wishlist item of the year. The proposal’s main wish was to fix Kartographer so that maps display in the language of the reader.  In January of this year, the Foundation’s <a href="https://www.mediawiki.org/wiki/Collaboration">Collaboration team</a> got the assignment to address this and other issues with Kartographer, and the <a href="https://www.mediawiki.org/wiki/Map_improvements_2018">Map improvements 2018</a> project was born.</p>
+<p>Revamping Kartographer so it displays maps in virtually every script and language on the planet was a significant challenge—I’m told there is no other mapping service that even tries. But after a lot of painstaking work, last month the maps community got its wish with the release of “map internationalization.”  At the same time, the Map Improvements project delivered the ability to embed maps on a wiki page to the 277 Wikipedias that didn’t have the feature previously, including English Wikipedia. Now, <a href="https://maps.wikimedia.org/?lang=en#5/30.632/106.728">maps like the one below</a>—which no longer shows a babel of languages and alphabets—can be displayed on almost all Wikimedia wikis.*</p>
+<div id="attachment_56207" class="post-image wp-caption aligncenter" style="width: 590px"><a href="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png"><img data-attachment-id="56207" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/asia-in-english/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png" data-orig-size="1114,761" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="asia-in-english" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=580" class="wp-image-56207 size-large" src="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=580&#038;h=396" alt="" width="580" height="396" srcset="https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=580&amp;h=396 580w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=150&amp;h=102 150w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=300&amp;h=205 300w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png?w=768&amp;h=525 768w, https://wikimediablog.files.wordpress.com/2018/06/asia-in-english.png 1114w" sizes="(max-width: 580px) 100vw, 580px" /></a><p class="wp-caption-text">The same map after internationalization. All labels are in the language of the wiki—English, in this case. <a href="https://maps.wikimedia.org/?lang=en#5/30.632/106.728">Visit the dynamic map</a>, and <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use#License_and_copyright">read more about its copyright licenses</a>.</p></div>
+<p>In the weeks since we released internationalized maps to all wiki projects, users have already placed more than 60,000 new mapframe maps on wiki pages.  These large numbers are possible because of templates, which volunteers can code to pull geo coordinates from Wikidata automatically and generate maps on hundreds or even thousands of pages at once. To cite a few examples, looking only at Wikipedias that didn’t have mapframe previously: Koreans now use mapframe to <a href="https://ko.wikipedia.org/wiki/%EC%98%A4%EB%82%98%EB%A6%AC%EB%AA%AC_%EC%97%AD">show the location of metro stations</a>, Italians are <a href="https://it.wikipedia.org/wiki/Stadio_Giuseppe_Meazza">mapping football stadiums</a> (see illustration), English Wikipedians are <a href="https://en.wikipedia.org/wiki/New_York_State_Route_895">tracing roads</a>, and Bengalis are pinpointing the sites of <a href="https://bn.wikipedia.org/wiki/%E0%A6%87%E0%A6%89%E0%A6%A8%E0%A6%BF%E0%A6%AD%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%B8%E0%A6%BF%E0%A6%9F%E0%A6%BF_%E0%A6%85%E0%A6%AC_%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%B2%E0%A6%BF%E0%A6%AB%E0%A7%8B%E0%A6%B0%E0%A7%8D%E0%A6%A8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE,_%E0%A6%AC%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%95%E0%A6%B2%E0%A7%87">American universities</a>.</p>
+<div id="attachment_56208" class="post-image wp-caption alignright" style="width: 110px"><img data-attachment-id="56208" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/stadium_template_itwiki/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png" data-orig-size="280,1154" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="stadium_template_itwiki" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png?w=73" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png?w=280" class="wp-image-56208" src="https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png?w=100&#038;h=412" alt="" width="100" height="412" srcset="https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png?w=100&amp;h=412 100w, https://wikimediablog.files.wordpress.com/2018/06/stadium_template_itwiki.png?w=200&amp;h=824 200w" sizes="(max-width: 100px) 100vw, 100px" /><p class="wp-caption-text">More on this at the bottom.**</p></div>
+<p>That users are spreading interactive maps around the wikis in large numbers isn’t a surprise, since they offer many advantages. As demonstrated by the template examples just cited, mapframe maps are easier to generate than previous locator maps, which had to be created as graphics and uploaded individually. They provide more information to readers, since clicking on a mapframe map pops it up in a larger window where it can be zoomed and panned to show detail or context. And, of course, dynamic maps are less likely to become outdated as borders, place names and page layouts change.</p>
+<h3>Limitations and workarounds</h3>
+<p>Like Wikipedia, OpenStreetMap (OSM) is an open-source project, which means that its map data, including name data, are created  by volunteers. What names are available in which languages varies considerably from language to language and place to place. In general, the names of countries, states, provinces and major cities are present in many languages, while smaller towns and geographic features may or may not be available in the language you want. The table below shows the relative strengths of “multilingual name data,” as it’s known, in the 25 most widely available OSM languages.</p>
+<p>With internationalization, Kartographer tries to present maps in the content language of the wiki where the map appears. When the software encounters a place or other map feature for which it can’t find a name in the desired language, it falls back as gracefully as possible: first to <a href="https://github.com/kartotherian/babel/blob/master/lib/fallbacks.json">languages configured as fallbacks</a> for the requested language, then to any transliterated names in the same script, and finally to the language of the territory mapped.</p>
+<p style="text-align:center;"><a href="https://blog.wikimedia.org/?attachment_id=56210"><img data-attachment-id="56210" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/osm-multilingual-data-2/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png" data-orig-size="382,298" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Osm-multilingual-data-2" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png?w=382" class="aligncenter wp-image-56210 size-full" src="https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png?w=382&#038;h=298" alt="" width="382" height="298" srcset="https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png 382w, https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png?w=150&amp;h=117 150w, https://wikimediablog.files.wordpress.com/2018/06/osm-multilingual-data-2.png?w=300&amp;h=234 300w" sizes="(max-width: 382px) 100vw, 382px" /></a></p>
+<p style="text-align:center;"><em><small>Availability of multilingual data in OpenStreetMap varies considerably from language to language. The more “translations” there are in a language, the higher the likelihood that a given map feature will display in that language. (Data from OSM, April, 2018.) <a href="https://commons.wikimedia.org/wiki/File:Osm-multilingual-data-2.png">Image</a> by Joe Matazzoni, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">CC BY-SA 4.0</a>.</small></em></p>
+<p>This system works better in some situations than others. When the results are unsatisfactory, there are a few things you can do:</p>
+<ul>
+<li>Add the missing names to OSM in your language. Doing so isn’t difficult, but do first take time to learn a bit about <a href="https://wiki.openstreetmap.org/wiki/Names">OSM’s best practices in this area</a>. For example, you’ll want to supply only names that are time-honored and traditional in your language, avoiding new translations and transliterations.</li>
+<li>Use a newly created parameter<strong>, lang=&#8221;<em>xx</em>&#8220;</strong>, that lets you specify a particular language for your map (where <em>xx</em> stands for the short <a href="https://meta.wikimedia.org/wiki/List_of_Wikipedias#All_Wikipedias_ordered_by_number_of_articles">codes used to identify each language</a>).</li>
+<li>Use the value “local” with the above parameter to essentially opt out of internationalization, displaying the map in the language(s) of the territory mapped, like so: <strong>lang=“local”.</strong></li>
+<li>Change your language’s fallback sequence, possibly adding a commonly-translated language to the list (this will require community consensus).</li>
+</ul>
+<p>The Map Improvements 2018 project page includes a number of posts that detail the hows and whys of these various approach, including: <a href="https://www.mediawiki.org/wiki/Map_improvements_2018#April_25,_2018,_You_can_now_try_out_internationalization_(on_testwiki)">this post</a> and <a href="https://www.mediawiki.org/wiki/Map_improvements_2018#April_26,_2018:_OSM_name_data_quirks_and_the_uses_of_lang=%22local%22">this one, on the uses of lang=”local”</a>; and this one about why some wikis <a href="https://www.mediawiki.org/wiki/Map_improvements_2018#May_11,_2018:_Should_your_wiki_change_its_map_fallback_language?">might want to change their fallback languages</a>.</p>
+<div id="attachment_56211" class="post-image wp-caption aligncenter" style="width: 590px"><a href="https://blog.wikimedia.org/?attachment_id=56211"><img data-attachment-id="56211" data-permalink="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/visual-editor_map-tools/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png" data-orig-size="636,611" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="visual-editor_map-tools" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=580" class="wp-image-56211 size-large" src="https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=580&#038;h=557" alt="" width="580" height="557" srcset="https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=580&amp;h=557 580w, https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=150&amp;h=144 150w, https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png?w=300&amp;h=288 300w, https://wikimediablog.files.wordpress.com/2018/06/visual-editor_map-tools.png 636w" sizes="(max-width: 580px) 100vw, 580px" /></a><p class="wp-caption-text">Visual Editor’s map tools let you define a map’s location by just dragging and zooming. You can also set the size, language and alignment and add informational markings. Here the user has outlined the state of Nevada and set a marker for Las Vegas. Screenshot, <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use#License_and_copyright">read more about its copyright licenses</a>.</p></div>
+<h3>Put your project on the map</h3>
+<p>The <a href="https://www.mediawiki.org/wiki/Map_improvements_2018">Map Improvements 2018</a> engagement comes to a conclusion at the end of June. Besides the internationalization features we’ve been talking about and some other necessary fixes to the user experience, a big focus of the project was modernizing and upgrading the Kartographer software so that the Reading Engineering team can maintain the technology going forward (here is the newly created <a href="https://www.mediawiki.org/wiki/Wikimedia_Maps">Wikimedia Maps</a> project page, where users will track and discuss that ongoing work).</p>
+<p>If you typically work on one of the 277 Wikipedias that never had embedded mapframe maps before, it’s pretty easy to try these new features out. Visual Editor offers tools for creating  basic maps (see the illustration). A newly rewritten <a href="https://www.mediawiki.org/wiki/Help:Extension:Kartographer">Kartographer Help page</a> explains the Visual Editor features and demonstrates more advanced annotation and other capabilities.</p>
+<p>It’s a wide world out there and mapping is a great way to explore and understand it a little better. Here’s hoping that these new feature encourage some of you to do just that.</p>
+<p style="text-align:center;">———</p>
+<p>*The exceptions are <a href="https://phabricator.wikimedia.org/T191583">nine wikis</a> that use a strict version of <a href="https://www.mediawiki.org/wiki/Extension:FlaggedRevs">Flagged Revisions</a>.</p>
+<p>**<span style="font-weight:400;">An Italian Wikipedia template for football stadiums pulls geo coordinates from Wikidata and uses mapframe to automatically generate locator maps. </span></p>
+<p style="padding-left:30px;"><em>Joe Matazzoni is a product manager at the Wikimedia Foundation. The Map Improvements 2018 project couldn’t have been successful without generous advice and programming contributions from map-loving volunteers, including </em><a href="https://www.mediawiki.org/wiki/User:Yurik"><em>Yurik</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Framawiki"><em>framawiki</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Naveenpf"><em>Naveenpf</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:TheDJ"><em>TheDJ</em></a><em>, </em><a href="https://www.mediawiki.org/w/index.php?title=User:Milu92&amp;action=edit&amp;redlink=1"><em>Milu92</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Atsirlin"><em>Atsirlin</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Evad37"><em>Evad37</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Pigsonthewing"><em>Pigsonthewing</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Mike_Peel"><em>Mike Peel</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Eranroz"><em>eranroz</em></a><em>, </em><a href="https://www.mediawiki.org/wiki/User:Gareth"><em>Gareth</em></a><em> and </em><a href="https://www.mediawiki.org/wiki/User:Abbe98"><em>Abbe98</em></a><em>. Thanks to them and everyone else who lent their hands to this work.</em></p>
+<p style="padding-left:30px;"><em>This blog post was edited on 9 July to include a mention of OpenStreetMap&#8217;s best practices.</em></p>
+				</div><!-- /.article-entry -->
+			</div><!-- /.article-body -->
+			
+			<footer class="article-foot">
+				
+<div class="comments" id="comments">
+	<div class="comments-head">
+		<h3><span>6 Comments on</span> Interactive maps, now in your language</h3>
+	</div>
+
+	
+		<div class="commentList" id="commentList">
+			
+				<div class="comment byuser comment-author-ederhart bypostauthor even thread-even depth-1 highlander-comment" id="li-comment-296708">
+		<div id="comment-296708" class="entry">
+			<p><a href='https://en.wikipedia.org/wiki/User:Ed_Erhart_(WMF)' rel='external nofollow' class='url'>Ed Erhart</a> <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296708">1 year</a></p>
+			<p>Hello Stefan,</p>
+<p>We&#8217;ve updated the posts. Thank you for your comments here! </p>
+<p>Best,<br />
+&#8211;Ed</p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=Hello+Stefan%2C%0D%0A%0D%0AWe%27ve+updated+the+posts.+Thank+you+for+your+comments+here%21+%0D%0A%0D%0ABest%2C%0D%0A--Ed" target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>	<div class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-296682">
+		<div id="comment-296682" class="entry">
+			<p><a href='http://twitter.com/sfkeller' rel='external nofollow' class='url'>Stefan Keller (@sfkeller)</a> <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296682">1 year</a></p>
+			<p>Joe,<br />
+It&#8217;s over a week ago since you published this news.<br />
+Then replies regarding your suboptimal recommendations related to names in OSM showed up.<br />
+I hope you&#8217;ll have soon time to update this nice post.</p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=Joe%2C+%0D%0AIt%27s+over+a+week+ago+since+you+published+this+news.+%0D%0AThen+replies+regarding+your+suboptimal+recommendations+related+to+names+in+OSM+showed+up.+%0D%0AI+hope+you%27ll+have+soon+time+to+update+this+nice+post." target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>	<div class="comment byuser comment-author-pigsonthewing even thread-even depth-1 highlander-comment" id="li-comment-296642">
+		<div id="comment-296642" class="entry">
+			<p><a href='http://pigsonthewing.org.uk' rel='external nofollow' class='url'>Andy Mabbett</a> <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296642">1 year</a></p>
+			<p>Describing good-faith contributions to an open-source project as &#8220;vandalism&#8221; is as unacceptable here (if not more so) than on the OSM mailing list where I first called out such behaviour.</p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=Describing+good-faith+contributions+to+an+open-source+project+as+%22vandalism%22+is+as+unacceptable+here+%28if+not+more+so%29+than+on+the+OSM+mailing+list+where+I+first+called+out+such+behaviour." target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>	<div class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-296491">
+		<div id="comment-296491" class="entry">
+			<p><a href='http://twitter.com/sfkeller' rel='external nofollow' class='url'>Stefan Keller (@sfkeller)</a> <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296491">1 year</a></p>
+			<p>Dear Joe,</p>
+<p>I would like to backup mxa’s recommendation to you to correct and update your call for the sake of all those nice WP, Wikidata and OpenStreetMap (OSM) projects.</p>
+<p>As yvecai said on OSM-talk: There is little advice in the article on how to enter names in OSM: <a href="https://www.mail-archive.com/talk@openstreetmap.org/msg60447.html" rel="nofollow">https://www.mail-archive.com/talk@openstreetmap.org/msg60447.html</a></p>
+<p>So pls. consider adding this along following lines “When the results are unsatisfactory…” </p>
+<p>* “Add the missing names to Wikidata (not OpenStreetMap) in your language”<br />
+* (… remaining bullets seem to target Wikidata anyway)<br />
+* “Add the name to OpenStreetMap only after having understood how to do this: See <a href="https://wiki.openstreetmap.org/wiki/Names" rel="nofollow">https://wiki.openstreetmap.org/wiki/Names</a> e.g. avoid pure translations (exonyms) and avoid transliterations.<br />
+* “Adding Wikidata-ID to OpenStreetMap is acceptable.”</p>
+<p>Other question regarding the Map Improvements 2018 engagement. Yuri Astrakhan stated on the same OSM-talk thread “The fundamental problem is that WMF refuses to do any additional maps work.”. </p>
+<p>a. What do you think?<br />
+b. Are there chances to continue WMF engagement on map improvements (hopefully without outsourcing)? </p>
+<p>I’d really like to organize a face-to-face meeting together with Katherine Maher on “WMF and it’s maps-related engagement” at one of the forthcoming conferences State-of-the-Map (Milan), WikiCon2018 (St. Gallen) or DINAcon.ch (Bern).</p>
+<p>Stefan – An OSM and WP / WD / WikiVoyage user and contributor</p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=Dear+Joe%2C%0A%0AI+would+like+to+backup+mxa%E2%80%99s+recommendation+to+you+to+correct+and+update+your+call+for+the+sake+of+all+those+nice+WP%2C+Wikidata+and+OpenStreetMap+%28OSM%29+projects.%0A%0AAs+yvecai+said+on+OSM-talk%3A+There+is+little+advice+in+the+article+on+how+to+enter+names+in+OSM%3A+https%3A%2F%2Fwww.mail-archive.com%2Ftalk%40openstreetmap.org%2Fmsg60447.html%0A%0ASo+pls.+consider+adding+this+along+following+lines+%E2%80%9CWhen+the+results+are+unsatisfactory%E2%80%A6%E2%80%9D+%0A%0A%2A+%E2%80%9CAdd+the+missing+names+to+Wikidata+%28not+OpenStreetMap%29+in+your+language%E2%80%9D%0A%2A+%28%E2%80%A6+remaining+bullets+seem+to+target+Wikidata+anyway%29%0A%2A+%E2%80%9CAdd+the+name+to+OpenStreetMap+only+after+having+understood+how+to+do+this%3A+See+https%3A%2F%2Fwiki.openstreetmap.org%2Fwiki%2FNames+e.g.+avoid+pure+translations+%28exonyms%29+and+avoid+transliterations.%0A%2A+%E2%80%9CAdding+Wikidata-ID+to+OpenStreetMap+is+acceptable.%E2%80%9D%0A%0AOther+question+regarding+the+Map+Improvements+2018+engagement.+Yuri+Astrakhan+stated+on+the+same+OSM-talk+thread+%E2%80%9CThe+fundamental+problem+is+that+WMF+refuses+to+do+any+additional+maps+work.%E2%80%9D.+%0A%0Aa.+What+do+you+think%3F%0Ab.+Are+there+chances+to+continue+WMF+engagement+on+map+improvements+%28hopefully+without+outsourcing%29%3F+%0A%0AI%E2%80%99d+really+like+to+organize+a+face-to-face+meeting+together+with+Katherine+Maher+on+%E2%80%9CWMF+and+it%E2%80%99s+maps-related+engagement%E2%80%9D+at+one+of+the+forthcoming+conferences+State-of-the-Map+%28Milan%29%2C+WikiCon2018+%28St.+Gallen%29+or+DINAcon.ch+%28Bern%29.%0A%0AStefan+%E2%80%93+An+OSM+and+WP+%2F+WD+%2F+WikiVoyage+user+and+contributor" target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>	<div class="comment even thread-even depth-1 highlander-comment" id="li-comment-296474">
+		<div id="comment-296474" class="entry">
+			<p>mxa <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296474">1 year</a></p>
+			<p>Rendering multilingual maps is an important and exciting development. Congratulations on your effort.<br />
+However your post here has stirred up quite some heated discussion on OSM-Talk.<br />
+Adding every imaginable language to every POI name in the OSM database is not what the OSM community wants and to call for this in this blog post is asking to vandalize OSM. Sorry, but it has to be called out like it is.</p>
+<p>It&#8217;s especially weird to read this on a wikimedia page from a wikimedia developer because wikimedia already has solved the internationalization issue with wikidata. Wikidata is the right place to save this data.</p>
+<p>OSM has the rule that any information added to it needs to be verifiable on the ground. Translations and transliterations are mostly not.<br />
+Most of the transliterations follow rule sets and thus can be done by machines much better then by convoluting the OSM database.</p>
+<p>So what&#8217;s needed to make a multilingual map is to add the wikidata ID to OSM. Then just connect the information from both databases and generate the missing translations to other scripts (romanizations for example) by a program.</p>
+<p>Please remove the call to add this information to OSM from this article. It&#8217;s not wanted and it&#8217;s against what OSM is. Put this effort in wikidata.</p>
+<p>Thank you.</p>
+<p><a href="https://wiki.openstreetmap.org/wiki/Names#Avoid_transliteration" rel="nofollow">https://wiki.openstreetmap.org/wiki/Names#Avoid_transliteration</a></p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=Rendering+multilingual+maps+is+an+important+and+exciting+development.+Congratulations+on+your+effort.%0D%0AHowever+your+post+here+has+stirred+up+quite+some+heated+discussion+on+OSM-Talk.+%0D%0AAdding+every+imaginable+language+to+every+POI+name+in+the+OSM+database+is+not+what+the+OSM+community+wants+and+to+call+for+this+in+this+blog+post+is+asking+to+vandalize+OSM.+Sorry%2C+but+it+has+to+be+called+out+like+it+is.%0D%0A%0D%0AIt%27s+especially+weird+to+read+this+on+a+wikimedia+page+from+a+wikimedia+developer+because+wikimedia+already+has+solved+the+internationalization+issue+with+wikidata.+Wikidata+is+the+right+place+to+save+this+data.%0D%0A%0D%0AOSM+has+the+rule+that+any+information+added+to+it+needs+to+be+verifiable+on+the+ground.+Translations+and+transliterations+are+mostly+not.%0D%0AMost+of+the+transliterations+follow+rule+sets+and+thus+can+be+done+by+machines+much+better+then+by+convoluting+the+OSM+database.%0D%0A%0D%0ASo+what%27s+needed+to+make+a+multilingual+map+is+to+add+the+wikidata+ID+to+OSM.+Then+just+connect+the+information+from+both+databases+and+generate+the+missing+translations+to+other+scripts+%28romanizations+for+example%29+by+a+program.%0D%0A%0D%0APlease+remove+the+call+to+add+this+information+to+OSM+from+this+article.+It%27s+not+wanted+and+it%27s+against+what+OSM+is.+Put+this+effort+in+wikidata.%0D%0A%0D%0AThank+you.%0D%0A%0D%0Ahttps%3A%2F%2Fwiki.openstreetmap.org%2Fwiki%2FNames%23Avoid_transliteration" target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>	<div class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-296465">
+		<div id="comment-296465" class="entry">
+			<p>yvecai <a class="comment-link" href="https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/#comment-296465">1 year</a></p>
+			<p>There is a good page here that gives insight on what &#8216;names&#8217; can be entered in OSM.<br />
+<a href="https://wiki.openstreetmap.org/wiki/Names" rel="nofollow">https://wiki.openstreetmap.org/wiki/Names</a></p>
+<p>Yvecai, an OSM user and contributor</p>
+
+			<div class="tools">
+								<a href="http://twitter.com/intent/tweet?text=There+is+a+good+page+here+that+gives+insight+on+what+%27names%27+can+be+entered+in+OSM.%0D%0Ahttps%3A%2F%2Fwiki.openstreetmap.org%2Fwiki%2FNames%0D%0A%0D%0AYvecai%2C+an+OSM+user+and+contributor" target="_blank" class="share">Share</a>
+			</div>
+		</div>
+	</div>		</div>
+		
+							<p class="nocomments">Comments are closed.</p>
+			
+	<div class="form comment-form">
+			</div>
+</div>
+<!-- /.comments -->			</footer><!-- /.article-foot -->
+		</article><!-- /.article -->
+	</div><!-- /.content -->
+
+	
+<div class="sidebar">
+	<ul class="widgets">
+		<li id="wmb_social_links-2" class="widget widget_connect"><h3 class="widget-title">Get Connected</h3><ul>			<li>
+				<a href="https://facebook.com/wikipedia" target="_blank">
+					<i class="fa fa-facebook"></i>
+				</a>
+			</li>
+						<li>
+				<a href="https://instagram.com/wikipedia" target="_blank">
+					<i class="fa fa-instagram"></i>
+				</a>
+			</li>
+						<li>
+				<a href="https://twitter.com/wikimedia" target="_blank">
+					<i class="fa fa-twitter"></i>
+				</a>
+			</li>
+						<li>
+				<a href="https://www.linkedin.com/company/wikimedia-foundation" target="_blank">
+					<i class="fa fa-linkedin"></i>
+				</a>
+			</li>
+						<li>
+				<a href="/feed/" target="_blank">
+					<i class="fa fa-rss"></i>
+				</a>
+			</li>
+			</ul></li><li id="wmb_subscribe_widget-2" class="widget widget_wmb_subscribe_widget"><h3 class="widget-title">Get our email updates</h3>
+		<!-- Begin MailChimp Signup Form -->
+		<link href="https://cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
+
+		<div id="mc_embed_signup">
+			<form action="https://wikimediafoundation.us11.list-manage.com/subscribe/post?u=7e010456c3e448b30d8703345&amp;id=246cd15c56" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+			    <div id="mc_embed_signup_scroll">
+					<div class="mc-field-group email">
+						<input type="email" placeholder="Your email address" name="EMAIL" class="email" id="mce-EMAIL">
+					</div>
+
+					<div class="clear"></div>
+
+					<div class="mc-field-group input-group">
+					    <ul>
+					    	<li><input type="radio" value="1" name="group[4037]" id="mce-group[4037]-4037-0" checked="CHECKED"><label for="mce-group[4037]-4037-0">Daily update</label></li>
+							<li><input type="radio" value="2" name="group[4037]" id="mce-group[4037]-4037-1"><label for="mce-group[4037]-4037-1">Weekly update</label></li>
+						</ul>
+					</div>
+
+					<input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+
+					<div id="mce-responses" class="clear">
+						<div class="response" id="mce-error-response" style="display:none"></div>
+						<div class="response" id="mce-success-response" style="display:none"></div>
+					</div>
+					<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+				    <div style="position: absolute; left: -5000px;"><input type="text" name="b_7e010456c3e448b30d8703345_246cd15c56" tabindex="-1" value=""></div>
+
+			    </div>
+			</form>
+		</div>
+		<script src='https://s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
+		<script>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+		<script src='https://s2.wp.com/wp-content/themes/vip/wikimedia-v2/js/subscribe.js'></script>
+		<!--End mc_embed_signup-->
+		</li><li id="wmb_category_posts-2" class="widget widget_community"><h3 class="widget-title">Meet our community</h3>			<ul>
+									<li>
+						<a href="https://blog.wikimedia.org/2018/07/13/jess-wade/" class="image">
+															<img width="146" height="110" src="https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=146&amp;h=110&amp;crop=1" class="attachment-category_posts_widget size-category_posts_widget wp-post-image" alt="" srcset="https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=146&amp;h=110&amp;crop=1 146w, https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=292&amp;h=220&amp;crop=1 292w, https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=150&amp;h=113&amp;crop=1 150w" sizes="(max-width: 146px) 100vw, 146px" data-attachment-id="56324" data-permalink="https://blog.wikimedia.org/2018/07/13/jess-wade/17_350-icl-jwade-024-2/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg" data-orig-size="570,423" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;14&quot;,&quot;credit&quot;:&quot;Dave Guttridge The Photographic&quot;,&quot;camera&quot;:&quot;NIKON D810&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;1513084476&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;85&quot;,&quot;iso&quot;:&quot;250&quot;,&quot;shutter_speed&quot;:&quot;0.00625&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="17_350 ICL JWade-024" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/07/17_350-icl-jwade-0241.jpg?w=570" />													</a>
+
+						<h5>
+							<a href="https://blog.wikimedia.org/2018/07/13/jess-wade/">Meet the scientist working to increase the number of underrepresented scientists and engineers on Wikipedia</a>
+						</h5>
+					</li>
+									<li>
+						<a href="https://blog.wikimedia.org/2018/06/19/wikipedia-editors-ancient-egypt/" class="image">
+															<img width="146" height="110" src="https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=146&amp;h=110&amp;crop=1" class="attachment-category_posts_widget size-category_posts_widget wp-post-image" alt="" srcset="https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=146&amp;h=110&amp;crop=1 146w, https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=292&amp;h=220&amp;crop=1 292w, https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=150&amp;h=113&amp;crop=1 150w" sizes="(max-width: 146px) 100vw, 146px" data-attachment-id="56157" data-permalink="https://blog.wikimedia.org/2018/06/19/wikipedia-editors-ancient-egypt/all-giza-pyramids-4/" data-orig-file="https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg" data-orig-size="570,423" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;10&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;Canon EOS 5D&quot;,&quot;caption&quot;:&quot;All Giza Pyramids&quot;,&quot;created_timestamp&quot;:&quot;1150725680&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;58&quot;,&quot;iso&quot;:&quot;100&quot;,&quot;shutter_speed&quot;:&quot;0.00625&quot;,&quot;title&quot;:&quot;All Giza Pyramids&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="All Giza Pyramids" data-image-description="" data-medium-file="https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=300" data-large-file="https://wikimediablog.files.wordpress.com/2018/06/all_gizah_pyramids3.jpg?w=570" />													</a>
+
+						<h5>
+							<a href="https://blog.wikimedia.org/2018/06/19/wikipedia-editors-ancient-egypt/">For these Wikipedia editors, ancient Egyptian pyramids are more than a symbol</a>
+						</h5>
+					</li>
+							</ul>
+
+							<p class="link-more">
+										<a href="https://blog.wikimedia.org/c/communications/profiles/">More Community Profiles</a>
+				</p>
+				</li><li id="wmb_most_viewed_posts-2" class="widget widget_most_viewed"><h3 class="widget-title">Most viewed this month</h3>			<ul>
+									<li>
+						<h4>
+							<a href="https://blog.wikimedia.org/tr/2017/11/02/turkiyeden-vikipediye-erisim-engeli-halen-devam-ediyor">Türkiye&#8217;den Vikipedi&#8217;ye erişim engeli halen devam ediyor</a>
+						</h4>
+
+						Vikipedi'nin tüm dil sürümleri, Nisan ayının...					</li>
+									<li>
+						<h4>
+							<a href="https://blog.wikimedia.org/2016/03/30/unique-devices-dataset/">Introducing the unique devices dataset: a new way to estimate reach on Wikimedia projects</a>
+						</h4>
+
+						With the unique devices dataset, we’ve...					</li>
+									<li>
+						<h4>
+							<a href="https://blog.wikimedia.org/2018/04/18/how-we-designed-page-previews-for-wikipedia/">How we designed page previews for Wikipedia — and what could be done with them in the future</a>
+						</h4>
+
+						Yesterday, we released a new feature...					</li>
+							</ul>
+
+			</li><li id="wmb_archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3><ul>	<li><a href='https://blog.wikimedia.org/2018/08/'>August 2018</a>&nbsp;(1)</li>
+	<li><a href='https://blog.wikimedia.org/2018/07/'>July 2018</a>&nbsp;(18)</li>
+	<li><a href='https://blog.wikimedia.org/2018/06/'>June 2018</a>&nbsp;(16)</li>
+	<li><a href='https://blog.wikimedia.org/2018/05/'>May 2018</a>&nbsp;(16)</li>
+	<li><a href='https://blog.wikimedia.org/2018/04/'>April 2018</a>&nbsp;(19)</li>
+<li class="older-posts"><a href="#">Older Posts</a>&nbsp;(2768)</li>	<li><a href='https://blog.wikimedia.org/2018/'>2018</a>&nbsp;(130)</li>
+	<li><a href='https://blog.wikimedia.org/2017/'>2017</a>&nbsp;(257)</li>
+	<li><a href='https://blog.wikimedia.org/2016/'>2016</a>&nbsp;(307)</li>
+	<li><a href='https://blog.wikimedia.org/2015/'>2015</a>&nbsp;(323)</li>
+	<li><a href='https://blog.wikimedia.org/2014/'>2014</a>&nbsp;(305)</li>
+	<li><a href='https://blog.wikimedia.org/2013/'>2013</a>&nbsp;(403)</li>
+	<li><a href='https://blog.wikimedia.org/2012/'>2012</a>&nbsp;(414)</li>
+	<li><a href='https://blog.wikimedia.org/2011/'>2011</a>&nbsp;(258)</li>
+	<li><a href='https://blog.wikimedia.org/2010/'>2010</a>&nbsp;(124)</li>
+	<li><a href='https://blog.wikimedia.org/2009/'>2009</a>&nbsp;(178)</li>
+	<li><a href='https://blog.wikimedia.org/2008/'>2008</a>&nbsp;(69)</li>
+</ul></li><li id="text-3" class="widget widget_text"><h3 class="widget-title">Work at Wikimedia</h3>			<div class="textwidget">Work with the foundation that supports Wikipedia and its sister projects around the world. 
+<a href="https://wikimediafoundation.org/wiki/Work_with_us#Wikimedia_Careers">Apply and join us</a></div>
+		</li>	</ul>
+</div><!-- /.sidebar --></div><!-- /.main -->
+
+		<div class="footer">
+			<div class="shell">
+				<div class="footer-inner cf">
+					
+											<div class="about-foundation">
+															<h6>Wikimedia Foundation</h6>
+							
+							<p>The <a href="https://wikimediafoundation.org/wiki/Home">Wikimedia Foundation, Inc</a> is a nonprofit charitable organization dedicated to encouraging the growth, development and distribution of free, multilingual content, and to providing the full content of these wiki-based projects to the public free of charge. <span class="footer-gray-links"><a href="https://meta.wikimedia.org/wiki/Wikimedia_Blog">Get Involved</a> | <a href="/wp-login.php">Log In</a></span></p>
+						</div><!-- /.about-foundation -->
+										
+											<div class="column alignleft">
+							
+																	<h6>Wikimedia Projects</h6>
+								
+								<p>The <a href="https://wikimediafoundation.org/wiki/Home">Wikimedia Foundation</a> operates some of the largest collaboratively edited reference projects in the world.</p>
+
+																	<ul id="menu-projects" class="menu"><li id="menu-item-30940" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30940"><a href="https://www.wikipedia.org/">Wikipedia</a></li>
+<li id="menu-item-30992" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30992"><a href="https://commons.wikimedia.org/wiki/Main_Page">Commons</a></li>
+<li id="menu-item-30994" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30994"><a href="https://www.mediawiki.org/wiki/MediaWiki">MediaWiki</a></li>
+<li id="menu-item-30943" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30943"><a href="https://www.wikibooks.org/">Wikibooks</a></li>
+<li id="menu-item-30993" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30993"><a href="https://www.wikidata.org/wiki/Wikidata:Main_Page">Wikidata</a></li>
+<li id="menu-item-30989" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30989"><a href="https://www.wikinews.org/">Wikinews</a></li>
+<li id="menu-item-30985" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30985"><a href="https://www.wikiquote.org/">Wikiquote</a></li>
+<li id="menu-item-30987" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30987"><a href="https://wikisource.org/wiki/Main_Page">Wikisource</a></li>
+<li id="menu-item-30988" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30988"><a href="https://species.wikimedia.org/wiki/Main_Page">Wikispecies</a></li>
+<li id="menu-item-30990" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30990"><a href="https://www.wikiversity.org/">Wikiversity</a></li>
+<li id="menu-item-30991" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30991"><a href="https://www.wikivoyage.org/">Wikivoyage</a></li>
+<li id="menu-item-30984" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30984"><a href="https://www.wiktionary.org/">Wiktionary</a></li>
+</ul>								
+													</div><!-- /.column -->						
+											<div class="column alignright">
+							
+																	<h6>Wikimedia Movement Affiliates</h6>
+								
+								<p>The Wikimedia projects have an international scope, and the Wikimedia movement has already made a significant impact throughout the world. To continue this success on an organizational level, Wikimedia is building an international network of associated organizations.</p>
+
+																	<ul id="menu-organizations" class="menu"><li id="menu-item-30982" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30982"><a href="https://meta.wikimedia.org/wiki/Wikimedia_chapters">Wikimedia chapters</a></li>
+<li id="menu-item-30939" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-30939"><a title="Thematic organizations" href="https://meta.wikimedia.org/wiki/Wikimedia_thematic_organizations">Thematic organizations</a></li>
+<li id="menu-item-31132" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-31132"><a href="https://meta.wikimedia.org/wiki/Wikimedia_user_groups">Wikimedia user groups</a></li>
+</ul>								
+													</div><!-- /.column -->						
+					
+											<div class="copyright">
+							<p>This work is licensed under a <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 unported license</a>. Some images under CC BY-SA.<br />
+Read our <a href="https://wikimediafoundation.org/wiki/Terms_of_Use">Terms of Use</a> and <a href="https://wikimediafoundation.org/wiki/Wikimedia_blog_privacy_policy">Privacy policy</a>. | Powered by <a href="https://wpvip.com/?utm_source=vip_powered_wpcom&#038;utm_medium=web&#038;utm_campaign=VIP%20Footer%20Credit&#038;utm_term=blog.wikimedia.org" rel="generator nofollow" class="powered-by-wpcom">WordPress.com VIP</a></p>
+						</div><!-- /.copyright -->
+									</div><!-- /.footer-inner -->
+			</div><!-- /.shell -->
+		</div><!-- /.footer -->
+	</div><!-- /.wrapper -->
+
+	<!-- wpcom_wp_footer -->
+	<div style="display:none">
+	</div>
+
+	<div id="carousel-reblog-box">
+		<form action="#" name="carousel-reblog">
+			<textarea id="carousel-reblog-content" name="carousel-reblog-content" placeholder="Add your thoughts here... (optional)"></textarea>
+			<label for="carousel-reblog-to-blog-id" id="carousel-reblog-lblogid">Post to</label>
+			<select name="carousel-reblog-to-blog-id" id="carousel-reblog-to-blog-id">
+						</select>
+
+			<div class="submit">
+				<span class="canceltext"><a href="#" class="cancel">Cancel</a></span>
+				<input type="submit" name="carousel-reblog-submit" class="button" id="carousel-reblog-submit" value="Reblog Post" />
+				<input type="hidden" id="carousel-reblog-blog-id" value="67752302" />
+				<input type="hidden" id="carousel-reblog-blog-url" value="https://blog.wikimedia.org" />
+				<input type="hidden" id="carousel-reblog-blog-title" value="Wikimedia Blog" />
+				<input type="hidden" id="carousel-reblog-post-url" value="" />
+				<input type="hidden" id="carousel-reblog-post-title" value="" />
+			</div>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="8cf90b9af2" /><input type="hidden" name="_wp_http_referer" value="/2018/06/28/interactive-maps-now-in-your-language/" />		</form>
+
+		<div class="arrow"></div>
+	</div>
+<link rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1524699534h&cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcomVipAnalytics = {"is_404":"0","is_home":"0","is_single":"1","is_front_page":"0","is_archive":"0","percentToTrack":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/blog.wikimedia.org\/wp-admin\/admin-ajax.php","nonce":"b2b1380849","display_exif":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/wikimediablog.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fblog.wikimedia.org%2F2018%2F06%2F28%2Finteractive-maps-now-in-your-language%2F","blog_id":"67752302","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"local_comments_commenting_as":"<fieldset><label for=\"email\">Email (Required)<\/label> <input type=\"text\" name=\"email\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-email-field\" \/><\/fieldset><fieldset><label for=\"author\">Name (Required)<\/label> <input type=\"text\" name=\"author\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-author-field\" \/><\/fieldset><fieldset><label for=\"url\">Website<\/label> <input type=\"text\" name=\"url\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-url-field\" \/><\/fieldset>","reblog":"Reblog","reblogged":"Reblogged","reblog_add_thoughts":"Add your thoughts here... (optional)","reblogging":"Reblogging...","post_reblog":"Post Reblog","stats_query_args":"blog=67752302&v=wpcom&tz=-4&user_id=0&subd=wikimediablog","is_public":"1","reblog_enabled":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/_static/??-eJyVUF0PgjAM/EOOCZHIi/G3zNHoxr5sN5R/b0lEeTAkPrW56921lY8kdAwZQpaWZA+j0ZCelaWdXFG+iOTK1QSSzgxA8l6gwE2F3gEuwyZoV3om2UhH71koEJKbKm/ChmMjRpNmERehgnJTNpo2BKpnQ3FRKL2iDMidiCMgmjn9g/3pkFHpgX4dQ+m7/xq3/AWc3qVaT/2I1ApjIXDSQk6cJBaANWd/qtv2eKi7bt/YFxfulmw='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script src="//stats.wp.com/w.js?60" type="text/javascript" async defer></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'67752302','blog_tz':'-4','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'67752302','v':'wpcom','tz':'-4','user_id':'0','post':'56204','subd':'wikimediablog'}]);
+function st_vt() {var x=document.createElement("img");x.src="https://pixel.wp.com/g.gif?blog=67752302&v=wpcomvt&tz=-4&user_id=0&post=56204&subd=wikimediablog&rand="+Math.random();}
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1BNmNJfGhxNCVxUDExYmtib2E/SzdEJm0lUEtbdFU0fFk4cHZvcUFrZT90Tn4yQm1+R3NyNTdBK0h4TjhEWTJPcGFpR214JUt8LC5bMVdmTH5GJlY5KzUxfjRpbUFxP0U2VTU5NXI0VV1xK2Vqc0dZaGJtREddTy4/ZVFXV2tqXXxMbFUwVj9jeEJMVk9kWm9sflpkdm5xbF9rOUJSeFVFXXFnUHNUV1ZINUclX2hTcmZMJWZxWUJvW0lvODRNY1pLM3ZVYmg5MDM/XS43eVlHVGh3UHJ6OWJQQmxoLStvV0FTXVM/QStYbVJdMmo4QlkwLWwzbDJbR34vR0lhdnwuN0EtQWJYcXBFSXNkLUowUCV1MQ=='}]);
+_stq.push([ 'clickTrackerInit', '67752302', '56204' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script></body>
+</html>
+<!--
+	generated 10 seconds ago
+	generated in 0.117 seconds
+	served from batcache in 0.001 seconds
+	expires in 290 seconds
+-->

@@ -78,6 +78,11 @@ MOCK_PAGES = { \
 'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.riverdale.html', \
 'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.sommertrend.html', \
 'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.fallinlove.html', \
+'http://www.loldf.org/spip.php?article717': 'lesoreillesloindufront.html', \
+'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.12wege.html'
+'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.html', \
+'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.html', \
+'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': 'blog.wikimedia.interactivemaps.html', \
 }
 # '': '', \
 
@@ -96,6 +101,11 @@ def load_mock_page(url):
 
 def new_pages():
     '''New pages, to be sorted'''
+    assert find_date(load_mock_page('http://www.loldf.org/spip.php?article717')) == '2019-06-27'
+    assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
+    assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
+    assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
+    assert find_date(load_mock_page('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/')) == '2018-06-28'
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
 
     pass
