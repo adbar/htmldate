@@ -74,14 +74,14 @@ MOCK_PAGES = { \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
 'http://www.stuttgart.de/': 'stuttgart.de.html', \
 'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
-'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355?lang=fr': 'paris-luttes.html', \
-'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.riverdale.html', \
-'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.sommertrend.html', \
-'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.fallinlove.html', \
-'http://www.loldf.org/spip.php?article717': 'lesoreillesloindufront.html', \
-'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.12wege.html'
-'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.html', \
-'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.html', \
+'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': 'paris-luttes.info.html', \
+'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.de.riverdale.html', \
+'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.de.sommertrend.html', \
+'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.de.fallinlove.html', \
+'http://www.loldf.org/spip.php?article717': 'loldf.org.html', \
+'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.de.12wege.html', \
+'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.de.kraeuter.html', \
+'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.at.html', \
 'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': 'blog.wikimedia.interactivemaps.html', \
 }
 # '': '', \
@@ -101,13 +101,7 @@ def load_mock_page(url):
 
 def new_pages():
     '''New pages, to be sorted'''
-    assert find_date(load_mock_page('http://www.loldf.org/spip.php?article717')) == '2019-06-27'
-    assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
-    assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
-    assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
-    assert find_date(load_mock_page('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/')) == '2018-06-28'
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
-
     pass
 
 
@@ -226,11 +220,16 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
     assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-07-12'
     assert find_date(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html')) == '2019-06-20'
-    #TODO:
+    assert find_date(load_mock_page('http://www.loldf.org/spip.php?article717')) == '2019-06-27'
+    assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
+    assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
+    assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
+    # TODO:
+    # assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) is ???
+    # print(find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')))
     # assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
-    # kein Datum gefunden in 'cosmopolitan.sommertrend.html'
-    # assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html'))
-    # assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355?lang=fr')) == '2019-06-29'
+    # assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355')) == '2019-06-29'
+
 
 def test_approximate_date():
     '''this page should return an approximate date'''
@@ -445,7 +444,7 @@ def readme_examples():
     assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2019-06-24'
     assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/'), original_date=True) == '2016-06-23'
     assert find_date('https://example.org/') is None
-    assert find_date('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/') == '2018-06-28'
+    assert find_date(load_mock_page('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/')) == '2018-06-28'
 
 
 if __name__ == '__main__':
