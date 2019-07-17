@@ -3,6 +3,7 @@
 ### version 0.5.2
 - small bugs and coverage issues removed
 - streamlined utils
+- documentation added
 
 ### version 0.5.1
 - bugs corrected and cleaner code
