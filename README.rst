@@ -22,11 +22,15 @@ htmldate: find the creation date of HTML pages
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
 
+In a nutshell:
+
 .. code-block:: python
 
     >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)
+    '2016-06-23'
 
 .. code-block:: bash
 
@@ -59,7 +63,7 @@ The module then returns a date if a valid cue could be found in the document, pe
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Handles batch processing of a list of URLs
 
-The library currently focuses on texts in written English or German.
+The library currently focuses on texts written in English or German.
 
 
 Installation
@@ -127,7 +131,7 @@ Although the time delta between the original publication and the *last modified*
 
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
     '2019-06-24'
-    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_bool=True) # modified behavior
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True) # modified behavior
     '2016-06-23'
 
 
