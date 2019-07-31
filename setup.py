@@ -62,7 +62,7 @@ setup(
         'cchardet >= 2.1.4',
         'ciso8601 >= 2.1.0',
         'dateparser == 0.7.1', # 0.5.0 is the fastest
-        'lxml >= 4.3.4', # CPython parser issue with version 4.3.1
+        'lxml == 4.3.4', # CPython parser issue with version 4.3.1 # > 4.3.4 not compatible with Python 3.4
         'regex',
         'requests >= 2.19.0',
     ],
