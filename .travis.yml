@@ -20,7 +20,6 @@ matrix:
   # fast_finish: true
 
 before_install:
-  - pip install dateparser lxml
   - pip install codecov tox
 
 install:

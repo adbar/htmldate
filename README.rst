@@ -22,7 +22,7 @@ htmldate: find the creation date of HTML pages
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
 
-In a nutshell:
+In a nutshell, with Python:
 
 .. code-block:: python
 
@@ -31,6 +31,8 @@ In a nutshell:
     '2016-12-23'
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)
     '2016-06-23'
+
+On the command-line:
 
 .. code-block:: bash
 
