@@ -39,9 +39,9 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug('dateparser configuration: %s %s', PARSER, PARSERCONFIG)
 
 DATE_EXPRESSIONS = [
-    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
     "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]",
-    "//*[contains(@class, 'time') or contains(@id, 'time')]",
+    "//*[contains(@class, 'time') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
+    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
     "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]",
     "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
     "//*[@class='meta' or @class='meta-before' or @class='asset-meta']",
@@ -155,7 +155,7 @@ def examine_header(tree, outputformat, extensive_search, original_date):
                 #    continue
                 # original date
                 if original_date is True:
-                    if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished'):
+                    if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished'):
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                         headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search)
                         if headerdate is not None:
@@ -168,7 +168,7 @@ def examine_header(tree, outputformat, extensive_search, original_date):
                         if attempt is not None:
                             headerdate = attempt
                             break # avoid looking further
-                    elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'rnews:datepublished') and headerdate is None:
+                    elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished') and headerdate is None:
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                         headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search)
             # name attribute

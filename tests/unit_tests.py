@@ -175,8 +175,7 @@ def test_exact_date():
     assert find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
     assert find_date(load_mock_page('http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php')) == '2015-12-14'
     assert find_date(load_mock_page('https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa')) == '2019-02-20'
-    # does not work
-    # assert find_date('<html><body><span class="date">Mai<span>06</span>2018</span></body></html>') == '2018-05-06' # https://www.wienbadminton.at/news/119843/Come-Together
+    assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together'), extensive_search=True) == '2018-05-06'
 
     # abbr in document body
     assert find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
@@ -224,10 +223,10 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
     assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
+    assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) == '2019-06-03'
+    assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
     # TODO:
-    # assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) is ???
-    # print(find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')))
-    # assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
+
     # assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355')) == '2019-06-29'
 
 
