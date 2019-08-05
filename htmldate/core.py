@@ -656,6 +656,17 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
+            # shortcut: time pubdate
+            if 'pubdate' in elem.attrib and elem.get('pubdate') == 'pubdate' and 'datetime' in elem.attrib:
+                LOGGER.debug('time pubdate found: %s', elem.get('datetime'))
+                if original_date is True:
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search)
+                    if attempt is not None:
+                        return attempt
+                else:
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
+                    if reference > 0:
+                        break
             # go for datetime
             if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
                 # first choice: entry-date + datetime attribute
