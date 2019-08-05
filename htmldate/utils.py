@@ -12,8 +12,8 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 import socket
-import urllib3
 from io import StringIO # Python 3
+import urllib3
 
 # libraries
 import cchardet as chardet

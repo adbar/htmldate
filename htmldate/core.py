@@ -109,7 +109,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search):
             # more than 4 digits required
             if len(toexamine) < 7 or len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
-            LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ ord(c):None for c in '\n\t\r' }).strip()[:100])
+            LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
             LOGGER.debug('analyzing (string): %s', toexamine)
             attempt = try_ymd_date(toexamine, outputformat, extensive_search)
             if attempt is not None:
@@ -662,10 +662,29 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
-            # shortcut: time pubdate
-            if 'pubdate' in elem.attrib and elem.get('pubdate') == 'pubdate' and 'datetime' in elem.attrib:
-                LOGGER.debug('time pubdate found: %s', elem.get('datetime'))
-                if original_date is True:
+            shortcut_flag = False
+            # go for datetime
+            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
+                # shortcut: time pubdate
+                if 'pubdate' in elem.attrib and elem.get('pubdate') == 'pubdate':
+                    if original_date is True:
+                        shortcut_flag = True
+                    LOGGER.debug('time pubdate found: %s', elem.get('datetime'))
+                # first choice: entry-date + datetime attribute
+                elif 'class' in elem.attrib:
+                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
+                        # shortcut
+                        if original_date is True:
+                            shortcut_flag = True
+                        LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
+                    # updated time
+                    elif elem.get('class') == 'updated' and original_date is False:
+                        LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
+                # datetime attribute
+                else:
+                    LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
+                # analyze attribute
+                if shortcut_flag is True:
                     attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search)
                     if attempt is not None:
                         return attempt
@@ -673,31 +692,6 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                     reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
                     if reference > 0:
                         break
-            # go for datetime
-            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
-                # first choice: entry-date + datetime attribute
-                if 'class' in elem.attrib:
-                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
-                        LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                        # shortcut
-                        if original_date is True:
-                            attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search)
-                            if attempt is not None:
-                                return attempt
-                        else:
-                            reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
-                            if reference > 0:
-                                break
-                    # updated time
-                    if elem.get('class') == 'updated' and original_date is False:
-                        LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
-                        reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
-                        if reference > 0:
-                            break
-                # datetime attribute
-                else:
-                    LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug('time/datetime found: %s', elem.text)
