@@ -1,5 +1,5 @@
-htmldate: find the creation date of HTML pages
-==============================================
+htmldate: find the publication date of web pages
+================================================
 
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
@@ -47,7 +47,7 @@ On the command-line:
 Features
 --------
 
-*htmldate* finds the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. All the steps needed from web page download to HTML parsing, including scraping and textual analysis are handled. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
+*htmldate* finds original and updated publication dates of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. All the steps needed from web page download to HTML parsing, including scraping and textual analysis are handled. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
 
 *htmldate* provides following ways to date a HTML document:
 
@@ -64,6 +64,7 @@ The module then returns a date if a valid cue could be found in the document, pe
 -  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Handles batch processing of a list of URLs
+-  Switch between original and updated date
 
 The library currently focuses on texts written in English or German.
 
