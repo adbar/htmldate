@@ -83,6 +83,9 @@ MOCK_PAGES = { \
 'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.de.kraeuter.html', \
 'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.at.html', \
 'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': 'blog.wikimedia.interactivemaps.html', \
+'https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique': 'mediapart.fr.violences.html', \
+'https://verfassungsblog.de/the-first-decade/': 'verfassungsblog.de.decade.html', \
+'https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145': 'cric-grenoble.info.radio.html', \
 }
 # '': '', \
 
@@ -225,9 +228,10 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
     assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) == '2019-06-03'
     assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
-    # TODO:
-
-    # assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355')) == '2019-06-29'
+    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # shoudl be '2019-06-29'
+    assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
+    assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
+    assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
 
 
 def test_approximate_date():
