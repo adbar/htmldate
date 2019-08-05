@@ -622,10 +622,16 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                     if 'title' in elem.attrib:
                         trytext = elem.get('title')
                         LOGGER.debug('abbr published-title found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date)
-                        # faster execution
-                        if reference > 0:
-                            break
+                        # shortcut
+                        if original_date is True:
+                            attempt = try_ymd_date(trytext, outputformat, extensive_search)
+                            if attempt is not None:
+                                return attempt
+                        else:
+                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date)
+                            # faster execution
+                            if reference > 0:
+                                break
                     # dates, not times of the day
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
@@ -673,9 +679,15 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                 if 'class' in elem.attrib:
                     if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
                         LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                        reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
-                        if reference > 0:
-                            break
+                        # shortcut
+                        if original_date is True:
+                            attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search)
+                            if attempt is not None:
+                                return attempt
+                        else:
+                            reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date)
+                            if reference > 0:
+                                break
                     # updated time
                     if elem.get('class') == 'updated' and original_date is False:
                         LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
