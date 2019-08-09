@@ -44,7 +44,7 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
     "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]",
     "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
-    "//*[@class='meta' or @class='meta-before' or @class='asset-meta']",
+    "//*[@class='meta' or @class='meta-before' or @class='asset-meta' or contains(@id, 'article-metadata') or contains(@class, 'article-metadata')]",
     "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
     "//*[contains(@id, 'lastmod')]",
     "//*[contains(@itemprop, 'date')]",
@@ -55,7 +55,6 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta']",
 ]
 # "//*[contains(@class, 'fa-clock-o')]",
-# "//*[contains(@id, 'metadata')]",
 
 CLEANER = Cleaner()
 CLEANER.comments = False
