@@ -109,7 +109,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search):
             if len(toexamine) < 7 or len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
             LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
-            LOGGER.debug('analyzing (string): %s', toexamine)
+            # LOGGER.debug('analyzing (string): %s', toexamine)
             attempt = try_ymd_date(toexamine, outputformat, extensive_search)
             if attempt is not None:
                 return attempt
@@ -539,7 +539,7 @@ def search_page(htmlstring, outputformat, original_date):
 
 
 #@profile
-def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None):
+def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None, verbose=False):
     """
     Extract dates from HTML documents using markup analysis and text patterns
 
@@ -562,13 +562,16 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         Provide an URL manually for pattern-searching in URL
         (in some cases much faster)
     :type url: string
+    :param verbose:
+        Set verbosity level for debugging
     :return: Returns a valid date expression as a string, or None
-
     """
+
     # init
+    if verbose is True:
+        logging.basicConfig(level=logging.DEBUG) # stream=sys.stdout,
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
-    LOGGER.debug('starting')
 
     # safety
     if tree is None:
@@ -713,7 +716,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     htmlstring = html.tostring(cleaned_html, encoding='unicode')
     # remove comments by hand as faulty in lxml
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
-    LOGGER.debug('html cleaned')
+    #LOGGER.debug('html cleaned')
 
     # date regex timestamp rescue
     json_match = JSON_PATTERN.search(htmlstring)

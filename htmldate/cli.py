@@ -7,14 +7,14 @@ Implementing a basic command-line interface.
 ## under GNU GPL v3 license
 
 import argparse
-import logging
+#import logging
 import sys
 
 from .core import find_date
 from .utils import fetch_url
 
 
-def examine(htmlstring, extensive_bool=True, original_date=False):
+def examine(htmlstring, extensive_bool=True, original_date=False, verbose_flag=False):
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:
@@ -25,7 +25,7 @@ def examine(htmlstring, extensive_bool=True, original_date=False):
         sys.stderr.write('# ERROR: file too small\n')
     # proceed
     else:
-        result = find_date(htmlstring, extensive_bool, original_date)
+        result = find_date(htmlstring, extensive_search=extensive_bool, original_date=original_date, verbose=verbose_flag)
         return result
     return None
 
@@ -40,9 +40,6 @@ def main():
     argsparser.add_argument("-i", "--inputfile", help="name of input file for batch processing (similar to wget -i)", type=str)
     argsparser.add_argument("-u", "--URL", help="custom URL download", type=str)
     args = argsparser.parse_args()
-
-    if args.verbose:
-        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
     # process input on STDIN
     if not args.inputfile:
@@ -59,7 +56,7 @@ def main():
                 # input_stream = io.TextIOWrapper(sys.stdin.buffer, encoding='latin-1')
                 sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n') # exit code: 1
 
-        result = examine(htmlstring, args.fast, args.original)
+        result = examine(htmlstring, extensive_bool=args.fast, original_date=args.original, verbose_flag=args.verbose)
         if result is not None:
             sys.stdout.write(result + '\n')
 
@@ -68,7 +65,7 @@ def main():
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = examine(htmltext, args.fast, args.original)
+                result = examine(htmltext, extensive_bool=args.fast, original_date=args.original, verbose_flag=args.verbose)
                 if result is None:
                     result = 'None'
                 sys.stdout.write(line.strip() + '\t' + result + '\n')
