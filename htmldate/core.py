@@ -106,7 +106,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search):
             toexamine = re.sub(r'\D+$', '', toexamine)
             #toexamine = re.sub(r'\|.+$', '', toexamine)
             # more than 4 digits required
-            if len(toexamine) < 7 or len(list(filter(str.isdigit, toexamine))) < 4:
+            if len(list(filter(str.isdigit, toexamine))) < 4:
                 continue
             LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
             # LOGGER.debug('analyzing (string): %s', toexamine)
@@ -299,7 +299,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date):
 def try_ymd_date(string, outputformat, extensive_search, parser=PARSER):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
-    if string is None or len(list(filter(str.isdigit, string))) < 4:
+    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 or not re.search(r'[.:,_/ -]|^[0-9]+$', string):
         return None
     # just time/single year, not a date
     if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
