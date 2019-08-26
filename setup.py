@@ -25,7 +25,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.5.3',
+    version='0.5.4',
     description='Find the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction.',
     long_description=readme(),
     classifiers=[

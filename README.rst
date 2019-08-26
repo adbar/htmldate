@@ -76,7 +76,7 @@ Install from package repository: ``pip install htmldate``
 
 For the latest version (check `build status <https://travis-ci.org/adbar/htmldate>`_): ``pip install git+https://github.com/adbar/htmldate.git``
 
-Version ``0.5.3`` is the last to support Python 3.4, later versions are 3.5+ compatible.
+Version ``0.5.4`` will be the last to support Python 3.4, later versions are 3.5+ compatible.
 
 
 With Python
