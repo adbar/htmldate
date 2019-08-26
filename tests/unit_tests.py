@@ -19,6 +19,7 @@ from lxml import html
 from htmldate.cli import examine
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.parsers import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
+from htmldate.settings import LATEST_POSSIBLE
 from htmldate.utils import fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, output_format_validator
 
@@ -286,47 +287,47 @@ def test_output_format_validator():
 def test_try_ymd_date():
     '''test date extraction via external package'''
     find_date.extensive_search = False
-    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) is None
+    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
     find_date.extensive_search = True
-    assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
     # assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
     # assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
-    assert try_ymd_date('1.9.2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert try_ymd_date('1/9/17', OUTPUTFORMAT, PARSER) == '2017-01-09' # assuming MDY format
-    assert try_ymd_date('201709011234', OUTPUTFORMAT, PARSER) == '2017-09-01'
+    assert try_ymd_date('1.9.2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('1/9/17', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
+    assert try_ymd_date('201709011234', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
     # other output format
-    assert try_ymd_date('1.9.2017', '%d %B %Y', PARSER) == '01 September 2017'
+    assert try_ymd_date('1.9.2017', '%d %B %Y', PARSER, LATEST_POSSIBLE) == '01 September 2017'
     # wrong
-    assert try_ymd_date('201', OUTPUTFORMAT, PARSER) is None
-    assert try_ymd_date('14:35:10', OUTPUTFORMAT, PARSER) is None
-    assert try_ymd_date('12:00 h', OUTPUTFORMAT, PARSER) is None
+    assert try_ymd_date('201', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
+    assert try_ymd_date('14:35:10', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
+    assert try_ymd_date('12:00 h', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
 
 
 #def test_header():
 #    assert examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
-def test_compare_reference(extensive_search=False, original_date=False):
+def test_compare_reference(extensive_search=False, original_date=False, max_date=LATEST_POSSIBLE):
     '''test comparison function'''
-    assert compare_reference(0, 'AAAA', OUTPUTFORMAT, extensive_search, original_date) == 0
-    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT, extensive_search, original_date) == 1517500000
-    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date) < 1517500000
-    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date) == 1517500000
+    assert compare_reference(0, 'AAAA', OUTPUTFORMAT, extensive_search, original_date, max_date) == 0
+    assert compare_reference(1517500000, '2018-33-01', OUTPUTFORMAT, extensive_search, original_date, max_date) == 1517500000
+    assert 1517400000 < compare_reference(0, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date, max_date) < 1517500000
+    assert compare_reference(1517500000, '2018-02-01', OUTPUTFORMAT, extensive_search, original_date, max_date) == 1517500000
 
 
-def test_candidate_selection(original_date=False):
+def test_candidate_selection(original_date=False, max_date=LATEST_POSSIBLE):
     '''test the algorithm for several candidates'''
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     allmatches = ['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat, original_date)
+    result = select_candidate(occurrences, catch, yearpat, original_date, max_date)
     assert result is not None
     allmatches = ['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28']
     occurrences = Counter(allmatches)
-    result = select_candidate(occurrences, catch, yearpat, original_date)
+    result = select_candidate(occurrences, catch, yearpat, original_date, max_date)
     assert result is None
 
 
@@ -364,47 +365,47 @@ def test_approximate_url():
     assert find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://example.com/category/2016/') is None
 
 
-def test_search_pattern(original_date=False):
+def test_search_pattern(original_date=False, max_date=LATEST_POSSIBLE):
     '''test pattern search in strings'''
     #
     pattern = re.compile('\D([0-9]{4}[/.-][0-9]{2})\D')
     catch = re.compile('([0-9]{4})[/.-]([0-9]{2})')
     yearpat = re.compile('^([12][0-9]{3})')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date) is None
-    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_date) is not None
-    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_date) is None
-    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_date) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is None
+    assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_date, max_date) is not None
+    assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_date, max_date) is None
+    assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_date, max_date) is not None
     #
     pattern = re.compile('\D([0-9]{2}[/.-][0-9]{4})\D')
     catch = re.compile('([0-9]{2})[/.-]([0-9]{4})')
     yearpat = re.compile('([12][0-9]{3})$')
-    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date) is None
-    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_date) is not None
+    assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is None
+    assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is not None
     #
     pattern = re.compile('\D(2[01][0-9]{2})\D')
     catch = re.compile('(2[01][0-9]{2})')
     yearpat = re.compile('^(2[01][0-9]{2})')
-    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_date) is None
-    assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_date) is not None
+    assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_date, max_date) is None
+    assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_date, max_date) is not None
 
 
-def test_search_html(original_date=False):
+def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
     '''test pattern search in HTML'''
     # file input + output format
-    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_date) == '06 April 2019'
+    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_date, max_date) == '06 April 2019'
     # tree input
     ## TODO: bug here
-    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date) == '2010-05-01'
-    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_date) == '2010-05-05'
-    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_date) == '1999-10-11'
-    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT, original_date) == '2011-03-03'
-    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT, original_date) == '2006-12-06'
-    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT, original_date) == '2014-09-15'
-    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT, original_date) == '2015-04-30'
-    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT, original_date) == '2013-03-03'
-    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_date) is None
-    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date) == '2013-01-01'
-    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date) == '2018-01-01'
+    assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2010-05-01'
+    assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2010-05-05'
+    assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '1999-10-11'
+    assert search_page('<html><body><p>The date is 3/3/11</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2011-03-03'
+    assert search_page('<html><body><p>The date is 06.12.06</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2006-12-06'
+    assert search_page('<html><body><p>The timestamp is 20140915D15:23H</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2014-09-15'
+    assert search_page('<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2015-04-30'
+    assert search_page('<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2013-03-03'
+    assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_date, max_date) is None
+    assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2013-01-01'
+    assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2018-01-01'
 
 
 def test_cli():

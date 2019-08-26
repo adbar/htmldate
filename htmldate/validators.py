@@ -23,7 +23,7 @@ LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 #@profile
-def date_validator(date_input, outputformat):
+def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
     if not isinstance(date_input, datetime.date):
@@ -41,12 +41,12 @@ def date_validator(date_input, outputformat):
     # basic year validation
     year = int(datetime.date.strftime(dateobject, '%Y'))
     if MIN_YEAR <= year <= MAX_YEAR:
-        # not newer than today
+        # not newer than today or stored variable
         try:
-            if dateobject.date() <= LATEST_POSSIBLE:
+            if dateobject.date() <= latest:
                 return True
         except AttributeError:
-            if dateobject <= LATEST_POSSIBLE:
+            if dateobject <= latest:
                 return True
     LOGGER.debug('date not valid: %s', date_input)
     return False
