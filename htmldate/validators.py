@@ -118,11 +118,11 @@ def compare_values(reference, attempt, outputformat, original_date):
 
 
 #@profile
-def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat):
+def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d') is True:
+        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
                 LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)

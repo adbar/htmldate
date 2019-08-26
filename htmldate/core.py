@@ -324,7 +324,8 @@ def try_ymd_date(string, outputformat, extensive_search, max_date, parser=PARSER
         # send to dateparser
         dateparser_result = external_date_parser(string, outputformat, parser)
         if dateparser_result is not None:
-            return dateparser_result
+            if date_validator(dateparser_result, outputformat, latest=max_date) is True:
+                return dateparser_result
     # catchall
     return None
 
@@ -401,7 +402,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
@@ -410,7 +411,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})')
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
@@ -437,7 +438,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     yearpat = re.compile(r'^([0-9]{4})')
     # select
     bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
@@ -446,7 +447,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'([12][0-9]{3})([01][0-9])([0-3][0-9])')
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
@@ -476,7 +477,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
@@ -512,7 +513,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     yearpat = re.compile(r'^([0-9]{4})')
     # select
     bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat)
+    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
     if result is not None:
         return result
 
