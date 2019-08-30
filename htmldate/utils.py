@@ -86,6 +86,7 @@ def fetch_url(url):
 #@profile
 def load_html(htmlobject):
     """Load object given as input and validate its type (accepted: LXML tree and string, HTML document or URL)"""
+    tree = None
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         # copy tree
         tree = htmlobject
@@ -102,17 +103,18 @@ def load_html(htmlobject):
         try:
             # parse
             tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)
-            # tree = html.fromstring(html.encode('utf8'), parser=parser)
+        except ValueError:
+            # try to parse a bytestring
+            try:
+                tree = html.fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
+            except Exception as err:
+                LOGGER.error('parser bytestring %s', err)
         except UnicodeDecodeError as err:
             LOGGER.error('unicode %s', err)
-            tree = None
         except UnboundLocalError as err:
             LOGGER.error('parsed string %s', err)
-            tree = None
-        except (etree.XMLSyntaxError, ValueError, AttributeError) as err:
+        except (etree.XMLSyntaxError, AttributeError) as err:
             LOGGER.error('parser %s', err)
-            tree = None
     else:
         LOGGER.error('this type cannot be processed: %s', type(htmlobject))
-        tree = None
     return tree
