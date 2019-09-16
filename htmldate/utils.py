@@ -16,7 +16,10 @@ from io import StringIO # Python 3
 import urllib3
 
 # libraries
-import cchardet as chardet
+try:
+    import cchardet as chardet
+except ImportError:
+    import chardet
 import requests
 from lxml import etree, html
 
