@@ -10,7 +10,7 @@ environment:
 build: off
 
 install:
-- pip install tox
+- pip install cchardet tox
 
 test_script:
 - tox
