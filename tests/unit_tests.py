@@ -402,23 +402,23 @@ def test_approximate_url():
 def test_search_pattern(original_date=False, max_date=LATEST_POSSIBLE):
     '''test pattern search in strings'''
     #
-    pattern = re.compile('\D([0-9]{4}[/.-][0-9]{2})\D')
-    catch = re.compile('([0-9]{4})[/.-]([0-9]{2})')
-    yearpat = re.compile('^([12][0-9]{3})')
+    pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
+    catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})')
+    yearpat = re.compile(r'^([12][0-9]{3})')
     assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is None
     assert search_pattern('The date is 2002.02.15.', pattern, catch, yearpat, original_date, max_date) is not None
     assert search_pattern('http://www.url.net/index.html', pattern, catch, yearpat, original_date, max_date) is None
     assert search_pattern('http://www.url.net/2016/01/index.html', pattern, catch, yearpat, original_date, max_date) is not None
     #
-    pattern = re.compile('\D([0-9]{2}[/.-][0-9]{4})\D')
-    catch = re.compile('([0-9]{2})[/.-]([0-9]{4})')
-    yearpat = re.compile('([12][0-9]{3})$')
+    pattern = re.compile(r'\D([0-9]{2}[/.-][0-9]{4})\D')
+    catch = re.compile(r'([0-9]{2})[/.-]([0-9]{4})')
+    yearpat = re.compile(r'([12][0-9]{3})$')
     assert search_pattern('It happened on the 202.E.19, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is None
     assert search_pattern('It happened on the 15.02.2002, the day when it all began.', pattern, catch, yearpat, original_date, max_date) is not None
     #
-    pattern = re.compile('\D(2[01][0-9]{2})\D')
-    catch = re.compile('(2[01][0-9]{2})')
-    yearpat = re.compile('^(2[01][0-9]{2})')
+    pattern = re.compile(r'\D(2[01][0-9]{2})\D')
+    catch = re.compile(r'(2[01][0-9]{2})')
+    yearpat = re.compile(r'^(2[01][0-9]{2})')
     assert search_pattern('It happened in the film 300.', pattern, catch, yearpat, original_date, max_date) is None
     assert search_pattern('It happened in 2002.', pattern, catch, yearpat, original_date, max_date) is not None
 

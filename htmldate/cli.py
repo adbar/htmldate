@@ -66,7 +66,7 @@ def main():
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile: # errors='strict', buffering=1
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = examine(htmltext, extensive_bool=args.fast, original_date=args.original, verbose_flag=args.verbose, max_date=args.maxdate)
+                result = examine(htmltext, extensive_bool=args.fast, original_date=args.original, verbose_flag=args.verbose, maxdate=args.maxdate)
                 if result is None:
                     result = 'None'
                 sys.stdout.write(line.strip() + '\t' + result + '\n')

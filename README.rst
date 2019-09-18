@@ -13,6 +13,9 @@ htmldate: find the publication date of web pages
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
     :target: https://travis-ci.org/adbar/htmldate
 
+.. image:: https://img.shields.io/appveyor/ci/adbar/htmldate
+    :target: https://ci.appveyor.com/project/adbar/htmldate
+
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
 
@@ -72,13 +75,15 @@ The library currently focuses on texts written in English or German.
 Installation
 ------------
 
+The package is tested on Linux, macOS and Windows systems.
+
 Install from package repository: ``pip install htmldate``
 
-For the latest version (check `build status <https://travis-ci.org/adbar/htmldate>`_): ``pip install git+https://github.com/adbar/htmldate.git``
+For the latest version (check build status above): ``pip install git+https://github.com/adbar/htmldate.git``
 
 Version ``0.5.5`` will be the last to support Python 3.4, later versions are 3.5+ compatible.
 
-For faster processing of downloads you might consider installing the ``cchardet``package as well (currently not working on some macOS versions).
+For faster processing of downloads you might consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
 
 
 With Python

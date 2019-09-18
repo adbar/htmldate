@@ -106,14 +106,14 @@ def load_html(htmlobject):
         try:
             # parse
             tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)
+        except UnicodeDecodeError as err:
+            LOGGER.error('unicode %s', err)
         except ValueError:
             # try to parse a bytestring
             try:
                 tree = html.fromstring(htmlobject.encode('utf8'))
             except Exception as err:
                 LOGGER.error('parser bytestring %s', err)
-        except UnicodeDecodeError as err:
-            LOGGER.error('unicode %s', err)
         except UnboundLocalError as err:
             LOGGER.error('parsed string %s', err)
         except (etree.XMLSyntaxError, AttributeError) as err:
