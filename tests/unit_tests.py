@@ -16,6 +16,11 @@ import dateparser
 
 from lxml import html
 
+try:
+    import cchardet as chardet
+except ImportError:
+    import chardet
+
 from htmldate.cli import examine
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.parsers import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
@@ -98,8 +103,20 @@ PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY
 
 def load_mock_page(url):
     '''load mock page from samples'''
-    with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'r') as inputf:
-        htmlstring = inputf.read()
+    try:
+        with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'r') as inputf:
+            htmlstring = inputf.read()
+    # windows fix for the tests
+    except UnicodeDecodeError:
+        # read as binary
+        with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'rb') as inputf:
+            htmlbinary = inputf.read()
+        guessed_encoding = chardet.detect(htmlbinary)['encoding']
+        if guessed_encoding is not None:
+            try:
+                htmlstring = htmlbinary.decode(guessed_encoding)
+            except UnicodeDecodeError:
+                htmlstring = htmlbinary
     return htmlstring
 
 
