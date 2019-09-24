@@ -75,13 +75,11 @@ The library currently focuses on texts written in English or German.
 Installation
 ------------
 
-The package is tested on Linux, macOS and Windows systems.
+The package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards.
 
 Install from package repository: ``pip install htmldate``
 
 For the latest version (check build status above): ``pip install git+https://github.com/adbar/htmldate.git``
-
-Version ``0.5.5`` will be the last to support Python 3.4, later versions are 3.5+ compatible.
 
 For faster processing of downloads you might consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
 
@@ -159,6 +157,22 @@ A basic command-line interface is included:
 
 For usage instructions see ``htmldate -h``:
 
+.. code-block:: bash
+
+    $ htmldate --help
+    htmldate [-h] [-v] [-f] [--original] [-m MAXDATE] [-i INPUTFILE] [-u URL]
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -v, --verbose  increase output verbosity
+  -f, --fast     fast mode: disable extensive search
+  --original     original date prioritized
+  -m MAXDATE, --maxdate MAXDATE
+                 latest acceptable date (YYYY-MM-DD)
+  -i INPUTFILE, --inputfile INPUTFILE
+                 name of input file for batch processing (similar to wget -i)
+  -u URL, --URL URL     custom URL download
+
 The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:
 
 .. code-block:: bash
@@ -183,6 +197,7 @@ Context
 
 This module is part of methods to derive metadata from web documents in order to build text corpora for computational linguistic and NLP analysis, the original problem being that there are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified. For more information:
 
+-  Barbaresi, Adrien. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the 7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
 Kudos to...
