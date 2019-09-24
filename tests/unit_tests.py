@@ -92,6 +92,9 @@ MOCK_PAGES = { \
 'https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique': 'mediapart.fr.violences.html', \
 'https://verfassungsblog.de/the-first-decade/': 'verfassungsblog.de.decade.html', \
 'https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145': 'cric-grenoble.info.radio.html', \
+'https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie': 'kurz.at.wasserstoff.html', \
+'https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany': 'la-bas.org.porte.html', \
+'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html', \
 }
 # '': '', \
 
@@ -258,6 +261,9 @@ def test_exact_date():
     assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
     assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
+    assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'
+    assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
+    assert find_date(load_mock_page('https://exporo.de/wiki/europaeische-zentralbank-ezb/')) == '2018-01-01'
 
 
 def test_approximate_date():
