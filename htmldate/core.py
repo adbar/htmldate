@@ -39,22 +39,17 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug('dateparser configuration: %s %s', PARSER, PARSERCONFIG)
 
 DATE_EXPRESSIONS = [
-    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum')]",
-    "//*[contains(@class, 'time') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
+    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
     "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
-    "//*[contains(@class, 'byline') or contains(@class, 'subline') or contains(@class, 'info')]",
     "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
-    "//*[@class='meta' or @class='meta-before' or @class='asset-meta' or contains(@id, 'article-metadata') or contains(@class, 'article-metadata')]",
+    "//*[@class='meta' or @class='meta-before' or @class='asset-meta' or contains(@id, 'article-metadata') or contains(@class, 'article-metadata') or contains(@class, 'byline') or contains(@class, 'subline')]",
     "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
-    "//*[contains(@id, 'lastmod')]",
-    "//*[contains(@itemprop, 'date')]",
+    "//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or contains(@class, 'time')]",
     "//footer",
-    "//*[@class='post-footer']",
-    "//*[@class='footer' or @id='footer']",
+    "//*[@class='post-footer' or @class='footer' or @id='footer']",
     "//small",
-    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta']",
+    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o')]",
 ]
-# "//*[contains(@class, 'fa-clock-o')]",
 
 CLEANER = Cleaner()
 CLEANER.comments = False
@@ -383,7 +378,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     # copyright symbol
     LOGGER.debug('looking for copyright/footer information')
     copyear = 0
-    pattern = re.compile(r'(?:©|&copy;|Copyright|\(c\))\D+([12][0-9]{3})\D')
+    pattern = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*([12][0-9]{3})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'^\D?([12][0-9]{3})')
     bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
