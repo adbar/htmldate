@@ -3,21 +3,31 @@ htmldate: find the publication date of web pages
 
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
+    :alt: Python package
 
 .. image:: https://img.shields.io/pypi/l/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
+    :alt: License
 
 .. image:: https://img.shields.io/pypi/pyversions/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
+    :alt: Python versions
+
+.. image:: https://readthedocs.org/projects/htmldate/badge/?version=latest
+    :target: http://htmldate.readthedocs.org/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
     :target: https://travis-ci.org/adbar/htmldate
+    :alt: Travis build status
 
 .. image:: https://img.shields.io/appveyor/ci/adbar/htmldate
     :target: https://ci.appveyor.com/project/adbar/htmldate
+    :alt: Appveyor/Windows build status
 
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
+    :alt: Code Coverage
 
 
 :Code:           https://github.com/adbar/htmldate
@@ -155,7 +165,7 @@ Context
 
 This module is part of methods to derive metadata from web documents in order to build text corpora for computational linguistic and NLP analysis, the original problem being that there are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified. For more information:
 
--  Barbaresi, Adrien. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the 7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
+-  Barbaresi, Adrien. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the `7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
 -  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
 
