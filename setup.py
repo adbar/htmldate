@@ -5,7 +5,6 @@ Seamlessly extract the date of web pages based on header or body.
 http://github.com/adbar/htmldate
 """
 
-from codecs import open # python2
 import os
 from setuptools import setup # find_packages,
 
@@ -20,7 +19,7 @@ packages = ['htmldate']
 
 
 def readme():
-    with open(os.path.join(here, 'README.rst'), 'r', 'utf-8') as readmefile:
+    with open(os.path.join(here, 'README.rst'), 'r', encoding='utf-8') as readmefile:
         return readmefile.read()
 
 setup(

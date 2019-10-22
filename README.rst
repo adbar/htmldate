@@ -35,6 +35,8 @@ htmldate: find the publication date of web pages
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
 
+Find original and updated publication dates of web pages.
+
 In a nutshell, with Python:
 
 .. code-block:: python

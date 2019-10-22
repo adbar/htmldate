@@ -35,6 +35,7 @@ before_install:
   - pip3 install codecov tox
 
 install:
+  # - pip3 install --upgrade pip
   - pip3 install .
 
 script:
