@@ -6,12 +6,9 @@ http://github.com/adbar/htmldate
 """
 
 import os
-from setuptools import setup # find_packages,
 
-#try:
-#    from setuptools import setup
-#except ImportError:
-#    from distutils.core import setup
+from codecs import open
+from setuptools import setup # find_packages,
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -19,7 +16,7 @@ packages = ['htmldate']
 
 
 def readme():
-    with open(os.path.join(here, 'README.rst'), 'r', encoding='utf-8') as readmefile:
+    with open(os.path.join(here, 'README.rst'), 'r', 'utf-8') as readmefile:
         return readmefile.read()
 
 setup(
@@ -29,11 +26,8 @@ setup(
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        #'Development Status :: 3 - Alpha',
-        #'Development Status :: 4 - Beta',
         'Development Status :: 5 - Production/Stable',
         #'Development Status :: 6 - Mature',
-        #'Development Status :: 7 - Inactive',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
@@ -57,6 +51,7 @@ setup(
     license='GPLv3+',
     packages=packages,
     include_package_data=True,
+    python_requires='>=3.5',
     install_requires=[
         'ciso8601 >= 2.1.1',
         'dateparser >= 0.7.2', # 0.5.0 could be faster
@@ -64,7 +59,6 @@ setup(
         'regex >= 2019.08.19',
         'requests >= 2.22.0',
     ],
-    # python_requires='>=3',
     entry_points = {
         'console_scripts': ['htmldate=htmldate.cli:main'],
     },
