@@ -24,7 +24,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.5.6',
+    version='0.5.7',
     description='Find the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction.',
     long_description=readme(),
     classifiers=[
@@ -58,11 +58,11 @@ setup(
     packages=packages,
     include_package_data=True,
     install_requires=[
-        'ciso8601 == 2.1.1',
-        'dateparser == 0.7.2', # 0.5.0 is the fastest
-        'lxml == 4.4.1', # CPython parser issue with version 4.3.1 # > 4.3.4 not compatible with Python 3.4
-        'regex == 2019.08.19',
-        'requests == 2.22.0',
+        'ciso8601 >= 2.1.1',
+        'dateparser >= 0.7.2', # 0.5.0 could be faster
+        'lxml >= 4.4.1', # > 4.3.4 not compatible with Python 3.4
+        'regex >= 2019.08.19',
+        'requests >= 2.22.0',
     ],
     # python_requires='>=3',
     entry_points = {

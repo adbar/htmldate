@@ -8,7 +8,7 @@ __title__ = 'htmldate'
 __author__ = 'Adrien Barbaresi'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2017-2019, Adrien Barbaresi'
-__version__ = '0.5.6'
+__version__ = '0.5.7'
 
 
 import logging
