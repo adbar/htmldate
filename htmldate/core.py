@@ -17,7 +17,7 @@ from collections import Counter
 # third-party
 import regex
 
-from ciso8601 import parse_datetime_as_naive
+from ciso8601 import parse_datetime, parse_datetime_as_naive
 from lxml import etree, html
 from lxml.html.clean import Cleaner
 
@@ -303,7 +303,11 @@ def try_ymd_date(string, outputformat, extensive_search, max_date, parser=PARSER
     if string[0:4].isdigit():
         # try speedup with ciso8601
         try:
-            result = parse_datetime_as_naive(string)
+            if extensive_search is True:
+                result = parse_datetime(string)
+            # speed-up by ignoring time zone info
+            else:
+                result = parse_datetime_as_naive(string)
             if date_validator(result, outputformat, latest=max_date) is True:
                 LOGGER.debug('ciso8601 result: %s', result)
                 converted = result.strftime(outputformat)
