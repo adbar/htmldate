@@ -48,8 +48,13 @@ DATE_EXPRESSIONS = [
     "//footer",
     "//*[@class='post-footer' or @class='footer' or @id='footer']",
     "//small",
-    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o')]",
+    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'publication')]",
 ]
+
+# supply more expressions for more languages
+#ADDITIONAL_EXPRESSIONS = [
+#    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
+#]
 
 CLEANER = Cleaner()
 CLEANER.comments = False
@@ -93,21 +98,19 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
         # simple length heuristics
         if not textcontent or len(textcontent) < 6:
             continue
-        # try the beginning of the string
-        else:
-            # shorten
-            toexamine = textcontent[:48]
-            # trim non-digits at the end of the string
-            toexamine = re.sub(r'\D+$', '', toexamine)
-            #toexamine = re.sub(r'\|.+$', '', toexamine)
-            # more than 4 digits required
-            if len(list(filter(str.isdigit, toexamine))) < 4:
-                continue
-            LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
-            # LOGGER.debug('analyzing (string): %s', toexamine)
-            attempt = try_ymd_date(toexamine, outputformat, extensive_search, max_date)
-            if attempt is not None:
-                return attempt
+        # shorten and try the beginning of the string
+        toexamine = textcontent[:48]
+        # trim non-digits at the end of the string
+        toexamine = re.sub(r'\D+$', '', toexamine)
+        #toexamine = re.sub(r'\|.+$', '', toexamine)
+        # more than 4 digits required
+        if len(list(filter(str.isdigit, toexamine))) < 4:
+            continue
+        LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
+        # LOGGER.debug('analyzing (string): %s', toexamine)
+        attempt = try_ymd_date(toexamine, outputformat, extensive_search, max_date)
+        if attempt is not None:
+            return attempt
     # catchall
     return None
 
@@ -376,7 +379,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
 
     """
     # init
-    # TODO: © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
+    # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # date ultimate rescue for the rest: most frequent year/month comination in the HTML
 
     # copyright symbol
@@ -666,6 +669,13 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
         if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
             return dateresult # break
+
+    # supply more expressions (other languages)
+    #if extensive_search is True:
+    #    for expr in ADDITIONAL_EXPRESSIONS:
+    #        dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
+    #        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
+    #            return dateresult # break
 
     # <time>
     elements = tree.xpath('//time')

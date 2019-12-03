@@ -175,6 +175,8 @@ def custom_parse(string, outputformat):
     dateobject = regex_parse_de(string)
     if dateobject is None:
         dateobject = regex_parse_en(string)
+    # copyright match?
+    # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # examine
     if dateobject is not None:
         try:

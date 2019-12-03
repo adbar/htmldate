@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Seamlessly extract the date of web pages based on header or body.
 http://github.com/adbar/htmldate
