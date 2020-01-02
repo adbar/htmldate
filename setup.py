@@ -65,8 +65,8 @@ setup(
     include_package_data=True,
     python_requires='>=3.5',
     install_requires=[
-        'dateutil' >= '2.8.1',
         'lxml >= 4.4.1',
+        'python-dateutil >= 2.8.1',
         'requests >= 2.22.0',
     ],
     extras_require=extras,
