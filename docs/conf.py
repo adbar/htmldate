@@ -21,7 +21,7 @@ import htmldate
 # -- Project information -----------------------------------------------------
 
 project = 'htmldate'
-copyright = '2018-2019, <a href="http://adrien.barbaresi.eu/">Adrien Barbaresi</a>'
+copyright = '2017-2019, <a href="http://adrien.barbaresi.eu/">Adrien Barbaresi</a>'
 author = 'Adrien Barbaresi'
 
 # -- General configuration ---------------------------------------------------
@@ -57,7 +57,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).

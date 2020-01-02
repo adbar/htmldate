@@ -85,13 +85,25 @@ The library currently focuses on texts written in English or German.
 Installation
 ------------
 
-The package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards.
+This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
-Install from package repository: ``pip install htmldate``
+.. code-block:: bash
 
-For the latest version (check build status above): ``pip install git+https://github.com/adbar/htmldate.git``
+    $ pip install htmldate # pip3 install on systems where both Python 2 and 3 are installed
+    $ pip install --upgrade htmldate # to make sure you have the latest version
+    $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
-For faster processing of downloads you might consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
+A few additional modules can be installed to enhance coverage and speed, most importantly ``ciso8601`` and ``dateparser``. They may not work on all platforms and have thus been singled out although installation is recommended:
+
+.. code-block:: bash
+
+    $ pip install htmldate[all] # all additional functionality
+
+``htmldate`` will detect automatically which packages are present on your system and opt for the best available combination.
+
+For faster processing of downloads you may also consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
+
+(For infos on dependency management of Python packages see `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_)
 
 
 With Python
@@ -109,7 +121,7 @@ In case the web page features easily readable metadata in the header, the extrac
     '# DEBUG result: 2016-12-23'
     '2016-12-23'
 
-The module can resort to a guess based on a complete screning of the document (``extensive_search`` parameter) which can be deactivated:
+``htmldate`` can resort to a guess based on a complete screening of the document (``extensive_search`` parameter) which can be deactivated:
 
 .. code-block:: python
 
@@ -122,7 +134,7 @@ The module can resort to a guess based on a complete screning of the document (`
 On the command-line
 -------------------
 
-A basic command-line interface is included:
+A command-line interface is included:
 
 .. code-block:: bash
 
@@ -153,7 +165,7 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 
 .. code-block:: bash
 
-    $ htmldate -fv -i list-of-urls.txt
+    $ htmldate --fast -i list-of-urls.txt
 
 
 Additional information
@@ -163,16 +175,16 @@ Additional information
 Context
 ~~~~~~~
 
-This module is part of methods to derive metadata from web documents in order to build text corpora for computational linguistic and NLP analysis, the original problem being that there are web pages for which neither the URL nor the server response provide a reliable way to date the document, i.e. find when it was first published and/or last modified. For more information:
+This module is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistic analysis and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to date the document, that is to find when it was first published and/or last modified. For more information:
 
--  Barbaresi, Adrien. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the `7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
--  Barbaresi, Adrien. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
-
+-  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://corpora.linguistik.uni-erlangen.de/data/konvens/proceedings/papers/kaleidoskop/camera_ready_barbaresi.pdf>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, University of Erlangen, 2019.
+-  Barbaresi, A. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the `7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
+-  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
 Kudos to...
 ~~~~~~~~~~~
 
--  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_ (although it is a bit slow)
+-  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
 
 
@@ -189,6 +201,7 @@ Besides, there are pages for which no date can be found, ever:
     >>> htmldate.find_date(r.text)
     >>>
 
+If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 
 Tests
 ~~~~~
@@ -197,7 +210,7 @@ A series of webpages triggering different structural and content patterns is inc
 
 .. code-block:: bash
 
-    $ python tests/unit_tests.py
+    $ pytest tests/unit_tests.py
 
 For more comprehensive tests ``tox`` is also an option (see ``tox.ini``).
 
@@ -222,7 +235,7 @@ In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pa
 Contact
 ~~~~~~~
 
-See my `contact page <http://adrien.barbaresi.eu/contact.html>`_ for details.
+See this `contact page <http://adrien.barbaresi.eu/contact.html>`_ for details.
 
 
 
