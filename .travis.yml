@@ -1,6 +1,6 @@
 sudo: false
 language: python
-cache: pip
+# cache: pip
 # dist: xenial
 
 matrix:
@@ -20,18 +20,18 @@ matrix:
       python: 3.7
       env: TOXENV=py37
       env: MINIMAL=false
-    - name: "Python 3.8 on Linux"
-      os: linux
-      dist: xenial
-      python: "3.8-dev"
-      env: TOXENV=py38
-      env: MINIMAL=false
     - name: "Python 3.8 on Linux with minimal dependencies"
       os: linux
       dist: xenial
       python: "3.8-dev"
       env: TOXENV=py38
       env: MINIMAL=true
+    - name: "Python 3.8 on Linux"
+      os: linux
+      dist: xenial
+      python: "3.8-dev"
+      env: TOXENV=py38
+      env: MINIMAL=false
     - name: "Python 3 on macOS"
       os: osx
       osx_image: xcode11
@@ -54,7 +54,7 @@ before_install:
 
 install:
   - if $MINIMAL; then pip3 install -U .;
-    else pip3 install -U .[all]; fi
+    else pip3 install -U ".[all]"; fi
 
 script:
   - tox
