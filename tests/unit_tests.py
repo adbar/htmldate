@@ -12,7 +12,12 @@ import sys
 
 from collections import Counter
 
-import dateparser
+try:
+    import dateparser
+    EXT_PARSER = True
+    PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
+except ImportError:
+    EXT_PARSER = False
 
 from lxml import html
 
@@ -28,6 +33,9 @@ from htmldate.settings import LATEST_POSSIBLE
 from htmldate.utils import fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, output_format_validator
 
+
+TEST_DIR = os.path.abspath(os.path.dirname(__file__))
+OUTPUTFORMAT = '%Y-%m-%d'
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -97,11 +105,6 @@ MOCK_PAGES = { \
 'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html', \
 }
 # '': '', \
-
-
-TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-OUTPUTFORMAT = '%Y-%m-%d'
-PARSER = dateparser.DateDataParser(languages=['de', 'en'], settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}) # allow_redetect_language=False,
 
 
 def load_mock_page(url):
@@ -257,12 +260,10 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
     assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) == '2019-06-03'
     assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
-    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # shoudl be '2019-06-29'
-    assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
+    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # should be '2019-06-29'
     assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
     assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'
-    assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
     assert find_date(load_mock_page('https://exporo.de/wiki/europaeische-zentralbank-ezb/')) == '2018-01-01'
 
 
@@ -327,22 +328,22 @@ def test_output_format_validator():
 def test_try_ymd_date():
     '''test date extraction via external package'''
     find_date.extensive_search = False
-    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
+    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, False, LATEST_POSSIBLE) is None
     find_date.extensive_search = True
-    assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     # assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
-    assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     # assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
-    assert try_ymd_date('1.9.2017', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('1/9/17', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
-    assert try_ymd_date('201709011234', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('1.9.2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
+    assert try_ymd_date('201709011234', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     # other output format
-    assert try_ymd_date('1.9.2017', '%d %B %Y', PARSER, LATEST_POSSIBLE) == '01 September 2017'
+    assert try_ymd_date('1.9.2017', '%d %B %Y', True, LATEST_POSSIBLE) == '01 September 2017'
     # wrong
-    assert try_ymd_date('201', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
-    assert try_ymd_date('14:35:10', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
-    assert try_ymd_date('12:00 h', OUTPUTFORMAT, PARSER, LATEST_POSSIBLE) is None
+    assert try_ymd_date('201', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
+    assert try_ymd_date('14:35:10', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
+    assert try_ymd_date('12:00 h', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
 
 
 #def test_header():
@@ -491,6 +492,15 @@ def readme_examples():
     assert find_date(load_mock_page('https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/')) == '2018-06-28'
 
 
+def test_dependencies():
+    '''Test README example for consistency'''
+    if EXT_PARSER is True:
+        assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
+        assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
+
+
+
+
 if __name__ == '__main__':
 
     # meta
@@ -516,6 +526,9 @@ if __name__ == '__main__':
     test_url()
     test_approximate_url()
     new_pages()
+
+    # dependencies
+    test_dependencies()
 
     # cli
     test_cli()
