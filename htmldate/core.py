@@ -14,8 +14,11 @@ import re
 
 from collections import Counter
 
-# third-party
-import regex
+# importing with a fallback
+try:
+    import regex
+except ImportError:
+    regex = re
 
 try:
     from ciso8601 import parse_datetime, parse_datetime_as_naive
