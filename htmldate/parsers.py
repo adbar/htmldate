@@ -12,12 +12,17 @@ import datetime
 import logging
 import re
 
-from .settings import PARSER
+from dateutil.parser import parse
+
+from .settings import EXTERNAL_PARSER, EXTERNAL_PARSER_CONFIG
+from .settings import DEFAULT_PARSER_PARAMS, LATEST_POSSIBLE
 from .validators import convert_date, date_validator
 
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
+# LOGGER.debug('dateparser configuration: %s %s', EXTERNAL_PARSER, EXTERNAL_PARSER_CONFIG)
+
 # Regex cache
 AMERICAN_ENGLISH = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
 BRITISH_ENGLISH = re.compile(r'([0-9]{1,2})(st|nd|rd|th)? (of )?(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember),? ([0-9]{4})') # ([0-9]{2,4})
@@ -190,18 +195,22 @@ def custom_parse(string, outputformat):
 
 
 #@profile
-def external_date_parser(string, outputformat, parser=PARSER):
-    """Use the dateparser module"""
+def external_date_parser(string, outputformat, latest=LATEST_POSSIBLE):
+    #"""Use the dateparser module"""
     LOGGER.debug('send to dateparser: %s', string)
     try:
-        target = parser.get_date_data(string)['date_obj']
-    # tzinfo.py line 323: loc_dt = dt + delta
-    except OverflowError:
+        # dateparser installed or not
+        if EXTERNAL_PARSER is not None:
+            target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
+        else:
+            target = parse(string, **DEFAULT_PARSER_PARAMS)
+    # 2 types of errors possible
+    except (OverflowError, ValueError):
         target = None
     if target is not None:
-        LOGGER.debug('dateparser result: %s', target)
-        # datestring = datetime.date.strftime(target, outputformat)
-        if date_validator(target, outputformat) is True:
+        LOGGER.debug('external parser result: %s', target)
+        # TODO: maybe used twice!
+        if date_validator(target, outputformat, latest) is True:
             datestring = datetime.date.strftime(target, outputformat)
             return datestring
     return None

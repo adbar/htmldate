@@ -17,13 +17,17 @@ from collections import Counter
 # third-party
 import regex
 
-from ciso8601 import parse_datetime, parse_datetime_as_naive
+try:
+    from ciso8601 import parse_datetime, parse_datetime_as_naive
+except ImportError:
+    from dateutil.parser import parse as parse_datetime
+    parse_datetime_as_naive = parse_datetime # shortcut
 from lxml import etree, html
 from lxml.html.clean import Cleaner
 
 # own
 from .parsers import custom_parse, external_date_parser, extract_url_date, extract_partial_url_date
-from .settings import LATEST_POSSIBLE, PARSER, PARSERCONFIG
+from .settings import LATEST_POSSIBLE
 from .utils import load_html
 from .validators import compare_values, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
 
@@ -36,7 +40,7 @@ from .validators import compare_values, convert_date, date_validator, filter_ymd
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-LOGGER.debug('dateparser configuration: %s %s', PARSER, PARSERCONFIG)
+
 
 DATE_EXPRESSIONS = [
     "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
@@ -51,6 +55,7 @@ DATE_EXPRESSIONS = [
     "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'publication')]",
 ]
 
+# article__date https://newint.org/features/2019/07/01/long-read-progress-and-its-discontents
 # supply more expressions for more languages
 #ADDITIONAL_EXPRESSIONS = [
 #    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
@@ -294,7 +299,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
 
 
 #@profile
-def try_ymd_date(string, outputformat, extensive_search, max_date, parser=PARSER):
+def try_ymd_date(string, outputformat, extensive_search, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
     if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 or not re.search(r'[.:,_/ -]|^[0-9]+$', string):
@@ -308,7 +313,7 @@ def try_ymd_date(string, outputformat, extensive_search, max_date, parser=PARSER
         try:
             if extensive_search is True:
                 result = parse_datetime(string)
-            # speed-up by ignoring time zone info
+            # speed-up by ignoring time zone info if ciso8601 is installed
             else:
                 result = parse_datetime_as_naive(string)
             if date_validator(result, outputformat, latest=max_date) is True:
@@ -323,8 +328,8 @@ def try_ymd_date(string, outputformat, extensive_search, max_date, parser=PARSER
         return customresult
     # slow but extensive search
     if extensive_search is True:
-        # send to dateparser
-        dateparser_result = external_date_parser(string, outputformat, parser)
+        # send to date parser
+        dateparser_result = external_date_parser(string, outputformat, latest=max_date)
         if dateparser_result is not None:
             if date_validator(dateparser_result, outputformat, latest=max_date) is True:
                 return dateparser_result
