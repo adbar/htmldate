@@ -32,7 +32,6 @@ matrix:
       python: "3.8-dev"
       env: TOXENV=py38
       env: MINIMAL=false
-      after_success: codecov # use this version for code coverage
     - name: "Python 3 on macOS"
       os: osx
       osx_image: xcode11
@@ -48,7 +47,6 @@ matrix:
         - python --version
         - python -m pip install -U pip
         - pip3 install -U pytest tox
-        # - pip3 install codecov
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
   allow_failures:
     - os: osx
@@ -72,6 +70,9 @@ script:
   - tox
   # - pytest
   # - coverage run --source htmldate tests/unit_tests.py
+
+after_success:
+  - codecov
 
 notifications:
   email:
