@@ -23,15 +23,28 @@ matrix:
     - name: "Python 3.8 on Linux with minimal dependencies"
       os: linux
       dist: xenial
-      python: "3.8-dev"
+      python: 3.8
       env: TOXENV=py38
       env: MINIMAL=true
     - name: "Python 3.8 on Linux"
       os: linux
       dist: xenial
-      python: "3.8-dev"
+      python: 3.8
       env: TOXENV=py38
       env: MINIMAL=false
+    - name: "Python 3.9 Nightly on Linux"
+      os: linux
+      dist: bionic
+      python: nightly
+      env: TOXENV=py39
+      env: MINIMAL=false
+    - name: "Python 3 on macOS with minimal dependencies"
+      os: osx
+      osx_image: xcode11
+      language: shell
+      # 'python:' is ignored on Travis CI macOS
+      before_install: python3 --version ; pip3 --version ; sw_vers; pip3 install codecov tox
+      env: MINIMAL=true
     - name: "Python 3 on macOS"
       os: osx
       osx_image: xcode11
@@ -39,6 +52,16 @@ matrix:
       # 'python:' is ignored on Travis CI macOS
       before_install: python3 --version ; pip3 --version ; sw_vers; pip3 install codecov tox
       env: MINIMAL=false
+    - name: "Python 3.7.4 on Windows with minimal dependencies"
+      os: windows # Windows 10.0.17134 N/A Build 17134
+      language: shell
+      before_install:
+        - choco install python --version 3.7.4
+        - python --version
+        - python -m pip install -U pip
+        - pip3 install -U pytest
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+      env: MINIMAL=true
     - name: "Python 3.7.4 on Windows"
       os: windows # Windows 10.0.17134 N/A Build 17134
       language: shell
@@ -46,12 +69,14 @@ matrix:
         - choco install python --version 3.7.4
         - python --version
         - python -m pip install -U pip
-        - pip3 install -U pytest tox
+        - pip3 install -U pytest
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+      env: MINIMAL=false
   allow_failures:
+    - python: nightly
     - os: osx
     - os: windows
-  # fast_finish: true
+  fast_finish: true
 
 before_install:
   - python --version
@@ -59,16 +84,15 @@ before_install:
   - pip --version
   - uname -a
   - lsb_release -a
-  - pip3 install -U codecov tox
-  - tox --version
+  - pip3 install -U codecov
 
 install:
   - if $MINIMAL; then pip3 install -U .;
     else pip3 install -U ".[all]"; fi
 
 script:
-  - tox
-  # - pytest
+  # - tox
+  - pytest
   # - coverage run --source htmldate tests/unit_tests.py
 
 after_success:
@@ -78,8 +102,3 @@ notifications:
   email:
     on_success: never
     on_failure: change
-
-
-# os:
-#  - windows # not supported
-# https://github.com/cclauss/Travis-CI-Python-on-three-OSes/blob/master/.travis.yml
