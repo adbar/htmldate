@@ -35,6 +35,8 @@ htmldate: find the publication date of web pages
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
 
+*htmldate* finds original and updated publication dates of any web page. All the steps needed from web page download to HTML parsing, scraping and text analysis are included. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
+
 In a nutshell, with Python:
 
 .. code-block:: python
@@ -60,26 +62,22 @@ On the command-line:
 Features
 --------
 
-*htmldate* finds original and updated publication dates of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. All the steps needed from web page download to HTML parsing, including scraping and textual analysis are handled. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
-
-*htmldate* provides following ways to date a HTML document:
+The library uses a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. It provides following ways to date a HTML document:
 
 1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
 3. **Bare HTML content**: A series of heuristics is run on text and markup:
 
   1. in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  2. in ``extensive`` mode date expressions are collected and the best one is chosen based on a disambiguation algorithm
+  2. in ``extensive`` mode all potential dates are collected and disambiguation algorithm determines the best one
 
-The module then returns a date if a valid cue could be found in the document, per default the updated date w.r.t. the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 -  Should be compatible with all common versions of Python 3 (see tests and coverage)
--  Safety belt included, the output is thouroughly verified with respect to its plausibility and adequateness
+-  Safety belt included, utput thouroughly verified in terms of plausibility and adequateness
 -  Designed to be computationally efficient and used in production on millions of documents
--  Handles batch processing of a list of URLs
+-  Batch processing of a list of URLs
 -  Switch between original and updated date
-
-The library currently focuses on texts written in English or German.
 
 
 Installation
@@ -93,17 +91,17 @@ This Python package is tested on Linux, macOS and Windows systems, it is compati
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
-A few additional modules can be installed to enhance coverage and speed, most importantly ``ciso8601`` and ``dateparser``. They may not work on all platforms and have thus been singled out although installation is recommended:
+A few additional libraries can be installed to enhance coverage and speed, most importantly ``ciso8601`` and ``regex`` (for speed) as well as ``dateparser`` (to go beyond the current focus on English or German). They may not work on all platforms and have thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
     $ pip install htmldate[all] # all additional functionality
 
-``htmldate`` will detect automatically which packages are present on your system and opt for the best available combination.
+You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
 
 For faster processing of downloads you may also consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
 
-(For infos on dependency management of Python packages see `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_)
+*For infos on dependency management of Python packages see* `*this discussion thread* <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_
 
 
 With Python
@@ -129,6 +127,38 @@ In case the web page features easily readable metadata in the header, the extrac
     '2017-08-11' # has been updated since
     >>> find_date('https://creativecommons.org/about/', extensive_search=False)
     >>>
+
+Already parsed HTML (that is a LXML tree object):
+
+.. code-block:: python
+
+    # simple HTML document as string
+    >>> htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
+    >>> find_date(mytree)
+    '2016-07-12'
+    # parsed LXML tree
+    >>> from lxml import html
+    >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
+    >>> find_date(mytree)
+    '2016-07-12'
+
+Change the output to a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
+
+.. code-block:: python
+
+    >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
+    '18 November 2016' # may have changed since
+
+Although the time delta between original publication and "last modified" info is usually a matter of hours or days, it can be useful to prioritize the **original publication date**:
+
+.. code-block:: python
+
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
+    '2019-06-24'
+    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True) # modified behavior
+    '2016-06-23'
+
+For more information see :doc:`options <./options.rst>` .
 
 
 On the command-line
@@ -175,9 +205,9 @@ Additional information
 Context
 ~~~~~~~
 
-This module is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistic analysis and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to date the document, that is to find when it was first published and/or last modified. For more information:
+This effort is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find when a document was published or modified. For more information:
 
--  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://corpora.linguistik.uni-erlangen.de/data/konvens/proceedings/papers/kaleidoskop/camera_ready_barbaresi.pdf>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, University of Erlangen, 2019.
+-  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://corpora.linguistik.uni-erlangen.de/data/konvens/proceedings/papers/kaleidoskop/camera_ready_barbaresi.pdf>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
 -  Barbaresi, A. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the `7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
 -  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
@@ -211,8 +241,6 @@ A series of webpages triggering different structural and content patterns is inc
 .. code-block:: bash
 
     $ pytest tests/unit_tests.py
-
-For more comprehensive tests ``tox`` is also an option (see ``tox.ini``).
 
 
 Going further
