@@ -188,7 +188,7 @@ Additional information
 Going further
 ~~~~~~~~~~~~~
 
-**Online documentation:** `**htmldate.readthedocs.io** <https://htmldate.readthedocs.io/>`_
+**Online documentation:** `htmldate.readthedocs.io <https://htmldate.readthedocs.io/>`_
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 

@@ -72,9 +72,11 @@ Although the time delta between the original publication and the "last modified"
 Settings
 --------
 
-See ``settings.py`` file.
+See ``settings.py`` file:
 
 .. automodule:: htmldate.settings
    :members:
    :show-inheritance:
    :undoc-members:
+
+The module can then be re-compiled locally to apply changes to the settings.

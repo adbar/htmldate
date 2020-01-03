@@ -158,7 +158,7 @@ Although the time delta between original publication and "last modified" info is
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True) # modified behavior
     '2016-06-23'
 
-For more information see :doc:`options <./options.rst>` .
+For more information see :doc:`options page <../options.rst>`_.
 
 
 On the command-line
