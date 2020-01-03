@@ -65,7 +65,7 @@ setup(
     include_package_data=True,
     python_requires='>=3.5',
     install_requires=[
-        'lxml >= 4.4.1',
+        'lxml >= 4.4.2',
         'python-dateutil >= 2.8.1',
         'requests >= 2.22.0',
     ],
@@ -74,6 +74,6 @@ setup(
         'console_scripts': ['htmldate=htmldate.cli:main'],
     },
     # platforms='any',
-    tests_require=['pytest', 'tox'],
+    tests_require=['pytest'],
     zip_safe=False,
 )

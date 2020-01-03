@@ -82,7 +82,6 @@ install:
 script:
   # - tox
   - pytest tests/unit_tests.py --cov=codecov
-  # - coverage run --source htmldate tests/unit_tests.py
 
 after_success:
   - codecov
