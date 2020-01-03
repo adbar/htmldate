@@ -1,5 +1,26 @@
 ## Changelog
 
+### version 0.6.0
+- reduced number of packages dependencies
+- introduced and tested optional dependencies
+- more detailed documentation on readthedocs
+
+### version 0.5.6
+- tests on Windows
+- compataibility and code linting
+
+### version 0.5.5
+- tests on Linux & MacOS
+- bugs removed
+
+### version 0.5.4
+- manually set maximum date
+- better precision
+- last version to support Python 3.4
+
+### version 0.5.3
+- coverage extension
+
 ### version 0.5.2
 - small bugs and coverage issues removed
 - streamlined utils

@@ -95,13 +95,13 @@ A few additional libraries can be installed to enhance coverage and speed, most 
 
 .. code-block:: bash
 
-    $ pip install htmldate[all] # all additional functionality
+    $ pip install htmldate[all] # install with all additional functionality
 
 You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
 
 For faster processing of downloads you may also consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
 
-*For infos on dependency management of Python packages see* `*this discussion thread* <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_
+*For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_
 
 
 With Python
@@ -257,7 +257,7 @@ If the date is nowhere to be found, it might be worth considering `carbon dating
 
 In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 
-`Pull requests <https://help.github.com/en/articles/about-pull-requests>`_ are welcome.
+`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
 
 
 Contact
