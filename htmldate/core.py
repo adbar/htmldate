@@ -87,7 +87,6 @@ GERMAN_PATTERN = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.(
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 
-#@profile
 def examine_date_elements(tree, expression, outputformat, extensive_search, max_date):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -123,7 +122,6 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
     return None
 
 
-#@profile
 def examine_header(tree, outputformat, extensive_search, original_date, max_date):
     """
     Parse header elements to find date cues
@@ -246,7 +244,6 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
     return None
 
 
-#@profile
 def select_candidate(occurrences, catch, yearpat, original_date, max_date):
     """Select a candidate among the most frequent matches"""
     # LOGGER.debug('occurrences: %s', occurrences)
@@ -294,14 +291,12 @@ def select_candidate(occurrences, catch, yearpat, original_date, max_date):
     return None
 
 
-#@profile
 def search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     return select_candidate(candidates, catch, yearpat, original_date, max_date)
 
 
-#@profile
 def try_ymd_date(string, outputformat, extensive_search, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
@@ -332,7 +327,7 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     # slow but extensive search
     if extensive_search is True:
         # send to date parser
-        dateparser_result = external_date_parser(string, outputformat, latest=max_date)
+        dateparser_result = external_date_parser(string, outputformat)
         if dateparser_result is not None:
             if date_validator(dateparser_result, outputformat, latest=max_date) is True:
                 return dateparser_result
@@ -340,7 +335,6 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     return None
 
 
-#@profile
 def try_expression(expression, outputformat, extensive_search, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
@@ -366,7 +360,6 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     return new_reference
 
 
-#@profile
 def search_page(htmlstring, outputformat, original_date, max_date):
     """
     Opportunistically search the HTML text for common text patterns
@@ -549,7 +542,6 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     return None
 
 
-#@profile
 def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None, verbose=False, max_date=None):
     """
     Extract dates from HTML documents using markup analysis and text patterns

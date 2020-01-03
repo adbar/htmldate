@@ -22,7 +22,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
-#@profile
 def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
@@ -52,7 +51,6 @@ def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
     return False
 
 
-#@profile
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
@@ -70,7 +68,6 @@ def output_format_validator(outputformat):
     return True
 
 
-#@profile
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
     ## slow
@@ -104,7 +101,6 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     return occurrences
 
 
-#@profile
 def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
@@ -117,7 +113,6 @@ def compare_values(reference, attempt, outputformat, original_date):
     return reference
 
 
-#@profile
 def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
@@ -129,7 +124,6 @@ def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date):
     return None
 
 
-#@profile
 def convert_date(datestring, inputformat, outputformat):
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)

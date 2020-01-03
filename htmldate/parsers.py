@@ -14,14 +14,14 @@ import re
 
 from dateutil.parser import parse
 
-from .settings import EXTERNAL_PARSER, EXTERNAL_PARSER_CONFIG
-from .settings import DEFAULT_PARSER_PARAMS, LATEST_POSSIBLE
+from .settings import EXTERNAL_PARSER
+from .settings import DEFAULT_PARSER_PARAMS
 from .validators import convert_date, date_validator
 
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-# LOGGER.debug('dateparser configuration: %s %s', EXTERNAL_PARSER, EXTERNAL_PARSER_CONFIG)
+
 
 # Regex cache
 AMERICAN_ENGLISH = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
@@ -37,7 +37,6 @@ GENERAL_TEXTSEARCH = re.compile(r'January|February|March|April|May|June|July|Aug
 TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
 
 
-#@profile
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string"""
     # easy extract in Y-M-D format
@@ -57,7 +56,6 @@ def extract_url_date(testurl, outputformat):
     return None
 
 
-#@profile
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string"""
     # easy extract in Y-M format
@@ -77,7 +75,6 @@ def extract_partial_url_date(testurl, outputformat):
     return None
 
 
-#@profile
 def regex_parse_de(string):
     """Try full-text parse for German date elements"""
     # text match
@@ -94,7 +91,7 @@ def regex_parse_de(string):
     LOGGER.debug('German text parse: %s', dateobject)
     return dateobject
 
-#@profile
+
 def regex_parse_en(string):
     """Try full-text parse for English date elements"""
     # https://github.com/vi3k6i5/flashtext ?
@@ -134,7 +131,6 @@ def regex_parse_en(string):
     return dateobject
 
 
-#@profile
 def custom_parse(string, outputformat):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
@@ -194,10 +190,9 @@ def custom_parse(string, outputformat):
     return None
 
 
-#@profile
-def external_date_parser(string, outputformat, latest=LATEST_POSSIBLE):
-    #"""Use the dateparser module"""
-    LOGGER.debug('send to dateparser: %s', string)
+def external_date_parser(string, outputformat):
+    """Use dateutil parser or dateparser module according to system settings"""
+    LOGGER.debug('send to external parser: %s', string)
     try:
         # dateparser installed or not
         if EXTERNAL_PARSER is not None:
@@ -207,10 +202,7 @@ def external_date_parser(string, outputformat, latest=LATEST_POSSIBLE):
     # 2 types of errors possible
     except (OverflowError, ValueError):
         target = None
+    # issue with data type
     if target is not None:
-        LOGGER.debug('external parser result: %s', target)
-        # TODO: maybe used twice!
-        if date_validator(target, outputformat, latest) is True:
-            datestring = datetime.date.strftime(target, outputformat)
-            return datestring
+        return datetime.date.strftime(target, outputformat)
     return None

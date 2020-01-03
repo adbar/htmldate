@@ -86,7 +86,6 @@ def fetch_url(url):
     return None
 
 
-#@profile
 def load_html(htmlobject):
     """Load object given as input and validate its type (accepted: LXML tree and string, HTML document or URL)"""
     tree = None
