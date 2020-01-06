@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint:disable-msg=E0611,I1101
 """
 Module bundling functions related to HTML processing.
@@ -17,11 +16,15 @@ import urllib3
 
 # libraries
 try:
+    # this module is faster
     import cchardet as chardet
 except ImportError:
     import chardet
+
 import requests
 from lxml import etree, html
+
+from .settings import MAX_FILE_SIZE # MIN_FILE_SIZE ?
 
 
 LOGGER = logging.getLogger(__name__)
@@ -30,6 +33,20 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # LXML
 HTML_PARSER = html.HTMLParser() # encoding='utf8'
 
+
+def decode_response(response, chunk_size=65536):
+    """Read the first chunk of server response and decode it"""
+    guessed_encoding = chardet.detect(response.content[:chunk_size])['encoding']
+    LOGGER.debug('response/guessed encoding: %s / %s', response.encoding, guessed_encoding)
+    if guessed_encoding is not None:
+        try:
+            htmltext = response.content.decode(guessed_encoding)
+        except UnicodeDecodeError:
+            htmltext = response.text
+    else:
+        htmltext = response.text
+    # return here
+    return htmltext
 
 
 def fetch_url(url):
@@ -43,11 +60,10 @@ def fetch_url(url):
     """
 
     # customize headers
-    headers = requests.utils.default_headers()
-    headers.update({
+    headers = {
         'Connection': 'close',  # another way to cover tracks
         # 'User-Agent': '', # your string here
-    })
+    }
     # send
     try:
         response = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
@@ -64,24 +80,15 @@ def fetch_url(url):
     # if no error
     else:
         # safety checks
-        if int(response.status_code) != 200:
+        if response.status_code != 200:
             LOGGER.error('not a 200 response: %s', response.status_code)
         elif response.text is None or len(response.text) < 100:
             LOGGER.error('file too small/incorrect response: %s %s', url, len(response.text))
-        elif len(response.text) > 20000000:
+        elif len(response.text) > MAX_FILE_SIZE:
             LOGGER.error('file too large: %s %s', url, len(response.text))
         else:
-            guessed_encoding = chardet.detect(response.content)['encoding']
-            LOGGER.debug('response/guessed encoding: %s / %s', response.encoding, guessed_encoding)
-            if guessed_encoding is not None:
-                try:
-                    htmltext = response.content.decode(guessed_encoding)
-                except UnicodeDecodeError:
-                    htmltext = response.text
-            else:
-                htmltext = response.text
-            # return here
-            return htmltext
+            return decode_response(response)
+
     # catchall
     return None
 
@@ -103,7 +110,7 @@ def load_html(htmlobject):
                 return None
         ## robust parsing
         try:
-            # parse
+            # parse # html.parse(StringIO(htmlobject))
             tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)
         except UnicodeDecodeError as err:
             LOGGER.error('unicode %s', err)
