@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Implementing a basic command-line interface.
 """

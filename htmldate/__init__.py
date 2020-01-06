@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extract the date of web pages, or web archeology in practice.
 """

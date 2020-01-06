@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint:disable-msg=E0611,I1101
 """
 Filters for date parsing and date validators.

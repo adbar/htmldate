@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint:disable-msg=W1401
 """
 Unit tests for the htmldate library.
@@ -87,7 +86,6 @@ MOCK_PAGES = { \
 'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html', \
 'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
 'http://www.stuttgart.de/': 'stuttgart.de.html', \
-'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
 'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': 'paris-luttes.info.html', \
 'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.de.riverdale.html', \
 'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.de.sommertrend.html', \
@@ -112,7 +110,7 @@ def load_mock_page(url):
     try:
         with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'r') as inputf:
             htmlstring = inputf.read()
-    # windows fix for the tests
+    # encoding/windows fix for the tests
     except UnicodeDecodeError:
         # read as binary
         with open(os.path.join(TEST_DIR, 'cache', MOCK_PAGES[url]), 'rb') as inputf:
@@ -123,13 +121,15 @@ def load_mock_page(url):
                 htmlstring = htmlbinary.decode(guessed_encoding)
             except UnicodeDecodeError:
                 htmlstring = htmlbinary
+        else:
+            print('Encoding error')
     return htmlstring
 
 
-def new_pages():
-    '''New pages, to be sorted'''
+#def new_pages():
+#    '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
-    pass
+#    pass
 
 
 def test_input():
@@ -459,9 +459,8 @@ def test_cli():
 
 def test_download():
     '''test page download'''
-    #assert fetch_url('https://www.iana.org/404') is None
-    #assert fetch_url('https://www.google.com/blank.html') is None
-    #assert fetch_url('https://blank.org') is None
+    assert examine(' ', False) is None
+    assert examine('0'*int(10e7), False) is None
     assert fetch_url('https://httpbin.org/status/404') is None
     url = 'https://httpbin.org/status/200'
     teststring = fetch_url(url)
@@ -525,7 +524,7 @@ if __name__ == '__main__':
     test_search_html()
     test_url()
     test_approximate_url()
-    new_pages()
+    #new_pages()
 
     # dependencies
     test_dependencies()
