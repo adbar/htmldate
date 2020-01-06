@@ -55,10 +55,6 @@ On the command-line:
     '2016-12-23'
 
 
-.. contents:: **Contents**
-    :backlinks: none
-
-
 Features
 --------
 
@@ -182,34 +178,46 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
     $ htmldate --fast -i list-of-urls.txt
 
 
-Additional information
-----------------------
+License
+-------
+
+*htmldate* is distributed under the `GNU General Public License v3.0 <https://github.com/adbar/htmldate/blob/master/LICENSE>`_
+
+`GPL and free software licensing: What's in it for business? <https://www.techrepublic.com/blog/cio-insights/gpl-and-free-software-licensing-whats-in-it-for-business/>`_
+
 
 Going further
-~~~~~~~~~~~~~
+-------------
 
 **Online documentation:** `htmldate.readthedocs.io <https://htmldate.readthedocs.io/>`_
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 
-`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
 
-Context
-~~~~~~~
+Author
+------
 
 This effort is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find when a document was published or modified. For more information:
 
--  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://corpora.linguistik.uni-erlangen.de/data/konvens/proceedings/papers/kaleidoskop/camera_ready_barbaresi.pdf>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
--  Barbaresi, A. "`The Vast and the Focused: On the need for domain-focused web corpora <https://ids-pub.bsz-bw.de/files/9025/Barbaresi_The_Vast_and_the_Focused_2019.pdf>`_", Proceedings of the `7th Workshop on Challenges in the Management of Large Corpora (CMLC-7) <http://corpora.ids-mannheim.de/cmlc-2019.html>`_, 2019.
+-  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://konvens.org/proceedings/2019/papers/kaleidoskop/camera_ready_barbaresi.pdf>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
 -  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
-Kudos to...
-~~~~~~~~~~~
+You can contact me via my `contact page <http://adrien.barbaresi.eu/contact.html>`_ or `GitHub <https://github.com/adbar>`_.
+
+
+Contributing
+------------
+
+Thanks to these contributors who submitted features and bugfixes:
+
+-  `DerKozmonaut <https://github.com/DerKozmonaut>`_
+-  `vbarbaresi <https://github.com/vbarbaresi>`_
+
+`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
+
+Feel free to file bug reports on the `issues page <https://github.com/adbar/htmldate/issues>`_.
+
+Kudos to the following software libraries:
 
 -  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
-
-Contact
-~~~~~~~
-
-See this `contact page <http://adrien.barbaresi.eu/contact.html>`_ for details.
