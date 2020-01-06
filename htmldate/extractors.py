@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # pylint:disable-msg=E0611,I1101
 """
-Custom parsers for date extraction.
+Custom parsers and X-Path expressions for date extraction
 """
-
-## This file is available from https://github.com/adbar/htmldate
+## This file is available from https://github.com/adbar/trafilatura
 ## under GNU GPL v3 license
 
 # standard
@@ -12,16 +10,42 @@ import datetime
 import logging
 import re
 
+# importing with a fallback
+try:
+    import regex
+except ImportError:
+    regex = re
+
+# external
 from dateutil.parser import parse
 
+# own
 from .settings import EXTERNAL_PARSER
 from .settings import DEFAULT_PARSER_PARAMS
 from .validators import convert_date, date_validator
 
-
 ## INIT
 LOGGER = logging.getLogger(__name__)
 
+
+DATE_EXPRESSIONS = [
+    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
+    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
+    "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
+    "//*[@class='meta' or @class='meta-before' or @class='asset-meta' or contains(@id, 'article-metadata') or contains(@class, 'article-metadata') or contains(@class, 'byline') or contains(@class, 'subline')]",
+    "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
+    "//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or contains(@class, 'time')]",
+    "//footer",
+    "//*[@class='post-footer' or @class='footer' or @id='footer']",
+    "//small",
+    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'publication')]",
+]
+
+# article__date https://newint.org/features/2019/07/01/long-read-progress-and-its-discontents
+# supply more expressions for more languages
+#ADDITIONAL_EXPRESSIONS = [
+#    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
+#]
 
 # Regex cache
 AMERICAN_ENGLISH = re.compile(r'(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})') # ([0-9]{2,4})
@@ -33,6 +57,11 @@ YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 GERMAN_TEXTSEARCH = re.compile(r'([0-9]{1,2})\. (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})')
 GENERAL_TEXTSEARCH = re.compile(r'January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember')
+JSON_PATTERN = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+# use of regex module for speed
+GERMAN_PATTERN = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
+
 # German dates cache
 TEXT_MONTHS = {'Januar':'01', 'Jänner':'01', 'January':'01', 'Jan':'01', 'Februar':'02', 'Feber':'02', 'February':'02', 'Feb':'02', 'März':'03', 'March':'03', 'Mar':'03', 'April':'04', 'Apr':'04', 'Mai':'05', 'May':'05', 'Juni':'06', 'June':'06', 'Jun':'06', 'Juli':'07', 'July':'07', 'Jul':'07', 'August':'08', 'Aug':'08', 'September':'09', 'Sep':'09', 'Oktober':'10', 'October':'10', 'Oct':'10', 'November':'11', 'Nov':'11', 'Dezember':'12', 'December':'12', 'Dec':'12'}
 
