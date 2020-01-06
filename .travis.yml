@@ -56,7 +56,7 @@ matrix:
       before_install:
         - choco install python --version 3.7.4
         - python --version
-        #- python -m pip install --upgrade pip
+        - python -m pip install --upgrade pip
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
       env: MINIMAL=true
     - name: "Python 3.7.4 on Windows"
@@ -65,7 +65,7 @@ matrix:
       before_install:
         - choco install python --version 3.7.4
         - python --version
-        #- python -m pip install --upgrade pip
+        - python -m pip install --upgrade pip
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
       env: MINIMAL=false
   allow_failures:
