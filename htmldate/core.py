@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint:disable-msg=E0611,I1101
 """
 Module bundling all functions needed to determine the date of HTML strings or LXML trees.
@@ -14,23 +13,16 @@ import re
 
 from collections import Counter
 
-# importing with a fallback
-try:
-    import regex
-except ImportError:
-    regex = re
-
 try:
     from ciso8601 import parse_datetime, parse_datetime_as_naive
 except ImportError:
     from dateutil.parser import parse as parse_datetime
     parse_datetime_as_naive = parse_datetime # shortcut
 from lxml import etree, html
-from lxml.html.clean import Cleaner
 
 # own
-from .parsers import custom_parse, external_date_parser, extract_url_date, extract_partial_url_date
-from .settings import LATEST_POSSIBLE
+from .extractors import DATE_EXPRESSIONS, GERMAN_PATTERN, JSON_PATTERN, TIMESTAMP_PATTERN, custom_parse, external_date_parser, extract_url_date, extract_partial_url_date
+from .settings import HTML_CLEANER, LATEST_POSSIBLE
 from .utils import load_html
 from .validators import compare_values, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
 
@@ -43,48 +35,6 @@ from .validators import compare_values, convert_date, date_validator, filter_ymd
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-
-
-DATE_EXPRESSIONS = [
-    "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
-    "//*[contains(@class, 'date') or contains(@class, 'Date') or contains(@class, 'datum') or contains(@class, 'Datum')]",
-    "//*[contains(@class, 'postmeta') or contains(@class, 'post-meta') or contains(@class, 'entry-meta') or contains(@class, 'postMeta') or contains(@class, 'post_meta') or contains(@class, 'post__meta')]",
-    "//*[@class='meta' or @class='meta-before' or @class='asset-meta' or contains(@id, 'article-metadata') or contains(@class, 'article-metadata') or contains(@class, 'byline') or contains(@class, 'subline')]",
-    "//*[contains(@class, 'published') or contains(@class, 'posted') or contains(@class, 'submitted') or contains(@class, 'created-post')]",
-    "//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or contains(@class, 'time')]",
-    "//footer",
-    "//*[@class='post-footer' or @class='footer' or @id='footer']",
-    "//small",
-    "//*[contains(@class, 'author') or contains(@class, 'autor') or contains(@class, 'field-content') or @class='meta' or contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'publication')]",
-]
-
-# article__date https://newint.org/features/2019/07/01/long-read-progress-and-its-discontents
-# supply more expressions for more languages
-#ADDITIONAL_EXPRESSIONS = [
-#    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
-#]
-
-CLEANER = Cleaner()
-CLEANER.comments = False
-CLEANER.embedded = True
-CLEANER.forms = False
-CLEANER.frames = True
-CLEANER.javascript = True
-CLEANER.links = False
-CLEANER.meta = False
-CLEANER.page_structure = True
-CLEANER.processing_instructions = True
-CLEANER.remove_unknown_tags = False
-CLEANER.safe_attrs_only = False
-CLEANER.scripts = False
-CLEANER.style = True
-CLEANER.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object', 'picture', 'rdf', 'svg', 'video'] # 'embed', 'figure', 'img', 'table'
-
-## REGEX cache
-JSON_PATTERN = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
-# use of regex module for speed
-GERMAN_PATTERN = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 
 def examine_date_elements(tree, expression, outputformat, extensive_search, max_date):
@@ -729,7 +679,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # clean before string search
     try:
-        cleaned_html = CLEANER.clean_html(tree)
+        cleaned_html = HTML_CLEANER.clean_html(tree)
     except ValueError: # rare LXML error: no NULL bytes or control characters
         cleaned_html = tree
     htmlstring = html.tostring(cleaned_html, encoding='unicode')

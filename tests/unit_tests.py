@@ -28,7 +28,7 @@ except ImportError:
 
 from htmldate.cli import examine
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
-from htmldate.parsers import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
+from htmldate.extractors import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
 from htmldate.settings import LATEST_POSSIBLE
 from htmldate.utils import fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, output_format_validator
