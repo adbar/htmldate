@@ -12,21 +12,8 @@ import re
 
 from functools import lru_cache
 
-from dateutil.parser import parse as full_parse
-
-# importing with a fallback
-try:
-    from ciso8601 import parse_datetime, parse_datetime_as_naive
-except ImportError:
-    parse_datetime = parse_datetime_as_naive = full_parse # shortcut
-try:
-    import regex
-except ImportError:
-    regex = re
-
 # own
-from .settings import EXTERNAL_PARSER
-from .settings import DEFAULT_PARSER_PARAMS
+from .settings import DEFAULT_PARSER_PARAMS, EXTERNAL_PARSER, full_parse, parse_datetime, parse_datetime_as_naive, regex
 from .validators import convert_date, date_validator
 
 ## INIT
