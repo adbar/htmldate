@@ -15,7 +15,7 @@ from collections import Counter
 from lxml import etree, html
 
 # own
-from .extractors import DATE_EXPRESSIONS, extract_url_date, extract_partial_url_date, german_text_search, json_search, try_ymd_date
+from .extractors import DATE_EXPRESSIONS, extract_url_date, extract_partial_url_date, german_text_search, json_search, timestamp_search, try_ymd_date
 from .settings import HTML_CLEANER
 from .utils import load_html
 from .validators import check_extracted_reference, compare_values, convert_date, date_validator, filter_ymd_candidate, get_max_date, output_format_validator, plausible_year_filter
@@ -26,8 +26,6 @@ from .validators import check_extracted_reference, compare_values, convert_date,
 # time-ago datetime= relative-time datetime=
 # German/English switch
 
-
-## INIT
 LOGGER = logging.getLogger(__name__)
 
 
@@ -38,7 +36,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
     except etree.XPathEvalError as err:
         LOGGER.error('lxml expression %s throws an error: %s', expression, err)
         return None
-    if not elements: # is not None and len(elements) > 0
+    if not elements:
         return None
     # loop through the elements to analyze
     for elem in elements:
@@ -53,12 +51,10 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
         toexamine = textcontent[:48]
         # trim non-digits at the end of the string
         toexamine = re.sub(r'\D+$', '', toexamine)
-        #toexamine = re.sub(r'\|.+$', '', toexamine)
         # more than 4 digits required
         if len(list(filter(str.isdigit, toexamine))) < 4:
             continue
         LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
-        # LOGGER.debug('analyzing (string): %s', toexamine)
         attempt = try_ymd_date(toexamine, outputformat, extensive_search, max_date)
         if attempt is not None:
             return attempt
@@ -91,15 +87,12 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
     reserve = None
     try:
         # loop through all meta elements
-        for elem in tree.xpath('//meta'): # was //head/meta # "og:" for OpenGraph http://ogp.me/
+        for elem in tree.xpath('//meta'):
             # safeguard
             if len(elem.attrib) < 1:
                 continue
             # property attribute
-            if 'property' in elem.attrib and 'content' in elem.attrib: # elem.get('property') is not None:
-                # safeguard
-                #if elem.get('content') is None or len(elem.get('content')) < 1:
-                #    continue
+            if 'property' in elem.attrib and 'content' in elem.attrib:
                 # original date
                 if original_date is True:
                     if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished'):
@@ -114,15 +107,12 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                         attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
                         if attempt is not None:
                             headerdate = attempt
-                            break # avoid looking further
+                            break
                     elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished') and headerdate is None:
                         LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                         headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
             # name attribute
-            elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib: # elem.get('name') is not None:
-                # safeguard
-                #if elem.get('content') is None or len(elem.get('content')) < 1:
-                #    continue
+            elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib:
                 # url
                 if elem.get('name').lower() == 'og:url':
                     headerdate = extract_url_date(elem.get('content'), outputformat)
@@ -170,9 +160,6 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                 if elem.get('http-equiv').lower() in ('date', 'last-modified'):
                     LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-            #else:
-            #    LOGGER.debug('not found: %s %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip(), elem.attrib)
-
 
         # if nothing was found, look for lower granularity (so far: "copyright year")
         if headerdate is None and reserve is not None:
@@ -183,7 +170,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
         LOGGER.error('XPath %s', err)
         return None
 
-    if headerdate is not None: # and date_validator(headerdate, outputformat) is True
+    if headerdate is not None:
         return headerdate
     return None
 
@@ -269,7 +256,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
     '''Scan the page for abbr elements and check if their content contains an eligible date'''
     elements = tree.xpath('//abbr')
-    if elements is not None: # and len(elements) > 0:
+    if elements is not None:
         reference = 0
         for elem in elements:
             # data-utime (mostly Facebook)
@@ -317,15 +304,15 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
             return converted
         # try rescue in abbr content
         dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
-        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
-            return dateresult # break
+        if dateresult is not None:
+            return dateresult
     return None
 
 
 def examine_time_elements(tree, outputformat, extensive_search, original_date, max_date):
     '''Scan the page for time elements and check if their content contains an eligible date'''
     elements = tree.xpath('//time')
-    if elements is not None: # and len(elements) > 0:
+    if elements is not None:
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
@@ -409,7 +396,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
             copyear = int(bestmatch.group(0))
             # return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
-    ## 3 components
+    # 3 components
     LOGGER.debug('3 components')
     # target URL characteristics
     pattern = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
@@ -495,7 +482,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     if result is not None:
         return result
 
-    ## 2 components
+    # 2 components
     LOGGER.debug('switching to two components')
     #
     pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
@@ -508,7 +495,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
                 LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
-    #
+    # 2 components, second option
     pattern = re.compile(r'\D([0-3]?[0-9][/.-][0-9]{4})\D')
     yearpat = re.compile(r'([12][0-9]{3})\D?$')
     candidates = plausible_year_filter(htmlstring, pattern, yearpat, original_date)
@@ -531,10 +518,8 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     if result is not None:
         return result
 
-    ## 1 component
+    # 1 component, last try
     LOGGER.debug('switching to one component')
-    # last try
-    # pattern = '(\D19[0-9]{2}\D|\D20[0-9]{2}\D)'
     pattern = re.compile(r'\D([12][0-9]{3})\D')
     yearpat = re.compile(r'^\D?([12][0-9]{3})')
     catch = re.compile(r'^\D?([12][0-9]{3})')
@@ -587,7 +572,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # init
     if verbose is True:
-        logging.basicConfig(level=logging.DEBUG) # stream=sys.stdout,
+        logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
     max_date = get_max_date(max_date)
@@ -611,7 +596,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # first, try header
     header_result = examine_header(tree, outputformat, extensive_search, original_date, max_date)
-    if header_result is not None: # and date_validator(pagedate, outputformat) is True: # already validated
+    if header_result is not None:
         return header_result
 
     # try abbr elements
@@ -622,8 +607,8 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
         dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
-        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
-            return dateresult # break
+        if dateresult is not None:
+            return dateresult
 
     # supply more expressions (other languages)
     #if extensive_search is True:
@@ -640,12 +625,12 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # clean before string search
     try:
         cleaned_html = HTML_CLEANER.clean_html(tree)
-    except ValueError: # rare LXML error: no NULL bytes or control characters
+    # rare LXML error: no NULL bytes or control characters
+    except ValueError:
         cleaned_html = tree
     htmlstring = html.tostring(cleaned_html, encoding='unicode')
-    # remove comments by hand as faulty in lxml
+    # remove comments by hand as faulty in lxml?
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
-    #LOGGER.debug('html cleaned')
 
     # date regex timestamp rescue 1
     json_result = json_search(htmlstring, outputformat, max_date)

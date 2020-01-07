@@ -11,7 +11,7 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 import socket
-from io import StringIO # Python 3
+from io import StringIO
 import urllib3
 
 # libraries
@@ -24,14 +24,14 @@ except ImportError:
 import requests
 from lxml import etree, html
 
-from .settings import MAX_FILE_SIZE # MIN_FILE_SIZE ?
+from .settings import MAX_FILE_SIZE
 
 
 LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # LXML
-HTML_PARSER = html.HTMLParser() # encoding='utf8'
+HTML_PARSER = html.HTMLParser()
 
 
 def decode_response(response, chunk_size=65536):
@@ -75,17 +75,16 @@ def fetch_url(url):
         LOGGER.error('SSL: %s %s', url, err)
     except (socket.timeout, requests.exceptions.ConnectionError, requests.exceptions.Timeout, socket.error, socket.gaierror) as err:
         LOGGER.error('connection: %s %s', url, err)
-    #except Exception as err:
+    # except Exception as err:
     #    logging.error('unknown: %s %s', url, err) # sys.exc_info()[0]
-    # if no error
     else:
         # safety checks
         if response.status_code != 200:
             LOGGER.error('not a 200 response: %s', response.status_code)
         elif response.text is None or len(response.text) < 100:
-            LOGGER.error('file too small/incorrect response: %s %s', url, len(response.text))
+            LOGGER.error('too small/incorrect: %s %s', url, len(response.text))
         elif len(response.text) > MAX_FILE_SIZE:
-            LOGGER.error('file too large: %s %s', url, len(response.text))
+            LOGGER.error('too large: %s %s', url, len(response.text))
         else:
             return decode_response(response)
 
@@ -94,7 +93,8 @@ def fetch_url(url):
 
 
 def load_html(htmlobject):
-    """Load object given as input and validate its type (accepted: LXML tree and string, HTML document or URL)"""
+    """Load object given as input and validate its type (accepted:
+       LXML tree and string, HTML document or URL)"""
     tree = None
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         # copy tree
@@ -108,7 +108,7 @@ def load_html(htmlobject):
                 htmlobject = htmltext
             else:
                 return None
-        ## robust parsing
+        # robust parsing
         try:
             # parse # html.parse(StringIO(htmlobject))
             tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)

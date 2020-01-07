@@ -17,14 +17,13 @@ from functools import lru_cache
 from .settings import MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
 
 
-## INIT
 LOGGER = logging.getLogger(__name__)
 LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 @lru_cache(maxsize=32)
 def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
-    """Validate a string with respect to the chosen outputformat and basic heuristics"""
+    """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
     if not isinstance(date_input, datetime.date):
         # speed-up
@@ -70,7 +69,7 @@ def output_format_validator(outputformat):
 
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
-    ## slow
+    # slow!
     allmatches = pattern.findall(htmlstring)
     occurrences = Counter(allmatches)
     toremove = set()
@@ -95,7 +94,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
                 toremove.add(item)
             # occurrences.remove(item)
             # continue
-    # record
+    # preventing dictionary changed size during iteration error
     for item in toremove:
         del occurrences[item]
     return occurrences
@@ -154,7 +153,9 @@ def get_max_date(max_date):
     if max_date is not None:
         try:
             # internal conversion from Y-M-D format
-            max_date = datetime.date(int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10]))
+            max_date = datetime.date(int(max_date[:4]),
+                                     int(max_date[5:7]),
+                                     int(max_date[8:10]))
         except ValueError:
             max_date = LATEST_POSSIBLE
     else:
