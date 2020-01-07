@@ -10,34 +10,6 @@ import datetime
 
 from lxml.html.clean import Cleaner
 
-# dateparser module
-try:
-    import dateparser # third-party, slow
-    EXTERNAL_PARSER = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
-    # allow_redetect_language=False,
-    # languages=['de', 'en'],
-    EXTERNAL_PARSER_CONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
-except ImportError:
-    # try dateutil parser
-    from dateutil.parser import parse as full_parse
-    EXTERNAL_PARSER = None
-    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
-else:
-    full_parse = DEFAULT_PARSER_PARAMS = None
-
-# importing with a fallback
-try:
-    from ciso8601 import parse_datetime, parse_datetime_as_naive
-except ImportError:
-    if not full_parse:
-        from dateutil.parser import parse as full_parse
-    parse_datetime = parse_datetime_as_naive = full_parse # shortcut
-
-try:
-    import regex
-except ImportError:
-    regex = re
-
 # Download
 MAX_FILE_SIZE = 20000000
 MIN_FILE_SIZE = 10

@@ -12,13 +12,39 @@ import re
 
 from functools import lru_cache
 
+## conditional imports with fallbacks for compatibility
+# coverage for date parsing
+try:
+    import dateparser # third-party, slow
+    EXTERNAL_PARSER = dateparser.DateDataParser(settings={'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'})
+    # allow_redetect_language=False,
+    # languages=['de', 'en'],
+    EXTERNAL_PARSER_CONFIG = {'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past', 'DATE_ORDER': 'DMY'}
+except ImportError:
+    # try dateutil parser
+    from dateutil.parser import parse as full_parse
+    EXTERNAL_PARSER = None
+    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
+else:
+    full_parse = DEFAULT_PARSER_PARAMS = None
+# iso date parsing speedup
+try:
+    from ciso8601 import parse_datetime, parse_datetime_as_naive
+except ImportError:
+    if not full_parse:
+        from dateutil.parser import parse as full_parse
+    parse_datetime = parse_datetime_as_naive = full_parse # shortcut
+# potential regex speedup
+try:
+    import regex
+except ImportError:
+    regex = re
+
 # own
-from .settings import DEFAULT_PARSER_PARAMS, EXTERNAL_PARSER, full_parse, parse_datetime, parse_datetime_as_naive, regex
 from .validators import convert_date, date_validator
 
 ## INIT
 LOGGER = logging.getLogger(__name__)
-
 
 DATE_EXPRESSIONS = [
     "//*[contains(@id, 'date') or contains(@id, 'Date') or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time') or contains(@class, 'post-meta-time')]",
@@ -258,4 +284,35 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
             if date_validator(dateparser_result, outputformat, latest=max_date) is True:
                 return dateparser_result
     # catchall
+    return None
+
+
+def json_search(htmlstring, outputformat, max_date):
+    '''Look for JSON time patterns throughout the web page'''
+    json_match = JSON_PATTERN.search(htmlstring)
+    if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date) is True:
+        LOGGER.debug('JSON time found: %s', json_match.group(0))
+        return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
+    timestamp_match = TIMESTAMP_PATTERN.search(htmlstring)
+    if timestamp_match and date_validator(timestamp_match.group(1), '%Y-%m-%d', latest=max_date) is True:
+        LOGGER.debug('time regex found: %s', timestamp_match.group(0))
+        return convert_date(timestamp_match.group(1), '%Y-%m-%d', outputformat)
+    return None
+
+
+def german_text_search(htmlstring, outputformat, max_date):
+    '''Look for precise German patterns throughout the web page'''
+    de_match = GERMAN_PATTERN.search(htmlstring)
+    if de_match and len(de_match.group(3)) in (2, 4):
+        try:
+            if len(de_match.group(3)) == 2:
+                candidate = datetime.date(int('20' + de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+            else:
+                candidate = datetime.date(int(de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
+        except ValueError:
+            LOGGER.debug('value error: %s', de_match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                LOGGER.debug('precise pattern found: %s', de_match.group(0))
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None

@@ -137,3 +137,26 @@ def convert_date(datestring, inputformat, outputformat):
     dateobject = datetime.datetime.strptime(datestring, inputformat)
     converted = dateobject.strftime(outputformat)
     return converted
+
+
+def check_extracted_reference(reference, outputformat, max_date):
+    '''Test if the extracted reference date can be returned'''
+    if reference > 0:
+        dateobject = datetime.datetime.fromtimestamp(reference)
+        converted = dateobject.strftime(outputformat)
+        if date_validator(converted, outputformat, latest=max_date) is True:
+            return converted
+    return None
+
+
+def get_max_date(max_date):
+    '''Validates the maximum date and/or defaults to latest plausible date'''
+    if max_date is not None:
+        try:
+            # internal conversion from Y-M-D format
+            max_date = datetime.date(int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10]))
+        except ValueError:
+            max_date = LATEST_POSSIBLE
+    else:
+        max_date = LATEST_POSSIBLE
+    return max_date

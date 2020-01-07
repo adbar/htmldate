@@ -7,7 +7,6 @@ Module bundling all functions needed to determine the date of HTML strings or LX
 ## under GNU GPL v3 license
 
 # standard
-import datetime
 import logging
 import re
 
@@ -16,10 +15,10 @@ from collections import Counter
 from lxml import etree, html
 
 # own
-from .extractors import DATE_EXPRESSIONS, GERMAN_PATTERN, JSON_PATTERN, TIMESTAMP_PATTERN, extract_url_date, extract_partial_url_date, try_ymd_date
-from .settings import HTML_CLEANER, LATEST_POSSIBLE
+from .extractors import DATE_EXPRESSIONS, extract_url_date, extract_partial_url_date, german_text_search, json_search, try_ymd_date
+from .settings import HTML_CLEANER
 from .utils import load_html
-from .validators import compare_values, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
+from .validators import check_extracted_reference, compare_values, convert_date, date_validator, filter_ymd_candidate, get_max_date, output_format_validator, plausible_year_filter
 
 
 ## TODO:
@@ -265,16 +264,6 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     else:
         new_reference = reference
     return new_reference
-
-
-def check_extracted_reference(reference, outputformat, max_date):
-    '''Test if the extracted reference date can be returned'''
-    if reference > 0:
-        dateobject = datetime.datetime.fromtimestamp(reference)
-        converted = dateobject.strftime(outputformat)
-        if date_validator(converted, outputformat, latest=max_date) is True:
-            return converted
-    return None
 
 
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
@@ -601,11 +590,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         logging.basicConfig(level=logging.DEBUG) # stream=sys.stdout,
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
-    # internal conversion from Y-M-D format
-    if max_date is not None:
-        max_date = datetime.date(int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10]))
-    else:
-        max_date = LATEST_POSSIBLE
+    max_date = get_max_date(max_date)
 
     # safety
     if tree is None:
@@ -663,29 +648,14 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     #LOGGER.debug('html cleaned')
 
     # date regex timestamp rescue
-    json_match = JSON_PATTERN.search(htmlstring)
-    if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date) is True:
-        LOGGER.debug('JSON time found: %s', json_match.group(0))
-        return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
-    timestamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if timestamp_match and date_validator(timestamp_match.group(1), '%Y-%m-%d', latest=max_date) is True:
-        LOGGER.debug('time regex found: %s', timestamp_match.group(0))
-        return convert_date(timestamp_match.group(1), '%Y-%m-%d', outputformat)
+    json_result = json_search(htmlstring, outputformat, max_date)
+    if json_result is not None:
+        return json_result
 
     # precise German patterns
-    de_match = GERMAN_PATTERN.search(htmlstring)
-    if de_match and len(de_match.group(3)) in (2, 4):
-        try:
-            if len(de_match.group(3)) == 2:
-                candidate = datetime.date(int('20' + de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
-            else:
-                candidate = datetime.date(int(de_match.group(3)), int(de_match.group(2)), int(de_match.group(1)))
-        except ValueError:
-            LOGGER.debug('value error: %s', de_match.group(0))
-        else:
-            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
-                LOGGER.debug('precise pattern found: %s', de_match.group(0))
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+    text_result = german_text_search(htmlstring, outputformat, max_date)
+    if text_result is not None:
+        return text_result
 
     # last try: URL 2
     if url is not None:
