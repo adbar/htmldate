@@ -265,11 +265,11 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
             else:
                 result = parse_datetime_as_naive(string)
             if date_validator(result, outputformat, latest=max_date) is True:
-                LOGGER.debug('ciso8601 result: %s', result)
+                LOGGER.debug('parsing result: %s', result)
                 converted = result.strftime(outputformat)
                 return converted
         except ValueError:
-            LOGGER.debug('ciso8601 error: %s', string)
+            LOGGER.debug('parsing error: %s', string)
     # faster
     customresult = custom_parse(string, outputformat)
     if customresult is not None:
@@ -308,6 +308,16 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     else:
         new_reference = reference
     return new_reference
+
+
+def check_extracted_reference(reference, outputformat, max_date):
+    '''Test if the extracted reference date can be returned'''
+    if reference > 0:
+        dateobject = datetime.datetime.fromtimestamp(reference)
+        converted = dateobject.strftime(outputformat)
+        if date_validator(converted, outputformat, latest=max_date) is True:
+            return converted
+    return None
 
 
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
@@ -356,17 +366,13 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                         LOGGER.debug('abbr published found: %s', trytext)
                         reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
         # convert and return
-        if reference > 0:
-            dateobject = datetime.datetime.fromtimestamp(reference)
-            converted = dateobject.strftime(outputformat)
-            # quality control
-            if date_validator(converted, outputformat, latest=max_date) is True:
-                return converted
+        converted = check_extracted_reference(reference, outputformat, max_date)
+        if converted is not None:
+            return converted
         # try rescue in abbr content
-        else:
-            dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
-            if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
-                return dateresult # break
+        dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
+        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
+            return dateresult # break
     return None
 
 
@@ -413,13 +419,9 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
                 reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, max_date)
             # else...
         # return
-        if reference > 0:
-            # convert and return
-            dateobject = datetime.datetime.fromtimestamp(reference)
-            converted = dateobject.strftime(outputformat)
-            # quality control
-            if date_validator(converted, outputformat, latest=max_date) is True:
-                return converted
+        converted = check_extracted_reference(reference, outputformat, max_date)
+        if converted is not None:
+            return converted
     return None
 
 
@@ -670,6 +672,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     if header_result is not None: # and date_validator(pagedate, outputformat) is True: # already validated
         return header_result
 
+    # try abbr elements
     abbr_result = examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date)
     if abbr_result is not None:
         return abbr_result
@@ -687,6 +690,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     #        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
     #            return dateresult # break
 
+    # try time elements
     time_result = examine_time_elements(tree, outputformat, extensive_search, original_date, max_date)
     if time_result is not None:
         return time_result
