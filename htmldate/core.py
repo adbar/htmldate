@@ -310,6 +310,119 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     return new_reference
 
 
+def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
+    '''Scan the page for abbr elements and check if their content contains an eligible date'''
+    elements = tree.xpath('//abbr')
+    if elements is not None: # and len(elements) > 0:
+        reference = 0
+        for elem in elements:
+            # data-utime (mostly Facebook)
+            if 'data-utime' in elem.attrib:
+                try:
+                    candidate = int(elem.get('data-utime'))
+                except ValueError:
+                    continue
+                LOGGER.debug('data-utime found: %s', candidate)
+                # look for original date
+                if original_date is True:
+                    if reference == 0:
+                        reference = candidate
+                    elif candidate < reference:
+                        reference = candidate
+                # look for newest (i.e. largest time delta)
+                else:
+                    if candidate > reference:
+                        reference = candidate
+            # class
+            if 'class' in elem.attrib:
+                if elem.get('class') in ('published', 'date-published', 'time published'):
+                    # other attributes
+                    if 'title' in elem.attrib:
+                        trytext = elem.get('title')
+                        LOGGER.debug('abbr published-title found: %s', trytext)
+                        # shortcut
+                        if original_date is True:
+                            attempt = try_ymd_date(trytext, outputformat, extensive_search, max_date)
+                            if attempt is not None:
+                                return attempt
+                        else:
+                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
+                            # faster execution
+                            if reference > 0:
+                                break
+                    # dates, not times of the day
+                    if elem.text and len(elem.text) > 10:
+                        trytext = re.sub(r'^am ', '', elem.text)
+                        LOGGER.debug('abbr published found: %s', trytext)
+                        reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
+        # convert and return
+        if reference > 0:
+            dateobject = datetime.datetime.fromtimestamp(reference)
+            converted = dateobject.strftime(outputformat)
+            # quality control
+            if date_validator(converted, outputformat, latest=max_date) is True:
+                return converted
+        # try rescue in abbr content
+        else:
+            dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
+            if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
+                return dateresult # break
+    return None
+
+
+def examine_time_elements(tree, outputformat, extensive_search, original_date, max_date):
+    '''Scan the page for time elements and check if their content contains an eligible date'''
+    elements = tree.xpath('//time')
+    if elements is not None: # and len(elements) > 0:
+        # scan all the tags and look for the newest one
+        reference = 0
+        for elem in elements:
+            shortcut_flag = False
+            # go for datetime
+            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
+                # shortcut: time pubdate
+                if 'pubdate' in elem.attrib and elem.get('pubdate') == 'pubdate':
+                    if original_date is True:
+                        shortcut_flag = True
+                    LOGGER.debug('time pubdate found: %s', elem.get('datetime'))
+                # first choice: entry-date + datetime attribute
+                elif 'class' in elem.attrib:
+                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
+                        # shortcut
+                        if original_date is True:
+                            shortcut_flag = True
+                        LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
+                    # updated time
+                    elif elem.get('class') == 'updated' and original_date is False:
+                        LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
+                # datetime attribute
+                else:
+                    LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
+                # analyze attribute
+                if shortcut_flag is True:
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                    if attempt is not None:
+                        return attempt
+                else:
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date, max_date)
+                    if reference > 0:
+                        break
+            # bare text in element
+            elif elem.text is not None and len(elem.text) > 6:
+                LOGGER.debug('time/datetime found: %s', elem.text)
+                reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, max_date)
+            # else...
+        # return
+        if reference > 0:
+            # convert and return
+            dateobject = datetime.datetime.fromtimestamp(reference)
+            converted = dateobject.strftime(outputformat)
+            # quality control
+            if date_validator(converted, outputformat, latest=max_date) is True:
+                return converted
+    return None
+
+
 def search_page(htmlstring, outputformat, original_date, max_date):
     """
     Opportunistically search the HTML text for common text patterns
@@ -553,66 +666,13 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             return dateresult
 
     # first, try header
-    pagedate = examine_header(tree, outputformat, extensive_search, original_date, max_date)
-    if pagedate is not None: # and date_validator(pagedate, outputformat) is True: # already validated
-        return pagedate
+    header_result = examine_header(tree, outputformat, extensive_search, original_date, max_date)
+    if header_result is not None: # and date_validator(pagedate, outputformat) is True: # already validated
+        return header_result
 
-    # <abbr>
-    elements = tree.xpath('//abbr')
-    if elements is not None: # and len(elements) > 0:
-        reference = 0
-        for elem in elements:
-            # data-utime (mostly Facebook)
-            if 'data-utime' in elem.attrib:
-                try:
-                    candidate = int(elem.get('data-utime'))
-                except ValueError:
-                    continue
-                LOGGER.debug('data-utime found: %s', candidate)
-                # look for original date
-                if original_date is True:
-                    if reference == 0:
-                        reference = candidate
-                    elif candidate < reference:
-                        reference = candidate
-                # look for newest (i.e. largest time delta)
-                else:
-                    if candidate > reference:
-                        reference = candidate
-            # class
-            if 'class' in elem.attrib:
-                if elem.get('class') in ('published', 'date-published', 'time published'):
-                    # other attributes
-                    if 'title' in elem.attrib:
-                        trytext = elem.get('title')
-                        LOGGER.debug('abbr published-title found: %s', trytext)
-                        # shortcut
-                        if original_date is True:
-                            attempt = try_ymd_date(trytext, outputformat, extensive_search, max_date)
-                            if attempt is not None:
-                                return attempt
-                        else:
-                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
-                            # faster execution
-                            if reference > 0:
-                                break
-                    # dates, not times of the day
-                    if elem.text and len(elem.text) > 10:
-                        trytext = re.sub(r'^am ', '', elem.text)
-                        LOGGER.debug('abbr published found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
-        # convert and return
-        if reference > 0:
-            dateobject = datetime.datetime.fromtimestamp(reference)
-            converted = dateobject.strftime(outputformat)
-            # quality control
-            if date_validator(converted, outputformat, latest=max_date) is True:
-                return converted
-        # try rescue in abbr content
-        else:
-            dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
-            if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
-                return dateresult # break
+    abbr_result = examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date)
+    if abbr_result is not None:
+        return abbr_result
 
     # expressions + text_content
     for expr in DATE_EXPRESSIONS:
@@ -627,55 +687,9 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     #        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
     #            return dateresult # break
 
-    # <time>
-    elements = tree.xpath('//time')
-    if elements is not None: # and len(elements) > 0:
-        # scan all the tags and look for the newest one
-        reference = 0
-        for elem in elements:
-            shortcut_flag = False
-            # go for datetime
-            if 'datetime' in elem.attrib and len(elem.get('datetime')) > 6:
-                # shortcut: time pubdate
-                if 'pubdate' in elem.attrib and elem.get('pubdate') == 'pubdate':
-                    if original_date is True:
-                        shortcut_flag = True
-                    LOGGER.debug('time pubdate found: %s', elem.get('datetime'))
-                # first choice: entry-date + datetime attribute
-                elif 'class' in elem.attrib:
-                    if elem.get('class').startswith('entry-date') or elem.get('class').startswith('entry-time'):
-                        # shortcut
-                        if original_date is True:
-                            shortcut_flag = True
-                        LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                    # updated time
-                    elif elem.get('class') == 'updated' and original_date is False:
-                        LOGGER.debug('updated time/datetime found: %s', elem.get('datetime'))
-                # datetime attribute
-                else:
-                    LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
-                # analyze attribute
-                if shortcut_flag is True:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
-                    if attempt is not None:
-                        return attempt
-                else:
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date, max_date)
-                    if reference > 0:
-                        break
-            # bare text in element
-            elif elem.text is not None and len(elem.text) > 6:
-                LOGGER.debug('time/datetime found: %s', elem.text)
-                reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, max_date)
-            # else...
-        # return
-        if reference > 0:
-            # convert and return
-            dateobject = datetime.datetime.fromtimestamp(reference)
-            converted = dateobject.strftime(outputformat)
-            # quality control
-            if date_validator(converted, outputformat, latest=max_date) is True:
-                return converted
+    time_result = examine_time_elements(tree, outputformat, extensive_search, original_date, max_date)
+    if time_result is not None:
+        return time_result
 
     # clean before string search
     try:
