@@ -15,13 +15,18 @@ from collections import Counter
 from lxml import etree, html
 
 # own
-from .extractors import DATE_EXPRESSIONS, extract_url_date, extract_partial_url_date, german_text_search, json_search, timestamp_search, try_ymd_date
+from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
+                         extract_url_date, extract_partial_url_date,
+                         german_text_search, json_search, timestamp_search,
+                         try_ymd_date)
 from .settings import HTML_CLEANER
 from .utils import load_html
-from .validators import check_extracted_reference, compare_values, convert_date, date_validator, filter_ymd_candidate, get_max_date, output_format_validator, plausible_year_filter
+from .validators import (check_extracted_reference, compare_values,
+                         convert_date, date_validator, filter_ymd_candidate,
+                         get_max_date, output_format_validator,
+                         plausible_year_filter)
 
-
-## TODO:
+# TODO:
 # from og:image or <img>?
 # time-ago datetime= relative-time datetime=
 # German/English switch
@@ -611,11 +616,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             return dateresult
 
     # supply more expressions (other languages)
-    #if extensive_search is True:
-    #    for expr in ADDITIONAL_EXPRESSIONS:
-    #        dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
-    #        if dateresult is not None: # and date_validator(dateresult, outputformat, latest=max_date) is True:
-    #            return dateresult # break
+    if extensive_search is True:
+        for expr in ADDITIONAL_EXPRESSIONS:
+            dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
+            if dateresult is not None:
+                return dateresult
 
     # try time elements
     time_result = examine_time_elements(tree, outputformat, extensive_search, original_date, max_date)

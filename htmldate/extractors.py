@@ -77,9 +77,9 @@ DATE_EXPRESSIONS = [
 ]
 
 # supply more expressions for more languages
-# ADDITIONAL_EXPRESSIONS = [
-#    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
-# ]
+ADDITIONAL_EXPRESSIONS = [
+    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
+]
 
 # Regex cache
 AMERICAN_ENGLISH = re.compile(r'''(January|February|March|April|May|June|July|
