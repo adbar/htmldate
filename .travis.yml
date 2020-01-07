@@ -38,6 +38,16 @@ matrix:
       python: nightly
       env: TOXENV=py39
       env: MINIMAL=false
+    - name: "Pypy 3 on Linux with minimal dependencies"
+      os: linux
+      python: pypy3
+      env: MINIMAL=true
+      env: TOXENV=pypy3
+    - name: "Pypy 3 on Linux"
+      os: linux
+      python: pypy3
+      env: MINIMAL=false
+      env: TOXENV=pypy3
     - name: "Python 3 on macOS with minimal dependencies"
       os: osx
       osx_image: xcode11
@@ -70,6 +80,7 @@ matrix:
       env: MINIMAL=false
   allow_failures:
     - python: nightly
+    - python: pypy3
     - os: windows
   fast_finish: true
 
