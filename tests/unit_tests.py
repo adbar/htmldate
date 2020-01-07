@@ -39,12 +39,12 @@ OUTPUTFORMAT = '%Y-%m-%d'
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 MOCK_PAGES = { \
-'http://blog.kinra.de/?p=959/': 'kinra.de.html', \
-'http://blog.python.org/2016/12/python-360-is-now-available.html': 'blog.python.org.html', \
-'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html', \
-'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html', \
-'https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov': '500px.com.spring.html', \
-'https://bayern.de/': 'bayern.de.html', \
+'http://blog.kinra.de/?p=959/': 'kinra.de.html',
+'http://blog.python.org/2016/12/python-360-is-now-available.html': 'blog.python.org.html',
+'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html',
+'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html',
+'https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov': '500px.com.spring.html',
+'https://bayern.de/': 'bayern.de.html',
 'https://creativecommons.org/about/': 'creativecommons.org.html', \
 'https://die-partei.net/sh/': 'die-partei.net.sh.html', \
 'https://en.blog.wordpress.com/': 'blog.wordpress.com.html', \
@@ -88,7 +88,6 @@ MOCK_PAGES = { \
 'http://www.stuttgart.de/': 'stuttgart.de.html', \
 'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': 'paris-luttes.info.html', \
 'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.de.riverdale.html', \
-'https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html': 'cosmopolitan.de.sommertrend.html', \
 'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.de.fallinlove.html', \
 'http://www.loldf.org/spip.php?article717': 'loldf.org.html', \
 'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.de.12wege.html', \
@@ -101,6 +100,7 @@ MOCK_PAGES = { \
 'https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie': 'kurz.at.wasserstoff.html', \
 'https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany': 'la-bas.org.porte.html', \
 'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html', \
+'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': 'revolutionpermanente.fr.antonin.html', \
 }
 # '': '', \
 
@@ -159,6 +159,9 @@ def test_exact_date():
     '''these pages should return an exact date'''
     ## HTML tree
     assert find_date('<html><head><meta property="dc:created" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
+    assert find_date('<html><head><meta property="og:published_time" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
+    assert find_date('<html><head><meta http-equiv="date" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
+    assert find_date('<html><head><meta name="last-modified" content="2017-09-01"/></head><body></body></html>', original_date=False) == '2017-09-01'
     assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
     assert find_date('<html><head><Meta Property="og:updated_time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
     assert find_date('<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>') == '2017-01-09'
@@ -192,6 +195,9 @@ def test_exact_date():
     assert find_date('<html><head></head><body><time class="entry-time" itemprop="datePublished" datetime="2018-04-18T09:57:38+00:00"></body></html>') == '2018-04-18'
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03'
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00"></time></p></footer></body></html>') == '2019-01-03'
+    # removed from HTML5 https://www.w3schools.com/TAgs/att_time_datetime_pubdate.asp
+    assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=False) == '2011-09-28'
+    assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=True) == '2011-09-28'
 
     ## precise pattern in document body
     assert find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
@@ -210,7 +216,8 @@ def test_exact_date():
 
     # abbr in document body
     assert find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
-    assert find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>') == '2016-11-12'
+    assert find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>', original_date=False) == '2016-11-12'
+    assert find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>', original_date=True) == '2016-11-12'
     assert find_date('<html><body><abbr class="date-published">8.11.2016</abbr></body></html>') == '2016-11-08'
     # valid vs. invalid data-utime
     assert find_date('<html><body><abbr data-utime="1438091078" class="something">A date</abbr></body></html>') == '2015-07-28'
@@ -258,7 +265,6 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
     assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
-    assert find_date(load_mock_page('https://www.cosmopolitan.de/sommertrend-print-look-so-tragen-ihn-die-influencerinnen-86546.html')) == '2019-06-03'
     assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
     assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # should be '2019-06-29'
     assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
@@ -451,10 +457,13 @@ def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
 
 def test_cli():
     '''test the command-line interface'''
-    assert examine(' ', True) is None
-    assert examine('0'*int(10e7), True) is None
+    assert examine(' ', extensive_bool=True) is None
+    assert examine('0'*int(10e7), extensive_bool=True) is None
     assert examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
-    assert examine('<html><body>2016-07-12</body></html>', True) == '2016-07-12'
+    assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True) == '2016-07-12'
+    assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2015-01-01') is None
+    assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-12-31') == '2016-07-12'
+    assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-41-41') == '2016-07-12'
 
 
 def test_download():
@@ -496,7 +505,7 @@ def test_dependencies():
     if EXT_PARSER is True:
         assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
         assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
-
+        assert find_date(load_mock_page('https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme')) == '2019-06-13'
 
 
 
