@@ -74,11 +74,9 @@ def extract_url_date(testurl, outputformat):
         dateresult = match.group(0)
         LOGGER.debug('found date in URL: %s', dateresult)
         try:
-            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
             dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
             if date_validator(dateobject, outputformat) is True:
-                converted = dateobject.strftime(outputformat)
-                return converted
+                return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', dateresult, err)
     # catchall
@@ -93,11 +91,9 @@ def extract_partial_url_date(testurl, outputformat):
         dateresult = match.group(0) + '/01'
         LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
-            # converted = convert_date(dateresult, '%Y/%m/%d', outputformat)
             dateobject = datetime.datetime(int(match.group(1)), int(match.group(2)), 1)
             if date_validator(dateobject, outputformat) is True:
-                converted = dateobject.strftime(outputformat)
-                return converted
+                return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', dateresult, err)
     # catchall
@@ -171,8 +167,7 @@ def custom_parse(string, outputformat):
             return None
         if date_validator(candidate, '%Y-%m-%d') is True:
             LOGGER.debug('ymd match: %s', candidate)
-            converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-            return converted
+            return convert_date(candidate, '%Y-%m-%d', outputformat)
     # %Y-%m-%d search
     match = YMD_PATTERN.search(string)
     if match:
@@ -183,8 +178,7 @@ def custom_parse(string, outputformat):
         else:
             if date_validator(candidate, '%Y-%m-%d') is True:
                 LOGGER.debug('ymd match: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
     # faster than fire dateparser at once
     datestub = DATESTUB_PATTERN.search(string)
     if datestub and len(datestub.group(3)) in (2, 4):
@@ -199,8 +193,7 @@ def custom_parse(string, outputformat):
             # test candidate
             if date_validator(candidate, '%Y-%m-%d') is True:
                 LOGGER.debug('D.M.Y match: %s', candidate)
-                converted = convert_date(candidate, '%Y-%m-%d', outputformat)
-                return converted
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
     # text match
     dateobject = regex_parse_de(string)
     if dateobject is None:
