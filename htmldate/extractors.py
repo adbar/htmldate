@@ -283,7 +283,6 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
         if dateparser_result is not None:
             if date_validator(dateparser_result, outputformat, latest=max_date) is True:
                 return dateparser_result
-    # catchall
     return None
 
 
@@ -293,6 +292,11 @@ def json_search(htmlstring, outputformat, max_date):
     if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date) is True:
         LOGGER.debug('JSON time found: %s', json_match.group(0))
         return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
+    return None
+
+
+def timestamp_search(htmlstring, outputformat, max_date):
+    '''Look for timestamps throughout the web page'''
     timestamp_match = TIMESTAMP_PATTERN.search(htmlstring)
     if timestamp_match and date_validator(timestamp_match.group(1), '%Y-%m-%d', latest=max_date) is True:
         LOGGER.debug('time regex found: %s', timestamp_match.group(0))
