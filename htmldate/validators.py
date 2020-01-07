@@ -29,7 +29,9 @@ def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
         # speed-up
         try:
             if outputformat == '%Y-%m-%d':
-                dateobject = datetime.datetime(int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10]))
+                dateobject = datetime.datetime(int(date_input[:4]),
+                                               int(date_input[5:7]),
+                                               int(date_input[8:10]))
             # default
             else:
                 dateobject = datetime.datetime.strptime(date_input, outputformat)
