@@ -12,6 +12,7 @@ import logging
 import time
 
 from collections import Counter
+from functools import lru_cache
 
 from .settings import MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
 
@@ -21,6 +22,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
+@lru_cache(maxsize=32)
 def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
     """Validate a string with respect to the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
@@ -59,7 +61,6 @@ def output_format_validator(outputformat):
     # test with date object
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
     try:
-        # datetime.datetime.strftime(dateobject, outputformat)
         dateobject.strftime(outputformat)
     except (NameError, TypeError, ValueError) as err:
         logging.error('wrong output format or format type: %s %s', outputformat, err)

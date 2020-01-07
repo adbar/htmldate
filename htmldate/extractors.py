@@ -235,6 +235,7 @@ def external_date_parser(string, outputformat):
     return None
 
 
+@lru_cache(maxsize=32)
 def try_ymd_date(string, outputformat, extensive_search, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
