@@ -13,15 +13,10 @@ import re
 
 from collections import Counter
 
-try:
-    from ciso8601 import parse_datetime, parse_datetime_as_naive
-except ImportError:
-    from dateutil.parser import parse as parse_datetime
-    parse_datetime_as_naive = parse_datetime # shortcut
 from lxml import etree, html
 
 # own
-from .extractors import DATE_EXPRESSIONS, GERMAN_PATTERN, JSON_PATTERN, TIMESTAMP_PATTERN, custom_parse, external_date_parser, extract_url_date, extract_partial_url_date
+from .extractors import DATE_EXPRESSIONS, GERMAN_PATTERN, JSON_PATTERN, TIMESTAMP_PATTERN, extract_url_date, extract_partial_url_date, try_ymd_date
 from .settings import HTML_CLEANER, LATEST_POSSIBLE
 from .utils import load_html
 from .validators import compare_values, convert_date, date_validator, filter_ymd_candidate, output_format_validator, plausible_year_filter
@@ -245,44 +240,6 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     return select_candidate(candidates, catch, yearpat, original_date, max_date)
-
-
-def try_ymd_date(string, outputformat, extensive_search, max_date):
-    """Use a series of heuristics and rules to parse a potential date expression"""
-    # discard on formal criteria
-    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 or not re.search(r'[.:,_/ -]|^[0-9]+$', string):
-        return None
-    # just time/single year, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
-        return None
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601
-        try:
-            if extensive_search is True:
-                result = parse_datetime(string)
-            # speed-up by ignoring time zone info if ciso8601 is installed
-            else:
-                result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat, latest=max_date) is True:
-                LOGGER.debug('parsing result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
-        except ValueError:
-            LOGGER.debug('parsing error: %s', string)
-    # faster
-    customresult = custom_parse(string, outputformat)
-    if customresult is not None:
-        return customresult
-    # slow but extensive search
-    if extensive_search is True:
-        # send to date parser
-        dateparser_result = external_date_parser(string, outputformat)
-        if dateparser_result is not None:
-            if date_validator(dateparser_result, outputformat, latest=max_date) is True:
-                return dateparser_result
-    # catchall
-    return None
 
 
 def try_expression(expression, outputformat, extensive_search, max_date):

@@ -10,14 +10,19 @@ import datetime
 import logging
 import re
 
+from functools import lru_cache
+
+from dateutil.parser import parse as full_parse
+
 # importing with a fallback
+try:
+    from ciso8601 import parse_datetime, parse_datetime_as_naive
+except ImportError:
+    parse_datetime = parse_datetime_as_naive = full_parse # shortcut
 try:
     import regex
 except ImportError:
     regex = re
-
-# external
-from dateutil.parser import parse
 
 # own
 from .settings import EXTERNAL_PARSER
@@ -220,11 +225,49 @@ def external_date_parser(string, outputformat):
         if EXTERNAL_PARSER is not None:
             target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
         else:
-            target = parse(string, **DEFAULT_PARSER_PARAMS)
+            target = full_parse(string, **DEFAULT_PARSER_PARAMS)
     # 2 types of errors possible
     except (OverflowError, ValueError):
         target = None
     # issue with data type
     if target is not None:
         return datetime.date.strftime(target, outputformat)
+    return None
+
+
+def try_ymd_date(string, outputformat, extensive_search, max_date):
+    """Use a series of heuristics and rules to parse a potential date expression"""
+    # discard on formal criteria
+    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 or not re.search(r'[.:,_/ -]|^[0-9]+$', string):
+        return None
+    # just time/single year, not a date
+    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
+        return None
+    # much faster
+    if string[0:4].isdigit():
+        # try speedup with ciso8601
+        try:
+            if extensive_search is True:
+                result = parse_datetime(string)
+            # speed-up by ignoring time zone info if ciso8601 is installed
+            else:
+                result = parse_datetime_as_naive(string)
+            if date_validator(result, outputformat, latest=max_date) is True:
+                LOGGER.debug('parsing result: %s', result)
+                converted = result.strftime(outputformat)
+                return converted
+        except ValueError:
+            LOGGER.debug('parsing error: %s', string)
+    # faster
+    customresult = custom_parse(string, outputformat)
+    if customresult is not None:
+        return customresult
+    # slow but extensive search
+    if extensive_search is True:
+        # send to date parser
+        dateparser_result = external_date_parser(string, outputformat)
+        if dateparser_result is not None:
+            if date_validator(dateparser_result, outputformat, latest=max_date) is True:
+                return dateparser_result
+    # catchall
     return None
