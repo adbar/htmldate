@@ -10,6 +10,7 @@ import re
 import sys
 
 from collections import Counter
+from unittest.mock import patch
 
 try:
     import dateparser
@@ -25,7 +26,7 @@ try:
 except ImportError:
     import chardet
 
-from htmldate.cli import examine
+from htmldate.cli import examine, parse_args
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
 from htmldate.settings import LATEST_POSSIBLE
@@ -455,6 +456,19 @@ def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
     assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2018-01-01'
 
 
+def test_parser():
+    '''test argument parsing for the command-line interface'''
+    testargs = ['-f', '-v', '--original', '-m', '2015-12-31', '-u', 'https://www.example.org']
+    with patch.object(sys, 'argv', testargs):
+        args = parse_args(testargs)
+        print(args)
+        assert args.fast is True
+        assert args.original is True
+        assert args.verbose is True
+        assert args.maxdate == '2015-12-31'
+        assert args.URL == 'https://www.example.org'
+
+
 def test_cli():
     '''test the command-line interface'''
     assert examine(' ', extensive_bool=True) is None
@@ -539,6 +553,7 @@ if __name__ == '__main__':
     test_dependencies()
 
     # cli
+    test_parser()
     test_cli()
 
     # loading functions

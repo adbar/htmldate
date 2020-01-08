@@ -31,9 +31,8 @@ def examine(htmlstring, extensive_bool=True, original_date=False,
     return None
 
 
-def main():
-    """ Run as a command-line utility. """
-    # arguments
+def parse_args(args):
+    """Define parser for command-line arguments"""
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-v", "--verbose",
                             help="increase output verbosity",
@@ -54,8 +53,13 @@ def main():
     argsparser.add_argument("-u", "--URL",
                             help="custom URL download",
                             type=str)
-    args = argsparser.parse_args()
+    return argsparser.parse_args()
 
+
+def main():
+    """ Run as a command-line utility. """
+    # arguments
+    args = parse_args(sys.argv[1:])
     # process input on STDIN
     if not args.inputfile:
         # URL as input
