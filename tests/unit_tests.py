@@ -28,7 +28,7 @@ except ImportError:
 
 from htmldate.cli import examine, parse_args
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
-from htmldate.extractors import custom_parse, extract_partial_url_date, regex_parse_de, regex_parse_en
+from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse_de, regex_parse_en
 from htmldate.settings import LATEST_POSSIBLE
 from htmldate.utils import fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, output_format_validator
@@ -199,6 +199,7 @@ def test_exact_date():
     # removed from HTML5 https://www.w3schools.com/TAgs/att_time_datetime_pubdate.asp
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=False) == '2011-09-28'
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=True) == '2011-09-28'
+    assert find_date('<html><body><time datetime="2011-09-28" class="entry-date"></time></body></html>', original_date=True) == '2011-09-28'
 
     ## precise pattern in document body
     assert find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
@@ -219,6 +220,7 @@ def test_exact_date():
     assert find_date(load_mock_page('http://blog.kinra.de/?p=959/')) == '2012-12-16'
     assert find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>', original_date=False) == '2016-11-12'
     assert find_date('<html><body><abbr class="published">am 12.11.16</abbr></body></html>', original_date=True) == '2016-11-12'
+    assert find_date('<html><body><abbr class="published" title="2016-11-12">XYZ</abbr></body></html>', original_date=True) == '2016-11-12'
     assert find_date('<html><body><abbr class="date-published">8.11.2016</abbr></body></html>') == '2016-11-08'
     # valid vs. invalid data-utime
     assert find_date('<html><body><abbr data-utime="1438091078" class="something">A date</abbr></body></html>') == '2015-07-28'
@@ -338,10 +340,10 @@ def test_try_ymd_date():
     assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, False, LATEST_POSSIBLE) is None
     find_date.extensive_search = True
     assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
-    # assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, PARSER) == '2017-09-01'
     assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
-    # assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT) == '2017-09-01'
+    assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('Fri - September 1 - 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('1.9.2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
     assert try_ymd_date('201709011234', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
@@ -393,6 +395,12 @@ def test_regex_parse():
     assert custom_parse('2004-12-12', OUTPUTFORMAT) is not None
     assert custom_parse('33.20.2004', OUTPUTFORMAT) is None
     assert custom_parse('12.12.2004', OUTPUTFORMAT) is not None
+
+
+def test_external_date_parser():
+    '''test external date parser'''
+    assert external_date_parser('Wednesday, January 1st 2020', OUTPUTFORMAT) == '2020-01-01'
+    assert external_date_parser('Random text with 2020', OUTPUTFORMAT) is None
 
 
 def test_url():
@@ -517,6 +525,7 @@ def readme_examples():
 def test_dependencies():
     '''Test README example for consistency'''
     if EXT_PARSER is True:
+        assert try_ymd_date('Fri | September 1 | 2017', OUTPUTFORMAT, True, LATEST_POSSIBLE) == '2017-09-01'
         assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
         assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
         assert find_date(load_mock_page('https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme')) == '2019-06-13'
@@ -538,6 +547,7 @@ if __name__ == '__main__':
     test_compare_reference()
     test_candidate_selection()
     test_regex_parse()
+    test_external_date_parser()
     #test_header()
 
     # module-level
