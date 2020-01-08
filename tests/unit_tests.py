@@ -389,12 +389,15 @@ def test_regex_parse():
     assert regex_parse_en('3rd Tuesday in March') is None
     assert regex_parse_en('3/14/2016') is not None
     assert regex_parse_en('36/14/2016') is None
-    assert custom_parse('12122004', OUTPUTFORMAT) is None
-    assert custom_parse('20041212', OUTPUTFORMAT) is not None
-    assert custom_parse('1212-20-04', OUTPUTFORMAT) is None
-    assert custom_parse('2004-12-12', OUTPUTFORMAT) is not None
-    assert custom_parse('33.20.2004', OUTPUTFORMAT) is None
-    assert custom_parse('12.12.2004', OUTPUTFORMAT) is not None
+    assert custom_parse('12122004', OUTPUTFORMAT, False, LATEST_POSSIBLE) is None
+    assert custom_parse('20041212', OUTPUTFORMAT, False, LATEST_POSSIBLE) is not None
+    assert custom_parse('20041212', OUTPUTFORMAT, True, LATEST_POSSIBLE) is not None
+    assert custom_parse('1212-20-04', OUTPUTFORMAT, False, LATEST_POSSIBLE) is None
+    assert custom_parse('1212-20-04', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
+    assert custom_parse('2004-12-12', OUTPUTFORMAT, False, LATEST_POSSIBLE) is not None
+    assert custom_parse('2004-12-12', OUTPUTFORMAT, True, LATEST_POSSIBLE) is not None
+    assert custom_parse('33.20.2004', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
+    assert custom_parse('12.12.2004', OUTPUTFORMAT, True, LATEST_POSSIBLE) is not None
 
 
 def test_external_date_parser():

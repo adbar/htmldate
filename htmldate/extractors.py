@@ -103,9 +103,11 @@ GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
 Oktober|November|Dezember''')
-JSON_PATTERN = re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+JSON_PATTERN = \
+  re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 # use of regex module for speed
-GERMAN_PATTERN = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+GERMAN_PATTERN = \
+  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German dates cache
@@ -136,7 +138,7 @@ def extract_url_date(testurl, outputformat):
             if date_validator(dateobject, outputformat) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', dateresult, err)
+            LOGGER.debug('conversion error: %s %s', dateresult, err)
     return None
 
 
@@ -153,7 +155,7 @@ def extract_partial_url_date(testurl, outputformat):
             if date_validator(dateobject, outputformat) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', dateresult, err)
+            LOGGER.debug('conversion error: %s %s', dateresult, err)
     return None
 
 
@@ -215,7 +217,7 @@ def regex_parse_en(string):
     return dateobject
 
 
-def custom_parse(string, outputformat):
+def custom_parse(string, outputformat, extensive_search, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
     # '201709011234' not covered by dateparser # regex was too slow
@@ -229,6 +231,21 @@ def custom_parse(string, outputformat):
         if date_validator(candidate, '%Y-%m-%d') is True:
             LOGGER.debug('ymd match: %s', candidate)
             return convert_date(candidate, '%Y-%m-%d', outputformat)
+    # much faster
+    if string[0:4].isdigit():
+        # try speedup with ciso8601 (if installed)
+        try:
+            if extensive_search is True:
+                result = parse_datetime(string)
+            # speed-up by ignoring time zone info if ciso8601 is installed
+            else:
+                result = parse_datetime_as_naive(string)
+            if date_validator(result, outputformat, latest=max_date) is True:
+                LOGGER.debug('parsing result: %s', result)
+                converted = result.strftime(outputformat)
+                return converted
+        except ValueError:
+            LOGGER.debug('parsing error: %s', string)
     # %Y-%m-%d search
     match = YMD_PATTERN.search(string)
     if match:
@@ -306,23 +323,8 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     # just time/single year, not a date
     if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
         return None
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601
-        try:
-            if extensive_search is True:
-                result = parse_datetime(string)
-            # speed-up by ignoring time zone info if ciso8601 is installed
-            else:
-                result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat, latest=max_date) is True:
-                LOGGER.debug('parsing result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
-        except ValueError:
-            LOGGER.debug('parsing error: %s', string)
     # faster
-    customresult = custom_parse(string, outputformat)
+    customresult = custom_parse(string, outputformat, extensive_search, max_date)
     if customresult is not None:
         return customresult
     # slow but extensive search
