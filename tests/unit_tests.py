@@ -103,6 +103,8 @@ MOCK_PAGES = { \
 'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html',
 'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': 'revolutionpermanente.fr.antonin.html',
 'http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/': 'wara-enforcement.org.guinee.html',
+'https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad': 'ebene11.com.autocad.html',
+'https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/': 'acredis.com.augenlidstraffung.html',
 }
 # '': '', \
 
@@ -208,7 +210,10 @@ def test_exact_date():
     assert find_date('<html><body>Datum: 10.11.2017</body></html>') == '2017-11-10'
     assert find_date(load_mock_page('https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html')) == '2012-12-22'
     assert find_date(load_mock_page('http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/')) == '2018-02-15'
-    assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03' # JSON dateModified
+    # JSON datePublished
+    assert find_date(load_mock_page('https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/')) == '2018-02-28'
+    # JSON dateModified
+    assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03'
 
     ## meta in document body
     assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), original_date=True) == '2013-08-09'
@@ -276,7 +281,10 @@ def test_exact_date():
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
     assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'
     assert find_date(load_mock_page('https://exporo.de/wiki/europaeische-zentralbank-ezb/')) == '2018-01-01'
-
+    # only found by extensive search
+    assert(find_date(load_mock_page('https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad'), extensive_search=False)) is None
+    assert(find_date(load_mock_page('https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad'), extensive_search=True)) == '2017-01-12'
+    
     # date not in footer but at the start of the article
     assert find_date(load_mock_page('http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/')) == '2016-09-27'
 

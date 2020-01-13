@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="de" class="no-js">
+	<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	
+<base href="https://ebene11.com" />
+
+	<title>Dateien mit Migrationshintergrund - Ein Ablaufplan für den effizienten Umgang mit fremden dwg-Dateien in AutoCAD | Ebene 11 - Webentwicklung . AutoCAD . Schulung</title>
+	<meta name="description" content="Schritt-für-Schritt Anleitung zur Arbeit in AutoCAD mit fremden dwg-Dateien im Planungsprozess" />
+
+	<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+
+
+
+		<link rel="stylesheet" href="/assets/components/minifyx/cache/styles_d45488d23e.min.css" type="text/css" />
+
+
+
+
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/files/images/favicon.ico" />
+
+
+
+
+
+
+
+	</head>
+	<body id="die-arbeit-mit-fremden-dwg-dateien-in-autocad" class="blogArticle">
+
+<header>
+<h1>
+<object data="/assets/files/images/layout/ebene11Logo.svg" type="image/svg+xml" width="241" height="30">
+<img src="/assets/files/images/layout/ebene11LogoSmall.png" alt="Ebene 11" width="241" height="30" />
+</object>
+<span>Webentwicklung . AutoCAD . Schulung</span>
+</h1>
+<nav class="mainnavi">
+<label for="toggleNavi" title="Navigation ein-/ausblenden"></label>
+<input id="toggleNavi" name="toggleNavi" type="checkbox" />
+<ul><li class="first"><a href="https://ebene11.com/" title="Leistungsspektrum, Referenzen" >Home</a></li>
+<li><a href="leistungen/" title="Bei diesen Themen kann ich Ihnen helfen" >Leistungen</a></li>
+<li><a href="portfolio/" title="Was bisher geschah - Kunden &amp; Projekte" >Portfolio</a></li>
+<li class="active"><a href="blog/" title="Schnipsel, Essays, Tutorials und Pamphlete zu AutoCAD, AutoCAD Architecture, HTML, CSS und MODX" >Noch‘n Blog</a></li>
+<li class="last"><a href="kontakt" title="Kommunikation ist alles" >Kontakt</a></li>
+</ul>
+</nav>
+
+</header>
+
+<article id="content">
+
+<header>
+<h2>Dateien mit Migrationshintergrund <span>Ein Ablaufplan für den effizienten Umgang mit fremden dwg-Dateien in AutoCAD</span></h2>
+<p>Wenn man nicht alles selber zeichnet, besteht immer die Gefahr unbeabsichtigt die eigenen Planungsdateien unnötig aufzublähen. Layer, Textstile, Bemaßungsstile, Linientypen, Blockdefinitionen, Maßstäbe und was es nicht sonst noch alles gibt … schnell eingefangen, extrem mühsam wieder rauszubekommen. Um diese Stolperfallen zu umschiffen, sollte man sich eine gute Strategie zum Umgang mit externer Planung überlegen. Deshalb hier eine kurze Anleitung zum einfachen Umgang mit fremden Dateien im Planungsprozess.</p>
+</header>
+
+
+<aside class="blogData">
+	<dl>
+		<dt>Datum</dt>
+		<dd>12.01.2017</dd>
+		<dt>Kategorie</dt>
+		<dd><a href="autocad/">AutoCAD</a></dd>
+
+		<dt>Schlagworte</dt>
+		<dd class="tag"><a href="tags?tag=AutoCAD&amp;key=blogTags">AutoCAD</a></dd><dd class="tag"><a href="tags?tag=externe+Referenzen&amp;key=blogTags">externe Referenzen</a></dd><dd class="tag"><a href="tags?tag=Fremdplanung&amp;key=blogTags">Fremdplanung</a></dd>
+
+		
+	</dl>
+</aside>
+<figure>
+<img src="" alt="" width="1200" height="400" />
+<figcaption>
+
+</figcaption>
+</figure>
+
+
+<h3>Ziel</h3>
+<p>Grundsätzlich sollten die eigenen Dateien sauber getrennt von etwaigen fremden Inhalten gehalten werden. Wenn man erst gar nichts vermischt, muss man später nichts sortieren. Zudem erleichtert es den Datenaustausch und die Projektzusammenarbeit von mehreren Beteiligten ungemein, wenn schon auf Systemebene klare Strukturen geschaffen werden. Je mehr Eckdaten schon vorher festgeschrieben sind (CAD-Pflichtenheft), desto weniger umständlich wird der Umgang mit den Daten, d.h. im Regelfall sind nicht alle der folgenden Schritte zwingend erforderlich.</p>
+
+<h3>Ablauf</h3>
+<ol>
+	<li>Original (also die fremde Datei) sicher abspeichern. So kann man im Notfall jederzeit wieder bei Null anfangen.</li>
+	<li>Eine Kopie der Datei in das passende Projektverzeichnis legen.</li>
+	<li>Die dwg aus Schritt 2 einmal durch den Vollwaschgang jagen, das meint:
+		<ol>
+			<li>Die dwg wiederherstellen, also in AutoCAD mit <kbd>wherst</kbd> öffnen und dann speichern.</li>
+			<li>Die Datei prüfen (<kbd>Prüfung</kbd>) und dabei alle Fehler beseitigen lassen. Am Ende die Datei speichern.</li>
+			<li>Die Datei bereinigen (<kbd>bereinig</kbd>), inkl. verschachtelte Elemente, dann speichern</li>
+			<li>Noch einmal prüfen lassen, also Schritt 2 wiederholen.</li>
+		</ol>
+	</li>
+	<li>Einheiten prüfen
+		<ol>
+			<li>Eine bekannte Strecke, z.B. Treppenbreite, Türöffnung o.ä., abmessen (<kbd>abstand</kbd>).</li>
+			<li>Wenn sich bei Schritt 1 herausstellt, dass nicht im Maßstab 1:1 gezeichnet wurde, dann:
+<ol>
+<li>alle Layer einschalten und tauen (ggf. vorher Layerstatus sichern)</li>
+<li>alle Objekte wählen (Strg+A)</li>
+<li>Skalieren (<kbd>varia</kbd>) mit dem Kehrwert des Maßstabs als Skalierfaktor</li>
+</ol>
+			<li>Den Einfügungsmaßstab überprüfen (<kbd>einheit</kbd>) und ggf. korrigieren.</li>
+			<li>Datei speichern</li>
+		</ol>
+	</li>
+	<li>Eine eigene Datei anlegen bzw. öffnen</li>
+	<li>Die fremde Datei als externe Referenz einfügen. Im Idealfall liegen in der Fremdzeichnung die Objekte schon sinnvoll auf den Nullpunkt des WKS bezogen. Wenn dies nicht der Fall ist und man es auch nicht ändern kann/darf/will, sollte man zumindest die Referenz in der Nähe des Nullpunktes platzieren.</li>
+</ol>
+
+<h3>Fazit</h3>
+<p>Je mehr verbindliche Projektvorgaben (Einfügungsmaßstab, Projektnullpunkt etc.) vereinbart sind, desto geringer fällt der Aufwand aus. Einmal gut strukturiert, lassen sich auf diesem Wege mühelos fremde Planungen integrieren und gezielt nur die Daten austauschen, die der Gegenüber auch wirklich braucht.</p>
+
+
+
+<section class="comments"> 
+    <h2>Kommentare (0)</h2> 
+      
+    <div id="topofcomments-qcom"></div> 
+
+
+<p>Es wurden noch keine Kommentare geschrieben.</p>
+
+    
+</section>
+
+<section class="leaveComment">
+<h2>Meine Meinung</h2>
+<p>Andere Meinung? Fragen? Ergänzungen? Hier ist der Platz dafür. Bitte beachte: Da hier jeder schreiben kann, werden zum Schutz vor Spam und grenzwertigen Inhalten alle Kommentare vor der Veröffentlichung von mir gegengelesen. Deine E-Mailadresse wird ausschließlich für eventuelle Rückfragen und ggf. eine Benachrichtigung bei neuen Antworten verwendet und keinesfalls an Dritte weitergegeben.</p>
+ 
+<form id="addComment-qcom" action="die-arbeit-mit-fremden-dwg-dateien-in-autocad#topofcomments-qcom" method="post">
+
+<ul class="commentPost">
+
+
+
+<li>
+<input type="hidden" name="nospam" value="" />
+<input type="hidden" name="thread" value="blogArticle50" /> 
+<input type="hidden" name="parent" value="0" /> 
+<input type="hidden" name="auth_nonce" value="" /> 
+<input type="hidden" name="preview_mode" value="" />
+</li>
+
+<li class="commentName">
+<label for="commentName-qcom">Name <span>(nötig, öffentlich)</span></label>
+<input type="text" name="name" id="commentName-qcom" value="" />
+</li>
+
+<li class="commentEmail">
+<label for="commentEmail-qcom">E-Mail <span>(nötig, nicht öffentlich)</span></label>
+<input type="text" name="email" id="commentEmail-qcom" value="" />
+</li>
+     
+<li class="commentWebsite">
+<label for="commentWebsite-qcom">Website <span>(freiwillig, öffentlich)</span></label>
+<input type="text" name="website" id="commentWebsite-qcom" value="" />
+</li>
+ 
+<li class="commentBox">
+<label for="commentBox-qcom">Kommentar <span>(nötig, öffentlich)</span></label>
+<textarea name="comment" id="commentBox-qcom" rows="5"></textarea> 
+
+</li>
+
+<li class="notifyMe">
+<label for="commentNotify-qcom">Bei neuen Antworten benachrichtigen</label>
+<input type="checkbox" class="checkbox" value="1" name="notify" id="commentNotify-qcom"  />
+</li>  
+
+<li>
+
+<button type="submit" name="quip-post" value="1">Absenden</button>
+</li>
+</ul> 
+</form> 
+</section>
+
+</article>
+
+<aside class="blogNavi">
+<h2>Tags &amp; Co</h2>
+<div class="tagcloud">
+<h3>Schlagworte</h3>
+<ul class="tagList">
+<li>
+<a href="tags?tag=AutoCAD">AutoCAD</a> (5)
+</li>
+<li>
+<a href="tags?tag=CSS3">CSS3</a> (3)
+</li>
+<li>
+<a href="tags?tag=Slider">Slider</a> (3)
+</li>
+<li>
+<a href="tags?tag=Plotten">Plotten</a> (2)
+</li>
+<li>
+<a href="tags?tag=Checkbox-Hack">Checkbox-Hack</a> (2)
+</li>
+<li>
+<a href="tags?tag=Transition">Transition</a> (2)
+</li>
+<li>
+<a href="tags?tag=Beschriftungsma%C3%9Fstab">Beschriftungsmaßstab</a> (2)
+</li>
+<li>
+<a href="tags?tag=Layer">Layer</a> (1)
+</li>
+<li>
+<a href="tags?tag=Layerstruktur">Layerstruktur</a> (1)
+</li>
+<li>
+<a href="tags?tag=Plotstile">Plotstile</a> (1)
+</li>
+</ul>
+</div>
+<div>
+<h3>Verwandte Artikel</h3>
+
+<ul class="relatedArticles">
+<li><h4><a href="attribute-mit-beschriftungsfunktion">Attribute mit Beschriftungsfunktion</a></h4>
+<p>Wie man in AutoCAD Attribute mit Beschriftungsfunktionalität erstellt und in Blöcken verwendet.</p>
+</li>
+<li><h4><a href="beschriftungsfunktion-in-autocad">Beschriftungsfunktion in AutoCAD</a></h4>
+<p>Grundlagen zu der mit AutoCAD 2008 eingeführten Beschriftungsfunktion für Objekte wie Texte, Bemassungen, Blöcke, Schraffuren etc.</p>
+</li>
+<li><h4><a href="layerstruktur-in-autocad">Layerstruktur in AutoCAD</a></h4>
+<p>Strategien zur Erstellung einer Layerstruktur (Layernamen und -eigenschaften) für AutoCAD.</p>
+</li>
+</ul>
+
+</div>
+<div class="latestComments">
+<h3>Neue Kommentare</h3>
+<ul class="commentList">
+<li class="quip-latest-comment">
+<h4><a href="slider-als-keyframe-animation-mit-css3#qcom294">Slider als Keyframe-Animation mit CSS3</a> <span class="commentDate">vor 2 Monaten, 1 Woche</span></h4>
+<p>Man muss schauen, dass sich die&#8230;</p>
+</li>
+<li class="quip-latest-comment quip-latest-comment-alt">
+<h4><a href="slider-als-keyframe-animation-mit-css3#qcom293">Slider als Keyframe-Animation mit CSS3</a> <span class="commentDate">vor 2 Monaten, 2 Wochen</span></h4>
+<p>Hey Jan,<br />
+<br />
+ich würde&#8230;</p>
+</li>
+<li class="quip-latest-comment">
+<h4><a href="slider-mit-purem-css#qcom288">Accordion, Slider, Tabs &amp; Co. mit purem CSS</a> <span class="commentDate">vor 3 Monaten, 1 Woche</span></h4>
+<p>Vielen Dank für diese kurze und&#8230;</p>
+</li>
+<li class="quip-latest-comment quip-latest-comment-alt">
+<h4><a href="imageslider-ohne-javascript#qcom287">Imageslider ohne Javascript</a> <span class="commentDate">vor 3 Monaten, 2 Wochen</span></h4>
+<p>Super Tool hab endlich das gefunden&#8230;</p>
+</li>
+<li class="quip-latest-comment">
+<h4><a href="imageslider-ohne-javascript#qcom286">Imageslider ohne Javascript</a> <span class="commentDate">vor 4 Monaten</span></h4>
+<p>@MJE: Ich würde es mit einer absoluten&#8230;</p>
+</li>
+</ul>
+</div>
+</aside>
+
+<footer>
+<a href="kontakt#datenschutz">Datenschutz</a>
+<address>
++49 7266 4540055 | <a href="mailto:info@ebene11.com">info@ebene11.com</a>
+</address>
+</footer>
+
+
+
+
+
+
+
+ 
+<script type="text/javascript" src="/assets/components/minifyx/cache/scripts_32326db0d3.min.js"></script>
+
+
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u=(("https:" == document.location.protocol) ? "https" : "http") + "://analytics.ebene11.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 1]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+    g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+
+</script>
+<noscript><p><img src="http://analytics.ebene11.com/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<script type="text/javascript">
+     SyntaxHighlighter.all();
+</script>
+</body>
+</html>
