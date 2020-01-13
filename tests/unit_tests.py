@@ -105,6 +105,8 @@ MOCK_PAGES = { \
 'http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/': 'wara-enforcement.org.guinee.html',
 'https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad': 'ebene11.com.autocad.html',
 'https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/': 'acredis.com.augenlidstraffung.html',
+'https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/': 'hertie-school.org.leyen.html',
+'https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/': 'adac.de.kindersitztest.html',
 }
 # '': '', \
 
@@ -221,6 +223,7 @@ def test_exact_date():
     assert find_date(load_mock_page('http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/')) == '2013-05-03'
     assert find_date(load_mock_page('http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php')) == '2015-12-14'
     assert find_date(load_mock_page('https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa')) == '2019-02-20'
+    assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together'), extensive_search=False) is None
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together'), extensive_search=True) == '2018-05-06'
 
     # abbr in document body
@@ -233,9 +236,12 @@ def test_exact_date():
     assert find_date('<html><body><abbr data-utime="1438091078" class="something">A date</abbr></body></html>') == '2015-07-28'
     assert find_date('<html><body><abbr data-utime="143809-1078" class="something">A date</abbr></body></html>') is None
 
+    # time in document body
+    assert find_date('<html><body><time>2018-01-04</time></body></html>') == '2018-01-04'
+    assert find_date(load_mock_page('https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/')) == '2018-10-23'
+
     ## other expressions in document body
     assert find_date('<html><body>"datePublished":"2018-01-04"</body></html>') == '2018-01-04'
-    assert find_date('<html><body><time>2018-01-04</time></body></html>') == '2018-01-04'
     assert find_date('<html><body>Stand: 1.4.18</body></html>') == '2018-04-01'
     assert find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-09'
 
@@ -284,7 +290,9 @@ def test_exact_date():
     # only found by extensive search
     assert(find_date(load_mock_page('https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad'), extensive_search=False)) is None
     assert(find_date(load_mock_page('https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad'), extensive_search=True)) == '2017-01-12'
-    
+    assert(find_date(load_mock_page('https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/'), extensive_search=False)) is None
+    assert(find_date(load_mock_page('https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/'), extensive_search=True)) == '2019-12-02' # 2019-02-12?
+
     # date not in footer but at the start of the article
     assert find_date(load_mock_page('http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/')) == '2016-09-27'
 
