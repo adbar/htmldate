@@ -59,7 +59,7 @@ DATE_EXPRESSIONS = [
     """//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
     or contains(@class, 'entry-meta') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
-    contains(@class, 'article__date')]""",
+    contains(@class, 'article__date') or contains(@class, 'post_detail')]""",
     """//*[@class='meta' or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
     or contains(@class, 'byline') or contains(@class, 'subline')]""",
@@ -79,6 +79,12 @@ DATE_EXPRESSIONS = [
 # supply more expressions for more languages
 ADDITIONAL_EXPRESSIONS = [
     "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
+]
+
+# discard parts of the webpage
+DISCARD_EXPRESSIONS = [
+    './/footer',
+    './/*[(self::div or self::section)][@id="footer" or @class="footer"]',
 ]
 
 # Regex cache
@@ -123,6 +129,16 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
                'Oktober': '10', 'October': '10', 'Oct': '10',
                'November': '11', 'Nov': '11',
                'Dezember': '12', 'December': '12', 'Dec': '12'}
+
+
+def discard_unwanted(tree):
+    '''Delete unwanted sections of an HTML document and return them as a list'''
+    my_discarded = list()
+    for expr in DISCARD_EXPRESSIONS:
+        for subtree in tree.xpath(expr):
+            my_discarded.append(subtree)
+            subtree.getparent().remove(subtree)
+    return tree, my_discarded
 
 
 def extract_url_date(testurl, outputformat):

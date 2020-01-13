@@ -46,62 +46,63 @@ MOCK_PAGES = { \
 'http://carta.info/der-neue-trend-muss-statt-wunschkoalition/': 'carta.info.html',
 'https://500px.com/photo/26034451/spring-in-china-by-alexey-kruglov': '500px.com.spring.html',
 'https://bayern.de/': 'bayern.de.html',
-'https://creativecommons.org/about/': 'creativecommons.org.html', \
-'https://die-partei.net/sh/': 'die-partei.net.sh.html', \
-'https://en.blog.wordpress.com/': 'blog.wordpress.com.html', \
-'https://en.support.wordpress.com/': 'support.wordpress.com.html', \
-'https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504': 'futurezone.at.cc.html', \
-'https://github.com/adbar/htmldate': 'github.com.html', \
-'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html', \
-'https://pixabay.com/en/service/terms/': 'pixabay.com.tos.html', \
-'https://www.austria.info/': 'austria.info.html', \
-'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html', \
-'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html', \
-'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html', \
-'https://www.creativecommons.at/faircoin-hackathon': 'creativecommons.at.faircoin.html', \
-'https://www.deutschland.de/en': 'deutschland.de.en.html', \
-'https://www.eff.org/files/annual-report/2015/index.html': 'eff.org.2015.html', \
-'https://www.facebook.com/visitaustria/': 'facebook.com.visitaustria.html', \
-'https://www.gnu.org/licenses/gpl-3.0.en.html': 'gnu.org.gpl.html', \
-'https://www.goodform.ch/blog/schattiges_plaetzchen': 'goodform.ch.blog.html', \
-'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html', \
-'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': 'intel.com.tos.html', \
-'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html', \
-'https://www.rosneft.com/business/Upstream/Licensing/': 'rosneft.com.licensing.html', \
-'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': 'scs78.de.html', \
-'https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html': 'tagesausblick.de.dow.html', \
-'https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html': 'transgen.de.aktuell.html', \
-'https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html': 'weltwoche.ch.html', \
-'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html', \
-'http://unexpecteduser.blogspot.de/2011/': 'unexpecteduser.2011.html', \
-'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html', \
-'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html', \
-'http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/': 'freundeskreis-videoclips.de.html', \
-'http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/': 'greenpeace.org.forests.html', \
-'http://www.heimicke.de/chronik/zahlen-und-daten/': 'heimicke.de.zahlen.html', \
-'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': 'hobby-werkstatt-blog.de.roomba.html', \
-'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html', \
-'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html', \
-'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': 'jovelstefan.de.parken.html', \
-'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html', \
-'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html', \
-'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html', \
-'http://www.stuttgart.de/': 'stuttgart.de.html', \
-'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': 'paris-luttes.info.html', \
-'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.de.riverdale.html', \
-'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.de.fallinlove.html', \
-'http://www.loldf.org/spip.php?article717': 'loldf.org.html', \
-'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.de.12wege.html', \
-'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.de.kraeuter.html', \
-'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.at.html', \
-'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': 'blog.wikimedia.interactivemaps.html', \
-'https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique': 'mediapart.fr.violences.html', \
-'https://verfassungsblog.de/the-first-decade/': 'verfassungsblog.de.decade.html', \
-'https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145': 'cric-grenoble.info.radio.html', \
-'https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie': 'kurz.at.wasserstoff.html', \
-'https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany': 'la-bas.org.porte.html', \
-'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html', \
-'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': 'revolutionpermanente.fr.antonin.html', \
+'https://creativecommons.org/about/': 'creativecommons.org.html',
+'https://die-partei.net/sh/': 'die-partei.net.sh.html',
+'https://en.blog.wordpress.com/': 'blog.wordpress.com.html',
+'https://en.support.wordpress.com/': 'support.wordpress.com.html',
+'https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504': 'futurezone.at.cc.html',
+'https://github.com/adbar/htmldate': 'github.com.html',
+'https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/': 'netzpolitik.org.abmahnungen.html',
+'https://pixabay.com/en/service/terms/': 'pixabay.com.tos.html',
+'https://www.austria.info/': 'austria.info.html',
+'https://www.befifty.de/home/2017/7/12/unter-uns-montauk': 'befifty.montauk.html',
+'https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa': 'beltz.de.didakta.html',
+'https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673': 'channelpartner.de.berufe.html',
+'https://www.creativecommons.at/faircoin-hackathon': 'creativecommons.at.faircoin.html',
+'https://www.deutschland.de/en': 'deutschland.de.en.html',
+'https://www.eff.org/files/annual-report/2015/index.html': 'eff.org.2015.html',
+'https://www.facebook.com/visitaustria/': 'facebook.com.visitaustria.html',
+'https://www.gnu.org/licenses/gpl-3.0.en.html': 'gnu.org.gpl.html',
+'https://www.goodform.ch/blog/schattiges_plaetzchen': 'goodform.ch.blog.html',
+'https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529': 'horizont.net.html',
+'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': 'intel.com.tos.html',
+'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': 'pferde.projekte.de.html',
+'https://www.rosneft.com/business/Upstream/Licensing/': 'rosneft.com.licensing.html',
+'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': 'scs78.de.html',
+'https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html': 'tagesausblick.de.dow.html',
+'https://www.transgen.de/aktuell/2687.afrikanische-schweinepest-genome-editing.html': 'transgen.de.aktuell.html',
+'https://www.weltwoche.ch/ausgaben/2019-4/artikel/forbes-die-weltwoche-ausgabe-4-2019.html': 'weltwoche.ch.html',
+'https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html': 'wunderweib.html',
+'http://unexpecteduser.blogspot.de/2011/': 'unexpecteduser.2011.html',
+'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': 'viehbacher.com.forderungsbetreibung.html',
+'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': 'eza.gv.at.html',
+'http://www.freundeskreis-videoclips.de/waehlen-sie-car-player-tipps-zur-auswahl-der-besten-car-cd-player/': 'freundeskreis-videoclips.de.html',
+'http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/': 'greenpeace.org.forests.html',
+'http://www.heimicke.de/chronik/zahlen-und-daten/': 'heimicke.de.zahlen.html',
+'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': 'hobby-werkstatt-blog.de.roomba.html',
+'http://www.hundeverein-kreisunna.de/termine.html': 'hundeverein-kreisunna.de.html',
+'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': 'hundeverein-querfurt.de.html',
+'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': 'jovelstefan.de.parken.html',
+'http://www.klimawandel-global.de/klimaschutz/energie-sparen/elektromobilitat-der-neue-trend/': 'klimawandel-global.de.html',
+'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': 'medef.fr.dispute.html',
+'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': 'pbrunst.de.html',
+'http://www.stuttgart.de/': 'stuttgart.de.html',
+'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': 'paris-luttes.info.html',
+'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': 'brigitte.de.riverdale.html',
+'https://www.ldt.de/ldtblog/fall-in-love-with-black/': 'ldt.de.fallinlove.html',
+'http://www.loldf.org/spip.php?article717': 'loldf.org.html',
+'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': 'beltz.de.12wege.html',
+'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': 'oberstdorfresort.de.kraeuter.html',
+'https://www.wienbadminton.at/news/119843/Come-Together': 'wienbadminton.at.html',
+'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': 'blog.wikimedia.interactivemaps.html',
+'https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique': 'mediapart.fr.violences.html',
+'https://verfassungsblog.de/the-first-decade/': 'verfassungsblog.de.decade.html',
+'https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145': 'cric-grenoble.info.radio.html',
+'https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie': 'kurz.at.wasserstoff.html',
+'https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany': 'la-bas.org.porte.html',
+'https://exporo.de/wiki/europaeische-zentralbank-ezb/': 'exporo.de.ezb.html',
+'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': 'revolutionpermanente.fr.antonin.html',
+'http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/': 'wara-enforcement.org.guinee.html',
 }
 # '': '', \
 
@@ -194,6 +195,7 @@ def test_exact_date():
     assert find_date('<html><body><time datetime="08:00"></body></html>') is None
     assert find_date('<html><body><time datetime="2014-07-10 08:30:45.687"></body></html>') == '2014-07-10'
     assert find_date('<html><head></head><body><time class="entry-time" itemprop="datePublished" datetime="2018-04-18T09:57:38+00:00"></body></html>') == '2018-04-18'
+    print(find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03')
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03'
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00"></time></p></footer></body></html>') == '2019-01-03'
     # removed from HTML5 https://www.w3schools.com/TAgs/att_time_datetime_pubdate.asp
@@ -274,6 +276,10 @@ def test_exact_date():
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
     assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'
     assert find_date(load_mock_page('https://exporo.de/wiki/europaeische-zentralbank-ezb/')) == '2018-01-01'
+
+    # date not in footer but at the start of the article
+    assert find_date(load_mock_page('http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/')) == '2016-09-27'
+
 
 
 def test_approximate_date():
@@ -472,7 +478,6 @@ def test_parser():
     testargs = ['-f', '-v', '--original', '-m', '2015-12-31', '-u', 'https://www.example.org']
     with patch.object(sys, 'argv', testargs):
         args = parse_args(testargs)
-        print(args)
         assert args.fast is True
         assert args.original is True
         assert args.verbose is True

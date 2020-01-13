@@ -11,14 +11,14 @@ import logging
 import re
 
 from collections import Counter
-
+from copy import deepcopy
 from lxml import etree, html
 
 # own
 from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
-                         extract_url_date, extract_partial_url_date,
-                         german_text_search, json_search, timestamp_search,
-                         try_ymd_date)
+                         discard_unwanted, extract_url_date,
+                         extract_partial_url_date, german_text_search,
+                         json_search, timestamp_search, try_ymd_date)
 from .settings import HTML_CLEANER
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -610,10 +610,18 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         return abbr_result
 
     # expressions + text_content
+    # first try in pruned tree
+    search_tree, discarded = discard_unwanted(deepcopy(tree))
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
+        dateresult = examine_date_elements(search_tree, expr, outputformat, extensive_search, max_date)
         if dateresult is not None:
             return dateresult
+    # search in discarded parts (currently: footer)
+    for subtree in discarded:
+        for expr in DATE_EXPRESSIONS:
+            dateresult = examine_date_elements(subtree, expr, outputformat, extensive_search, max_date)
+            if dateresult is not None:
+                return dateresult
 
     # supply more expressions (other languages)
     if extensive_search is True:
