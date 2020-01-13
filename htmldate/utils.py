@@ -24,14 +24,11 @@ except ImportError:
 import requests
 from lxml import etree, html
 
-from .settings import MAX_FILE_SIZE
+from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
 
 LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# LXML
-HTML_PARSER = html.HTMLParser()
 
 
 def decode_response(response, chunk_size=65536):
@@ -45,7 +42,6 @@ def decode_response(response, chunk_size=65536):
             htmltext = response.text
     else:
         htmltext = response.text
-    # return here
     return htmltext
 
 
@@ -58,14 +54,15 @@ def fetch_url(url):
     Raises:
         Nothing.
     """
-
     # customize headers
     headers = {
         'Connection': 'close',  # another way to cover tracks
-        # 'User-Agent': '', # your string here
+        # 'User-Agent': '',  # your string here
     }
     # send
     try:
+        # read by streaming chunks (stream=True, iter_content=xx)
+        # so we can stop downloading as soon as MAX_FILE_SIZE is reached
         response = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
     except (requests.exceptions.MissingSchema, requests.exceptions.InvalidURL):
         LOGGER.error('malformed URL: %s', url)
@@ -81,24 +78,22 @@ def fetch_url(url):
         # safety checks
         if response.status_code != 200:
             LOGGER.error('not a 200 response: %s', response.status_code)
-        elif response.text is None or len(response.text) < 100:
+        elif response.text is None or len(response.text) < MIN_FILE_SIZE:
             LOGGER.error('too small/incorrect: %s %s', url, len(response.text))
         elif len(response.text) > MAX_FILE_SIZE:
             LOGGER.error('too large: %s %s', url, len(response.text))
         else:
             return decode_response(response)
-
-    # catchall
     return None
 
 
 def load_html(htmlobject):
-    """Load object given as input and validate its type (accepted:
-       LXML tree and string, HTML document or URL)"""
+    """Load object given as input and validate its type
+    (accepted: LXML tree and string, HTML document or URL)
+    """
     tree = None
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
-        # copy tree
-        tree = htmlobject
+        return htmlobject
     elif isinstance(htmlobject, str):
         # the string is a URL, download it
         if re.search(r'^https?://[^ ]+$', htmlobject):
@@ -111,7 +106,7 @@ def load_html(htmlobject):
         # robust parsing
         try:
             # parse # html.parse(StringIO(htmlobject))
-            tree = html.parse(StringIO(htmlobject), parser=HTML_PARSER)
+            tree = html.parse(StringIO(htmlobject))  # parser=html.HTMLParser()
         except UnicodeDecodeError as err:
             LOGGER.error('unicode %s', err)
         except ValueError:
