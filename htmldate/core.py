@@ -1,6 +1,6 @@
 # pylint:disable-msg=E0611,I1101
-"""
-Module bundling all functions needed to determine the date of HTML strings or LXML trees.
+"""Module bundling all functions needed to determine the date of HTML strings
+or LXML trees.
 """
 
 ## This file is available from https://github.com/adbar/htmldate
@@ -59,7 +59,10 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
         # more than 4 digits required
         if len(list(filter(str.isdigit, toexamine))) < 4:
             continue
-        LOGGER.debug('analyzing (HTML): %s', html.tostring(elem, pretty_print=False, encoding='unicode').translate({ord(c):None for c in '\n\t\r'}).strip()[:100])
+        LOGGER.debug('analyzing (HTML): %s', html.tostring(
+            elem, pretty_print=False, encoding='unicode').translate(
+                {ord(c): None for c in '\n\t\r'}
+            ).strip()[:100])
         attempt = try_ymd_date(toexamine, outputformat, extensive_search, max_date)
         if attempt is not None:
             return attempt
@@ -90,94 +93,107 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
     """
     headerdate = None
     reserve = None
-    try:
-        # loop through all meta elements
-        for elem in tree.xpath('//meta'):
-            # safeguard
-            if len(elem.attrib) < 1:
-                continue
-            # property attribute
-            if 'property' in elem.attrib and 'content' in elem.attrib:
-                # original date
-                if original_date is True:
-                    if elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished'):
-                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                        headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                        if headerdate is not None:
-                            break
-                # modified date: override published_time
-                else:
-                    if elem.get('property').lower() in ('article:modified_time', 'og:article:modified_time', 'og:updated_time'):
-                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                        attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                        if attempt is not None:
-                            headerdate = attempt
-                            break
-                    elif elem.get('property').lower() in ('article:published_time', 'bt:pubdate', 'dc:created', 'dc:date', 'og:article:published_time', 'og:published_time', 'sailthru.date', 'rnews:datepublished') and headerdate is None:
-                        LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                        headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-            # name attribute
-            elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib:
-                # url
-                if elem.get('name').lower() == 'og:url':
-                    headerdate = extract_url_date(elem.get('content'), outputformat)
-                # date
-                elif elem.get('name').lower() in ('article.created', 'article_date_original', 'article.published', 'created', 'cxenseparse:recs:publishtime', 'date', 'date_published', 'dc.date', 'dc.date.created', 'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time', 'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date', 'published-date', 'publication_date', 'sailthru.date', 'timestamp'):
-                    LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+    # loop through all meta elements
+    for elem in tree.xpath('//meta'):
+        # safeguard
+        if len(elem.attrib) < 1:
+            continue
+        # property attribute
+        if 'property' in elem.attrib and 'content' in elem.attrib:
+            # original date
+            if original_date is True:
+                if elem.get('property').lower() in (
+                        'article:published_time', 'bt:pubdate', 'dc:created',
+                        'dc:date', 'og:article:published_time',
+                        'og:published_time', 'sailthru.date', 'rnews:datepublished'
+                    ):
+                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                # modified
-                elif elem.get('name').lower() in ('lastmodified', 'last-modified') and original_date is False:
-                    LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-            elif headerdate is None and 'pubdate' in elem.attrib:
-                if elem.get('pubdate').lower() == 'pubdate':
-                    LOGGER.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-            # other types # itemscope?
-            elif headerdate is None and 'itemprop' in elem.attrib:
-                if elem.get('itemprop').lower() in ('datecreated', 'datepublished', 'pubyear') and headerdate is None:
-                    LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    if 'datetime' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
-                    elif 'content' in elem.attrib:
-                        headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                # override
-                elif elem.get('itemprop').lower() == 'datemodified' and original_date is False:
-                    LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    if 'datetime' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
-                    elif 'content' in elem.attrib:
-                        attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    if headerdate is not None:
+                        break
+            # modified date: override published_time
+            else:
+                if elem.get('property').lower() in (
+                        'article:modified_time', 'og:article:modified_time',
+                        'og:updated_time'
+                    ):
+                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                    attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
                     if attempt is not None:
                         headerdate = attempt
-                # reserve with copyrightyear
-                elif headerdate is None and elem.get('itemprop').lower() == 'copyrightyear':
-                    LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    if 'content' in elem.attrib:
-                        attempt = '-'.join([elem.get('content'), '01', '01'])
-                        if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
-                            reserve = attempt
-            # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
-            elif headerdate is None and 'http-equiv' in elem.attrib:
-                if original_date is True and elem.get('http-equiv').lower() == 'date':
-                    LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                        break
+                elif elem.get('property').lower() in (
+                        'article:published_time', 'bt:pubdate', 'dc:created',
+                        'dc:date', 'og:article:published_time',
+                        'og:published_time', 'sailthru.date',
+                        'rnews:datepublished'
+                    ) and headerdate is None:
+                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                if elem.get('http-equiv').lower() in ('date', 'last-modified'):
-                    LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+        # name attribute
+        elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib:
+            # url
+            if elem.get('name').lower() == 'og:url':
+                headerdate = extract_url_date(elem.get('content'), outputformat)
+            # date
+            elif elem.get('name').lower() in (
+                    'article.created', 'article_date_original',
+                    'article.published', 'created', 'cxenseparse:recs:publishtime',
+                    'date', 'date_published', 'dc.date', 'dc.date.created',
+                    'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time',
+                    'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date',
+                    'published-date', 'publication_date', 'sailthru.date',
+                    'timestamp'):
+                LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+            # modified
+            elif elem.get('name').lower() in ('lastmodified', 'last-modified') and original_date is False:
+                LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+        elif headerdate is None and 'pubdate' in elem.attrib:
+            if elem.get('pubdate').lower() == 'pubdate':
+                LOGGER.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+        # other types # itemscope?
+        elif headerdate is None and 'itemprop' in elem.attrib:
+            if elem.get('itemprop').lower() in (
+                    'datecreated', 'datepublished', 'pubyear'
+                ) and headerdate is None:
+                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                if 'datetime' in elem.attrib:
+                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                elif 'content' in elem.attrib:
                     headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-
-        # if nothing was found, look for lower granularity (so far: "copyright year")
-        if headerdate is None and reserve is not None:
-            LOGGER.debug('opting for reserve date with less granularity')
-            headerdate = reserve
-
-    except etree.XPathEvalError as err:
-        LOGGER.error('XPath %s', err)
-        return None
-
-    if headerdate is not None:
-        return headerdate
-    return None
+            # override
+            elif elem.get('itemprop').lower() == 'datemodified' and original_date is False:
+                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                if 'datetime' in elem.attrib:
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                elif 'content' in elem.attrib:
+                    attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                if attempt is not None:
+                    headerdate = attempt
+            # reserve with copyrightyear
+            elif headerdate is None and elem.get('itemprop').lower() == 'copyrightyear':
+                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                if 'content' in elem.attrib:
+                    attempt = '-'.join([elem.get('content'), '01', '01'])
+                    if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
+                        reserve = attempt
+        # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
+        elif headerdate is None and 'http-equiv' in elem.attrib:
+            if original_date is True and elem.get('http-equiv').lower() == 'date':
+                LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+            if elem.get('http-equiv').lower() in ('date', 'last-modified'):
+                LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+    # if nothing was found, look for lower granularity (so far: "copyright year")
+    if headerdate is None and reserve is not None:
+        LOGGER.debug('opting for reserve date with less granularity')
+        headerdate = reserve
+    # return value
+    return headerdate
 
 
 def select_candidate(occurrences, catch, yearpat, original_date, max_date):
@@ -600,12 +616,18 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             return dateresult
 
     # first, try header
-    header_result = examine_header(tree, outputformat, extensive_search, original_date, max_date)
+    try:
+        header_result = examine_header(tree, outputformat, extensive_search,
+                                       original_date, max_date)
+    except etree.XPathEvalError as err:
+        LOGGER.error('header XPath %s', err)
     if header_result is not None:
         return header_result
 
     # try abbr elements
-    abbr_result = examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date)
+    abbr_result = examine_abbr_elements(
+        tree, outputformat, extensive_search, original_date, max_date
+    )
     if abbr_result is not None:
         return abbr_result
 
@@ -613,25 +635,33 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # first try in pruned tree
     search_tree, discarded = discard_unwanted(deepcopy(tree))
     for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(search_tree, expr, outputformat, extensive_search, max_date)
+        dateresult = examine_date_elements(
+            search_tree, expr, outputformat, extensive_search, max_date
+        )
         if dateresult is not None:
             return dateresult
     # search in discarded parts (currently: footer)
     for subtree in discarded:
         for expr in DATE_EXPRESSIONS:
-            dateresult = examine_date_elements(subtree, expr, outputformat, extensive_search, max_date)
+            dateresult = examine_date_elements(
+                subtree, expr, outputformat, extensive_search, max_date
+            )
             if dateresult is not None:
                 return dateresult
 
     # supply more expressions (other languages)
     if extensive_search is True:
         for expr in ADDITIONAL_EXPRESSIONS:
-            dateresult = examine_date_elements(tree, expr, outputformat, extensive_search, max_date)
+            dateresult = examine_date_elements(
+                tree, expr, outputformat, extensive_search, max_date
+            )
             if dateresult is not None:
                 return dateresult
 
     # try time elements
-    time_result = examine_time_elements(tree, outputformat, extensive_search, original_date, max_date)
+    time_result = examine_time_elements(
+        tree, outputformat, extensive_search, original_date, max_date
+    )
     if time_result is not None:
         return time_result
 

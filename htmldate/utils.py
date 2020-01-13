@@ -63,14 +63,16 @@ def fetch_url(url):
     try:
         # read by streaming chunks (stream=True, iter_content=xx)
         # so we can stop downloading as soon as MAX_FILE_SIZE is reached
-        response = requests.get(url, timeout=30, verify=False, allow_redirects=True, headers=headers)
+        response = requests.get(url, timeout=30, verify=False, allow_redirects=True,
+                                headers=headers)
     except (requests.exceptions.MissingSchema, requests.exceptions.InvalidURL):
         LOGGER.error('malformed URL: %s', url)
     except requests.exceptions.TooManyRedirects:
         LOGGER.error('redirects: %s', url)
     except requests.exceptions.SSLError as err:
         LOGGER.error('SSL: %s %s', url, err)
-    except (socket.timeout, requests.exceptions.ConnectionError, requests.exceptions.Timeout, socket.error, socket.gaierror) as err:
+    except (socket.timeout, requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout, socket.error, socket.gaierror) as err:
         LOGGER.error('connection: %s %s', url, err)
     # except Exception as err:
     #    logging.error('unknown: %s %s', url, err) # sys.exc_info()[0]
@@ -94,7 +96,7 @@ def load_html(htmlobject):
     tree = None
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         return htmlobject
-    elif isinstance(htmlobject, str):
+    if isinstance(htmlobject, str):
         # the string is a URL, download it
         if re.search(r'^https?://[^ ]+$', htmlobject):
             LOGGER.info('URL detected, downloading: %s', htmlobject)
