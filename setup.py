@@ -68,7 +68,8 @@ setup(
         'lxml == 4.3.5; python_version == "3.4"',
         'lxml >= 4.4.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
-        'requests >= 2.22.0',
+        'requests == 2.21.0; python_version == "3.4"',
+        'requests >= 2.22.0; python_version > "3.4"',
     ],
     extras_require=extras,
     entry_points = {
