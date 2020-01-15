@@ -63,9 +63,10 @@ setup(
     license='GPLv3+',
     packages=packages,
     include_package_data=True,
-    python_requires='>=3.5',
+    python_requires='>=3.4',
     install_requires=[
-        'lxml >= 4.4.2',
+        'lxml == 4.3.5; python_version == "3.4"',
+        'lxml >= 4.4.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
         'requests >= 2.22.0',
     ],
