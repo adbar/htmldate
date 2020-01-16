@@ -17,9 +17,9 @@ packages = ['htmldate']
 # some problems with installation solved this way
 extras = {
     'all': [
-        'ciso8601 >= 2.1.1',
-        'dateparser >= 0.7.2', # 0.5.0 could be faster
-        'regex >= 2019.08.19',
+        'ciso8601 >= 2.1.2',
+        'dateparser >= 0.7.2',  # 0.5.0 could be faster
+        'regex >= 2020.1.8',
         ],
 }
 
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.6.0',
+    version='0.6.1',
     description='Find the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction.',
     long_description=readme(),
     classifiers=[
@@ -47,6 +47,7 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
