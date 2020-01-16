@@ -79,7 +79,7 @@ The module returns a date if a valid cue could be found in the document, corresp
 Installation
 ------------
 
-This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.4 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 
