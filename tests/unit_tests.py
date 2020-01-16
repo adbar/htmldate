@@ -2,7 +2,7 @@
 """
 Unit tests for the htmldate library.
 """
-# https://docs.pytest.org/en/latest/
+
 
 import logging
 import os
@@ -132,7 +132,7 @@ def load_mock_page(url):
     return htmlstring
 
 
-#def new_pages():
+# def new_pages():
 #    '''New pages, to be sorted'''
     # assert find_date(load_mock_page('...')) == 'YYYY-MM-DD'
 #    pass
@@ -152,11 +152,11 @@ def test_no_date():
     assert find_date(load_mock_page('https://en.support.wordpress.com/'), extensive_search=False) is None
     assert find_date(load_mock_page('https://en.support.wordpress.com/')) is None
     # errors
-    ## problem with LXML on macOS: AssertionError: ElementTree not initialized, missing root
-    try:
-        assert find_date(' ', outputformat='X%') is None
-    except AssertionError:
-        pass
+    # problem with LXML on macOS: AssertionError: ElementTree not initialized, missing root
+    #try:
+    assert find_date(' ', outputformat='X%') is None
+    #except AssertionError:
+    #    pass
     assert find_date('<html></html>', outputformat='%X') is None
     assert find_date('<html></html>', url='http://www.website.com/9999/01/43/') is None
 
@@ -272,11 +272,11 @@ def test_exact_date():
     assert find_date(load_mock_page('http://carta.info/der-neue-trend-muss-statt-wunschkoalition/')) == '2012-05-08'
     assert find_date(load_mock_page('https://www.wunderweib.de/manuela-reimann-hochzeitsueberraschung-in-bayern-107930.html')) == '2019-06-20'
     assert find_date(load_mock_page('https://www.befifty.de/home/2017/7/12/unter-uns-montauk')) == '2017-07-12'
-    try:
-        assert find_date(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html')) == '2019-06-20'
-    except AssertionError:
-        print('### date error')
-        print(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html'))
+    # try:
+    assert find_date(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html')) == '2019-06-20'
+    # except AssertionError:
+        # print('### date error')
+        # print(load_mock_page('https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html'))
     assert find_date(load_mock_page('http://www.loldf.org/spip.php?article717')) == '2019-06-27'
     assert find_date(load_mock_page('https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html')) == '2019-02-07'
     assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
@@ -306,11 +306,11 @@ def test_approximate_date():
     assert find_date(load_mock_page('https://creativecommons.org/about/'), original_date=False) == '2017-08-11' # or '2017-08-03'
     assert find_date(load_mock_page('https://creativecommons.org/about/'), original_date=True) == '2016-05-22' # or '2017-08-03'
     # problem on Windows
-    try:
-        assert find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
-    except AssertionError:
-        print('### date error')
-        print(load_mock_page('https://www.deutschland.de/en'))
+    # try:
+    assert find_date(load_mock_page('https://www.deutschland.de/en')) == '2017-08-01' # or?
+    # except AssertionError:
+    #    print('### date error')
+    #    print(load_mock_page('https://www.deutschland.de/en'))
     assert find_date(load_mock_page('http://www.greenpeace.org/international/en/campaigns/forests/asia-pacific/')) == '2017-04-28'
     assert find_date(load_mock_page('https://www.creativecommons.at/faircoin-hackathon')) == '2017-07-24'
     assert find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-01-01' # actually 2017-08-09
@@ -349,11 +349,11 @@ def test_output_format_validator():
     assert output_format_validator('%M-%Y') is True
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
-    ## problem on macOS: AssertionError: assert True is False
-    try:
-        assert output_format_validator('X%') is False
-    except AssertionError:
-        pass
+    # problem on macOS: AssertionError: assert True is False
+    #try:
+    assert output_format_validator('X%') is False
+    #except AssertionError:
+    #    pass
 
 
 def test_try_ymd_date():
@@ -377,7 +377,7 @@ def test_try_ymd_date():
     assert try_ymd_date('12:00 h', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
 
 
-#def test_header():
+# def test_header():
 #    assert examine_header(tree, OUTPUTFORMAT, PARSER)
 
 
@@ -475,7 +475,6 @@ def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
     # file input + output format
     assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_date, max_date) == '06 April 2019'
     # tree input
-    ## TODO: bug here
     assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2010-05-01'
     assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2010-05-05'
     assert search_page('<html><body><p>The date is 11/10/99</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '1999-10-11'
@@ -572,7 +571,7 @@ if __name__ == '__main__':
     test_candidate_selection()
     test_regex_parse()
     test_external_date_parser()
-    #test_header()
+    # test_header()
 
     # module-level
     test_no_date()
@@ -581,7 +580,7 @@ if __name__ == '__main__':
     test_search_html()
     test_url()
     test_approximate_url()
-    #new_pages()
+    # new_pages()
 
     # dependencies
     test_dependencies()
