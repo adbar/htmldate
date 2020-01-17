@@ -29,11 +29,20 @@ htmldate: find the publication date of web pages
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
 
+|
 
 :Code:           https://github.com/adbar/htmldate
 :Documentation:  https://htmldate.readthedocs.io
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
+|
+
+    .. image:: htmldate-demo.gif
+        :alt: Demo as GIF image
+        :align: center
+        :width: 85%
+
+|
 
 Find original and updated publication dates of any web page. All the steps needed from web page download to HTML parsing, scraping and text analysis are included.
 

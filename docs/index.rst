@@ -29,11 +29,20 @@ htmldate: find the publication date of web pages
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
 
+|
 
 :Code:           https://github.com/adbar/htmldate
 :Documentation:  https://htmldate.readthedocs.io
 :Issue tracker:  https://github.com/adbar/htmldate/issues
 
+|
+
+    .. image:: htmldate-demo.gif
+        :alt: Demo as GIF image
+        :align: center
+        :width: 85%
+
+|
 
 *htmldate* finds original and updated publication dates of any web page. All the steps needed from web page download to HTML parsing, scraping and text analysis are included. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
 
@@ -54,10 +63,12 @@ On the command-line:
     $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
     '2016-12-23'
 
+|
 
 .. contents:: **Contents**
     :backlinks: none
 
+|
 
 Features
 --------
@@ -158,7 +169,7 @@ Although the time delta between original publication and "last modified" info is
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True) # modified behavior
     '2016-06-23'
 
-For more information see :doc:`options page <../options.rst>`_.
+For more information see `options page <options.html>`_.
 
 
 On the command-line
