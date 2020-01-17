@@ -14,7 +14,7 @@ htmldate: find the publication date of web pages
     :alt: Python versions
 
 .. image:: https://readthedocs.org/projects/htmldate/badge/?version=latest
-    :target: http://htmldate.readthedocs.org/en/latest/?badge=latest
+    :target: https://htmldate.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
@@ -37,10 +37,11 @@ htmldate: find the publication date of web pages
 
 |
 
-    .. image:: htmldate-demo.gif
-        :alt: Demo as GIF image
-        :align: center
-        :width: 85%
+.. image:: htmldate-demo.gif
+    :alt: Demo as GIF image
+    :align: center
+    :width: 85%
+    :target: https://htmldate.readthedocs.org/
 
 |
 

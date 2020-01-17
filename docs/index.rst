@@ -37,10 +37,11 @@ htmldate: find the publication date of web pages
 
 |
 
-    .. image:: htmldate-demo.gif
-        :alt: Demo as GIF image
-        :align: center
-        :width: 85%
+.. image:: htmldate-demo.gif
+    :alt: Demo as GIF image
+    :align: center
+    :width: 85%
+    :target: https://htmldate.readthedocs.org/
 
 |
 
