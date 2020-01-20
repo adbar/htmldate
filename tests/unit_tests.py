@@ -39,7 +39,7 @@ OUTPUTFORMAT = '%Y-%m-%d'
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-MOCK_PAGES = { \
+MOCK_PAGES = {
 'http://blog.kinra.de/?p=959/': 'kinra.de.html',
 'http://blog.python.org/2016/12/python-360-is-now-available.html': 'blog.python.org.html',
 'http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/': 'blog.todamax.net.html',

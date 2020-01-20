@@ -13,10 +13,6 @@ htmldate: find the publication date of web pages
     :target: https://pypi.python.org/pypi/htmldate
     :alt: Python versions
 
-.. image:: https://readthedocs.org/projects/htmldate/badge/?version=latest
-    :target: http://htmldate.readthedocs.org/en/latest/?badge=latest
-    :alt: Documentation Status
-
 .. image:: https://img.shields.io/travis/adbar/htmldate.svg
     :target: https://travis-ci.org/adbar/htmldate
     :alt: Travis build status
@@ -146,7 +142,7 @@ Already parsed HTML (that is a LXML tree object):
 
     # simple HTML document as string
     >>> htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
-    >>> find_date(mytree)
+    >>> find_date(htmldoc)
     '2016-07-12'
     # parsed LXML tree
     >>> from lxml import html

@@ -134,7 +134,7 @@ Already parsed HTML (that is a LXML tree object):
 
     # simple HTML document as string
     >>> htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
-    >>> find_date(mytree)
+    >>> find_date(htmldoc)
     '2016-07-12'
     # parsed LXML tree
     >>> from lxml import html
