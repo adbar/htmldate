@@ -82,7 +82,7 @@ The library uses a combination of tree traversal, common structural patterns, te
 The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 -  Should be compatible with all common versions of Python 3 (see tests and coverage)
--  Safety belt included, utput thouroughly verified in terms of plausibility and adequateness
+-  Safety belt included, output thouroughly verified in terms of plausibility and adequateness
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Batch processing of a list of URLs
 -  Switch between original and updated date
@@ -217,7 +217,7 @@ License
 Author
 ------
 
-This effort is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find when a document was published or modified. For more information:
+This effort is part of a methodological approach to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
 
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3459599.svg
    :target: https://doi.org/10.5281/zenodo.3459599

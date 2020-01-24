@@ -207,7 +207,7 @@ If the date is nowhere to be found, it might be worth considering `carbon dating
 Author
 ------
 
-This effort is part of methods to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find when a document was published or modified. For more information:
+This effort is part of a methodological approach to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
 
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3459599.svg
    :target: https://doi.org/10.5281/zenodo.3459599
