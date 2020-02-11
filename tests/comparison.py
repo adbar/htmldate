@@ -14,10 +14,13 @@ try:
 except ImportError:
     import chardet
 
-
+from articleDateExtractor import extractArticlePublishedDate
+from date_guesser import guess_date, Accuracy
+from goose3 import Goose
 from htmldate import find_date
 from htmldate.validators import convert_date
 from newspaper import Article
+from newspaper.article import ArticleDownloadState
 from newsplease import NewsPlease
 
 
@@ -195,25 +198,295 @@ EVAL_PAGES = {
     'file': 'klimawandel-global.de.html',
     'date': '2013-05-03',
 },
-#'': {
-#    'file': '',
+'http://www.medef.com/en/content/alternative-dispute-resolution-for-antitrust-damages': {
+    'file': 'medef.fr.dispute.html',
+    'date': '2017-09-01',
+},
+'http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/': {
+    'file': 'pbrunst.de.html',
+    'date': '2011-12-03',
+},
+'http://www.stuttgart.de/': {
+    'file': 'stuttgart.de.html',
+    'date': '2017-10-09',
+},
+'https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355': {
+    'file': 'paris-luttes.info.html',
+    'date': '2019-06-29',
+},
+'https://www.brigitte.de/aktuell/riverdale--so-ehrt-die-serie-luke-perry-in-staffel-vier-11602344.html': {
+    'file': 'brigitte.de.riverdale.html',
+    'date': '2019-06-20',
+},
+'https://www.ldt.de/ldtblog/fall-in-love-with-black/': {
+    'file': 'ldt.de.fallinlove.html',
+    'date': '2017-08-08',
+},
+'http://www.loldf.org/spip.php?article717': {
+    'file': 'loldf.org.html',
+    'date': '2019-06-27',
+},
+#'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': {
+#    'file': 'beltz.de.12wege.html',
 #    'date': '',
 #},
-}
+'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': {
+    'file': 'oberstdorfresort.de.kraeuter.html',
+    'date': '2018-06-20',
+},
+'https://www.wienbadminton.at/news/119843/Come-Together': {
+    'file': 'wienbadminton.at.html',
+    'date': '2018-05-06',
+},
+'https://blog.wikimedia.org/2018/06/28/interactive-maps-now-in-your-language/': {
+    'file': 'blog.wikimedia.interactivemaps.html',
+    'date': '2018-06-28',
+},
+'https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique': {
+    'file': 'mediapart.fr.violences.html',
+    'date': '2019-06-27',
+},
+'https://verfassungsblog.de/the-first-decade/': {
+    'file': 'verfassungsblog.de.decade.html',
+    'date': '2019-07-13',
+},
+'https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145': {
+    'file': 'cric-grenoble.info.radio.html',
+    'date': '2019-06-09',
+},
+'https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie': {
+    'file': 'kurz.at.wasserstoff.html',
+    'date': '2019-07-30',
+},
+'https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany': {
+    'file': 'la-bas.org.porte.html',
+    'date': '2019-06-28',
+},
+#'https://exporo.de/wiki/europaeische-zentralbank-ezb/': {
+#    'file': 'exporo.de.ezb.html',
+#    'date': '',
+#},
+'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': {
+    'file': 'revolutionpermanente.fr.antonin.html',
+    'date': '2019-06-13',
+},
+'http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/': {
+    'file': 'wara-enforcement.org.guinee.html',
+    'date': '2016-09-27',
+},
+'https://ebene11.com/die-arbeit-mit-fremden-dwg-dateien-in-autocad': {
+    'file': 'ebene11.com.autocad.html',
+    'date': '2017-01-12',
+},
+'https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/': {
+    'file': 'acredis.com.augenlidstraffung.html',
+    'date': '2018-02-28',
+},
+'https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/': {
+    'file': 'hertie-school.org.leyen.html',
+    'date': '2019-12-02',
+},
+'https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/': {
+    'file': 'adac.de.kindersitztest.html',
+    'date': '2018-10-23',
+},
+'https://www.ahlen.de/start/aktuelles/aktuelle/information/nachricht/aus-ahlen/reparaturcafe-am-31-januar/': {
+    'file': 'ahlen.de.reparaturcafe.html',
+    'date': '2020-01-27',
+},
+'https://rete-mirabile.net/notizen/15-jahre-rete-mirabile/': {
+    'file': 'rete-mirabile.net.15jahre.html',
+    'date': '2019-07-28',
+},
+'https://shop.nmb-media.de/eBay-Template-Datenschutz-Google-Fonts-Fontawesome': {
+    'file': 'nmb-media.de.ebay.html',
+    'date': '2018-06-22',
+},
+'https://viertausendhertz.de/ddg48/': {
+    'file': 'viertausendhertz.de.ddg48.html',
+    'date': '2019-12-16',
+},
+'http://www.bibliothek2null.de/2014/05/18/alles-neue-mach-der-mai/': {
+    'file': 'bibliothek2null.de.mai.html',
+    'date': '2014-05-18',
+},
+'http://www.helge.at/2014/03/warum-wien-zu-blod-fur-eine-staufreie-mahu-ist/': {
+    'file': 'helge.at.mahu.html',
+    'date': '2014-03-05',
+},
+'https://blogoff.de/2015/11/12/i-htm/': {
+    'file': 'blogoff.de.i-htm.html',
+    'date': '2015-11-12',
+},
+'https://de.globalvoices.org/2019/04/30/ein-jahr-voller-proteste-nicaraguaner-wollen-nicht-mehr-nur-den-rucktritt-ortegas-sondern-einen-neuanfang/': {
+    'file': 'de.globalvoices.org.nicaragua.html',
+    'date': '2019-04-30',
+},
+'http://www.heiko-adams.de/laufen-im-winter-von-baeh-zu-yeah-in-12-monaten/': {
+    'file': 'heiko-adams.de.laufen.html',
+    'date': '2019-02-10',
+},
+'https://www.faz.net/aktuell/wirtschaft/nutzerbasierte-abrechnung-musik-stars-fordern-neues-streaming-modell-16604622.html': {
+    'file': 'faz.net.streaming.html',
+    'date': '2020-01-28',
+},
+'http://wir-empfehlen.info/?p=3289': {
+    'file': 'wir-empfehlen.info.3289.html',
+    'date': '2020-01-03',
+},
+'https://nextkabinett.wordpress.com/2014/01/17/derek-jarman-%c2%b7-the-garden/': {
+    'file': 'nextkabinett.wordpress.com.garden.html',
+    'date': '2014-01-17',
+},
+'https://sprechblase.wordpress.com/2019/11/17/elektro-zapfsaeulen/': {
+    'file': 'sprechblase.wordpress.com.zapfsaeulen.html',
+    'date': '2019-11-17',
+},
+'https://creeny.wordpress.com/2020/01/24/nebelsuppe-6/': {
+    'file': 'creeny.wordpress.com.nebelsuppe.html',
+    'date': '2020-01-24',
+},
+'https://nurmeinstandpunkt.wordpress.com/2020/01/23/blogposting-01-23-2020/': {
+    'file': 'nurmeinstandpunkt.wordpress.com.blogposting.html',
+    'date': '2020-01-23',
+},
+'https://flowfx.de/blog/copy-paste-from-tmux-to-system-clipboard/': {
+    'file': 'flowfx.de.tmux.html',
+    'date': '2020-01-16',
+},
+'https://gnadlib.wordpress.com/2020/01/05/scherenschnitt-3/': {
+    'file': 'gnadlib.wordpress.com.scherenschnitt.html',
+    'date': '2020-01-05',
+},
+'https://www.spontis.de/schwarze-szene/liebe-leser-bitte-rutschen-sie-nicht-in-das-neue-jahrzehnt/': {
+    'file': 'spontis.de.jahrzehnt.html',
+    'date': '2019-12-31',
+},
+'https://www.schneems.com/2018/10/09/pair-with-me-rubocop-cop-that-detects-duplicate-array-allocations/': {
+    'file': 'schneems.com.rubocop.html',
+    'date': '2018-10-09',
+},
+'https://hackernoon.com/how-to-scrape-google-with-python-bo7d2tal': {
+    'file': 'hackernoon.com.scrape.html',
+    'date': '2019-12-29',
+},
+'www.colours-of-the-soul.alhelm.net': {
+    'file': 'colours-of-the-soul.alhelm.net',
+    'date': '2009-02-18',
+},
+'https://lernpfadprismen.wordpress.com/masse/masse-des-quaders/': {
+    'file': 'lernpfadprismen.wordpress.com.masse.html',
+    'date': '2015-12-07',
+},
+'https://grossefragen.wordpress.com/2019/03/13/wuerde-des-lebens-ein-projekt/': {
+    'file': 'grossefragen.wordpress.com.projekt.html',
+    'date': '2019-03-13',
+},
+'https://knowledge-on-air.de/2019/12/17/koa039-live-vom-knowledgecamp-2019/': {
+    'file': 'knowledge-on-air.de.koa039.html',
+    'date': '2019-12-17',
+},
+'https://campino2k.de/2016/02/28/uberspace-und-lets-encrypt/': {
+    'file': 'campino2k.de.uberspace.html',
+    'date': '2016-02-28',
+},
+'http://www.silvias.net/blog/wahlzensur-angriff-auf-universitaeten/': {
+    'file': 'silvias.net.wahlzensur.html',
+    'date': '2018-10-26',
+},
+'https://wolfsrebellen-netz.forumieren.com/t7-forums-regeln': {
+    'file': 'wolfsrebellen-netz.forumieren.com.regeln.html',
+    'date': '2013-10-26',
+},
+'https://resonator-podcast.de/2019/res158-kathrin-goebel/': {
+    'file': 'resonator-podcast.de.res158.html',
+    'date': '2019-08-16',
+},
+'https://bunterepublik.wordpress.com/2017/06/12/keine-spiel-talstrasse-zur-bunten-republik-neustadt/': {
+    'file': 'bunterepublik.wordpress.com.talstrasse.html',
+    'date': '2017-06-12',
+},
 
+'https://murdeltas.wordpress.com/2015/04/05/barcamp-graz-2015-politcamp-call-for-action/': {
+    'file': 'murdeltas.wordpress.com.politcamp.html',
+    'date': '2015-04-05',
+},
+'https://herrpfleger.de/2019/10/new-balance-fuelcell-echo-bringt-speed/': {
+    'file': 'herrpfleger.de.fuelcell.html',
+    'date': '2019-10-01',
+},
+'https://andreabottlinger.wordpress.com/2019/12/26/arent-we-all/': {
+    'file': 'andreabottlinger.wordpress.com.arent.html',
+    'date': '2019-12-26',
+},
+'http://www.jan-grosser.de/art/385_xum1541_dateien_zwischen_linux.html': {
+    'file': 'jan-grosser.de.xum1541.html',
+    'date': '2016-01-31',
+},
+'http://www.einfachspanien.de/malaga-die-quirlige-metropole-in-andalusien.html': {
+    'file': 'einfachspanien.de.malaga.html',
+    'date': '2011-11-22',
+},
+'https://prof-pc.de/': {
+    'file': 'prof-pc.de.html',
+    'date': '2017-09-10',
+},
+'https://mobilsicher.de/aktuelles/apple-kippt-verschluesselungsplaene-fuer-icloud': {
+    'file': 'mobilsicher.de.icloud.html',
+    'date': '2020-01-23',
+},
+'https://gnaur.wordpress.com/2013/06/14/die-moglichkeit-nichts-zu-tun-ist-auch-eine-moglichkeit/': {
+    'file': 'gnaur.wordpress.com.moglichkeit.html',
+    'date': '2013-06-14',
+},
+'http://www.seelenradio.de/nummer-zwei-leo/': {
+    'file': 'seelenradio.de.leo.html',
+    'date': '2015-08-03',
+},
+'http://www.hertha-blog.de/der-lange-und-die-alte-dame.html': {
+    'file': 'hertha-blog.de.dame.html',
+    'date': '2017-07-23',
+},
+'http://www.echte-demokratie-jetzt.de/blog/': {
+    'file': 'echte-demokratie-jetzt.de.blog.html',
+    'date': '2014-01-13',
+},
+'https://gizmeo.eu/makrophotos-von-insekten/': {
+    'file': 'gizmeo.eu.insekten.html',
+    'date': '2020-01-22',
+},
+'https://alexanderlasch.wordpress.com/2019/11/14/was-das-christkind-und-native-americans-gemeinsam-haben-oder-warum-wir-sprachgeschichte-brauchen/': {
+    'file': 'alexanderlasch.wordpress.com.sprachgeschichte.html',
+    'date': '2019-11-14',
+},
+'https://www.alexander-klier.net/zeitenkompetenz/zeitphilosophie/': {
+    'file': 'alexander-klier.net.zeitphilosophie.html',
+    'date': '2012-06-08',
+},
+'https://2gewinnt.wordpress.com/uber-uns/': {
+    'file': '2gewinnt.wordpress.com.uns.html',
+    'date': '2012-06-30',
+},
+'http://www.buero-hoppe.de/baumgutachten.htm': {
+    'file': 'buero-hoppe.de.baumgutachten.htm',
+    'date': '2006-12-16',
+},
+}
 
 
 
 def load_document(filename):
     '''load mock page from samples'''
-    dirname = 'cache'
+    mypath = os.path.join(TEST_DIR, 'cache', filename)
+    if not os.path.isfile(mypath):
+        mypath = os.path.join(TEST_DIR, 'eval', filename)
     try:
-        with open(os.path.join(TEST_DIR, dirname, filename), 'r') as inputf:
+        with open(mypath, 'r') as inputf:
             htmlstring = inputf.read()
     # encoding/windows fix for the tests
     except UnicodeDecodeError:
         # read as binary
-        with open(os.path.join(TEST_DIR, dirname, filename), 'rb') as inputf:
+        with open(mypath, 'rb') as inputf:
             htmlbinary = inputf.read()
         guessed_encoding = chardet.detect(htmlbinary)['encoding']
         if guessed_encoding is not None:
@@ -235,8 +508,14 @@ def run_htmldate(htmlstring):
 def run_newspaper(htmlstring):
     '''try with the newspaper module'''
     ## does not work!
-    article = Article(htmlstring)
-    return article.publish_date
+    myarticle = Article('https://www.example.org/test/')
+    myarticle.html = htmlstring
+    myarticle.download_state = ArticleDownloadState.SUCCESS
+    myarticle.parse()
+    if myarticle.publish_date is None:
+        return None
+    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+    return date
 
 
 def run_newsplease(htmlstring):
@@ -247,6 +526,39 @@ def run_newsplease(htmlstring):
    date = convert_date(article.date_publish, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
    return date
 
+
+def run_articledateextractor(htmlstring):
+   '''try with articleDateExtractor'''
+   dateresult = extractArticlePublishedDate('', html=htmlstring)
+   if dateresult is None:
+      return None
+   date = convert_date(dateresult, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+   return date
+
+
+def run_dateguesser(htmlstring):
+   '''try with date_guesser'''
+   guess = guess_date(url='https://www.example.org/test/', html=htmlstring)
+   if guess.date is None:
+      return None
+   date = convert_date(guess.date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+   return date
+
+
+def run_goose(htmlstring):
+    '''try with the goose algorithm'''
+    g = Goose()
+    article = g.extract(raw_html=htmlstring)
+    if article.publish_date is None:
+        return None
+    datematch = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', article.publish_date)
+    try:
+        result = datematch.group(0)
+        return result
+    # illogical result
+    except AttributeError:
+        print(article.publish_date)
+        return None
 
 
 def evaluate_result(result, EVAL_PAGES, item):
@@ -269,12 +581,16 @@ def calculate_scores(mydict):
 
 
 template_dict = {'positives': 0, 'negatives': 0, 'time': 0}
-everything, nothing, htmldate_result, newspaper_result, newsplease_result = {}, {}, {}, {}, {}
+everything, nothing, htmldate_result, newspaper_result, newsplease_result, articledateextractor_result, dateguesser_result, goose_result = {}, {}, {}, {}, {}, {}, {}, {}
 everything.update(template_dict)
 nothing.update(template_dict)
 htmldate_result.update(template_dict)
 newspaper_result.update(template_dict)
 newsplease_result.update(template_dict)
+articledateextractor_result.update(template_dict)
+dateguesser_result.update(template_dict)
+goose_result.update(template_dict)
+
 
 i = 0
 
@@ -294,12 +610,12 @@ for item in EVAL_PAGES:
     htmldate_result['positives'] += positives
     htmldate_result['negatives'] += negatives
     # newspaper
-    #start = time.time()
-    #result = run_newspaper(htmlstring)
-    #newspaper_result['time'] += time.time() - start
-    #positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    #newspaper_result['positives'] += positives
-    #newspaper_result['negatives'] += negatives
+    start = time.time()
+    result = run_newspaper(htmlstring)
+    newspaper_result['time'] += time.time() - start
+    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
+    newspaper_result['positives'] += positives
+    newspaper_result['negatives'] += negatives
     # newsplease
     start = time.time()
     result = run_newsplease(htmlstring)
@@ -307,6 +623,27 @@ for item in EVAL_PAGES:
     positives, negatives = evaluate_result(result, EVAL_PAGES, item)
     newsplease_result['positives'] += positives
     newsplease_result['negatives'] += negatives
+    # articledateextractor
+    start = time.time()
+    result = run_articledateextractor(htmlstring)
+    articledateextractor_result['time'] += time.time() - start
+    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
+    articledateextractor_result['positives'] += positives
+    articledateextractor_result['negatives'] += negatives
+    # date_guesser
+    start = time.time()
+    result = run_dateguesser(htmlstring)
+    dateguesser_result['time'] += time.time() - start
+    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
+    dateguesser_result['positives'] += positives
+    dateguesser_result['negatives'] += negatives
+    # goose
+    start = time.time()
+    result = run_goose(htmlstring)
+    goose_result['time'] += time.time() - start
+    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
+    goose_result['positives'] += positives
+    goose_result['negatives'] += negatives
 
 
 print('number of documents:', i)
@@ -319,9 +656,18 @@ print(nothing)
 print('htmldate')
 print(htmldate_result)
 print("accuracy: %.3f" % (calculate_scores(htmldate_result)))
-#print('newspaper')
-#print(newspaper_result)
-#print("accuracy: %.3f" % (calculate_scores(newspaper_result)))
+print('newspaper')
+print(newspaper_result)
+print("accuracy: %.3f" % (calculate_scores(newspaper_result)))
 print('newsplease')
 print(newsplease_result)
 print("accuracy: %.3f" % (calculate_scores(newsplease_result)))
+print('articledateextractor')
+print(articledateextractor_result)
+print("accuracy: %.3f" % (calculate_scores(articledateextractor_result)))
+print('date_guesser')
+print(dateguesser_result)
+print("accuracy: %.3f" % (calculate_scores(dateguesser_result)))
+print('goose')
+print(goose_result)
+print("accuracy: %.3f" % (calculate_scores(goose_result)))
