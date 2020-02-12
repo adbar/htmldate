@@ -499,9 +499,15 @@ def load_document(filename):
     return htmlstring
 
 
-def run_htmldate(htmlstring):
+def run_htmldate_extensive(htmlstring):
     '''run htmldate on content'''
-    result = find_date(htmlstring, original_date=True)
+    result = find_date(htmlstring, original_date=True, extensive_search=True)
+    return result
+
+
+def run_htmldate_fast(htmlstring):
+    '''run htmldate on content'''
+    result = find_date(htmlstring, original_date=True, extensive_search=False)
     return result
 
 
@@ -563,28 +569,38 @@ def run_goose(htmlstring):
 
 def evaluate_result(result, EVAL_PAGES, item):
     '''evaluate result contents'''
-    positives = 0
-    negatives = 0
+    true_positives = 0
+    false_positives = 0
+    true_negatives = 0 # not in use (yet)
+    false_negatives = 0
     datereference = EVAL_PAGES[item]['date']
-    if result == datereference:
-        positives += 1
+    if result is None and datereference is None:
+        true_negatives += 1
+    elif result is None and datereference is not None:
+        false_negatives += 1
+    elif result == datereference:
+        true_positives += 1
     else:
-        negatives += 1
-    return positives, negatives
+        false_positives += 1
+    return true_positives, false_positives, true_negatives, false_negatives
 
 
 def calculate_scores(mydict):
     '''output weighted result score'''
-    pos, neg = mydict['positives'], mydict['negatives']
-    accuracy = pos/(pos+neg)
-    return accuracy
+    tp, fn, fp, tn = mydict['true_positives'], mydict['false_negatives'], mydict['false_positives'], mydict['true_negatives']
+    precision = tp/(tp+fp)
+    recall = tp/(tp+fn)
+    accuracy = (tp+tn)/(tp+tn+fp+fn)
+    fscore = (2*tp)/(2*tp + fp + fn)  # 2*((precision*recall)/(precision+recall))
+    return precision, recall, accuracy, fscore
 
 
-template_dict = {'positives': 0, 'negatives': 0, 'time': 0}
-everything, nothing, htmldate_result, newspaper_result, newsplease_result, articledateextractor_result, dateguesser_result, goose_result = {}, {}, {}, {}, {}, {}, {}, {}
+template_dict = {'true_positives': 0, 'false_positives': 0, 'true_negatives': 0, 'false_negatives': 0, 'time': 0}
+everything, nothing, htmldate_extensive_result, htmldate_fast_result, newspaper_result, newsplease_result, articledateextractor_result, dateguesser_result, goose_result = {}, {}, {}, {}, {}, {}, {}, {}, {}
 everything.update(template_dict)
 nothing.update(template_dict)
-htmldate_result.update(template_dict)
+htmldate_extensive_result.update(template_dict)
+htmldate_fast_result.update(template_dict)
 newspaper_result.update(template_dict)
 newsplease_result.update(template_dict)
 articledateextractor_result.update(template_dict)
@@ -599,75 +615,98 @@ for item in EVAL_PAGES:
     print(item)
     htmlstring = load_document(EVAL_PAGES[item]['file'])
     # null hypotheses
-    positives, negatives = evaluate_result('', EVAL_PAGES, item)
-    nothing['positives'] += positives
-    nothing['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(None, EVAL_PAGES, item)
+    nothing['true_positives'] += tp
+    nothing['false_positives'] += fp
+    nothing['true_negatives'] += tn
+    nothing['false_negatives'] += fn
     # htmldate
     start = time.time()
-    result = run_htmldate(htmlstring)
-    htmldate_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    htmldate_result['positives'] += positives
-    htmldate_result['negatives'] += negatives
+    result = run_htmldate_extensive(htmlstring)
+    htmldate_extensive_result['time'] += time.time() - start
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    htmldate_extensive_result['true_positives'] += tp
+    htmldate_extensive_result['false_positives'] += fp
+    htmldate_extensive_result['true_negatives'] += tn
+    htmldate_extensive_result['false_negatives'] += fn
+    # htmldate fast
+    start = time.time()
+    result = run_htmldate_fast(htmlstring)
+    htmldate_fast_result['time'] += time.time() - start
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    htmldate_fast_result['true_positives'] += tp
+    htmldate_fast_result['false_positives'] += fp
+    htmldate_fast_result['true_negatives'] += tn
+    htmldate_fast_result['false_negatives'] += fn
     # newspaper
     start = time.time()
     result = run_newspaper(htmlstring)
     newspaper_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    newspaper_result['positives'] += positives
-    newspaper_result['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    newspaper_result['true_positives'] += tp
+    newspaper_result['false_positives'] += fp
+    newspaper_result['true_negatives'] += tn
+    newspaper_result['false_negatives'] += fn
     # newsplease
     start = time.time()
     result = run_newsplease(htmlstring)
     newsplease_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    newsplease_result['positives'] += positives
-    newsplease_result['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    newsplease_result['true_positives'] += tp
+    newsplease_result['false_positives'] += fp
+    newsplease_result['true_negatives'] += tn
+    newsplease_result['false_negatives'] += fn
     # articledateextractor
     start = time.time()
     result = run_articledateextractor(htmlstring)
     articledateextractor_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    articledateextractor_result['positives'] += positives
-    articledateextractor_result['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    articledateextractor_result['true_positives'] += tp
+    articledateextractor_result['false_positives'] += fp
+    articledateextractor_result['true_negatives'] += tn
+    articledateextractor_result['false_negatives'] += fn
     # date_guesser
     start = time.time()
     result = run_dateguesser(htmlstring)
     dateguesser_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    dateguesser_result['positives'] += positives
-    dateguesser_result['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    dateguesser_result['true_positives'] += tp
+    dateguesser_result['false_positives'] += fp
+    dateguesser_result['true_negatives'] += tn
+    dateguesser_result['false_negatives'] += fn
     # goose
     start = time.time()
     result = run_goose(htmlstring)
     goose_result['time'] += time.time() - start
-    positives, negatives = evaluate_result(result, EVAL_PAGES, item)
-    goose_result['positives'] += positives
-    goose_result['negatives'] += negatives
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    goose_result['true_positives'] += tp
+    goose_result['false_positives'] += fp
+    goose_result['true_negatives'] += tn
+    goose_result['false_negatives'] += fn
 
 
 print('number of documents:', i)
 print('nothing')
 print(nothing)
 # print(calculate_f_score(nothing))
-#print('everything')
-#print(everything)
-#print("precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f" % (calculate_scores(everything)))
-print('htmldate')
-print(htmldate_result)
-print("accuracy: %.3f" % (calculate_scores(htmldate_result)))
+print('htmldate extensive')
+print(htmldate_extensive_result)
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(htmldate_extensive_result)))
+print('htmldate fast')
+print(htmldate_fast_result)
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(htmldate_fast_result)))
 print('newspaper')
 print(newspaper_result)
-print("accuracy: %.3f" % (calculate_scores(newspaper_result)))
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(newspaper_result)))
 print('newsplease')
 print(newsplease_result)
-print("accuracy: %.3f" % (calculate_scores(newsplease_result)))
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(newsplease_result)))
 print('articledateextractor')
 print(articledateextractor_result)
-print("accuracy: %.3f" % (calculate_scores(articledateextractor_result)))
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(articledateextractor_result)))
 print('date_guesser')
 print(dateguesser_result)
-print("accuracy: %.3f" % (calculate_scores(dateguesser_result)))
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(dateguesser_result)))
 print('goose')
 print(goose_result)
-print("accuracy: %.3f" % (calculate_scores(goose_result)))
+print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(goose_result)))
