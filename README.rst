@@ -86,6 +86,26 @@ The module returns a date if a valid cue could be found in the document, corresp
 -  Switch between original and updated date
 
 
+Performance
+-----------
+
+=============================== ========= ========  ========
+100 documents containing identifiable dates (2020-02-12)
+------------------------------------------------------------
+Python Package                  Precision Accuracy  Time
+=============================== ========= ========  ========
+newspaper3k 0.2.8               **0.97**  0.31      49.51
+goose3 3.1.6                    0.94      0.32      7.10
+date_guesser 2.1.4              0.80      0.40      18.26
+news-please 1.4.25              0.80      0.46      40.85
+articleDateExtractor 0.20       0.81      0.46      2.13
+htmldate 0.6.1 (fast)           0.93      0.79      **1.40**
+htmldate[all] 0.6.1 (extensive) 0.91      **0.91**  2.67
+=============================== ========= ========  ========
+
+For complete results and explanations see the `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
+
+
 Installation
 ------------
 

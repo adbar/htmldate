@@ -280,6 +280,7 @@ A series of webpages triggering different structural and content patterns is inc
    :maxdepth: 2
 
    corefunctions
+   evaluation
    options
 
 
