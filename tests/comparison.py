@@ -370,7 +370,7 @@ EVAL_PAGES = {
     'file': 'hackernoon.com.scrape.html',
     'date': '2019-12-29',
 },
-'www.colours-of-the-soul.alhelm.net': {
+'http://www.colours-of-the-soul.alhelm.net': {
     'file': 'colours-of-the-soul.alhelm.net',
     'date': '2009-02-18',
 },
@@ -406,7 +406,6 @@ EVAL_PAGES = {
     'file': 'bunterepublik.wordpress.com.talstrasse.html',
     'date': '2017-06-12',
 },
-
 'https://murdeltas.wordpress.com/2015/04/05/barcamp-graz-2015-politcamp-call-for-action/': {
     'file': 'murdeltas.wordpress.com.politcamp.html',
     'date': '2015-04-05',
@@ -471,8 +470,341 @@ EVAL_PAGES = {
     'file': 'buero-hoppe.de.baumgutachten.htm',
     'date': '2006-12-16',
 },
-}
 
+'https://www.pamelaandersonfoundation.org/news/2018/12/4/yellow-vests-and-i': {
+    'file': 'pamelaandersonfoundation.org.yellow.html',
+    'date': '2018-12-04',
+},
+'https://www.dbjr.de/artikel/bundespraesident-wuerdigte-das-ehrenamtliche-engagement/': {
+    'file': 'dbjr.de.bundespraesident.html',
+    'date': '2020-01-23',
+},
+'https://achtundvierzig.hypotheses.org/822': {
+    'file': 'achtundvierzig.hypotheses.org.822.html',
+    'date': '2015-01-28',
+},
+'http://bayrische-bembel.de/bbr/modules/news/article.php?storyid=504': {
+    'file': 'bayrische-bembel.de.504.html',
+    'date': '2015-08-25',
+},
+'https://ethify.org/content/vegetarier-zu-sein-bedarf-trend-oder-eigene-entscheidung': {
+    'file': 'ethify.org.vegetarier.html',
+    'date': '2019-07-07',
+},
+'https://disfunctions.de/tutorials/podcasts-in-plex-einbinden/': {
+    'file': 'disfunctions.de.podcasts.html',
+    'date': '2014-05-06',
+},
+'http://archiv.krimiblog.de/?p=2895': {
+    'file': 'archiv.krimiblog.de.2895.html',
+    'date': '2009-08-06',
+},
+'https://journal.3960.org/posts/2019-12-22-firefox-weniger-werbung-mehr-speed-unter-android/': {
+    'file': 'journal.3960.org.firefox.html',
+    'date': '2019-12-22',
+},
+'https://beyssonmanagement.com/2014/07/15/was-ist-innovation/': {
+    'file': 'beyssonmanagement.com.innovation.html',
+    'date': '2014-07-15',
+},
+'https://damianduchamps.wordpress.com/2019/08/03/office-365-hbdi-die-dritte/': {
+    'file': 'damianduchamps.wordpress.com.hbdi.html',
+    'date': '2019-08-03',
+},
+'https://sladisworld.wordpress.com/2019/12/10/was-wurde-eigentlich-aus-six-sigma/': {
+    'file': 'sladisworld.wordpress.com.sigma.html',
+    'date': '2019-12-10',
+},
+'https://www.piratenpartei-marburg.de/2019/09/21/wir-unterstuetzen-fridays-for-future/': {
+    'file': 'piratenpartei-marburg.de.fridays.html',
+    'date': '2019-09-21',
+},
+'https://www.piratenpartei.at/volksbegehren-zum-bedingungslosen-grundeinkommen-bge/': {
+    'file': 'piratenpartei.at.grundeinkommen.html',
+    'date': '2019-11-17',
+},
+'https://www.dobszay.ch/2016-04-15/was-ist-der-unterschied-zwischen-privaten-und-staatlichen-geheimdiensten/': {
+    'file': 'dobszay.ch.geheimdiensten.html',
+    'date': '2016-04-15',
+},
+'https://www.unsere-zeitung.at/2020/02/02/ist-die-inklusion-im-kapitalismus-umsetzbar/': {
+    'file': 'unsere-zeitung.at.inklusion.html',
+    'date': '2020-02-02',
+},
+'http://www.sprechwaisen.com/sw082-82-gruende-zum-weiter-hoeren/': {
+    'file': 'sprechwaisen.com.sw082.html',
+    'date': '2019-07-21',
+},
+'https://www.unterwegsinberlin.de/radtouren-berlin/radtour-durch-friedrichsfelde-karlshorst-und-schoeneweide/': {
+    'file': 'unterwegsinberlin.de.friedrichsfelde.html',
+    'date': '2020-02-02',
+},
+'https://www.strafprozess.ch/rasende-polizisten/': {
+    'file': 'strafprozess.ch.polizisten.html',
+    'date': '2020-02-04',
+},
+'https://wolfgangschmale.eu/abgebrochene-forschung-eine-neue-studie-von-heinz-duchhardt/': {
+    'file': 'wolfgangschmale.eu.duchhardt.html',
+    'date': '2020-02-10',
+},
+'https://netzfueralle.blog.rosalux.de/2019/10/30/netzpolitik-als-us-wahlkampfthema/': {
+    'file': 'netzfueralle.blog.rosalux.de.netzpolitik.html',
+    'date': '2019-10-30',
+},
+'https://www.anchor.ch/gesellschaft/ein-tag-aus-dem-leben-eines-taugenichts-oder-die-leute-von-sri-lanka/': {
+    'file': 'anchor.ch.lanka.html',
+    'date': '2019-12-22',
+},
+'https://www.ejwue.de/aktuell/news/faire-lieferketten/': {
+    'file': 'ejwue.de.lieferketten.html',
+    'date': '2020-02-05',
+},
+'https://thebigbone.wordpress.com/2017/04/13/die-ueberforderung-durch-ueberangebote/': {
+    'file': 'thebigbone.wordpress.com.ueberforderung.html',
+    'date': '2017-04-13',
+},
+'https://ritinardo.wordpress.com/2017/11/26/bundesregierung-2017-btw17-groko/': {
+    'file': 'ritinardo.wordpress.com.btw17.html',
+    'date': '2017-11-26',
+},
+'http://www.qualisys.eu/gefahrstoff-service': {
+    'file': 'qualisys.eu.gefahrstoff.html',
+    'date': '2019-12-19',
+},
+'http://www.xinhuanet.com/local/2020-02/19/c_1125597921.htm': {
+    'file': 'xinhuanet.com.c_1125597921.htm',
+    'date': '2020-02-19',
+},
+'http://www.banyuetan.org/jmcs/detail/20200102/1000200033136171577956287380194268_1.html': {
+    'file': 'banyuetan.org.1000200033136171577956287380194268_1.html',
+    'date': '2020-01-02',
+},
+'https://baike.baidu.com/item/%E8%94%A1%E5%81%A5%E9%9B%85': {
+    'file': 'baike.baidu.com.tanya.html',
+    'date': '2020-02-14',
+},
+'https://www.lastampa.it/cronaca/2020/02/19/news/temperature-in-calo-in-tutta-italia-attesa-neve-sull-appennino-1.38487954': {
+    'file': 'lastampa.it.temperature.html',
+    'date': '2020-02-19',
+},
+'https://elpais.com/elpais/2020/02/18/ciencia/1582045946_459487.html': {
+    'file': 'elpais.com.ciencia.html',
+    'date': '2020-02-19',
+},
+'https://www.latimes.com/politics/story/2020-02-19/mike-bloomberg-democratic-debate-history': {
+    'file': 'latimes.com.bloomberg.html',
+    'date': '2020-02-19',
+},
+'https://www.uusisuomi.fi/uutiset/sanna-marin-tapasi-angela-merkelin-myos-saksa-haluaa-pitaa-kiinni-maataloustuista-meidan-nakemyksiamme-suurimpana-nettomaksajana-ei-ole-otettu-riittavasti-huomioon/b29c11d3-9590-4045-8e2c-a568f9f24617': {
+    'file': 'uusisuomi.fi.angela.html',
+    'date': '2019-02-19',
+},
+'https://yle.fi/uutiset/3-11212601': {
+    'file': 'yle.fi.3-11212601.html',
+    'date': '2019-02-19',
+},
+'https://www.tofugu.com/travel/dezuka-suisan/': {
+    'file': 'tofugu.com.dezuka-suisan.html',
+    'date': '2020-02-04',
+},
+'https://blog.gaijinpot.com/tweet-of-the-week-67-dealing-with-chikan/': {
+    'file': 'blog.gaijinpot.com.chikan.html',
+    'date': '2020-02-08',
+},
+'https://madame.lefigaro.fr/bien-etre/problemes-dintestin-quoi-manger-pour-aller-bien-110417-130897': {
+    'file': 'madame.lefigaro.fr.dintestin.html',
+    'date': '2017-04-12',
+},
+'https://www.bondyblog.fr/societe/a-paris-8-un-peu-de-tension-beaucoup-d-actions/': {
+    'file': 'bondyblog.fr.paris-8.html',
+    'date': '2020-02-17',
+},
+'https://lapresse.tn/48915/parite-hommes-femmes-en-tunisie-au-dessous-de-la-moyenne-mondiale/': {
+    'file': 'lapresse.tn.parite.html',
+    'date': '2020-02-18',
+},
+'https://www.ledevoir.com/politique/montreal/573258/la-fin-des-trottinettes-en-libre-service-a-montreal': {
+    'file': 'ledevoir.com.trottinettes.html',
+    'date': '2020-02-19',
+},
+
+'https://wiki.piratenpartei.de/HE:Kassel/Stammtisch': {
+    'file': 'wiki.piratenpartei.de.stammtisch.html',
+    'date': '2020-01-29',
+},
+'https://aktion-hummelschutz.de/biologie/tote-hummeln-unter-linden/': {
+    'file': 'aktion-hummelschutz.de.hummeln.html',
+    'date': '2017-08-09',
+},
+'https://www.vinosytapas.de/wein/herkunft/spanien/d_o_ca_-rioja/': {
+    'file': 'vinosytapas.de.rioja.html',
+    'date': '2020-02-11',
+},
+'http://www.creativecommons.ch/wie-funktionierts/': {
+    'file': 'creativecommons.ch.wie.html',
+    'date': '2014-03-17',
+},
+'https://arsnova.thm.de/blog/frag-jetzt/': {
+    'file': 'arsnova.thm.de.frag.html',
+    'date': '2019-06-28',
+},
+'https://shabka.org/about-us/': {
+    'file': 'shabka.org.about.html',
+    'date': '2018-06-07',
+},
+'https://www.parallels.com/products/desktop/': {
+    'file': 'parallels.com.desktop.html',
+    'date': '2020-02-03',
+},
+'https://taz.de/Siemens-und-die-Kohlemine-Adani/!5655255/': {
+    'file': 'taz.de.siemens.html',
+    'date': '2020-01-13',
+},
+'https://fivethirtyeight.com/features/the-2020-endorsement-race-is-getting-interesting/': {
+    'file': 'fivethirtyeight.com.endorsement.html',
+    'date': '2020-01-28',
+},
+'https://www.wired.com/story/ai-great-things-burn-planet/': {
+    'file': 'wired.com.burn.html',
+    'date': '2020-01-21',
+},
+'http://www.parcoabruzzo.it/dettaglio.php?id=58354': {
+    'file': 'parcoabruzzo.it.58354.html',
+    'date': '2020-01-14',
+},
+'https://www.timesofisrael.com/state-of-washington-swears-in-first-native-american-jewish-supreme-court-justice/': {
+    'file': 'timesofisrael.com.washington.html',
+    'date': '2020-01-08',
+},
+'https://www.scmp.com/comment/opinion/article/3046526/taiwanese-president-tsai-ing-wens-political-playbook-should-be': {
+    'file': 'scmp.com.playbook.html',
+    'date': '2020-01-20',
+},
+'https://medium.com/@ransu.massol/recherche-non-%C3%A0-une-loi-in%C3%A9galitaire-be507f7cf761': {
+    'file': 'medium.com.recherche.html',
+    'date': '2019-12-09',
+},
+'https://juliasleseblog.blogspot.com/2018/08/irland-roadtrip.html': {
+    'file': 'juliasleseblog.blogspot.com.irland.html',
+    'date': '2018-08-02',
+},
+'https://literaturgefluester.wordpress.com/2019/01/01/ins-neue-jahr-4/': {
+    'file': 'literaturgefluester.wordpress.com.jahr.html',
+    'date': '2019-01-01',
+},
+'https://abookshelffullofsunshine.blogspot.com/2013/10/news-viertes-eigenes-blog-interview.html': {
+    'file': 'abookshelffullofsunshine.blogspot.com.interview.html',
+    'date': '2013-10-05',
+},
+'https://www.derpapierplanet.de/2015/06/through-booking-glass-juni-genre.html': {
+    'file': 'derpapierplanet.de.juni.html',
+    'date': '2015-06-05',
+},
+'https://weinlachgummis.blogspot.com/2017/09/rezi-love-is-war-sehnsucht-von-r-k.html': {
+    'file': 'weinlachgummis.blogspot.com.rezi.html',
+    'date': '2017-09-09',
+},
+'https://happyface313.com/2018/03/07/im-test-plantur-39-color-braun-phyto-coffein-shampoo-und-pflege-spulung/': {
+    'file': 'happyface313.com.plantur.html',
+    'date': '2018-03-07',
+},
+'https://www.limespace.de/2019/10/22/professionell-entloeten-so-machen-sie-alte-elektrogeraete-wieder-einsatzbereit/': {
+    'file': 'limespace.de.entloeten.html',
+    'date': '2019-10-22',
+},
+'https://frau-sabienes.de/konsumsparen-fazit/': {
+    'file': 'frau-sabienes.de.konsumsparen.html',
+    'date': '2020-02-17',
+},
+'http://lexikon.huettenhilfe.de/obst/banane.html': {
+    'file': 'lexikon.huettenhilfe.de.banane.html',
+    'date': '2011-07-25',
+},
+'https://de.happycoffee.org/collections/shop/products/happy-coffee-sidamo-bio-kaffeebohnen': {
+    'file': 'de.happycoffee.org.sidamo.html',
+    'date': '2019-03-02',
+},
+'https://www.spektrum.de/wissen/laesst-sich-die-coronavirus-ausbreitung-in-deutschland-kontrollieren/1700384': {
+    'file': 'spektrum.de.coronavirus.html',
+    'date': '2020-02-26',
+},
+'https://www.talent.ch/?p=5031': {
+    'file': 'talent.ch.5031.html',
+    'date': '2019-12-26',
+},
+'https://www.pronats.de/informationen/kindheit-und-arbeit/kinder-und-arbeit/': {
+    'file': 'pronats.de.arbeit.html',
+    'date': '2016-12-30',
+},
+'https://www.tafelblog.de/welches-europa-wir-wollen/': {
+    'file': 'tafelblog.de.europa.html',
+    'date': '2019-06-11',
+},
+'http://columbus-entdeckt.de/ski-fahren-auf-den-spuren-des-trolls/': {
+    'file': 'columbus-entdeckt.de.trolls.html',
+    'date': '2020-01-05',
+},
+'https://www.advents-shopping.de/die-weihnachtsmarkt-saison-beginnt-so-finden-sie-die-besten-weihnachtsmaerkte-in-ihrer-naehe.html': {
+    'file': 'advents-shopping.de.weihnachtsmaerkte.html',
+    'date': '2014-11-02',
+},
+'https://bloghaus.hypotheses.org/2320': {
+    'file': 'bloghaus.hypotheses.org.2320.html',
+    'date': '2019-09-26',
+},
+'http://www.der-erfolg-gibt-recht.de/rezepte/rinderleber-geschnetzeltes-mit-apfel-und-zwiebel.htm': {
+    'file': 'der-erfolg-gibt-recht.de.rinderleber.html',
+    'date': '2010-12-08',
+},
+'https://tell-review.de/unstillbares-heimweh/': {
+    'file': 'tell-review.de.heimweh.html',
+    'date': '2019-09-18',
+},
+'https://it-for-kids.org/blog/191211_variables/': {
+    'file': 'it-for-kids.org.variables.html',
+    'date': '2019-12-11',
+},
+'http://papaganda.org/2016/04/02/minions-mit-schablonen-malen-mit-malerrolle-und-bunten-farben/': {
+    'file': 'papaganda.org.minions.html',
+    'date': '2016-04-02',
+},
+'http://marktplatz.die-besserwisser.org/alles-hat-seine-zeit/': {
+    'file': 'marktplatz.die-besserwisser.org.zeit.html',
+    'date': '2017-04-05',
+},
+'https://www.doschu.com/2020/02/solopreneur-social-media-linkedin/': {
+    'file': 'doschu.com.solopreneur.html',
+    'date': '2020-02-14',
+},
+'https://blog.teufel.de/musik-und-sport-so-steigern-songs-deine-leistung/': {
+    'file': 'blog.teufel.de.leistung.html',
+    'date': '2020-02-13',
+},
+'https://www.whiskyverkostung.com/termine-whisky-tastings-januar-mai-2020-halle-saale/5805': {
+    'file': 'whiskyverkostung.com.halle.html',
+    'date': '2019-11-27',
+},
+'https://zahlenzauberin.wordpress.com/2012/08/22/was-zum-horen-in-den-ferien/': {
+    'file': 'zahlenzauberin.wordpress.com.ferien.html',
+    'date': '2010-08-22',
+},
+'https://www.deutschlandfunk.de/die-zukunft-der-arbeit-wir-dekorieren-auf-der-titanic-die.911.de.html?dram:article_id=385022': {
+    'file': 'deutschlandfunk.de.titanic.html',
+    'date': '2017-05-01',
+},
+'https://1hundetagebuch.wordpress.com/2019/10/31/nach-viel-zu-langer-zeit-mal-wieder/': {
+    'file': '1hundetagebuch.wordpress.com.langer.html',
+    'date': '2019-10-31',
+},
+'http://www.steinhau.com/steinhau/wordpress/einmal-zahlen-alles-lesen/': {
+    'file': 'steinhau.com.zahlen.html',
+    'date': '2019-11-13',
+},
+'http://www.pointofsail-kiel.de/artikel/ben-wilson-surf.html': {
+    'file': 'pointofsail-kiel.de.wilson.html',
+    'date': '2019-06-20',
+},
+}
 
 
 def load_document(filename):
@@ -525,12 +857,16 @@ def run_newspaper(htmlstring):
 
 
 def run_newsplease(htmlstring):
-   '''try with newsplease'''
-   article = NewsPlease.from_html(htmlstring, url=None)
-   if article.date_publish is None:
-      return None
-   date = convert_date(article.date_publish, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-   return date
+    '''try with newsplease'''
+    try:
+        article = NewsPlease.from_html(htmlstring, url=None)
+        if article.date_publish is None:
+             return None
+        date = convert_date(article.date_publish, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+        return date
+    except Exception as err:
+        print('Exception:', err)
+        return None
 
 
 def run_articledateextractor(htmlstring):
