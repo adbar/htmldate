@@ -66,10 +66,6 @@ EVAL_PAGES = {
     'file': 'blog.wordpress.com.html',
     'date': '2017-08-30',
 },
-#'https://en.support.wordpress.com/': {
-#    'file': 'support.wordpress.com.html',
-#    'date': None,
-#},
 'https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504': {
     'file': 'futurezone.at.cc.html',
     'date': '2013-08-09',
@@ -122,18 +118,6 @@ EVAL_PAGES = {
     'file': 'horizont.net.html',
     'date': '2019-01-29',
 },
-#'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': {
-#    'file': 'intel.com.tos.html',
-#    'date': None,
-#},
-#'https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/': {
-#    'file': 'pferde.projekte.de.html',
-#    'date': '2016-07-15',
-#},
-#'https://www.rosneft.com/business/Upstream/Licensing/': {
-#    'file': 'rosneft.com.licensing.html',
-#    'date': '2014-12-31',
-#},
 'https://www.scs78.de/news/items/warm-war-es-schoen-war-es.html': {
     'file': 'scs78.de.html',
     'date': '2018-06-10',
@@ -162,10 +146,6 @@ EVAL_PAGES = {
     'file': 'unexpecteduser.2011.html',
     'date': '2011-03-30',
 },
-#'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': {
-#    'file': 'viehbacher.com.forderungsbetreibung.html',
-#    'date': '2016-01-01',
-#},
 'http://www.eza.gv.at/das-ministerium/presse/aussendungen/2018/07/aussenministerin-karin-kneissl-beim-treffen-der-deutschsprachigen-aussenminister-in-luxemburg/': {
     'file': 'eza.gv.at.html',
     'date': '2018-07-03',
@@ -174,22 +154,10 @@ EVAL_PAGES = {
     'file': 'greenpeace.org.forests.html',
     'date': '2017-04-28',
 },
-#'http://www.heimicke.de/chronik/zahlen-und-daten/': {
-#    'file': 'heimicke.de.zahlen.html',
-#    'date': '',
-#},
 'http://www.hobby-werkstatt-blog.de/arduino/424-eine-arduino-virtual-wall-fuer-den-irobot-roomba.php': {
     'file': 'hobby-werkstatt-blog.de.roomba.html',
     'date': '2015-12-14',
 },
-#'http://www.hundeverein-kreisunna.de/termine.html': {
-#    'file': 'hundeverein-kreisunna.de.html',
-#    'date': '',
-#},
-#'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': {
-#    'file': 'hundeverein-querfurt.de.html',
-#    'date': '',
-#},
 'http://www.jovelstefan.de/2012/05/11/parken-in-paris/': {
     'file': 'jovelstefan.de.parken.html',
     'date': '2012-05-11',
@@ -226,10 +194,6 @@ EVAL_PAGES = {
     'file': 'loldf.org.html',
     'date': '2019-06-27',
 },
-#'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': {
-#    'file': 'beltz.de.12wege.html',
-#    'date': '',
-#},
 'https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html': {
     'file': 'oberstdorfresort.de.kraeuter.html',
     'date': '2018-06-20',
@@ -262,10 +226,6 @@ EVAL_PAGES = {
     'file': 'la-bas.org.porte.html',
     'date': '2019-06-28',
 },
-#'https://exporo.de/wiki/europaeische-zentralbank-ezb/': {
-#    'file': 'exporo.de.ezb.html',
-#    'date': '',
-#},
 'https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme': {
     'file': 'revolutionpermanente.fr.antonin.html',
     'date': '2019-06-13',
@@ -804,7 +764,155 @@ EVAL_PAGES = {
     'file': 'pointofsail-kiel.de.wilson.html',
     'date': '2019-06-20',
 },
+'http://www.interscenar.io/politik/eindruecke/was-wir-ueber-uns-nicht-hoeren-wollen': {
+    'file': 'interscenar.io.hoeren.html',
+    'date': '2019-03-03',
+},
+'https://www.deviante-pfade.de/unbefriedigt/': {
+    'file': 'deviante-pfade.de.unbefriedigt.html',
+    'date': '2020-01-08',
+},
+'https://seglerblog.stössenseer.de/haltet-unsere-gewaesser-sauber/': {
+    'file': 'seglerblog.stössenseer.de.sauber.html',
+    'date': '2020-02-23',
+},
+'https://www.ihrwebprofi.at/2011/09/17/publikumsvoting-beim-wiener-content-award-gestartet/': {
+    'file': 'ihrwebprofi.at.publikumsvoting.html',
+    'date': '2011-09-17',
+},
+'https://mitternachtskabinett.wordpress.com/2016/06/19/geister-spuk-gentrifizierung/': {
+    'file': 'mitternachtskabinett.wordpress.com.gentrifizierung.html',
+    'date': '2016-06-19',
+},
+'http://www.aussengedanken.de/streit-ums-feuerholz/': {
+    'file': 'aussengedanken.de.feuerholz.html',
+    'date': '2017-02-13',
+},
+'https://insubordinant.wordpress.com/2015/08/11/need-for-speed/': {
+    'file': 'insubordinant.wordpress.com.speed.html',
+    'date': '2015-08-11',
+},
+'http://rueda.wikidot.com/enchufla': {
+    'file': 'rueda.wikidot.com.enchufla.html',
+    'date': '2008-03-23',
+},
+'https://zulang.wordpress.com/2015/12/12/3-jahre-legalisierte-genitalverstuemmelung/': {
+    'file': 'zulang.wordpress.com.genitalverstuemmelung.html',
+    'date': '2015-12-12',
+},
+'https://surfguard.wordpress.com/2016/11/01/ich-las-sah-hoerte-medien-im-oktober-2016/': {
+    'file': 'surfguard.wordpress.com.medien.html',
+    'date': '2016-11-01',
+},
+'https://litradio.net/die-autorin-nora-bossong-im-gespraech-ueber-ihren-roman-schutzzone/': {
+    'file': 'litradio.net.bossong.html',
+    'date': '2020-02-22',
+},
+'https://www.japantimes.co.jp/news/2020/02/18/national/crime-legal/6000-surgical-masks-stolen/': {
+    'file': 'japantimes.co.jp.surgical.html',
+    'date': '2020-02-18',
+},
+'http://www.hearya.com/2006/12/04/hit-paraders-top-100-metal-vocalists-of-all-time/': {
+    'file': 'hearya.com.metal.html',
+    'date': '2006-12-04',
+},
+'http://thenervousbreakdown.com/tanderson/2011/07/the-loneliest-woman-in-the-world-an-appreciation-of-hearts-alone/': {
+    'file': 'thenervousbreakdown.com.loneliest.html',
+    'date': '2011-07-11',
+},
+'https://www.cbsnews.com/news/2020-presidential-election-south-carolina-black-voters-democrats-joe-biden/': {
+    'file': 'cbsnews.com.carolina.html',
+    'date': '2020-02-24',
+},
+'https://pagesix.com/2020/02/24/former-wh-press-secretary-dee-dee-myers-exits-warner-bros-role/': {
+    'file': 'pagesix.com.myers.html',
+    'date': '2020-02-24',
+},
+'https://tonedeaf.thebrag.com/record-of-the-week-luboku-pale-blue-dot-lift-off/': {
+    'file': 'tonedeaf.thebrag.com.luboku.html',
+    'date': '2020-02-21',
+},
+'https://it-learner.de/wenn-das-netzwerk-unter-windows-10-sehr-langsam-ist-koennte-das-abschalten-der-autotuning-funktion-abhilfe-schaffen/': {
+    'file': 'it-learner.de.autotuning.html',
+    'date': '2019-05-16',
+},
+'https://de.induux.com/4press/energiezaehler-m-bus-mod-bus-ethernet-mid-3999/': {
+    'file': 'de.induux.com.energiezaehler.html',
+    'date': '2018-04-20',
+},
+'https://aoc.media/opinion/2019/12/09/pour-le-neoliberalisme-la-retraite-est-un-archaisme/': {
+    'file': 'aoc.media.archaisme.html',
+    'date': '2019-12-10',
+},
+'http://www.regards.fr/politique/article/deux-ans-et-demi-en-macronie-9-mises-en-examen-10-enquetes-en-cours-et-2': {
+    'file': 'regards.fr.enquetes.html',
+    'date': '2018-09-30',
+},
+'https://newrepublic.com/article/155970/collapse-neoliberalism': {
+    'file': 'newrepublic.com.neoliberalism.html',
+    'date': '2019-12-23',
+},
+'https://www.tdg.ch/suisse/berne-interdit-chlorothalonil/story/18348200': {
+    'file': 'tdg.ch.chlorothalonil.html',
+    'date': '2019-12-12',
+},
+'https://www.gala.fr/l_actu/news_de_stars/jean-paul-delevoye-monsieur-retraites-du-gouvernement-jacques-chirac-lui-donnait-un-surnom-peu-flatteur_439447': {
+    'file': 'gala.fr.surnom.html',
+    'date': '2019-12-09',
+},
+'https://www.elle.de/plateau-sneaker-trend': {
+    'file': 'elle.de.sneaker.html',
+    'date': '2019-06-19',
+},
+'https://www.faz.net/aktuell/reise/reise-durch-sierra-leone-es-ist-zeit-fuer-den-tourismus-16306548.html': {
+    'file': 'faz.net.leone.html',
+    'date': '2019-07-30',
+},
+'https://www.management-circle.de/blog/remote-support-mit-smart-glasses/': {
+    'file': 'management-circle.de.glasses.html',
+    'date': '2019-07-25',
+},
+'https://www.it-finanzmagazin.de/creditshelf-kooperiert-mit-finleap-und-plant-akquisition-der-valendo-gmbh-90871/': {
+    'file': 'it-finanzmagazin.de.creditshelf.html',
+    'date': '2019-06-20',
+},
+'https://abenteuer-astronomie.de/astrofoto-community/plejaden-m45-2/': {
+    'file': 'abenteuer-astronomie.de.plejaden.html',
+    'date': '2019-09-17',
+},
 }
+#'https://en.support.wordpress.com/': {
+#    'file': 'support.wordpress.com.html',
+#    'date': None,
+#},
+#'https://exporo.de/wiki/europaeische-zentralbank-ezb/': {
+#    'file': 'exporo.de.ezb.html',
+#    'date': '',
+#},
+#'https://www.beltz.de/sachbuch_ratgeber/buecher/produkt_produktdetails/37219-12_wege_zu_guter_pflege.html': {
+#    'file': 'beltz.de.12wege.html',
+#    'date': '',
+#},
+#'http://www.hundeverein-kreisunna.de/termine.html': {
+#    'file': 'hundeverein-kreisunna.de.html',
+#    'date': '',
+#},
+#'http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50': {
+#    'file': 'hundeverein-querfurt.de.html',
+#    'date': '',
+#},
+#'https://www.intel.com/content/www/us/en/legal/terms-of-use.html': {
+#    'file': 'intel.com.tos.html',
+#    'date': None,
+#},
+#'http://www.heimicke.de/chronik/zahlen-und-daten/': {
+#    'file': 'heimicke.de.zahlen.html',
+#    'date': '',
+#},
+#'http://viehbacher.com/de/spezialisierung/internationale-forderungsbeitreibung': {
+#    'file': 'viehbacher.com.forderungsbetreibung.html',
+#    'date': '',
+#},
 
 
 def load_document(filename):
