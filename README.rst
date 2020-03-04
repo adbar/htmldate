@@ -89,19 +89,19 @@ The module returns a date if a valid cue could be found in the document, corresp
 Performance
 -----------
 
-=============================== ========= ========  ========
-100 documents containing identifiable dates (2020-02-12)
-------------------------------------------------------------
-Python Package                  Precision Accuracy  Time
-=============================== ========= ========  ========
-newspaper3k 0.2.8               **0.97**  0.31      49.51
-goose3 3.1.6                    0.94      0.32      7.10
-date_guesser 2.1.4              0.80      0.40      18.26
-news-please 1.4.25              0.80      0.46      40.85
-articleDateExtractor 0.20       0.81      0.46      2.13
-htmldate 0.6.1 (fast)           0.93      0.79      **1.40**
-htmldate[all] 0.6.1 (extensive) 0.91      **0.91**  2.67
-=============================== ========= ========  ========
+=============================== ========= ========= ========= ========= =======
+200 web pages containing identifiable dates (2020-03-04)
+-------------------------------------------------------------------------------
+Python Package                  Precision Recall    Accuracy  F-Score   Time
+=============================== ========= ========= ========= ========= =======
+newspaper3k 0.2.8               **0.917** 0.399     0.385     0.556     78.6
+goose3 3.1.6                    0.910     0.422     0.405     0.577     13.5
+date_guesser 2.1.4              0.825     0.553     0.495     0.662     36.7
+news-please 1.4.25              0.831     0.638     0.565     0.722     64.5
+articleDateExtractor 0.20       0.832     0.644     0.570     0.726     5.7
+htmldate 0.6.1 (fast)           **0.917** 0.897     0.830     0.907     **2.2**
+htmldate[all] 0.6.1 (extensive) 0.899     **0.994** **0.895** **0.945** 5.4
+=============================== ========= ========= ========= ========= =======
 
 For complete results and explanations see the `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
 
