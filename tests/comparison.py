@@ -880,6 +880,58 @@ EVAL_PAGES = {
     'file': 'abenteuer-astronomie.de.plejaden.html',
     'date': '2019-09-17',
 },
+'https://www.soundofscience.fr/1927': {
+    'file': 'soundofscience.fr.1927.html',
+    'date': '2020-01-20',
+},
+'https://www.theguardian.com/education/2020/jan/20/thousands-of-uk-academics-treated-as-second-class-citizens': {
+    'file': 'theguardian.com.academics.html',
+    'date': '2020-01-20',
+},
+'https://phys.org/news/2019-10-flint-flake-tool-partially-birch.html': {
+    'file': 'phys.org.tool.html',
+    'date': '2019-10-22',
+},
+'https://laviedesidees.fr/L-evaluation-et-les-listes-de.html': {
+    'file': 'laviedesidees.fr.evaluation.html',
+    'date': '2009-09-15',
+},
+'https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/': {
+    'file': 'gregoryszorc.com.python3.html',
+    'date': '2020-01-13',
+},
+'https://www.pluralsight.com/tech-blog/managing-python-environments/': {
+    'file': 'pluralsight.com.python.html',
+    'date': '2020-01-10',
+},
+'https://stackoverflow.blog/2020/01/20/what-is-rust-and-why-is-it-so-popular/': {
+    'file': 'stackoverflow.com.rust.html',
+    'date': '2020-01-20',
+},
+'https://www.theplanetarypress.com/2020/01/management-of-intact-forestlands-by-indigenous-peoples-key-to-protecting-climate/': {
+    'file': 'theplanetarypress.com.forestlands.html',
+    'date': '2020-01-19',
+},
+'https://wikimediafoundation.org/news/2020/01/15/access-to-wikipedia-restored-in-turkey-after-more-than-two-and-a-half-years/': {
+    'file': 'wikimediafoundation.org.turkey.html',
+    'date': '2020-01-15',
+},
+'https://www.reuters.com/article/us-awards-sag/parasite-scores-upset-at-sag-awards-boosting-oscar-chances-idUSKBN1ZI0EH': {
+    'file': 'reuters.com.parasite.html',
+    'date': '2020-01-19',
+},
+'https://www.nationalgeographic.co.uk/environment-and-conservation/2020/01/ravenous-wild-goats-ruled-island-over-century-now-its-being': {
+    'file': 'nationalgeographic.co.uk.goats.html',
+    'date': '2020-01-06',
+},
+'https://www.nature.com/articles/d41586-019-02790-3': {
+    'file': 'nature.com.telescope.html',
+    'date': '2019-09-24',
+},
+'https://www.salon.com/2020/01/10/despite-everything-u-s-emissions-dipped-in-2019_partner/': {
+    'file': 'salon.com.emissions.html',
+    'date': '2020-01-10',
+},
 }
 #'https://en.support.wordpress.com/': {
 #    'file': 'support.wordpress.com.html',
