@@ -1,8 +1,8 @@
 # pylint:disable-msg=E0611,I1101
 """
-Custom parsers and X-Path expressions for date extraction
+Custom parsers and XPath expressions for date extraction
 """
-## This file is available from https://github.com/adbar/trafilatura
+## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
 # standard

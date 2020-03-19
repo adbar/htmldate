@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.6.2
+- performance and documentation improved
+
 ### 0.6.1
 - code base restructured
 - bugs fixed and further tests

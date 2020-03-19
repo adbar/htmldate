@@ -68,7 +68,7 @@ On the command-line:
 Features
 --------
 
-*htmldate* finds original and updated publication dates of web pages. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format. It provides following ways to date a HTML document:
+*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format. It provides following ways to date a HTML document:
 
 1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
@@ -252,5 +252,5 @@ Feel free to file bug reports on the `issues page <https://github.com/adbar/html
 
 Kudos to the following software libraries:
 
--  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
+-  `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.

@@ -30,8 +30,8 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.6.1',
-    description='Find the creation date of web pages using a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction.',
+    version='0.6.2',
+    description='Fast and robust extraction of original and updated publication dates from web pages.',
     long_description=readme(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
