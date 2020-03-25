@@ -12,7 +12,7 @@ Tested solutions
 - `date_guesser <https://github.com/mitmedialab/date_guesser>`_ extracts publication dates from a web pages along with an accuracy measure (not used here),
 - `goose3 <https://github.com/goose3/goose3>`_ can extract information for embedded content,
 - `htmldate <https://github.com/adbar/htmldate>`_ is the software package described here, it is designed to extract original and updated publication dates of web pages,
-- `newspaper3k <https://github.com/codelucas/newspaper>`_ is mostly geared towards newspaper texts,
+- `newspaper <https://github.com/codelucas/newspaper>`_ is mostly geared towards newspaper texts,
 - `news-please <https://github.com/fhamborg/news-please>`_ is a news crawler that extracts structured information,
 
 
@@ -41,7 +41,7 @@ The results below show that **date extraction is not a completely solved task** 
 -------------------------------------------------------------------------------
 Python Package                  Precision Recall    Accuracy  F-Score   Time
 =============================== ========= ========= ========= ========= =======
-newspaper3k 0.2.8               **0.917** 0.399     0.385     0.556     78.6
+newspaper 0.2.8                 **0.917** 0.399     0.385     0.556     78.6
 goose3 3.1.6                    0.910     0.422     0.405     0.577     13.5
 date_guesser 2.1.4              0.825     0.553     0.495     0.662     36.7
 news-please 1.4.25              0.831     0.638     0.565     0.722     64.5
@@ -51,7 +51,7 @@ htmldate[all] 0.6.1 (extensive) 0.899     **0.994** **0.895** **0.945** 5.4
 =============================== ========= ========= ========= ========= =======
 
 
-Precision describes if the dates given as output are correct: *newspaper3k* and *goose3* fare well precision-wise but they fail to extract dates in a large majority of cases (poor recall). The difference in accuracy between *date_guesser* and *newspaper3k* is consistent with tests described on the `website of the former <https://github.com/mitmedialab/date_guesser>`_.
+Precision describes if the dates given as output are correct: *newspaper* and *goose3* fare well precision-wise but they fail to extract dates in a large majority of cases (poor recall). The difference in accuracy between *date_guesser* and *newspaper* is consistent with tests described on the `website of the former <https://github.com/mitmedialab/date_guesser>`_.
 
 It turns out that *htmldate* performs better than the other solutions overall. Most of all and despite being measured on a sample, **the higher accuracy and faster processing time are highly significant**. Especially for smaller news outlets, websites and blogs, as well as pages written in languages other than English (in this case mostly but not exclusively German), *htmldate* greatly extends date extraction coverage without sacrificing precision.
 
