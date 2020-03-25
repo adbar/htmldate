@@ -98,19 +98,20 @@ The execution time (best of 3 tests) cannot be easily compared in all cases as s
 
 ## Results
 
-The results below show that date extraction is not a completely solved task but one for which extractors have to resort to heuristics and guesses. The figures documenting recall and accuracy capture the real-world performance of the tools as the absence of a date output impacts the result.
+The results in Table 1 show that date extraction is not a completely solved task but one for which extractors have to resort to heuristics and guesses. The figures documenting recall and accuracy capture the real-world performance of the tools as the absence of a date output impacts the result.
 
 
-| Python Package 	| Precision 	| Recall 	| Accuracy 	| F-Score 	| Time |
-------------------------------------------------------------------------------------------------
+| Python Package | Precision | Recall | Accuracy | F-Score | Time |
+| --- | --- | --- | --- | --- | --- |
 | newspaper 0.2.8 	| **0.917** 	| 0.399 	| 0.385 	| 0.556 	| 78.6 |
 | goose3 3.1.6 		| 0.910 	| 0.422 	| 0.405 	| 0.577 	| 13.5 |
 | date_guesser 2.1.4 	| 0.825 	| 0.553 	| 0.495 	| 0.662 	| 36.7 |
 | news-please 1.4.25 	| 0.831 	| 0.638 	| 0.565 	| 0.722 	| 64.5 |
-| articleDateExtractor	| 0.20 		| 0.832 	| 0.644 	| 0.570 	| 0.726	| 5.7 |
-| htmldate 0.6.1 (fast) | **0.917** 	| 0.897 	| 0.830 	| 0.907 	| **2.2** |
-| htmldate[all] 0.6.1 (extensive) | 0.899 	| **0.994** 	| **0.895** 	| **0.945** 	| 5.4 |
-[200 web pages containing identifiable dates (2020-03-04)][table1]
+| articleDateExtractor	| 0.832 	| 0.644 	| 0.570 	| 0.726		| 5.7 |
+| htmldate 0.6.1 *(fast)* | **0.917** 	| 0.897 	| 0.830 	| 0.907 	| **2.2** |
+| htmldate[all] 0.6.1 *(extensive)* | 0.899 	| **0.994** 	| **0.895** 	| **0.945** 	| 5.4 |
+
+: 200 web pages containing identifiable dates (2020-03-04)
 
 
 Precision describes if the dates given as output are correct: ``newspaper`` and ``goose3`` fare well precision-wise but they fail to extract dates in a large majority of cases (poor recall). The difference in accuracy between ``date_guesser`` and ``newspaper`` is consistent with tests described on the website of the former.
@@ -128,7 +129,7 @@ It turns out that ``htmldate`` performs better than the other solutions overall.
 
 This work has been supported by the ZDL research project (*Zentrum für digitale Lexikographie der deutschen Sprache*, [zdl.org](https://www.zdl.org/)). Thanks to Yannick Kozmus and further [contributors](https://github.com/adbar/htmldate/graphs/contributors) for working on and testing the package.
 
-The following Python modules have been of help: ``lxml``, ``ciso8601``, and ``dateparser``. A few patterns are derived from ``python-goose``, ``metascraper``, ``newspaper`` and ``articleDateExtractor``. This module extends their coverage and robustness significantly.
+The following Python modules have been of help: ``lxml``, ``ciso8601``, and ``dateparser``. A few patterns are derived from ``python-goose``, ``metascraper``, ``newspaper`` and ``articleDateExtractor``; this package extends their coverage and robustness significantly.
 
 
 # References
