@@ -70,12 +70,12 @@ Features
 
 *htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format. It provides following ways to date a HTML document:
 
-1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
-2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
+1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
+2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
 3. **Bare HTML content**: A series of heuristics is run on text and markup:
 
   - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  - in ``extensive`` mode all potential dates are collected and disambiguation algorithm determines the best one
+  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
 
 The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 

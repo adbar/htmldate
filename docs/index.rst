@@ -72,12 +72,12 @@ Features
 
 The library uses a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. It provides following ways to date a HTML document:
 
-1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncracies
-2. **HTML code**: The whole document is then searched for structural markers: ``abbr``/``time`` elements and a series of attributes (e.g. ``postmetadata``)
+1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
+2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
 3. **Bare HTML content**: A series of heuristics is run on text and markup:
 
-  1. in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  2. in ``extensive`` mode all potential dates are collected and disambiguation algorithm determines the best one
+  - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
+  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
 
 The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
@@ -242,7 +242,7 @@ Feel free to file bug reports on the `issues page <https://github.com/adbar/html
 
 Kudos to the following software libraries:
 
--  `cchardet <https://github.com/PyYoshi/cChardet>`_, `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
+-  `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
 -  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
 
 
