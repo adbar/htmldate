@@ -142,6 +142,8 @@ def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
     assert load_html('<html><body>XYZ</body></html>') is not None
+    assert load_html(b'<html><body>XYZ</body></html>') is not None
+    assert load_html('https://httpbin.org/html') is not None
     assert find_date(None) is None
 
 
@@ -153,8 +155,8 @@ def test_no_date():
     assert find_date(load_mock_page('https://en.support.wordpress.com/')) is None
     # problem with LXML: AssertionError: ElementTree not initialized, missing root
     # assert find_date(' ', outputformat='%X') is None
-    assert find_date('<html></html>', outputformat='%X') is None
-    assert find_date('<html></html>', url='http://www.website.com/9999/01/43/') is None
+    assert find_date('<html><body>XYZ</body></html>', outputformat='%XYZ') is None
+    assert find_date('<html><body>XYZ</body></html>', url='http://www.website.com/9999/01/43/') is None
 
 
 def test_exact_date():
@@ -235,6 +237,9 @@ def test_exact_date():
     # time in document body
     assert find_date('<html><body><time>2018-01-04</time></body></html>') == '2018-01-04'
     assert find_date(load_mock_page('https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/')) == '2018-10-23'
+
+    # additional XPath expressions
+    assert find_date('<html><body><div class="fecha">2018-01-04</div></body></html>') == '2018-01-04'
 
     ## other expressions in document body
     assert find_date('<html><body>"datePublished":"2018-01-04"</body></html>') == '2018-01-04'
