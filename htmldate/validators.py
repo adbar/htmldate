@@ -69,6 +69,7 @@ def output_format_validator(outputformat):
     return True
 
 
+@lru_cache(maxsize=32)
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
     # slow!
@@ -114,6 +115,7 @@ def compare_values(reference, attempt, outputformat, original_date):
     return reference
 
 
+@lru_cache(maxsize=32)
 def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:

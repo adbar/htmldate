@@ -46,16 +46,13 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
     # loop through the elements to analyze
     for elem in elements:
         # trim
-        temptext = elem.text_content().strip()
-        temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
-        textcontent = temptext.strip()
+        textcontent = re.sub(r'[\n\r\s\t]+', ' ', elem.text_content(), re.MULTILINE).strip()
         # simple length heuristics
         if not textcontent or len(textcontent) < 6:
             continue
         # shorten and try the beginning of the string
-        toexamine = textcontent[:48]
         # trim non-digits at the end of the string
-        toexamine = re.sub(r'\D+$', '', toexamine)
+        toexamine = re.sub(r'\D+$', '', textcontent[:48])
         # more than 4 digits required
         if len(list(filter(str.isdigit, toexamine))) < 4:
             continue
@@ -91,8 +88,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
     :return: Returns a valid date expression as a string, or None
 
     """
-    headerdate = None
-    reserve = None
+    headerdate, reserve = None, None
     # loop through all meta elements
     for elem in tree.xpath('//meta'):
         # safeguard
@@ -109,8 +105,6 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                     ):
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
-                    if headerdate is not None:
-                        break
             # modified date: override published_time
             else:
                 if elem.get('property').lower() in (
@@ -121,7 +115,6 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                     attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
                     if attempt is not None:
                         headerdate = attempt
-                        break
                 elif elem.get('property').lower() in (
                         'article:published_time', 'bt:pubdate', 'dc:created',
                         'dc:date', 'og:article:published_time',
@@ -188,6 +181,9 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
             if elem.get('http-equiv').lower() in ('date', 'last-modified'):
                 LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+        # exit loop
+        if headerdate is not None:
+            break
     # if nothing was found, look for lower granularity (so far: "copyright year")
     if headerdate is None and reserve is not None:
         LOGGER.debug('opting for reserve date with less granularity')
@@ -213,10 +209,8 @@ def select_candidate(occurrences, catch, yearpat, original_date, max_date):
         bestones = sorted(firstselect, reverse=True)[:2]
     else:
         bestones = sorted(firstselect)[:2]
-    first_pattern = bestones[0][0]
-    first_count = bestones[0][1]
-    second_pattern = bestones[1][0]
-    second_count = bestones[1][1]
+    first_pattern, first_count = bestones[0][0], bestones[0][1]
+    second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
     # same number of occurrences: always take top of the pile
     if first_count == second_count:
@@ -252,15 +246,12 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
 def try_expression(expression, outputformat, extensive_search, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
-    temptext = expression.strip()
-    temptext = re.sub(r'[\n\r\s\t]+', ' ', temptext, re.MULTILINE)
-    textcontent = temptext.strip()
+    textcontent = re.sub(r'[\n\r\s\t]+', ' ', expression, re.MULTILINE).strip()
     # simple length heuristics
     if not textcontent or len(list(filter(str.isdigit, textcontent))) < 4:
         return None
     # try the beginning of the string
-    textcontent = textcontent[:48]
-    attempt = try_ymd_date(textcontent, outputformat, extensive_search, max_date)
+    attempt = try_ymd_date(textcontent[:48], outputformat, extensive_search, max_date)
     return attempt
 
 
@@ -621,8 +612,9 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
                                        original_date, max_date)
     except etree.XPathEvalError as err:
         LOGGER.error('header XPath %s', err)
-    if header_result is not None:
-        return header_result
+    else:
+        if header_result is not None:
+            return header_result
 
     # try abbr elements
     abbr_result = examine_abbr_elements(

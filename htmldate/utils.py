@@ -28,6 +28,8 @@ from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+HTML_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True, encoding='utf-8')
+RECOVERY_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True)
 
 
 def isutf8(data):
@@ -126,15 +128,16 @@ def load_html(htmlobject):
         guessed_encoding = detect_encoding(htmlobject)
         if guessed_encoding is not None:
             if guessed_encoding == 'UTF-8':
-                tree = html.fromstring(htmlobject)  # parser=HTML_PARSER
+                tree = html.fromstring(htmlobject, parser=HTML_PARSER)
             else:
                 try:
                     htmlobject = htmlobject.decode(guessed_encoding)
+                    tree = html.fromstring(htmlobject, parser=HTML_PARSER)
                 except UnicodeDecodeError:
                     LOGGER.warning('encoding issue: %s', guessed_encoding)
-                    tree = html.fromstring(htmlobject)  # parser=RECOVERY_PARSER
+                    tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
         else:
-            tree = html.fromstring(htmlobject)  # parser=RECOVERY_PARSER
+            tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
     # use string if applicable
     if isinstance(htmlobject, str):
         # the string is a URL, download it
@@ -147,11 +150,11 @@ def load_html(htmlobject):
                 return None
         # robust parsing
         try:
-            tree = html.fromstring(htmlobject)  # parser=HTML_PARSER
+            tree = html.fromstring(htmlobject, parser=HTML_PARSER)
         except ValueError:
             # try to parse a bytestring
             try:
-                tree = html.fromstring(htmlobject.encode('utf8'))  # parser=HTML_PARSER
+                tree = html.fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
             except Exception as err:
                 LOGGER.error('parser bytestring %s', err)
         except Exception as err:

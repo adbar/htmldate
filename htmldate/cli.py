@@ -74,7 +74,6 @@ def main():
                 htmlstring = sys.stdin.read()
             except UnicodeDecodeError as err:
                 sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n')
-
         result = examine(htmlstring, extensive_bool=args.fast,
                          original_date=args.original,
                          verbose_flag=args.verbose,

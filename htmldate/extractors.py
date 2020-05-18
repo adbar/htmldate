@@ -130,6 +130,9 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
                'November': '11', 'Nov': '11',
                'Dezember': '12', 'December': '12', 'Dec': '12'}
 
+TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
+NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
+
 
 def discard_unwanted(tree):
     '''Delete unwanted sections of an HTML document and return them as a list'''
@@ -200,9 +203,7 @@ def regex_parse_en(string):
     # numbers
     match = ENGLISH_DATE.search(string)
     if match:
-        day = match.group(2)
-        month = match.group(1)
-        year = match.group(3)
+        day, month, year = match.group(2), match.group(1), match.group(3)
     else:
         # general search
         if not GENERAL_TEXTSEARCH.search(string):
@@ -210,16 +211,14 @@ def regex_parse_en(string):
         # American English
         match = AMERICAN_ENGLISH.search(string)
         if match:
-            day = match.group(2)
-            month = TEXT_MONTHS[match.group(1)]
-            year = match.group(4)
+            day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], \
+                               match.group(4)
         # British English
         else:
             match = BRITISH_ENGLISH.search(string)
             if match:
-                day = match.group(1)
-                month = TEXT_MONTHS[match.group(4)]
-                year = match.group(5)
+                day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], \
+                                   match.group(5)
             else:
                 return None
     # process and return
@@ -258,8 +257,7 @@ def custom_parse(string, outputformat, extensive_search, max_date):
                 result = parse_datetime_as_naive(string)
             if date_validator(result, outputformat, latest=max_date) is True:
                 LOGGER.debug('parsing result: %s', result)
-                converted = result.strftime(outputformat)
-                return converted
+                return result.strftime(outputformat)
         except ValueError:
             LOGGER.debug('parsing error: %s', string)
     # %Y-%m-%d search
@@ -305,8 +303,7 @@ def custom_parse(string, outputformat, extensive_search, max_date):
         try:
             if date_validator(dateobject, outputformat) is True:
                 LOGGER.debug('custom parse result: %s', dateobject)
-                converted = dateobject.strftime(outputformat)
-                return converted
+                return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', string, err)
     return None
@@ -334,10 +331,11 @@ def external_date_parser(string, outputformat):
 def try_ymd_date(string, outputformat, extensive_search, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
-    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 or not re.search(r'[.:,_/ -]|^[0-9]+$', string):
+    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 \
+    or not TEXT_DATE_PATTERN.search(string):
         return None
     # just time/single year, not a date
-    if re.match(r'[0-9]{2}:[0-9]{2}(:| )', string) or re.match(r'\D*[0-9]{4}\D*$', string):
+    if NO_TEXT_DATE_PATTERN.match(string):
         return None
     # faster
     customresult = custom_parse(string, outputformat, extensive_search, max_date)
