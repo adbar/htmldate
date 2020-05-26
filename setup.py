@@ -17,9 +17,9 @@ packages = ['htmldate']
 # some problems with installation solved this way
 extras = {
     'all': [
-        'ciso8601 >= 2.1.2',
-        'dateparser >= 0.7.2',  # 0.5.0 could be faster
-        'regex >= 2020.1.8',
+        'ciso8601 >= 2.1.3',
+        'dateparser >= 0.7.4',  # 0.5.0 could be faster
+        'regex >= 2020.5.14',
         ],
 }
 
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.6.2',
+    version='0.6.3',
     description='Fast and robust extraction of original and updated publication dates from web pages.',
     long_description=readme(),
     classifiers=[
@@ -39,6 +39,7 @@ setup(
         #'Development Status :: 6 - Mature',
         'Environment :: Console',
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
@@ -67,10 +68,10 @@ setup(
     python_requires='>=3.4',
     install_requires=[
         'lxml == 4.3.5; python_version == "3.4"',
-        'lxml >= 4.4.2; python_version > "3.4"',
+        'lxml >= 4.5.1; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
         'requests == 2.21.0; python_version == "3.4"',
-        'requests >= 2.22.0; python_version > "3.4"',
+        'requests >= 2.23.0; python_version > "3.4"',
     ],
     extras_require=extras,
     entry_points = {
