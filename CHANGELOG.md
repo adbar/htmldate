@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.6.3
+- more efficient code
+- additional evaluation data
+
 ### 0.6.2
 - performance and documentation improved
 
