@@ -134,12 +134,10 @@ def convert_date(datestring, inputformat, outputformat):
         return str(datestring)
     # date object (speedup)
     if isinstance(datestring, datetime.date):
-        converted = datestring.strftime(outputformat)
-        return converted
+        return datestring.strftime(outputformat)
     # normal
     dateobject = datetime.datetime.strptime(datestring, inputformat)
-    converted = dateobject.strftime(outputformat)
-    return converted
+    return dateobject.strftime(outputformat)
 
 
 def check_extracted_reference(reference, outputformat, max_date):

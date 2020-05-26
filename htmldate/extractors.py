@@ -136,7 +136,7 @@ NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 def discard_unwanted(tree):
     '''Delete unwanted sections of an HTML document and return them as a list'''
-    my_discarded = list()
+    my_discarded = []
     for expr in DISCARD_EXPRESSIONS:
         for subtree in tree.xpath(expr):
             my_discarded.append(subtree)
@@ -331,7 +331,8 @@ def external_date_parser(string, outputformat):
 def try_ymd_date(string, outputformat, extensive_search, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
-    if string is None or len(string) < 6 or len(list(filter(str.isdigit, string))) < 4 \
+    # list(filter(str.isdigit, string))
+    if not string or len(string) < 6 or len([c for c in string if c.isdigit()]) < 4 \
     or not TEXT_DATE_PATTERN.search(string):
         return None
     # just time/single year, not a date

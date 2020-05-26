@@ -12,6 +12,7 @@ import re
 
 from collections import Counter
 from copy import deepcopy
+from functools import lru_cache, partial
 from lxml import etree, html
 
 # own
@@ -34,6 +35,7 @@ from .validators import (check_extracted_reference, compare_values,
 LOGGER = logging.getLogger(__name__)
 
 
+@lru_cache(maxsize=32)
 def examine_date_elements(tree, expression, outputformat, extensive_search, max_date):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -53,8 +55,8 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
         # shorten and try the beginning of the string
         # trim non-digits at the end of the string
         toexamine = re.sub(r'\D+$', '', textcontent[:48])
-        # more than 4 digits required
-        if len(list(filter(str.isdigit, toexamine))) < 4:
+        # more than 4 digits required # list(filter(str.isdigit, toexamine))
+        if len([c for c in toexamine if c.isdigit()]) < 4:
             continue
         LOGGER.debug('analyzing (HTML): %s', html.tostring(
             elem, pretty_print=False, encoding='unicode').translate(
@@ -89,10 +91,11 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
 
     """
     headerdate, reserve = None, None
+    tryfunc = partial(try_ymd_date, outputformat=outputformat, extensive_search=extensive_search, max_date=max_date)
     # loop through all meta elements
     for elem in tree.xpath('//meta'):
         # safeguard
-        if len(elem.attrib) < 1:
+        if not elem.attrib: # len(elem.attrib) < 1:
             continue
         # property attribute
         if 'property' in elem.attrib and 'content' in elem.attrib:
@@ -104,7 +107,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                         'og:published_time', 'sailthru.date', 'rnews:datepublished'
                     ):
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    headerdate = tryfunc(elem.get('content'))
             # modified date: override published_time
             else:
                 if elem.get('property').lower() in (
@@ -112,7 +115,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                         'og:updated_time'
                     ):
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    attempt = tryfunc(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
                 elif elem.get('property').lower() in (
@@ -122,7 +125,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                         'rnews:datepublished'
                     ) and headerdate is None:
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    headerdate = tryfunc(elem.get('content'))
         # name attribute
         elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib:
             # url
@@ -138,15 +141,15 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                     'published-date', 'publication_date', 'sailthru.date',
                     'timestamp'):
                 LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                headerdate = tryfunc(elem.get('content'))
             # modified
             elif elem.get('name').lower() in ('lastmodified', 'last-modified') and original_date is False:
                 LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                headerdate = tryfunc(elem.get('content'))
         elif headerdate is None and 'pubdate' in elem.attrib:
             if elem.get('pubdate').lower() == 'pubdate':
                 LOGGER.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                headerdate = tryfunc(elem.get('content'))
         # other types # itemscope?
         elif headerdate is None and 'itemprop' in elem.attrib:
             if elem.get('itemprop').lower() in (
@@ -156,14 +159,14 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                 if 'datetime' in elem.attrib:
                     headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
                 elif 'content' in elem.attrib:
-                    headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    headerdate = tryfunc(elem.get('content'))
             # override
             elif elem.get('itemprop').lower() == 'datemodified' and original_date is False:
                 LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 if 'datetime' in elem.attrib:
                     attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
                 elif 'content' in elem.attrib:
-                    attempt = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                    attempt = tryfunc(elem.get('content'))
                 if attempt is not None:
                     headerdate = attempt
             # reserve with copyrightyear
@@ -177,10 +180,10 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
         elif headerdate is None and 'http-equiv' in elem.attrib:
             if original_date is True and elem.get('http-equiv').lower() == 'date':
                 LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                headerdate = tryfunc(elem.get('content'))
             if elem.get('http-equiv').lower() in ('date', 'last-modified'):
                 LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = try_ymd_date(elem.get('content'), outputformat, extensive_search, max_date)
+                headerdate = tryfunc(elem.get('content'))
         # exit loop
         if headerdate is not None:
             break
@@ -247,14 +250,15 @@ def try_expression(expression, outputformat, extensive_search, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
     textcontent = re.sub(r'[\n\r\s\t]+', ' ', expression, re.MULTILINE).strip()
-    # simple length heuristics
-    if not textcontent or len(list(filter(str.isdigit, textcontent))) < 4:
+    # simple length heuristics list(filter(str.isdigit, textcontent))
+    if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
         return None
     # try the beginning of the string
     attempt = try_ymd_date(textcontent[:48], outputformat, extensive_search, max_date)
     return attempt
 
 
+@lru_cache(maxsize=32)
 def compare_reference(reference, expression, outputformat, extensive_search, original_date, max_date):
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_expression(expression, outputformat, extensive_search, max_date)
