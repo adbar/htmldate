@@ -5,10 +5,6 @@ htmldate: find the publication date of web pages
     :target: https://pypi.python.org/pypi/htmldate
     :alt: Python package
 
-.. image:: https://img.shields.io/pypi/l/htmldate.svg
-    :target: https://pypi.python.org/pypi/htmldate
-    :alt: License
-
 .. image:: https://img.shields.io/pypi/pyversions/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
     :alt: Python versions
@@ -231,14 +227,9 @@ You can contact me via my `contact page <http://adrien.barbaresi.eu/contact.html
 Contributing
 ------------
 
-Thanks to these contributors who submitted features and bugfixes:
-
--  `DerKozmonaut <https://github.com/DerKozmonaut>`_
--  `vbarbaresi <https://github.com/vbarbaresi>`_
-
 `Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
 
-Feel free to file bug reports on the `issues page <https://github.com/adbar/htmldate/issues>`_.
+Feel free to file issues on the `dedicated page <https://github.com/adbar/htmldate/issues>`_. Thanks to the `contributors <https://github.com/adbar/htmldate/graphs/contributors>`_ who submitted features and bugfixes!
 
 Kudos to the following software libraries:
 
