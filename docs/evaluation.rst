@@ -42,17 +42,17 @@ The results below show that **date extraction is not a completely solved task** 
 
 
 =============================== ========= ========= ========= ========= =======
-200 web pages containing identifiable dates (as of 2020-03-04)
+225 web pages containing identifiable dates (as of 2020-06-17)
 -------------------------------------------------------------------------------
 Python Package                  Precision Recall    Accuracy  F-Score   Time
 =============================== ========= ========= ========= ========= =======
-newspaper 0.2.8                 **0.917** 0.399     0.385     0.556     78.6
-goose3 3.1.6                    0.910     0.422     0.405     0.577     13.5
-date_guesser 2.1.4              0.825     0.553     0.495     0.662     36.7
-news-please 1.4.25              0.831     0.638     0.565     0.722     64.5
-articleDateExtractor 0.20       0.832     0.644     0.570     0.726     5.7
-htmldate 0.6.1 (fast)           **0.917** 0.897     0.830     0.907     **2.2**
-htmldate[all] 0.6.1 (extensive) 0.899     **0.994** **0.895** **0.945** 5.4
+articleDateExtractor 0.20       0.817     0.635     0.556     0.714     7.0
+date_guesser 2.1.4              0.809     0.553     0.489     0.657     40.0
+goose3 3.1.6                    0.887     0.441     0.418     0.589     15.5
+htmldate 0.6.3 (fast)           **0.903** 0.907     0.827     0.905     **2.4**
+htmldate[all] 0.6.3 (extensive) 0.893     **1.000** **0.893** **0.944** 5.7
+newspaper 0.2.8                 0.888     0.407     0.387     0.558     81.6
+news-please 1.5.3               0.822     0.655     0.573     0.729     69.6
 =============================== ========= ========= ========= ========= =======
 
 
