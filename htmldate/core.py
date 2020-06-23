@@ -667,7 +667,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # rare LXML error: no NULL bytes or control characters
     except ValueError:
         cleaned_html = tree
-    htmlstring = html.tostring(cleaned_html, encoding='unicode')
+    # robust conversion to string
+    try:
+        htmlstring = html.tostring(cleaned_html, pretty_print=False, encoding='unicode')
+    except UnicodeDecodeError:
+        htmlstring = html.tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore') 
     # remove comments by hand as faulty in lxml?
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 
