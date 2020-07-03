@@ -106,11 +106,7 @@ COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})(\.|) (Januar|Jänner|Februar|
-Feber|März|April|Mai|Juni|Juli|August|September|Oktober|
-November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|
-Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|
-Ağu|Eyl|Eki|Kas|Ara) ([0-9]{4})''')
+GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara) ([0-9]{4})''')
 GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
