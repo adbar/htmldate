@@ -22,23 +22,20 @@ bibliography: paper.bib
 # Introduction
 
 
-Although text is ubiquitous on the Web, extracting information from web pages can prove to be difficult. Web documents come in different shapes and sizes mostly because of the wide variety of genres, platforms or content management systems, and not least because of greatly diverse publication goals. Web data science thus leads to a better comprehension of the retrieved data; more specifically, substantial filtering and quality assessment of data collections can be crucial.
-
-
-### Text data from the Web and metadata extraction
-
-Metadata extraction is part of data mining and knowledge extraction techniques. Being able to better qualify content allows for insights based on descriptive or typological information (e.g. content type, authors or categories), better bandwidth control (e.g. by knowing when webpages have been updated), or optimization of indexing (e.g. caches or language-based heuristics). It is useful for applications including database management, business intelligence, or data visualization.
-
-Dates are critical components since they are relevant both from a philological standpoint and in the context of information technology. In most cases, immediately accessible data on retrieved webpages do not carry substantial or accurate information: neither the URL nor the server response provide a reliable way to date a web document, i.e. to find when it was written or modified. In that case it is necessary to fully parse the document or apply robust scraping patterns on it.
-
-Large "offline" web text collections are now standard among the research community in linguistics and natural language processing. The construction of such text corpora notably involves "crawling, downloading, 'cleaning' and de-duplicating the data, then linguistically annotating it and loading it into a corpus query tool." [@Kilgarriff:2007] Web crawling [@Olston:2010] involves a significant number of design decisions and turning points in data processing, without which data and applications turn into a "Wild West" [@JoGebru:2020]. Researchers face a lack of information regarding the content, whose adequacy, focus and quality are the object of a post hoc evaluation [@Baroni:2009]. Comparably, web corpora (i.e. document collections) usually lack metadata gathered with or obtained from documents. Between opportunistic and restrained data collection [@Barbaresi:2015], a significant challenge lies in the ability to extract and pre-process web data to meet scientific expectations with respect to corpus quality.
-
-
 ### Rationale
 
-This effort is part of a methodological approach to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document has been published and possibly modified. Improving extraction methods for web collections can hopefully allow for combining both the quantity resulting from broad web crawling and the quality obtained by accurately extracting text and metadata and by rejecting documents which do not match certain criteria.
+
+Metadata extraction is part of data mining and knowledge extraction techniques. Being able to better qualify content allows for insights based on descriptive or typological information (e.g. content type, authors or categories), better bandwidth control (e.g. by knowing when webpages have been updated), or optimization of indexing (e.g. caches or language-based heuristics). It is useful for applications including database management, business intelligence, or data visualization. This particular effort is part of a methodological approach to derive information from web documents in order to build text databases for research, chiefly linguistics and natural language processing. Dates are critical components since they are relevant both from a philological standpoint and in the context of information technology.
+
+Although text is ubiquitous on the Web, extracting information from web pages can prove to be difficult. Web documents come in different shapes and sizes mostly because of the wide variety of genres, platforms or content management systems, and not least because of greatly diverse publication goals. In most cases, immediately accessible data on retrieved webpages do not carry substantial or accurate information: neither the URL nor the server response provide a reliable way to date a web document, that is to find out when it has been published or possibly modified. In that case it is necessary to fully parse the document or apply robust scraping patterns on it. Improving extraction methods for web collections can hopefully allow for combining both the quantity resulting from broad web crawling and the quality obtained by accurately extracting text and metadata and by rejecting documents which do not match certain criteria.
+
+
+### Research context
+
 
 Fellow colleagues are working on a lexicographic information platform [@GeykenEtAl:2017] at the language center of the Berlin-Brandenburg Academy of Sciences ([dwds.de](https://www.dwds.de/)). The platform hosts and provides access to a series of metadata-enhanced web corpora [@Barbaresi:2016]. Information on publication and modification dates is crucial to be able to make sense of linguistic data, that is in the case of lexicography to determine precisely when a given word has been used for the first time and how its use evolves through time.
+
+Large "offline" web text collections are now standard among the research community in linguistics and natural language processing. The construction of such text corpora notably involves "crawling, downloading, 'cleaning' and de-duplicating the data, then linguistically annotating it and loading it into a corpus query tool." [@Kilgarriff:2007] Web crawling [@Olston:2010] involves a significant number of design decisions and turning points in data processing, without which data and applications turn into a "Wild West" [@JoGebru:2020]. Researchers face a lack of information regarding the content, whose adequacy, focus and quality are the object of a post hoc evaluation [@Baroni:2009]. Comparably, web corpora (i.e. document collections) usually lack metadata gathered with or obtained from documents. Between opportunistic and restrained data collection [@Barbaresi:2015], a significant challenge lies in the ability to extract and pre-process web data to meet scientific expectations with respect to corpus quality.
 
 
 # Functionality
