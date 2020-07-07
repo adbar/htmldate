@@ -91,44 +91,47 @@ DISCARD_EXPRESSIONS = [
 AMERICAN_ENGLISH = re.compile(r'''(January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
-Oktober|November|Dezember) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})''')
+Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
+Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
+Eki|Kas|Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})''')
 BRITISH_ENGLISH = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
 February|March|April|May|June|July|August|September|October|November|December|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|
 März|April|Mai|Juni|Juli|August|September|Oktober|November|
-Dezember),? ([0-9]{4})''')
+Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
+Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
+Eki|Kas|Ara),? ([0-9]{4})''')
 ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\. (Januar|Jänner|Februar|
-Feber|März|April|Mai|Juni|Juli|August|September|Oktober|
-November|Dezember) ([0-9]{4})''')
+GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara) ([0-9]{4})''')
 GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
-Oktober|November|Dezember''')
+Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
+Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara''')
 JSON_PATTERN = \
-  re.compile(r'"date(?:Modified|Published)":"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+  re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 # use of regex module for speed
 GERMAN_PATTERN = \
   regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
-# English + German dates cache
-TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
-               'Februar': '02', 'Feber': '02', 'February': '02', 'Feb': '02',
-               'März': '03', 'March': '03', 'Mar': '03',
-               'April': '04', 'Apr': '04',
-               'Mai': '05', 'May': '05',
-               'Juni': '06', 'June': '06', 'Jun': '06',
-               'Juli': '07', 'July': '07', 'Jul': '07',
-               'August': '08', 'Aug': '08',
-               'September': '09', 'Sep': '09',
-               'Oktober': '10', 'October': '10', 'Oct': '10',
-               'November': '11', 'Nov': '11',
-               'Dezember': '12', 'December': '12', 'Dec': '12'}
+# English + German + Turkish dates cache
+TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01', 'Ocak': '01', 'Oca': '01',
+               'Februar': '02', 'Feber': '02', 'February': '02', 'Feb': '02', 'Şubat': '02', 'Şub': '02',
+               'März': '03', 'March': '03', 'Mar': '03', 'Mart': '03',
+               'April': '04', 'Apr': '04', 'Nisan': '04', 'Nis': '04',
+               'Mai': '05', 'May': '05', 'Mayıs': '05',
+               'Juni': '06', 'June': '06', 'Jun': '06', 'Haziran': '06', 'Haz': '06',
+               'Juli': '07', 'July': '07', 'Jul': '07', 'Temmuz': '07', 'Tem': '07',
+               'August': '08', 'Aug': '08', 'Ağustos': '08', 'Ağu': '08',
+               'September': '09', 'Sep': '09', 'Eylül': '09', 'Eyl': '09',
+               'Oktober': '10', 'October': '10', 'Oct': '10', 'Ekim': '10', 'Eki': '10',
+               'November': '11', 'Nov': '11', 'Kasım': '11', 'Kas': '11',
+               'Dezember': '12', 'December': '12', 'Dec': '12', 'Aralık': '12', 'Ara': '12'}
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
