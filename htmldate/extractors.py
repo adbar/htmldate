@@ -136,6 +136,10 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01', 'O
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
+IDIOSYNCRASIES_EN = regex.compile(r'((U|u)pdated|UPDATED|(P|p)ublished|PUBLISHED)( in| IN)?:? ?[0-9]{1,2}(\.|\/)[0-9]{1,2}(\.|\/)[0-9]{2,4}')
+IDIOSYNCRASIES_TR = regex.compile(r'''((G|g)üncellen?me|GÜNCELLEN?ME|((Y|y)ayı(n|m)lan?ma|YAYI(N|M)LAN?MA)( tarihi|TARİHİ)?:? ?[0-9]{1,2}(\.|\/)[0-9]{1,2}(\.|\/)[0-9]{2,4}|
+                                 ([0-9]{1,2}(\.|\/)[0-9]{1,2}(\.|\/)[0-9]{2,4})('[a-zA-Z]{2}| tarihinde| TARİHİNDE) (yayı(n|m)landı|YAYI(N|M)LANDI|güncellendi|GÜNCELLENDİ)''')
+
 
 def discard_unwanted(tree):
     '''Delete unwanted sections of an HTML document and return them as a list'''
