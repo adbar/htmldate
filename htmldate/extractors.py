@@ -62,7 +62,7 @@ DATE_EXPRESSIONS = [
     contains(@class, 'article__date') or contains(@class, 'post_detail')]""",
     """//*[@class='meta' or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'byline') or contains(@class, 'subline')]""",
+    or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')]""",
     """//*[contains(@class, 'published') or contains(@class, 'posted') or
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
     """//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
