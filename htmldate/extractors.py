@@ -397,3 +397,41 @@ def german_text_search(htmlstring, outputformat, max_date):
                 LOGGER.debug('precise pattern found: %s', de_match.group(0))
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
+
+def idiosyncrasies_search(htmlstring, outputformat, max_date):
+    '''Look for precise German patterns throughout the web page'''
+    match = IDIOSYNCRASIES_EN.search(htmlstring)
+    if match and len(match.group(3)) in (2, 4):
+        try:
+            if len(match.group(3)) == 2:
+                candidate = datetime.date(int('20' + match.group(3)),
+                                          int(match.group(2)),
+                                          int(match.group(1)))
+            else:
+                candidate = datetime.date(int(match.group(3)),
+                                          int(match.group(2)),
+                                          int(match.group(1)))
+        except ValueError:
+            LOGGER.debug('value error: %s', match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                LOGGER.debug('precise pattern found: %s', match.group(0))
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
+     match = IDIOSYNCRASIES_TR.search(htmlstring)
+     if match and len(match.group(3)) in (2, 4):
+        try:
+            if len(match.group(3)) == 2:
+                candidate = datetime.date(int('20' + match.group(3)),
+                                          int(match.group(2)),
+                                          int(match.group(1)))
+            else:
+                candidate = datetime.date(int(match.group(3)),
+                                          int(match.group(2)),
+                                          int(match.group(1)))
+        except ValueError:
+            LOGGER.debug('value error: %s', match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                LOGGER.debug('precise pattern found: %s', match.group(0))
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
+    return None
