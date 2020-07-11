@@ -483,6 +483,12 @@ def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
     assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2013-01-01'
     assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, max_date) == '2018-01-01'
 
+def test_idiosyncrasies():
+    assert find_date('<p><em>Last updated: 5/5/20</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Son güncelleme: 5/5/20</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Son güncelleme tarihi: 5/5/20</em></p>') == '2020-05-05'
+    assert find_date('<p><em>5/5/20 tarihinde güncellendi.</em></p>') == '2020-05-05'
+    assert find_date('''<p><em>5/5/20'de güncellendi.</em></p>''') == '2020-05-05'
 
 def test_parser():
     '''test argument parsing for the command-line interface'''
@@ -576,6 +582,7 @@ if __name__ == '__main__':
     test_search_html()
     test_url()
     test_approximate_url()
+    test_idiosyncrasies()
     # new_pages()
 
     # dependencies
