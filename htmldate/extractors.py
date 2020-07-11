@@ -138,7 +138,7 @@ NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 IDIOSYNCRASIES_EN = regex.compile(r'[updatedUPDATEDpblishPBLISH]{7,9} ?[inIN]{0,2}:? ?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})')
 IDIOSYNCRASIES_TR_PREFIXED = regex.compile(r'[güncelenmeGÜNCELENMEyayıaYAYIA]{9,11} ?[tarihTARİH]{0,6}:? ?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})')
-IDIOSYNCRASIES_TR_SUFFIXED = regex.compile(r'''([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) ['’tarihndeTARİHNDE]{3,9} [yaınmldYAINMLDgüceiGÜCEİ]{10,11}''')
+IDIOSYNCRASIES_TR_SUFFIXED = regex.compile(r'''([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) ?['’tarihndeTARİHNDE]{3,9} [yaınmldYAINMLDgüceiGÜCEİ]{10,11}''')
 
 
 def discard_unwanted(tree):
