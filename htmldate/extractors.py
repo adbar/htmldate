@@ -57,14 +57,14 @@ DATE_EXPRESSIONS = [
     """//*[contains(@class, 'date') or contains(@class, 'Date')
     or contains(@class, 'datum') or contains(@class, 'Datum')]""",
     """//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
-    or contains(@class, 'entry-meta') or contains(@class, 'postMeta')
+    or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
     contains(@class, 'article__date') or contains(@class, 'post_detail')]""",
     """//*[@class='meta' or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
     or contains(@class, 'byline') or contains(@class, 'subline')]""",
     """//*[contains(@class, 'published') or contains(@class, 'posted') or
-    contains(@class, 'submitted') or contains(@class, 'created-post')]""",
+    contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
     """//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time')]""",
     "//footer",
@@ -72,7 +72,7 @@ DATE_EXPRESSIONS = [
     "//small",
     """//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
-    contains(@class, 'info') or contains(@class, 'fa-clock-o') or
+    contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
     contains(@class, 'publication')]""",
 ]
 
