@@ -423,12 +423,12 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
 def idiosyncrasies_search(htmlstring, outputformat, max_date):
     '''Look for author-written dates throughout the web page'''
     result = extract_idiosyncrasy(IDIOSYNCRASIES_EN, htmlstring, outputformat, max_date)
-        if result is not None:
-            return result
+    if result is not None:
+        return result
     result = extract_idiosyncrasy(IDIOSYNCRASIES_TR_PREFIXED, htmlstring, outputformat, max_date)
-        if result is not None:
-            return result
+    if result is not None:
+        return result
     result = extract_idiosyncrasy(IDIOSYNCRASIES_TR_SUFFIXED, htmlstring, outputformat, max_date)
-        if result is not None:
-            return result
+    if result is not None:
+        return result
     return None
