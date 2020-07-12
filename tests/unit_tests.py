@@ -403,8 +403,13 @@ def test_regex_parse():
     '''test date extraction using rules and regular expressions'''
     assert regex_parse_de('3. Dezember 2008') is not None
     assert regex_parse_de('33. Dezember 2008') is None
+    assert regex_parse_de('3 Aralık 2008 Çarşamba') is not None
+    assert regex_parse_de('3 Aralık 2008') is not None
     assert regex_parse_en('Tuesday, March 26th, 2019') is not None
+    assert regex_parse_en('March 26, 2019') is not None
     assert regex_parse_en('3rd Tuesday in March') is None
+    assert regex_parse_en('Mart 26, 2019') is not None
+    assert regex_parse_en('Salı, Mart 26, 2019') is not None
     assert regex_parse_en('3/14/2016') is not None
     assert regex_parse_en('36/14/2016') is None
     assert custom_parse('12122004', OUTPUTFORMAT, False, LATEST_POSSIBLE) is None
