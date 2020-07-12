@@ -485,10 +485,16 @@ def test_search_html(original_date=False, max_date=LATEST_POSSIBLE):
 
 def test_idiosyncrasies():
     assert find_date('<p><em>Last updated: 5/5/20</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Published: 5/5/2020</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Published in: 05.05.2020</em></p>') == '2020-05-05'
     assert find_date('<p><em>Son güncelleme: 5/5/20</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Son güncellenme: 5/5/2020</em></p>') == '2020-05-05'
+    assert find_date('<p><em>Yayımlama tarihi: 05.05.2020</em></p>') == '2020-05-05'
     assert find_date('<p><em>Son güncelleme tarihi: 5/5/20</em></p>') == '2020-05-05'
     assert find_date('<p><em>5/5/20 tarihinde güncellendi.</em></p>') == '2020-05-05'
     assert find_date('''<p><em>5/5/20'de güncellendi.</em></p>''') == '2020-05-05'
+    assert find_date('<p><em>5/5/2020 tarihinde yayımlandı.</em></p>') == '2020-05-05'
+    assert find_date('<p><em>05.05.2020 tarihinde yayınlandı.</em></p>') == '2020-05-05'
 
 def test_parser():
     '''test argument parsing for the command-line interface'''
