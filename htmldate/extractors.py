@@ -114,9 +114,6 @@ Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
 Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara''')
 JSON_PATTERN = \
   re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
-# use of regex module for speed
-GERMAN_PATTERN = \
-  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German + Turkish dates cache
@@ -136,9 +133,12 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01', 'O
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
-IDIOSYNCRASIES_EN = regex.compile(r'[updatedUPDATEDpblishPBLISH]{7,9} ?[inIN]{0,2}:? ?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})')
-IDIOSYNCRASIES_TR_PREFIXED = regex.compile(r'[güncelenmeGÜNCELENMEyayıaYAYIA]{9,11} ?[tarihTARİH]{0,6}:? ?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})')
-IDIOSYNCRASIES_TR_SUFFIXED = regex.compile(r'''([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) ?['’tarihndeTARİHNDE]{3,9} [yaınmldYAINMLDgüceiGÜCEİ]{10,11}''')
+# use of regex module for speed
+IDIOSYNCRASIES_EN = regex.compile(r'(?:updated|published) ?(?:in)? *([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
+GERMAN_PATTERN = \
+  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+IDIOSYNCRASIES_TR = regex.compile(r'''(?:güncelenme|GÜNCELENME|yayıa|YAYIA) *(?:tarih|TARİH)? *([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
+                                  ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) ?['’tarihndeTARİHNDE]{3,9} [yaınmldYAINMLDgüceiGÜCEİ]{10,11}''')
 
 
 def discard_unwanted(tree):
@@ -398,6 +398,7 @@ def german_text_search(htmlstring, outputformat, max_date):
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
 
+
 def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
     '''Extract dates in given expression'''
     match = idiosyncrasy.search(htmlstring)
@@ -412,23 +413,23 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
                                           int(match.group(2)),
                                           int(match.group(1)))
         except ValueError:
-            LOGGER.debug('value error: %s', match.group(0))
+            LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
         else:
             if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
-                LOGGER.debug('precise pattern found: %s', match.group(0))
+                LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
-    
+
 
 def idiosyncrasies_search(htmlstring, outputformat, max_date):
     '''Look for author-written dates throughout the web page'''
+    result = None
+    # EN
     result = extract_idiosyncrasy(IDIOSYNCRASIES_EN, htmlstring, outputformat, max_date)
-    if result is not None:
-        return result
-    result = extract_idiosyncrasy(IDIOSYNCRASIES_TR_PREFIXED, htmlstring, outputformat, max_date)
-    if result is not None:
-        return result
-    result = extract_idiosyncrasy(IDIOSYNCRASIES_TR_SUFFIXED, htmlstring, outputformat, max_date)
-    if result is not None:
-        return result
-    return None
+    # DE
+    if result is None:
+        result = extract_idiosyncrasy(GERMAN_PATTERN, htmlstring, outputformat, max_date)
+    # TR
+    if result is None:
+        result = extract_idiosyncrasy(IDIOSYNCRASIES_TR, htmlstring, outputformat, max_date)
+    return result
