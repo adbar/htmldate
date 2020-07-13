@@ -134,11 +134,11 @@ TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 # use of regex module for speed
-IDIOSYNCRASIES_EN = regex.compile(r'(?:updated|published) ?(?:in)? *([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
+IDIOSYNCRASIES_EN = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
 GERMAN_PATTERN = \
   regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-IDIOSYNCRASIES_TR = regex.compile(r'''(?:güncelenme|GÜNCELENME|yayıa|YAYIA) *(?:tarih|TARİH)? *([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
-                                  ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) ?['’tarihndeTARİHNDE]{3,9} [yaınmldYAINMLDgüceiGÜCEİ]{10,11}''')
+IDIOSYNCRASIES_TR = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
+                                 ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)''', re.I)
 
 
 def discard_unwanted(tree):
