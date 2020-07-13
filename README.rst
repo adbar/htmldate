@@ -76,7 +76,7 @@ Features
 The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
 -  Should be compatible with all common versions of Python 3
--  Output thouroughly verified in terms of plausibility and adequateness
+-  Output thoroughly verified in terms of plausibility and adequateness
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Batch processing of a list of URLs
 -  Switch between original and updated date
@@ -223,7 +223,7 @@ If the date is nowhere to be found, it might be worth considering `carbon dating
 Author
 ------
 
-This effort is part of a methodological approach to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
+This effort is part of a methodological approach to derive information from web documents in order to build text databases for research (chiefly linguistics and natural language processing). There are web pages for which neither the URL nor the server response provides a reliable way to find out when a document was published or modified. For more information:
 
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3459599.svg
    :target: https://doi.org/10.5281/zenodo.3459599
@@ -244,4 +244,4 @@ Feel free to file issues on the `dedicated page <https://github.com/adbar/htmlda
 Kudos to the following software libraries:
 
 -  `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
--  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
+-  A few patterns are derived from the `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_ libraries. This module extends their coverage and robustness significantly.
