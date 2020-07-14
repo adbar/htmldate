@@ -402,8 +402,8 @@ def german_text_search(htmlstring, outputformat, max_date):
 def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
     '''Extract dates in given expression'''
     match = idiosyncrasy.search(htmlstring)
-    groups = [0, 1, 2, 3] if match.group(3) else [] #because len(None) has no len
-    groups = [0, 4, 5, 6] if match.group(6) else groups #because len(None) has no len
+    groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
+    groups = [0, 4, 5, 6] if match and match.group(6) else groups #because len(None) has no len
     if match and groups: #because len(None) has no len
         if len(match.group(groups[3])) in (2, 4):
             try:
