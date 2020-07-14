@@ -402,22 +402,25 @@ def german_text_search(htmlstring, outputformat, max_date):
 def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
     '''Extract dates in given expression'''
     match = idiosyncrasy.search(htmlstring)
-    if match and len(match.group(3)) in (2, 4):
-        try:
-            if len(match.group(3)) == 2:
-                candidate = datetime.date(int('20' + match.group(3)),
-                                          int(match.group(2)),
-                                          int(match.group(1)))
+    groups = [0, 1, 2, 3] if match.group(3) else [] #because len(None) has no len
+    groups = [0, 4, 5, 6] if match.group(6) else groups #because len(None) has no len
+    if match and groups: #because len(None) has no len
+        if len(match.group(groups[3])) in (2, 4):
+            try:
+                if len(match.group(groups[3])) == 2:
+                    candidate = datetime.date(int('20' + match.group(groups[3])),
+                                              int(match.group(groups[2])),
+                                              int(match.group(groups[1])))
+                else:
+                    candidate = datetime.date(int(match.group(groups[3])),
+                                              int(match.group(groups[2])),
+                                              int(match.group(groups[1])))
+            except ValueError:
+                LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
             else:
-                candidate = datetime.date(int(match.group(3)),
-                                          int(match.group(2)),
-                                          int(match.group(1)))
-        except ValueError:
-            LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
-        else:
-            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
-                LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+                if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                    LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
+                    return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
 
 
