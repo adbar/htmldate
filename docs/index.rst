@@ -37,7 +37,7 @@ htmldate: find the publication date of web pages
 
 |
 
-*htmldate* finds original and updated publication dates of any web page. All the steps needed from web page download to HTML parsing, scraping and text analysis are included. URLs, HTML files or HTML trees are given as input, the library outputs a date string in the desired format.
+Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
 
 In a nutshell, with Python:
 
@@ -66,7 +66,7 @@ On the command-line:
 Features
 --------
 
-The library uses a combination of tree traversal, common structural patterns, text-based heuristics and robust date extraction. It provides following ways to date a HTML document:
+*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. URLs, HTML files, or HTML trees are given as input. It provides following ways to date a HTML document:
 
 1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
@@ -75,13 +75,14 @@ The library uses a combination of tree traversal, common structural patterns, te
   - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
   - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
 
-The module returns a date if a valid cue could be found in the document, corresponding to either the last update (default) or the original publishing statement. The output string defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_.
+The output is thouroughly verified in terms of plausibility and adequateness and the library outputs a date string, corresponding to either the last update or the original publishing statement (the default), in the desired format (defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_).
 
--  Should be compatible with all common versions of Python 3 (see tests and coverage)
--  Safety belt included, output thouroughly verified in terms of plausibility and adequateness
+-  Should be compatible with all recent versions of Python (currently 3.4 to 3.9)
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Batch processing of a list of URLs
 -  Switch between original and updated date
+
+Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support German, English and Turkish.
 
 
 Installation
@@ -157,8 +158,6 @@ Although the time delta between original publication and "last modified" info is
 
 .. code-block:: python
 
-    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/') # default setting
-    '2019-06-24'
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True) # modified behavior
     '2016-06-23'
 
@@ -234,7 +233,7 @@ Feel free to file issues on the `dedicated page <https://github.com/adbar/htmlda
 Kudos to the following software libraries:
 
 -  `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
--  A few patterns are derived from `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_. This module extends their coverage and robustness significantly.
+-  A few patterns are derived from the `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_ libraries. This module extends their coverage and robustness significantly.
 
 
 Going further
