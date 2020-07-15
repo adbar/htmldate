@@ -57,14 +57,14 @@ DATE_EXPRESSIONS = [
     """//*[contains(@class, 'date') or contains(@class, 'Date')
     or contains(@class, 'datum') or contains(@class, 'Datum')]""",
     """//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
-    or contains(@class, 'entry-meta') or contains(@class, 'postMeta')
+    or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
     contains(@class, 'article__date') or contains(@class, 'post_detail')]""",
     """//*[@class='meta' or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'byline') or contains(@class, 'subline')]""",
+    or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')]""",
     """//*[contains(@class, 'published') or contains(@class, 'posted') or
-    contains(@class, 'submitted') or contains(@class, 'created-post')]""",
+    contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
     """//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time')]""",
     "//footer",
@@ -72,7 +72,7 @@ DATE_EXPRESSIONS = [
     "//small",
     """//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
-    contains(@class, 'info') or contains(@class, 'fa-clock-o') or
+    contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
     contains(@class, 'publication')]""",
 ]
 
@@ -114,9 +114,6 @@ Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
 Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara''')
 JSON_PATTERN = \
   re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
-# use of regex module for speed
-GERMAN_PATTERN = \
-  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German + Turkish dates cache
@@ -135,6 +132,12 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01', 'O
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
+
+# use of regex module for speed
+IDIOSYNCRASIES_EN = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
+GERMAN_PATTERN = \
+  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+IDIOSYNCRASIES_TR = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)''', re.I)
 
 
 def discard_unwanted(tree):
@@ -393,3 +396,45 @@ def german_text_search(htmlstring, outputformat, max_date):
                 LOGGER.debug('precise pattern found: %s', de_match.group(0))
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
+
+
+def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
+    '''Extract dates in given expression'''
+    match = idiosyncrasy.search(htmlstring)
+    groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
+    try:
+        groups = [0, 4, 5, 6] if match and match.group(6) else groups #because len(None) has no len
+    except IndexError:
+        pass
+    if match and groups: #because len(None) has no len
+        if len(match.group(groups[3])) in (2, 4):
+            try:
+                if len(match.group(groups[3])) == 2:
+                    candidate = datetime.date(int('20' + match.group(groups[3])),
+                                              int(match.group(groups[2])),
+                                              int(match.group(groups[1])))
+                else:
+                    candidate = datetime.date(int(match.group(groups[3])),
+                                              int(match.group(groups[2])),
+                                              int(match.group(groups[1])))
+            except ValueError:
+                LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
+            else:
+                if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                    LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
+                    return convert_date(candidate, '%Y-%m-%d', outputformat)
+    return None
+
+
+def idiosyncrasies_search(htmlstring, outputformat, max_date):
+    '''Look for author-written dates throughout the web page'''
+    result = None
+    # EN
+    result = extract_idiosyncrasy(IDIOSYNCRASIES_EN, htmlstring, outputformat, max_date)
+    # DE
+    if result is None:
+        result = extract_idiosyncrasy(GERMAN_PATTERN, htmlstring, outputformat, max_date)
+    # TR
+    if result is None:
+        result = extract_idiosyncrasy(IDIOSYNCRASIES_TR, htmlstring, outputformat, max_date)
+    return result

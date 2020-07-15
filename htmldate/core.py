@@ -19,7 +19,8 @@ from lxml import etree, html
 from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
                          discard_unwanted, extract_url_date,
                          extract_partial_url_date, german_text_search,
-                         json_search, timestamp_search, try_ymd_date)
+                         idiosyncrasies_search, json_search, 
+                         timestamp_search, try_ymd_date)
 from .settings import HTML_CLEANER
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -687,6 +688,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # precise German patterns
     text_result = german_text_search(htmlstring, outputformat, max_date)
+    if text_result is not None:
+        return text_result
+    
+    #idiosyncrasies
+    text_result = idiosyncrasies_search(htmlstring, outputformat, max_date)
     if text_result is not None:
         return text_result
 

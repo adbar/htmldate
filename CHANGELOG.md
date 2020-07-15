@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.6.4 (unreleased)
+- support for Turkish dates
+- some author-written idiosyncrasies
+
 ### 0.6.3
 - more efficient code
 - additional evaluation data
