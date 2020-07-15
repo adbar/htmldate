@@ -18,9 +18,8 @@ from lxml import etree, html
 # own
 from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
                          discard_unwanted, extract_url_date,
-                         extract_partial_url_date, german_text_search,
-                         idiosyncrasies_search, json_search, 
-                         timestamp_search, try_ymd_date)
+                         extract_partial_url_date, idiosyncrasies_search,
+                         json_search, timestamp_search, try_ymd_date)
 from .settings import HTML_CLEANER
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -672,7 +671,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     try:
         htmlstring = html.tostring(cleaned_html, pretty_print=False, encoding='unicode')
     except UnicodeDecodeError:
-        htmlstring = html.tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore') 
+        htmlstring = html.tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore')
     # remove comments by hand as faulty in lxml?
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 
@@ -686,12 +685,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     if timestamp_result is not None:
         return timestamp_result
 
-    # precise German patterns
-    text_result = german_text_search(htmlstring, outputformat, max_date)
-    if text_result is not None:
-        return text_result
-    
-    #idiosyncrasies
+    # precise patterns and idiosyncrasies
     text_result = idiosyncrasies_search(htmlstring, outputformat, max_date)
     if text_result is not None:
         return text_result

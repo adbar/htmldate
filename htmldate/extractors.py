@@ -88,13 +88,13 @@ DISCARD_EXPRESSIONS = [
 ]
 
 # Regex cache
-AMERICAN_ENGLISH = re.compile(r'''(January|February|March|April|May|June|July|
+MDY_PATTERN = re.compile(r'''(January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
 Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
 Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
 Eki|Kas|Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})''')
-BRITISH_ENGLISH = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
+DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
 February|March|April|May|June|July|August|September|October|November|December|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|
 März|April|Mai|Juni|Juli|August|September|Oktober|November|
@@ -106,7 +106,7 @@ COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara) ([0-9]{4})''')
+GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})''')
 GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
@@ -117,27 +117,35 @@ JSON_PATTERN = \
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German + Turkish dates cache
-TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01', 'Ocak': '01', 'Oca': '01',
-               'Februar': '02', 'Feber': '02', 'February': '02', 'Feb': '02', 'Şubat': '02', 'Şub': '02',
+TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
+               'Ocak': '01', 'Oca': '01',
+               'Februar': '02', 'Feber': '02', 'February': '02', 'Feb': '02',
+               'Şubat': '02', 'Şub': '02',
                'März': '03', 'March': '03', 'Mar': '03', 'Mart': '03',
                'April': '04', 'Apr': '04', 'Nisan': '04', 'Nis': '04',
                'Mai': '05', 'May': '05', 'Mayıs': '05',
-               'Juni': '06', 'June': '06', 'Jun': '06', 'Haziran': '06', 'Haz': '06',
-               'Juli': '07', 'July': '07', 'Jul': '07', 'Temmuz': '07', 'Tem': '07',
-               'August': '08', 'Aug': '08', 'Ağustos': '08', 'Ağu': '08',
-               'September': '09', 'Sep': '09', 'Eylül': '09', 'Eyl': '09',
-               'Oktober': '10', 'October': '10', 'Oct': '10', 'Ekim': '10', 'Eki': '10',
-               'November': '11', 'Nov': '11', 'Kasım': '11', 'Kas': '11',
-               'Dezember': '12', 'December': '12', 'Dec': '12', 'Aralık': '12', 'Ara': '12'}
+               'Juni': '06', 'June': '06', 'Jun': '06',
+               'Haziran': '06', 'Haz': '06',
+               'Juli': '07', 'July': '07', 'Jul': '07',
+               'Temmuz': '07', 'Tem': '07',
+               'August': '08', 'Aug': '08',
+               'Ağustos': '08', 'Ağu': '08',
+               'September': '09', 'Sep': '09',
+               'Eylül': '09', 'Eyl': '09',
+               'Oktober': '10', 'October': '10', 'Oct': '10',
+               'Ekim': '10', 'Eki': '10',
+               'November': '11', 'Nov': '11',
+               'Kasım': '11', 'Kas': '11',
+               'Dezember': '12', 'December': '12', 'Dec': '12',
+               'Aralık': '12', 'Ara': '12'}
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 # use of regex module for speed
-IDIOSYNCRASIES_EN = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
-GERMAN_PATTERN = \
-  regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-IDIOSYNCRASIES_TR = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)''', re.I)
+EN_PATTERNS = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
+DE_PATTERNS = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)''', re.I)
 
 
 def discard_unwanted(tree):
@@ -184,6 +192,15 @@ def extract_partial_url_date(testurl, outputformat):
     return None
 
 
+def regex_parse(string):
+    """Full-text parse using a series of regular expressions"""
+    dateobject = None
+    dateobject = regex_parse_de(string)
+    if dateobject is None:
+        dateobject = regex_parse_multilingual(string)
+    return dateobject
+
+
 def regex_parse_de(string):
     """Try full-text parse for German date elements"""
     # text match
@@ -203,7 +220,7 @@ def regex_parse_de(string):
     return dateobject
 
 
-def regex_parse_en(string):
+def regex_parse_multilingual(string):
     """Try full-text parse for English date elements"""
     # https://github.com/vi3k6i5/flashtext ?
     # numbers
@@ -215,13 +232,13 @@ def regex_parse_en(string):
         if not GENERAL_TEXTSEARCH.search(string):
             return None
         # American English
-        match = AMERICAN_ENGLISH.search(string)
+        match = MDY_PATTERN.search(string)
         if match:
             day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], \
                                match.group(4)
-        # British English
+        # multilingual day-month-year pattern
         else:
-            match = BRITISH_ENGLISH.search(string)
+            match = DMY_PATTERN.search(string)
             if match:
                 day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], \
                                    match.group(5)
@@ -299,9 +316,7 @@ def custom_parse(string, outputformat, extensive_search, max_date):
                 LOGGER.debug('D.M.Y match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
     # text match
-    dateobject = regex_parse_de(string)
-    if dateobject is None:
-        dateobject = regex_parse_en(string)
+    dateobject = regex_parse(string)
     # copyright match?
     # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # examine
@@ -376,30 +391,8 @@ def timestamp_search(htmlstring, outputformat, max_date):
     return None
 
 
-def german_text_search(htmlstring, outputformat, max_date):
-    '''Look for precise German patterns throughout the web page'''
-    de_match = GERMAN_PATTERN.search(htmlstring)
-    if de_match and len(de_match.group(3)) in (2, 4):
-        try:
-            if len(de_match.group(3)) == 2:
-                candidate = datetime.date(int('20' + de_match.group(3)),
-                                          int(de_match.group(2)),
-                                          int(de_match.group(1)))
-            else:
-                candidate = datetime.date(int(de_match.group(3)),
-                                          int(de_match.group(2)),
-                                          int(de_match.group(1)))
-        except ValueError:
-            LOGGER.debug('value error: %s', de_match.group(0))
-        else:
-            if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
-                LOGGER.debug('precise pattern found: %s', de_match.group(0))
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
-    return None
-
-
 def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
-    '''Extract dates in given expression'''
+    '''Look for a precise pattern throughout the web page'''
     match = idiosyncrasy.search(htmlstring)
     groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
     try:
@@ -429,12 +422,12 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
 def idiosyncrasies_search(htmlstring, outputformat, max_date):
     '''Look for author-written dates throughout the web page'''
     result = None
-    # EN
-    result = extract_idiosyncrasy(IDIOSYNCRASIES_EN, htmlstring, outputformat, max_date)
     # DE
+    result = extract_idiosyncrasy(DE_PATTERNS, htmlstring, outputformat, max_date)
+    # EN
     if result is None:
-        result = extract_idiosyncrasy(GERMAN_PATTERN, htmlstring, outputformat, max_date)
+        result = extract_idiosyncrasy(EN_PATTERNS, htmlstring, outputformat, max_date)
     # TR
     if result is None:
-        result = extract_idiosyncrasy(IDIOSYNCRASIES_TR, htmlstring, outputformat, max_date)
+        result = extract_idiosyncrasy(TR_PATTERNS, htmlstring, outputformat, max_date)
     return result
