@@ -88,19 +88,19 @@ DISCARD_EXPRESSIONS = [
 ]
 
 # Regex cache
-MDY_PATTERN = re.compile(r'(January|February|March|April|May|June|July|'+\
-'August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|'+\
-'Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|'+\
-'Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|'+\
-'Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|'+\
-'Eki|Kas|Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})')
+MDY_PATTERN = re.compile(r'''(January|February|March|April|May|June|July|
+August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
+Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
+Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
+Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
+Eki|Kas|Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n',''))
 DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
 February|March|April|May|June|July|August|September|October|November|December|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|
 März|April|Mai|Juni|Juli|August|September|Oktober|November|
 Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
 Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
-Eki|Kas|Ara),? ([0-9]{4})''')
+Eki|Kas|Ara),? ([0-9]{4})'''.replace('\n',''))
 ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
@@ -111,7 +111,7 @@ GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
 Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
-Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara''')
+Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara'''.replace('\n',''))
 JSON_PATTERN = \
   re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
