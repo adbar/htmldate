@@ -89,29 +89,29 @@ DISCARD_EXPRESSIONS = [
 
 # Regex cache
 MDY_PATTERN = re.compile(r'''(January|February|March|April|May|June|July|
-August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
-Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
-Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
-Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
-Eki|Kas|Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})''')
+August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|
+Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|Mai|Juni|Juli|Oktober|Dezember|
+Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
+Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|
+Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n',''))
 DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
 February|March|April|May|June|July|August|September|October|November|December|
-Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|
-März|April|Mai|Juni|Juli|August|September|Oktober|November|
-Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
-Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|
-Eki|Kas|Ara),? ([0-9]{4})''')
+Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|
+Mai|Juni|Juli|Oktober|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|
+Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|
+Ara),? ([0-9]{4})'''.replace('\n',''))
 ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})''')
+GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|
+Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})'''.replace('\n',''))
 GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
 August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
-Nov|Dec|Januar|Jänner|Februar|Feber|März|April|Mai|Juni|Juli|August|September|
-Oktober|November|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|
-Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara''')
+Nov|Dec|Januar|Jänner|Februar|Feber|März|Mai|Juni|Juli|Oktober|Dezember|
+Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
+Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara'''.replace('\n',''))
 JSON_PATTERN = \
   re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
@@ -145,7 +145,8 @@ NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 # use of regex module for speed
 EN_PATTERNS = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
 DE_PATTERNS = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
-TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)''', re.I)
+TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
+([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)'''.replace('\n',''), re.I)
 
 
 def discard_unwanted(tree):
