@@ -22,6 +22,9 @@ LATEST_POSSIBLE = datetime.date.today()
 # latest possible year
 MAX_YEAR = datetime.date.today().year
 
+# set an upper limit to the number of candidates
+MAX_POSSIBLE_CANDIDATES = 50
+
 # HTML_CLEANER config # http://lxml.de/api/lxml.html.clean.Cleaner-class.html
 HTML_CLEANER = Cleaner()
 HTML_CLEANER.comments = False

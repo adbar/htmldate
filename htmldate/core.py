@@ -20,7 +20,7 @@ from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
                          discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
                          json_search, timestamp_search, try_ymd_date)
-from .settings import HTML_CLEANER
+from .settings import HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
                          convert_date, date_validator, filter_ymd_candidate,
@@ -43,7 +43,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
     except etree.XPathEvalError as err:
         LOGGER.error('lxml expression %s throws an error: %s', expression, err)
         return None
-    if not elements:
+    if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
         return None
     # loop through the elements to analyze
     for elem in elements:
@@ -198,7 +198,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
 def select_candidate(occurrences, catch, yearpat, original_date, max_date):
     """Select a candidate among the most frequent matches"""
     # LOGGER.debug('occurrences: %s', occurrences)
-    if len(occurrences) == 0:
+    if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
         return None
     if len(occurrences) == 1:
         match = catch.search(list(occurrences.keys())[0])
@@ -272,7 +272,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
     '''Scan the page for abbr elements and check if their content contains an eligible date'''
     elements = tree.xpath('//abbr')
-    if elements is not None:
+    if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         reference = 0
         for elem in elements:
             # data-utime (mostly Facebook)
@@ -328,7 +328,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
 def examine_time_elements(tree, outputformat, extensive_search, original_date, max_date):
     '''Scan the page for time elements and check if their content contains an eligible date'''
     elements = tree.xpath('//time')
-    if elements is not None:
+    if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
