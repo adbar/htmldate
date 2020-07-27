@@ -140,7 +140,7 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
                'Aralık': '12', 'Ara': '12'}
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
-NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
+NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}-[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 # use of regex module for speed
 EN_PATTERNS = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)

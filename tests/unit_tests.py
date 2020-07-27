@@ -371,6 +371,8 @@ def test_try_ymd_date():
     assert try_ymd_date('201', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
     assert try_ymd_date('14:35:10', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
     assert try_ymd_date('12:00 h', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
+    # date range
+    assert try_ymd_date('2005-2006', OUTPUTFORMAT, True, LATEST_POSSIBLE) is None
 
 
 # def test_header():
