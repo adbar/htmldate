@@ -148,6 +148,34 @@ DE_PATTERNS = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-
 TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
 ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)'''.replace('\n',''), re.I)
 
+# extensive search patterns
+COPYRIGHT_PATTERN = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*([12][0-9]{3})\D')
+COPYRIGHT_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+COPYRIGHT_CATCH = re.compile(r'^\D?([12][0-9]{3})')
+THREE_PATTERN = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
+THREE_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+THREE_CATCH = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
+THREE_LOOSE_PATTERN = re.compile(r'\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D')
+THREE_LOOSE_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+THREE_LOOSE_CATCH = re.compile(r'([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})')
+SELECT_YMD_PATTERN = re.compile(r'\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D')
+SELECT_YMD_YEAR = re.compile(r'(19[0-9]{2}|20[0-9]{2})\D?$')
+YMD_CATCH = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
+YMD_YEAR = re.compile(r'^([0-9]{4})')
+DATESTRINGS_PATTERN = re.compile(r'(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)')
+DATESTRINGS_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+DATESTRINGS_CATCH = re.compile(r'([12][0-9]{3})([01][0-9])([0-3][0-9])')
+SLASHES_PATTERN = re.compile(r'\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D')
+SLASHES_YEAR = re.compile(r'([0-9]{2})$')
+YYYYMM_PATTERN = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
+YYYYMM_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+YYYYMM_CATCH = re.compile(r'([0-9]{4})[/.-]([0-9]{2})')
+MMYYYY_PATTERN = re.compile(r'\D([0-3]?[0-9][/.-][0-9]{4})\D')
+MMYYYY_YEAR = re.compile(r'([12][0-9]{3})\D?$')
+SIMPLE_PATTERN = re.compile(r'\D([12][0-9]{3})\D')
+SIMPLE_YEAR = re.compile(r'^\D?([12][0-9]{3})')
+SIMPLE_CATCH = re.compile(r'^\D?([12][0-9]{3})')
+
 
 def discard_unwanted(tree):
     '''Delete unwanted sections of an HTML document and return them as a list'''

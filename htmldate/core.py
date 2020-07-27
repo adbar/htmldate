@@ -16,10 +16,19 @@ from functools import lru_cache, partial
 from lxml import etree, html
 
 # own
-from .extractors import (ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
-                         discard_unwanted, extract_url_date,
+from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
-                         json_search, timestamp_search, try_ymd_date)
+                         json_search, timestamp_search, try_ymd_date,
+                         ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
+                         COPYRIGHT_PATTERN, COPYRIGHT_YEAR, COPYRIGHT_CATCH,
+                         THREE_PATTERN, THREE_YEAR, THREE_CATCH,
+                         THREE_LOOSE_PATTERN, THREE_LOOSE_YEAR, THREE_LOOSE_CATCH,
+                         SELECT_YMD_PATTERN, SELECT_YMD_YEAR, YMD_CATCH, YMD_YEAR,
+                         DATESTRINGS_PATTERN, DATESTRINGS_YEAR, DATESTRINGS_CATCH,
+                         SLASHES_PATTERN, SLASHES_YEAR,
+                         YYYYMM_PATTERN, YYYYMM_YEAR, YYYYMM_CATCH,
+                         MMYYYY_PATTERN, MMYYYY_YEAR,
+                         SIMPLE_PATTERN, SIMPLE_YEAR, SIMPLE_CATCH)
 from .settings import HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -400,42 +409,31 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     # copyright symbol
     LOGGER.debug('looking for copyright/footer information')
     copyear = 0
-    pattern = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*([12][0-9]{3})\D')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'^\D?([12][0-9]{3})')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
+    bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, COPYRIGHT_CATCH, COPYRIGHT_YEAR, original_date, max_date)
     if bestmatch is not None:
         LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
         if date_validator(bestmatch.group(0), '%Y', latest=max_date) is True:
-            LOGGER.debug('date found for copyright/footer pattern "%s": %s', pattern, pagedate)
+            LOGGER.debug('date found for copyright/footer pattern "%s": %s', COPYRIGHT_PATTERN, pagedate)
             copyear = int(bestmatch.group(0))
             # return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # 3 components
     LOGGER.debug('3 components')
     # target URL characteristics
-    pattern = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, THREE_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
     # more loosely structured data
-    pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, THREE_LOOSE_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
-    #
-    pattern = re.compile(r'\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D')
-    yearpat = re.compile(r'(19[0-9]{2}|20[0-9]{2})\D?$')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
+    # YYYY-MM-DD/DD-MM-YYYY
+    candidates = plausible_year_filter(htmlstring, SELECT_YMD_PATTERN, SELECT_YMD_YEAR)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
     for item in candidates:
@@ -451,27 +449,20 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         candidate = '-'.join([match.group(3), month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
-    yearpat = re.compile(r'^([0-9]{4})')
     # select
-    bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
     # valid dates strings
-    pattern = re.compile(r'(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'([12][0-9]{3})([01][0-9])([0-3][0-9])')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, DATESTRINGS_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
     # DD?/MM?/YY
-    pattern = re.compile(r'\D([0-3]?[0-9][/.][01]?[0-9][/.][019][0-9])\D')
-    yearpat = re.compile(r'([0-9]{2})$')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=True)
+    candidates = plausible_year_filter(htmlstring, SLASHES_PATTERN, SLASHES_YEAR, tocomplete=True)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
     for item in candidates:
@@ -491,30 +482,23 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
-    yearpat = re.compile(r'^([0-9]{4})')
-    bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
     # 2 components
     LOGGER.debug('switching to two components')
-    #
-    pattern = re.compile(r'\D([0-9]{4}[/.-][0-9]{2})\D')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'([0-9]{4})[/.-]([0-9]{2})')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
+    # first option
+    bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YYYYMM_YEAR, original_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+                LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
     # 2 components, second option
-    pattern = re.compile(r'\D([0-3]?[0-9][/.-][0-9]{4})\D')
-    yearpat = re.compile(r'([12][0-9]{3})\D?$')
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat, original_date)
+    candidates = plausible_year_filter(htmlstring, MMYYYY_PATTERN, MMYYYY_YEAR, original_date)
     # revert DD-MM-YYYY patterns before sorting
     replacement = dict()
     for item in candidates:
@@ -526,25 +510,20 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         candidate = '-'.join([match.group(2), month, '01'])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
-    yearpat = re.compile(r'^([0-9]{4})')
     # select
-    bestmatch = select_candidate(candidates, catch, yearpat, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
+    result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, copyear, outputformat, max_date)
     if result is not None:
         return result
 
     # 1 component, last try
     LOGGER.debug('switching to one component')
-    pattern = re.compile(r'\D([12][0-9]{3})\D')
-    yearpat = re.compile(r'^\D?([12][0-9]{3})')
-    catch = re.compile(r'^\D?([12][0-9]{3})')
-    bestmatch = search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date)
+    bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, SIMPLE_CATCH, SIMPLE_YEAR, original_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
             if copyear == 0 or int(bestmatch.group(0)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+                LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # catchall
