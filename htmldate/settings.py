@@ -40,6 +40,6 @@ HTML_CLEANER.remove_unknown_tags = False
 HTML_CLEANER.safe_attrs_only = False
 HTML_CLEANER.scripts = False
 HTML_CLEANER.style = True
-HTML_CLEANER.kill_tags = ['audio', 'canvas', 'label', 'map', 'math', 'object',
+HTML_CLEANER.kill_tags = ['applet', 'audio', 'canvas', 'datalist', 'embed',
+                          'figure', 'label', 'map', 'math', 'object',
                           'picture', 'rdf', 'svg', 'video']
-# 'embed', 'figure', 'img', 'table'
