@@ -111,8 +111,10 @@ August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
 Nov|Dec|Januar|Jänner|Februar|Feber|März|Mai|Juni|Juli|Oktober|Dezember|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara'''.replace('\n',''))
-JSON_PATTERN = \
-  re.compile(r'"date(?:Modified|Published)": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+JSON_PATTERN_MODIFIED = \
+  re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+JSON_PATTERN_PUBLISHED = \
+  re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German + Turkish dates cache
@@ -401,9 +403,15 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     return None
 
 
-def json_search(htmlstring, outputformat, max_date):
+def json_search(htmlstring, outputformat, original_date, max_date):
     '''Look for JSON time patterns throughout the web page'''
-    json_match = JSON_PATTERN.search(htmlstring)
+    # determine pattern
+    if original_date is True:
+        json_pattern = JSON_PATTERN_PUBLISHED
+    else:
+        json_pattern = JSON_PATTERN_MODIFIED
+    # look throughout the HTML
+    json_match = json_pattern.search(htmlstring)
     if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date):
         LOGGER.debug('JSON time found: %s', json_match.group(0))
         return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)

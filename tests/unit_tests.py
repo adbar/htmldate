@@ -211,9 +211,9 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html')) == '2012-12-22'
     assert find_date(load_mock_page('http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/')) == '2018-02-15'
     # JSON datePublished
-    assert find_date(load_mock_page('https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/')) == '2018-02-28'
+    assert find_date(load_mock_page('https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/'), original_date=True) == '2018-02-28'
     # JSON dateModified
-    assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673')) == '2019-04-03'
+    assert find_date(load_mock_page('https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673'), original_date=False) == '2019-04-03'
 
     ## meta in document body
     assert find_date(load_mock_page('https://futurezone.at/digital-life/wie-creativecommons-richtig-genutzt-wird/24.600.504'), original_date=True) == '2013-08-09'

@@ -655,11 +655,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 
     # date regex timestamp rescue 1
-    json_result = json_search(htmlstring, outputformat, max_date)
+    json_result = json_search(htmlstring, outputformat, original_date, max_date)
     if json_result is not None:
         return json_result
 
-    # date regex timestamp rescue 2
+    # date regex timestamp rescue
     timestamp_result = timestamp_search(htmlstring, outputformat, max_date)
     if timestamp_result is not None:
         return timestamp_result
