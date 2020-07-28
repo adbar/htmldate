@@ -59,16 +59,15 @@ DATE_EXPRESSIONS = [
     """//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
     or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
-    contains(@class, 'article__date') or contains(@class, 'post_detail')]""",
-    """//*[@class='meta' or @class='meta-before' or @class='asset-meta' or
+    contains(@class, 'article__date') or contains(@class, 'post_detail') or @class='meta'
+    or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')]""",
-    """//*[contains(@class, 'published') or contains(@class, 'posted') or
+    or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')
+    or contains(@class, 'published') or contains(@class, 'posted') or
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
     """//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time')]""",
-    "//footer",
-    "//*[@class='post-footer' or @class='footer' or @id='footer']",
+    "//footer|//*[@class='post-footer' or @class='footer' or @id='footer']",
     "//small",
     """//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
