@@ -627,14 +627,21 @@ def test_idiosyncrasies():
 
 def test_parser():
     '''test argument parsing for the command-line interface'''
-    testargs = ['-f', '-v', '--original', '-m', '2015-12-31', '-u', 'https://www.example.org']
+    testargs = ['-f', '-v', '--original', '-max', '2015-12-31', '-u', 'https://www.example.org']
     with patch.object(sys, 'argv', testargs):
         args = parse_args(testargs)
-        assert args.fast is True
-        assert args.original is True
-        assert args.verbose is True
-        assert args.maxdate == '2015-12-31'
-        assert args.URL == 'https://www.example.org'
+    assert args.fast is True
+    assert args.original is True
+    assert args.verbose is True
+    assert args.maxdate == '2015-12-31'
+    assert args.URL == 'https://www.example.org'
+    testargs = ['-f', '-min', '2015-12-31']
+    with patch.object(sys, 'argv', testargs):
+        args = parse_args(testargs)
+    assert args.fast is True
+    assert args.original is False
+    assert args.verbose is False
+    assert args.mindate == '2015-12-31'
 
 
 def test_cli():

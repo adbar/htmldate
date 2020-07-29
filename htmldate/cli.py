@@ -14,7 +14,7 @@ from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
 
 
 def examine(htmlstring, extensive_bool=True, original_date=False,
-            verbose_flag=False, maxdate=None):
+            verbose_flag=False, mindate=None, maxdate=None):
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:
@@ -27,7 +27,7 @@ def examine(htmlstring, extensive_bool=True, original_date=False,
     else:
         result = find_date(htmlstring, extensive_search=extensive_bool,
                            original_date=original_date, verbose=verbose_flag,
-                           max_date=maxdate)
+                           min_date=mindate, max_date=maxdate)
         return result
     return None
 
@@ -44,7 +44,10 @@ def parse_args(args):
     argsparser.add_argument("--original",
                             help="original date prioritized",
                             action="store_true")
-    argsparser.add_argument("-m", "--maxdate",
+    argsparser.add_argument("-min", "--mindate",
+                            help="earliest acceptable date (YYYY-MM-DD)",
+                            type=str)
+    argsparser.add_argument("-max", "--maxdate",
                             help="latest acceptable date (YYYY-MM-DD)",
                             type=str)
     argsparser.add_argument("-i", "--inputfile",
@@ -89,7 +92,7 @@ def main():
                 result = examine(htmltext, extensive_bool=args.fast,
                                  original_date=args.original,
                                  verbose_flag=args.verbose,
-                                 maxdate=args.maxdate)
+                                 mindate=args.mindate, maxdate=args.maxdate)
                 if result is None:
                     result = 'None'
                 sys.stdout.write(line.strip() + '\t' + result + '\n')
