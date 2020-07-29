@@ -211,6 +211,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
 
 def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date):
     """Select a candidate among the most frequent matches"""
+    match = None
     # LOGGER.debug('occurrences: %s', occurrences)
     if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
         return None
@@ -236,8 +237,8 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
         year1 = int(yearpat.search(first_pattern).group(1))
         year2 = int(yearpat.search(second_pattern).group(1))
         # safety net: plausibility
-        if date_validator(str(year1), '%Y', latest=max_date) is False:
-            if date_validator(str(year2), '%Y', latest=max_date) is True:
+        if date_validator(str(year1), '%Y', earliest=min_date, latest=max_date) is False:
+            if date_validator(str(year2), '%Y', earliest=min_date, latest=max_date) is True:
                 # LOGGER.debug('first candidate not suitable: %s', year1)
                 match = catch.match(second_pattern)
             else:
@@ -249,9 +250,7 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
         # not newer or hopefully not significant
         else:
             match = catch.match(first_pattern)
-    if match:
-        return match
-    return None
+    return match
 
 
 def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date, max_date):
