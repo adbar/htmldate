@@ -190,7 +190,9 @@ optional arguments:
   -v, --verbose  increase output verbosity
   -f, --fast     fast mode: disable extensive search
   --original     original date prioritized
-  -m MAXDATE, --maxdate MAXDATE
+  -min MINDATE, --mindate MINDATE
+                 earliest acceptable date (YYYY-MM-DD)
+  -max MAXDATE, --maxdate MAXDATE
                  latest acceptable date (YYYY-MM-DD)
   -i INPUTFILE, --inputfile INPUTFILE
                  name of input file for batch processing (similar to wget -i)
