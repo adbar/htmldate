@@ -599,6 +599,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         if header_result is not None:
             return header_result
 
+    # try to use JSON data
+    json_result = json_search(tree, outputformat, original_date, max_date)
+    if json_result is not None:
+        return json_result
+
     # try abbr elements
     abbr_result = examine_abbr_elements(
         tree, outputformat, extensive_search, original_date, max_date
@@ -653,11 +658,6 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         htmlstring = html.tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore')
     # remove comments by hand as faulty in lxml?
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
-
-    # date regex timestamp rescue 1
-    json_result = json_search(htmlstring, outputformat, original_date, max_date)
-    if json_result is not None:
-        return json_result
 
     # date regex timestamp rescue
     timestamp_result = timestamp_search(htmlstring, outputformat, max_date)

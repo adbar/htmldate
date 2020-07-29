@@ -403,18 +403,21 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     return None
 
 
-def json_search(htmlstring, outputformat, original_date, max_date):
-    '''Look for JSON time patterns throughout the web page'''
+def json_search(tree, outputformat, original_date, max_date):
+    '''Look for JSON time patterns in JSON sections of the tree'''
     # determine pattern
     if original_date is True:
         json_pattern = JSON_PATTERN_PUBLISHED
     else:
         json_pattern = JSON_PATTERN_MODIFIED
-    # look throughout the HTML
-    json_match = json_pattern.search(htmlstring)
-    if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date):
-        LOGGER.debug('JSON time found: %s', json_match.group(0))
-        return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
+    # look throughout the HTML tree
+    for elem in tree.xpath('//script[@type="application/ld+json"]|//script[@type="application/settings+json"]'):
+        if not elem.text or not '"date' in elem.text:
+            continue
+        json_match = json_pattern.search(elem.text)
+        if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date):
+            LOGGER.debug('JSON time found: %s', json_match.group(0))
+            return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
     return None
 
 
