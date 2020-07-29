@@ -20,15 +20,14 @@ from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
                          json_search, timestamp_search, try_ymd_date,
                          ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
-                         COPYRIGHT_PATTERN, COPYRIGHT_YEAR, COPYRIGHT_CATCH,
-                         THREE_PATTERN, THREE_YEAR, THREE_CATCH,
-                         THREE_LOOSE_PATTERN, THREE_LOOSE_YEAR, THREE_LOOSE_CATCH,
-                         SELECT_YMD_PATTERN, SELECT_YMD_YEAR, YMD_CATCH, YMD_YEAR,
-                         DATESTRINGS_PATTERN, DATESTRINGS_YEAR, DATESTRINGS_CATCH,
+                         YEAR_PATTERN, YMD_PATTERN, COPYRIGHT_PATTERN,
+                         THREE_PATTERN, THREE_CATCH,
+                         THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH,
+                         SELECT_YMD_PATTERN, SELECT_YMD_YEAR, YMD_YEAR,
+                         DATESTRINGS_PATTERN, DATESTRINGS_CATCH,
                          SLASHES_PATTERN, SLASHES_YEAR,
-                         YYYYMM_PATTERN, YYYYMM_YEAR, YYYYMM_CATCH,
-                         MMYYYY_PATTERN, MMYYYY_YEAR,
-                         SIMPLE_PATTERN, SIMPLE_YEAR, SIMPLE_CATCH)
+                         YYYYMM_PATTERN, YYYYMM_CATCH, MMYYYY_PATTERN,
+                         MMYYYY_YEAR, SIMPLE_PATTERN)
 from .settings import HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -415,7 +414,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # copyright symbol
     LOGGER.debug('looking for copyright/footer information')
     copyear = 0
-    bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, COPYRIGHT_CATCH, COPYRIGHT_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
@@ -427,13 +426,13 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # 3 components
     LOGGER.debug('3 components')
     # target URL characteristics
-    bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, THREE_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, THREE_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # more loosely structured data
-    bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, THREE_LOOSE_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
@@ -456,13 +455,13 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # valid dates strings
-    bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, DATESTRINGS_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
@@ -488,7 +487,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
@@ -496,7 +495,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # 2 components
     LOGGER.debug('switching to two components')
     # first option
-    bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YYYYMM_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
@@ -517,14 +516,14 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
     result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # 1 component, last try
     LOGGER.debug('switching to one component')
-    bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, SIMPLE_CATCH, SIMPLE_YEAR, original_date, min_date, max_date)
+    bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
