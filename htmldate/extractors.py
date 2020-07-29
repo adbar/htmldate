@@ -285,7 +285,7 @@ def regex_parse_multilingual(string):
     return dateobject
 
 
-def custom_parse(string, outputformat, extensive_search, max_date):
+def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
     # '201709011234' not covered by dateparser # regex was too slow
@@ -308,7 +308,7 @@ def custom_parse(string, outputformat, extensive_search, max_date):
             # speed-up by ignoring time zone info if ciso8601 is installed
             else:
                 result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat, latest=max_date) is True:
+            if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('parsing result: %s', result)
                 return result.strftime(outputformat)
         except ValueError:
@@ -379,7 +379,7 @@ def external_date_parser(string, outputformat):
 
 
 @lru_cache(maxsize=32)
-def try_ymd_date(string, outputformat, extensive_search, max_date):
+def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
     # list(filter(str.isdigit, string))
@@ -390,7 +390,7 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
     if NO_TEXT_DATE_PATTERN.match(string):
         return None
     # faster
-    customresult = custom_parse(string, outputformat, extensive_search, max_date)
+    customresult = custom_parse(string, outputformat, extensive_search, min_date, max_date)
     if customresult is not None:
         return customresult
     # slow but extensive search
@@ -398,12 +398,12 @@ def try_ymd_date(string, outputformat, extensive_search, max_date):
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
         if dateparser_result is not None:
-            if date_validator(dateparser_result, outputformat, latest=max_date):
+            if date_validator(dateparser_result, outputformat, earliest=min_date, latest=max_date):
                 return dateparser_result
     return None
 
 
-def json_search(tree, outputformat, original_date, max_date):
+def json_search(tree, outputformat, original_date, min_date, max_date):
     '''Look for JSON time patterns in JSON sections of the tree'''
     # determine pattern
     if original_date is True:
@@ -415,22 +415,22 @@ def json_search(tree, outputformat, original_date, max_date):
         if not elem.text or not '"date' in elem.text:
             continue
         json_match = json_pattern.search(elem.text)
-        if json_match and date_validator(json_match.group(1), '%Y-%m-%d', latest=max_date):
+        if json_match and date_validator(json_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
             LOGGER.debug('JSON time found: %s', json_match.group(0))
             return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
     return None
 
 
-def timestamp_search(htmlstring, outputformat, max_date):
+def timestamp_search(htmlstring, outputformat, min_date, max_date):
     '''Look for timestamps throughout the web page'''
     tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if tstamp_match and date_validator(tstamp_match.group(1), '%Y-%m-%d', latest=max_date):
+    if tstamp_match and date_validator(tstamp_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
         LOGGER.debug('time regex found: %s', tstamp_match.group(0))
         return convert_date(tstamp_match.group(1), '%Y-%m-%d', outputformat)
     return None
 
 
-def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
+def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_date):
     '''Look for a precise pattern throughout the web page'''
     match = idiosyncrasy.search(htmlstring)
     groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
@@ -452,21 +452,21 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, max_date):
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
             else:
-                if date_validator(candidate, '%Y-%m-%d', latest=max_date) is True:
+                if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                     LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
                     return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
 
 
-def idiosyncrasies_search(htmlstring, outputformat, max_date):
+def idiosyncrasies_search(htmlstring, outputformat, min_date, max_date):
     '''Look for author-written dates throughout the web page'''
     result = None
     # DE
-    result = extract_idiosyncrasy(DE_PATTERNS, htmlstring, outputformat, max_date)
+    result = extract_idiosyncrasy(DE_PATTERNS, htmlstring, outputformat, min_date, max_date)
     # EN
     if result is None:
-        result = extract_idiosyncrasy(EN_PATTERNS, htmlstring, outputformat, max_date)
+        result = extract_idiosyncrasy(EN_PATTERNS, htmlstring, outputformat, min_date, max_date)
     # TR
     if result is None:
-        result = extract_idiosyncrasy(TR_PATTERNS, htmlstring, outputformat, max_date)
+        result = extract_idiosyncrasy(TR_PATTERNS, htmlstring, outputformat, min_date, max_date)
     return result

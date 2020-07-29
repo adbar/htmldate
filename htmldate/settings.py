@@ -16,7 +16,8 @@ MIN_FILE_SIZE = 10
 
 # Plausible dates
 # earliest possible year to take into account (inclusive)
-MIN_YEAR = 1995
+MIN_DATE = datetime.date(1995, 1, 1)
+MIN_YEAR = MIN_DATE.year
 # latest possible date
 LATEST_POSSIBLE = datetime.date.today()
 # latest possible year

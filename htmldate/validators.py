@@ -14,7 +14,7 @@ import time
 from collections import Counter
 from functools import lru_cache
 
-from .settings import MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
+from .settings import MIN_DATE, MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
 
 
 LOGGER = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 @lru_cache(maxsize=32)
-def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
+def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_POSSIBLE):
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
     if not isinstance(date_input, datetime.date):
@@ -44,10 +44,10 @@ def date_validator(date_input, outputformat, latest=LATEST_POSSIBLE):
     if MIN_YEAR <= year <= MAX_YEAR:
         # not newer than today or stored variable
         try:
-            if dateobject.date() <= latest:
+            if earliest <= dateobject.date() <= latest:
                 return True
         except AttributeError:
-            if dateobject <= latest:
+            if earliest <= dateobject <= latest:
                 return True
     LOGGER.debug('date not valid: %s', date_input)
     return False
@@ -116,11 +116,11 @@ def compare_values(reference, attempt, outputformat, original_date):
 
 
 @lru_cache(maxsize=32)
-def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, max_date):
+def filter_ymd_candidate(bestmatch, pattern, copyear, outputformat, min_date, max_date):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
+        if date_validator(pagedate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
                 LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
@@ -140,14 +140,29 @@ def convert_date(datestring, inputformat, outputformat):
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(reference, outputformat, max_date):
+def check_extracted_reference(reference, outputformat, min_date, max_date):
     '''Test if the extracted reference date can be returned'''
     if reference > 0:
         dateobject = datetime.datetime.fromtimestamp(reference)
         converted = dateobject.strftime(outputformat)
-        if date_validator(converted, outputformat, latest=max_date) is True:
+        if date_validator(converted, outputformat, earliest=min_date, latest=max_date) is True:
             return converted
     return None
+
+
+def get_min_date(min_date):
+    '''Validates the minimum date and/or defaults to earliest plausible date'''
+    if min_date is not None:
+        try:
+            # internal conversion from Y-M-D format
+            min_date = datetime.date(int(min_date[:4]),
+                                     int(min_date[5:7]),
+                                     int(min_date[8:10]))
+        except ValueError:
+            min_date = MIN_DATE
+    else:
+        min_date = MIN_DATE
+    return min_date
 
 
 def get_max_date(max_date):

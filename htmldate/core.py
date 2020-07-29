@@ -33,7 +33,7 @@ from .settings import HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
                          convert_date, date_validator, filter_ymd_candidate,
-                         get_max_date, output_format_validator,
+                         get_min_date, get_max_date, output_format_validator,
                          plausible_year_filter)
 
 # TODO:
@@ -45,7 +45,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=32)
-def examine_date_elements(tree, expression, outputformat, extensive_search, max_date):
+def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -71,14 +71,14 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, max_
             elem, pretty_print=False, encoding='unicode').translate(
                 {ord(c): None for c in '\n\t\r'}
             ).strip()[:100])
-        attempt = try_ymd_date(toexamine, outputformat, extensive_search, max_date)
+        attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
         if attempt is not None:
             return attempt
     # catchall
     return None
 
 
-def examine_header(tree, outputformat, extensive_search, original_date, max_date):
+def examine_header(tree, outputformat, extensive_search, original_date, min_date, max_date):
     """
     Parse header elements to find date cues
 
@@ -96,11 +96,17 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
         Look for original date (e.g. publication date) instead of most recent
         one (e.g. last modified, updated time)
     :type original_date: boolean
+    :param min_date:
+        Set the earliest acceptable date manually (YYYY-MM-DD format)
+    :type min_date: string
+    :param max_date:
+        Set the latest acceptable date manually (YYYY-MM-DD format)
+    :type max_date: string
     :return: Returns a valid date expression as a string, or None
 
     """
     headerdate, reserve = None, None
-    tryfunc = partial(try_ymd_date, outputformat=outputformat, extensive_search=extensive_search, max_date=max_date)
+    tryfunc = partial(try_ymd_date, outputformat=outputformat, extensive_search=extensive_search, min_date=min_date, max_date=max_date)
     # loop through all meta elements
     for elem in tree.xpath('//meta'):
         # safeguard
@@ -166,14 +172,14 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
                 ) and headerdate is None:
                 LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 if 'datetime' in elem.attrib:
-                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
                     headerdate = tryfunc(elem.get('content'))
             # override
             elif elem.get('itemprop').lower() == 'datemodified' and original_date is False:
                 LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 if 'datetime' in elem.attrib:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
                     attempt = tryfunc(elem.get('content'))
                 if attempt is not None:
@@ -204,7 +210,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, max_date
     return headerdate
 
 
-def select_candidate(occurrences, catch, yearpat, original_date, max_date):
+def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date):
     """Select a candidate among the most frequent matches"""
     # LOGGER.debug('occurrences: %s', occurrences)
     if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
@@ -249,13 +255,13 @@ def select_candidate(occurrences, catch, yearpat, original_date, max_date):
     return None
 
 
-def search_pattern(htmlstring, pattern, catch, yearpat, original_date, max_date):
+def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date, max_date):
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
-    return select_candidate(candidates, catch, yearpat, original_date, max_date)
+    return select_candidate(candidates, catch, yearpat, original_date, min_date, max_date)
 
 
-def try_expression(expression, outputformat, extensive_search, max_date):
+def try_expression(expression, outputformat, extensive_search, min_date, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
     textcontent = re.sub(r'[\n\r\s\t]+', ' ', expression, re.MULTILINE).strip()
@@ -263,14 +269,14 @@ def try_expression(expression, outputformat, extensive_search, max_date):
     if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
         return None
     # try the beginning of the string
-    attempt = try_ymd_date(textcontent[:48], outputformat, extensive_search, max_date)
+    attempt = try_ymd_date(textcontent[:48], outputformat, extensive_search, min_date, max_date)
     return attempt
 
 
 @lru_cache(maxsize=32)
-def compare_reference(reference, expression, outputformat, extensive_search, original_date, max_date):
+def compare_reference(reference, expression, outputformat, extensive_search, original_date, min_date, max_date):
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
-    attempt = try_expression(expression, outputformat, extensive_search, max_date)
+    attempt = try_expression(expression, outputformat, extensive_search, min_date, max_date)
     if attempt is not None:
         new_reference = compare_values(reference, attempt, outputformat, original_date)
     else:
@@ -278,7 +284,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     return new_reference
 
 
-def examine_abbr_elements(tree, outputformat, extensive_search, original_date, max_date):
+def examine_abbr_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
     '''Scan the page for abbr elements and check if their content contains an eligible date'''
     elements = tree.xpath('//abbr')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
@@ -310,11 +316,11 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                         LOGGER.debug('abbr published-title found: %s', trytext)
                         # shortcut
                         if original_date is True:
-                            attempt = try_ymd_date(trytext, outputformat, extensive_search, max_date)
+                            attempt = try_ymd_date(trytext, outputformat, extensive_search, min_date, max_date)
                             if attempt is not None:
                                 return attempt
                         else:
-                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
+                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
                             # faster execution
                             if reference > 0:
                                 break
@@ -322,19 +328,19 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                     if elem.text and len(elem.text) > 10:
                         trytext = re.sub(r'^am ', '', elem.text)
                         LOGGER.debug('abbr published found: %s', trytext)
-                        reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, max_date)
+                        reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
         # convert and return
-        converted = check_extracted_reference(reference, outputformat, max_date)
+        converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
             return converted
         # try rescue in abbr content
-        dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, max_date)
+        dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, min_date, max_date)
         if dateresult is not None:
             return dateresult
     return None
 
 
-def examine_time_elements(tree, outputformat, extensive_search, original_date, max_date):
+def examine_time_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
     '''Scan the page for time elements and check if their content contains an eligible date'''
     elements = tree.xpath('//time')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
@@ -364,26 +370,26 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
                     LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
                 # analyze attribute
                 if shortcut_flag is True:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, max_date)
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                     if attempt is not None:
                         return attempt
                 else:
-                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date, max_date)
+                    reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date, min_date, max_date)
                     if reference > 0:
                         break
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug('time/datetime found: %s', elem.text)
-                reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, max_date)
+                reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, min_date, max_date)
             # else...
         # return
-        converted = check_extracted_reference(reference, outputformat, max_date)
+        converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
             return converted
     return None
 
 
-def search_page(htmlstring, outputformat, original_date, max_date):
+def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     """
     Opportunistically search the HTML text for common text patterns
 
@@ -409,7 +415,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     # copyright symbol
     LOGGER.debug('looking for copyright/footer information')
     copyear = 0
-    bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, COPYRIGHT_CATCH, COPYRIGHT_YEAR, original_date, max_date)
+    bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, COPYRIGHT_CATCH, COPYRIGHT_YEAR, original_date, min_date, max_date)
     if bestmatch is not None:
         LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
         pagedate = '-'.join([bestmatch.group(0), '07', '01'])
@@ -421,14 +427,14 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     # 3 components
     LOGGER.debug('3 components')
     # target URL characteristics
-    bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, THREE_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, THREE_PATTERN, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, THREE_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # more loosely structured data
-    bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, THREE_LOOSE_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, THREE_LOOSE_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -450,14 +456,14 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # valid dates strings
-    bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, DATESTRINGS_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, copyear, outputformat, max_date)
+    bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, DATESTRINGS_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -482,15 +488,15 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # 2 components
     LOGGER.debug('switching to two components')
     # first option
-    bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YYYYMM_YEAR, original_date, max_date)
+    bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YYYYMM_YEAR, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
@@ -511,14 +517,14 @@ def search_page(htmlstring, outputformat, original_date, max_date):
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, max_date)
-    result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, copyear, outputformat, max_date)
+    bestmatch = select_candidate(candidates, YMD_CATCH, YMD_YEAR, original_date, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # 1 component, last try
     LOGGER.debug('switching to one component')
-    bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, SIMPLE_CATCH, SIMPLE_YEAR, original_date, max_date)
+    bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, SIMPLE_CATCH, SIMPLE_YEAR, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
@@ -533,7 +539,7 @@ def search_page(htmlstring, outputformat, original_date, max_date):
     return None
 
 
-def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None, verbose=False, max_date=None):
+def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None, verbose=False, min_date=None, max_date=None):
     """
     Extract dates from HTML documents using markup analysis and text patterns
 
@@ -559,6 +565,9 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     :param verbose:
         Set verbosity level for debugging
     :type verbose: boolean
+    :param min_date:
+        Set the earliest acceptable date manually (YYYY-MM-DD format)
+    :type min_date: string
     :param max_date:
         Set the latest acceptable date manually (YYYY-MM-DD format)
     :type max_date: string
@@ -570,6 +579,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
+    min_date = get_min_date(min_date)
     max_date = get_max_date(max_date)
 
     # safety
@@ -592,7 +602,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # first, try header
     try:
         header_result = examine_header(tree, outputformat, extensive_search,
-                                       original_date, max_date)
+                                       original_date, min_date, max_date)
     except etree.XPathEvalError as err:
         LOGGER.error('header XPath %s', err)
     else:
@@ -600,13 +610,13 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             return header_result
 
     # try to use JSON data
-    json_result = json_search(tree, outputformat, original_date, max_date)
+    json_result = json_search(tree, outputformat, original_date, min_date, max_date)
     if json_result is not None:
         return json_result
 
     # try abbr elements
     abbr_result = examine_abbr_elements(
-        tree, outputformat, extensive_search, original_date, max_date
+        tree, outputformat, extensive_search, original_date, min_date, max_date
     )
     if abbr_result is not None:
         return abbr_result
@@ -616,7 +626,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     search_tree, discarded = discard_unwanted(deepcopy(tree))
     for expr in DATE_EXPRESSIONS:
         dateresult = examine_date_elements(
-            search_tree, expr, outputformat, extensive_search, max_date
+            search_tree, expr, outputformat, extensive_search, min_date, max_date
         )
         if dateresult is not None:
             return dateresult
@@ -624,7 +634,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     for subtree in discarded:
         for expr in DATE_EXPRESSIONS:
             dateresult = examine_date_elements(
-                subtree, expr, outputformat, extensive_search, max_date
+                subtree, expr, outputformat, extensive_search, min_date, max_date
             )
             if dateresult is not None:
                 return dateresult
@@ -633,14 +643,14 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     if extensive_search is True:
         for expr in ADDITIONAL_EXPRESSIONS:
             dateresult = examine_date_elements(
-                tree, expr, outputformat, extensive_search, max_date
+                tree, expr, outputformat, extensive_search, min_date, max_date
             )
             if dateresult is not None:
                 return dateresult
 
     # try time elements
     time_result = examine_time_elements(
-        tree, outputformat, extensive_search, original_date, max_date
+        tree, outputformat, extensive_search, original_date, min_date, max_date
     )
     if time_result is not None:
         return time_result
@@ -660,12 +670,12 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 
     # date regex timestamp rescue
-    timestamp_result = timestamp_search(htmlstring, outputformat, max_date)
+    timestamp_result = timestamp_search(htmlstring, outputformat, min_date, max_date)
     if timestamp_result is not None:
         return timestamp_result
 
     # precise patterns and idiosyncrasies
-    text_result = idiosyncrasies_search(htmlstring, outputformat, max_date)
+    text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
     if text_result is not None:
         return text_result
 
@@ -678,7 +688,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
-        pagedate = search_page(htmlstring, outputformat, original_date, max_date)
+        pagedate = search_page(htmlstring, outputformat, original_date, min_date, max_date)
         return pagedate
 
     return None
