@@ -183,19 +183,20 @@ On the command-line
     $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
     '2016-12-23'
     $ htmldate --help
-    htmldate [-h] [-v] [-f] [--original] [-m MAXDATE] [-i INPUTFILE] [-u URL]
+    htmldate [-h] [-v] [-f] [--original] [-min MINDATE] [-max MAXDATE] [-i INPUTFILE] [-u URL]
 
 optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  increase output verbosity
-  -f, --fast     fast mode: disable extensive search
-  --original     original date prioritized
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -f, --fast            fast mode: disable extensive search
+  --original            original date prioritized
   -min MINDATE, --mindate MINDATE
-                 earliest acceptable date (YYYY-MM-DD)
+                        earliest acceptable date (YYYY-MM-DD)
   -max MAXDATE, --maxdate MAXDATE
-                 latest acceptable date (YYYY-MM-DD)
+                        latest acceptable date (YYYY-MM-DD)
   -i INPUTFILE, --inputfile INPUTFILE
-                 name of input file for batch processing (similar to wget -i)
+                        name of input file for batch processing (similar to
+                        wget -i)
   -u URL, --URL URL     custom URL download
 
 The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:

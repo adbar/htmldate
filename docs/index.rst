@@ -181,7 +181,7 @@ For usage instructions see ``htmldate -h``:
 .. code-block:: bash
 
     $ htmldate --help
-    htmldate [-h] [-v] [-f] [--original] [-m MAXDATE] [-i INPUTFILE] [-u URL]
+    htmldate [-h] [-v] [-f] [--original] [-min MINDATE] [-max MAXDATE] [-i INPUTFILE] [-u URL]
     optional arguments:
         -h, --help     show this help message and exit
         -v, --verbose  increase output verbosity
