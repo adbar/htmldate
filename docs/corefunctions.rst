@@ -22,9 +22,7 @@ Useful internal functions
 
 .. autofunction:: htmldate.extractors.custom_parse
 
-.. autofunction:: htmldate.extractors.regex_parse_de
-
-.. autofunction:: htmldate.extractors.regex_parse_en
+.. autofunction:: htmldate.extractors.regex_parse
 
 .. autofunction:: htmldate.extractors.extract_url_date
 

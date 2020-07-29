@@ -190,14 +190,14 @@ optional arguments:
   -v, --verbose         increase output verbosity
   -f, --fast            fast mode: disable extensive search
   --original            original date prioritized
-  -min MINDATE, --mindate MINDATE
+  -min, --mindate MINDATE
                         earliest acceptable date (YYYY-MM-DD)
-  -max MAXDATE, --maxdate MAXDATE
+  -max, --maxdate MAXDATE
                         latest acceptable date (YYYY-MM-DD)
-  -i INPUTFILE, --inputfile INPUTFILE
+  -i, --inputfile INPUTFILE
                         name of input file for batch processing (similar to
                         wget -i)
-  -u URL, --URL URL     custom URL download
+  -u, --URL URL     custom URL download
 
 The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:
 
