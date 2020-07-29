@@ -1,8 +1,9 @@
 ## Changelog
 
-### 0.6.4 (unreleased)
-- support for Turkish dates
-- some author-written idiosyncrasies
+### 0.7.0
+- code base and performance improved
+- minimum date available as option
+- support for Turkish patterns and CMS idiosyncrasies (thanks @evolutionoftheuniverse)
 
 ### 0.6.3
 - more efficient code
