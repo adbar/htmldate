@@ -13,7 +13,7 @@ authors:
 affiliations:
  - name: Berlin-Brandenburg Academy of Sciences
    index: 1
-date: 26 March 2020
+date: 29 July 2020
 bibliography: paper.bib
 ---
 
@@ -54,7 +54,7 @@ The package features a combination of tree traversal and text-based extraction, 
 
 Finally, a date is returned if a valid cue could be found in the document, corresponding to either the last update or the original publishing statement (the default), which allows for switching between original and updated dates. The output string defaults to ISO 8601 YMD format.
 
-``htmldate`` is compatible with all recent versions of Python (currently 3.4 to 3.9). It is designed to be computationally efficient and used in production on millions of documents. All the steps needed from web page download to HTML parsing, scraping, and text analysis are handled, including batch processing. It is distributed under the GNU General Public License v3.0.
+``htmldate`` is compatible with all recent versions of Python (currently 3.4 to 3.9). It is designed to be computationally efficient and used in production on millions of documents. All the steps needed from web page download to HTML parsing, scraping, and text analysis are handled, including batch processing. It is distributed under the GNU General Public License v3.0. Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support German, English and Turkish.
 
 
 # State of the art
@@ -111,12 +111,12 @@ The results in Table 1 show that date extraction is not a completely solved task
 | newspaper 0.2.8 	| 0.888 	| 0.407 	| 0.387 	| 0.558 	| 81.6 |
 | goose3 3.1.6 		| 0.887 	| 0.441 	| 0.418 	| 0.589 	| 15.5 |
 | date_guesser 2.1.4 	| 0.809 	| 0.553 	| 0.489 	| 0.657 	| 40.0 |
-| news-please 1.5.3  	| 0.822 	| 0.655 	| 0.573 	| 0.729 	| 69.6 |
-| articleDateExtractor 0.20 | 0.817 	| 0.635 	| 0.556 	| 0.714		| 7.0 |
-| htmldate 0.6.3 *(fast)* | **0.903** 	| 0.907 	| 0.827 	| 0.905 	| **2.4** |
-| htmldate[all] 0.6.3 *(extensive)* | 0.893 	| **1.000** 	| **0.893** 	| **0.944** 	| 5.7 |
+| news-please 1.5.3  	| 0.823 	| 0.660 	| 0.578 	| 0.732 	| 69.6 |
+| articleDateExtractor 0.20 | 0.817 	| 0.635 	| 0.556 	| 0.714		| 6.8 |
+| htmldate 0.7.0 *(fast)* | **0.903** 	| 0.907 	| 0.827 	| 0.905 	| **2.4** |
+| htmldate[all] 0.7.0 *(extensive)* | 0.889 	| **1.000** 	| **0.889** 	| **0.941** 	| 3.8 |
 
-: 225 web pages containing identifiable dates (as of 2020-06-17)
+: 225 web pages containing identifiable dates (as of 2020-07-29)
 
 
 Precision describes if the dates given as output are correct: ``newspaper`` and ``goose3`` fare well precision-wise but they fail to extract dates in a large majority of cases (poor recall). The difference in accuracy between ``date_guesser`` and ``newspaper`` is consistent with tests described on the website of the former.
@@ -133,7 +133,7 @@ It turns out that ``htmldate`` performs better than the other solutions overall.
 
 # Acknowledgements
 
-This work has been supported by the ZDL research project (*Zentrum für digitale Lexikographie der deutschen Sprache*, [zdl.org](https://www.zdl.org/)). Thanks to Yannick Kozmus and further [contributors](https://github.com/adbar/htmldate/graphs/contributors) for testing and working on the package.
+This work has been supported by the ZDL research project (*Zentrum für digitale Lexikographie der deutschen Sprache*, [zdl.org](https://www.zdl.org/)). Thanks to Yannick Kozmus (evaluation), user evolutionoftheuniverse (patterns for Turkish) and further [contributors](https://github.com/adbar/htmldate/graphs/contributors) for testing and working on the package. Thanks to Daniel S. Katz, Geoff Bacon and Maarten van Gompel for reviewing this JOSS submission.
 
 The following Python modules have been of great help: ``lxml``, ``ciso8601``, and ``dateparser``. A few patterns are derived from ``python-goose``, ``metascraper``, ``newspaper`` and ``articleDateExtractor``; this package extends their coverage and robustness significantly.
 
