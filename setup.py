@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.7.0',
+    version='0.7.1',
     description='Fast and robust extraction of original and updated publication dates from web pages.',
     long_description=readme(),
     classifiers=[
@@ -71,7 +71,7 @@ setup(
         'lxml >= 4.5.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
         'requests == 2.21.0; python_version == "3.4"',
-        'requests >= 2.24.0; python_version > "3.4"',
+        'requests >= 2.21.0; python_version > "3.4"',
     ],
     extras_require=extras,
     entry_points = {
