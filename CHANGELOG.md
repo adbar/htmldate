@@ -1,5 +1,9 @@
 ## Changelog
 
+
+### 0.7.1
+- technical release: package requirements and docs wording
+
 ### 0.7.0
 - code base and performance improved
 - minimum date available as option
