@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='htmldate',
-    version='0.7.1',
+    version='0.7.2',
     description='Fast and robust extraction of original and updated publication dates from web pages.',
     long_description=readme(),
     classifiers=[
@@ -53,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Text Processing :: Linguistic',
@@ -60,6 +61,11 @@ setup(
     ],
     keywords=['datetime', 'date-parser', 'entity-extraction', 'html-extraction', 'html-parsing', 'metadata-extraction',  'webarchives', 'web-scraping'],
     url='http://github.com/adbar/htmldate',
+    project_urls={
+        "Source": "https://github.com/adbar/htmldate",
+        "Coverage": "https://codecov.io/github/adbar/htmldate",
+        "Tracker": "https://github.com/adbar/htmldate/issues",
+    },
     author='Adrien Barbaresi',
     author_email='barbaresi@bbaw.de',
     license='GPLv3+',

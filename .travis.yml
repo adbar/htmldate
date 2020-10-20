@@ -31,7 +31,17 @@ matrix:
       python: 3.8
       env: TOXENV=py38
       env: MINIMAL=false
-    - name: "Python 3.9 Nightly on Linux"
+    - name: "Python 3.9 on Linux with minimal dependencies"
+      dist: bionic
+      python: 3.9-dev
+      env: TOXENV=py39
+      env: MINIMAL=true
+    - name: "Python 3.9 on Linux"
+      dist: bionic
+      python: 3.9-dev
+      env: TOXENV=py39
+      env: MINIMAL=false
+    - name: "Python Nightly on Linux"
       dist: bionic
       python: nightly
       env: TOXENV=py39
@@ -65,6 +75,15 @@ matrix:
     - name: "Python 3 on macOS"
       os: osx
       osx_image: xcode11
+      language: shell
+      env: MINIMAL=false
+      before_install:
+        - sw_vers
+        - python3 --version
+        - pip3 --version
+    - name: "Python 3 on recent macOS"
+      os: osx
+      osx_image: xcode12.2
       language: shell
       env: MINIMAL=false
       before_install:
