@@ -1,6 +1,10 @@
 ## Changelog
 
 
+### 0.7.2
+- compatibility with Python 3.9
+- better speed and accuracy
+
 ### 0.7.1
 - technical release: package requirements and docs wording
 
