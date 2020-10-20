@@ -107,7 +107,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
     headerdate, reserve = None, None
     tryfunc = partial(try_ymd_date, outputformat=outputformat, extensive_search=extensive_search, min_date=min_date, max_date=max_date)
     # loop through all meta elements
-    for elem in tree.xpath('//meta'):
+    for elem in tree.iterfind('.//meta'):
         # safeguard
         if not elem.attrib: # len(elem.attrib) < 1:
             continue
@@ -153,7 +153,8 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                     'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time',
                     'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date',
                     'published-date', 'publication_date', 'sailthru.date',
-                    'timestamp'):
+                    'timestamp'
+                    ):
                 LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 headerdate = tryfunc(elem.get('content'))
             # modified
@@ -284,7 +285,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
 
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
     '''Scan the page for abbr elements and check if their content contains an eligible date'''
-    elements = tree.xpath('//abbr')
+    elements = tree.findall('.//abbr')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         reference = 0
         for elem in elements:
@@ -332,7 +333,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
         if converted is not None:
             return converted
         # try rescue in abbr content
-        dateresult = examine_date_elements(tree, '//abbr', outputformat, extensive_search, min_date, max_date)
+        dateresult = examine_date_elements(tree, './/abbr', outputformat, extensive_search, min_date, max_date)
         if dateresult is not None:
             return dateresult
     return None
@@ -340,7 +341,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
 
 def examine_time_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
     '''Scan the page for time elements and check if their content contains an eligible date'''
-    elements = tree.xpath('//time')
+    elements = tree.findall('.//time')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         # scan all the tags and look for the newest one
         reference = 0
@@ -589,9 +590,10 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # URL
     if url is None:
         # link canonical
-        for elem in tree.xpath('//link[@rel="canonical"]'):
+        for elem in tree.iterfind('.//link[@rel="canonical"]'):
             if 'href' in elem.attrib:
                 url = elem.get('href')
+                break
     if url is not None:
         dateresult = extract_url_date(url, outputformat)
         if dateresult is not None:

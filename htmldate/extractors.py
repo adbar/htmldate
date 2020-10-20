@@ -51,12 +51,12 @@ from .validators import convert_date, date_validator
 LOGGER = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = [
-    """//*[contains(@id, 'date') or contains(@id, 'Date') or
+    """.//*[contains(@id, 'date') or contains(@id, 'Date') or
     contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
     or contains(@class, 'post-meta-time')]""",
-    """//*[contains(@class, 'date') or contains(@class, 'Date')
+    """.//*[contains(@class, 'date') or contains(@class, 'Date')
     or contains(@class, 'datum') or contains(@class, 'Datum')]""",
-    """//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
+    """.//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
     or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
     contains(@class, 'article__date') or contains(@class, 'post_detail') or @class='meta'
@@ -65,11 +65,11 @@ DATE_EXPRESSIONS = [
     or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')
     or contains(@class, 'published') or contains(@class, 'posted') or
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
-    """//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
+    """.//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time')]""",
-    "//footer|//*[@class='post-footer' or @class='footer' or @id='footer']",
-    "//small",
-    """//*[contains(@class, 'author') or contains(@class, 'autor') or
+    ".//footer|.//*[@class='post-footer' or @class='footer' or @id='footer']",
+    ".//small",
+    """.//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
     contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
     contains(@class, 'publication')]""",
@@ -77,7 +77,7 @@ DATE_EXPRESSIONS = [
 
 # supply more expressions for more languages
 ADDITIONAL_EXPRESSIONS = [
-    "//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
+    ".//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
 ]
 
 # discard parts of the webpage
@@ -403,7 +403,7 @@ def json_search(tree, outputformat, original_date, min_date, max_date):
     else:
         json_pattern = JSON_PATTERN_MODIFIED
     # look throughout the HTML tree
-    for elem in tree.xpath('//script[@type="application/ld+json"]|//script[@type="application/settings+json"]'):
+    for elem in tree.xpath('.//script[@type="application/ld+json"]|//script[@type="application/settings+json"]'):
         if not elem.text or not '"date' in elem.text:
             continue
         json_match = json_pattern.search(elem.text)
