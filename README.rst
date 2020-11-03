@@ -87,17 +87,17 @@ Performance
 -----------
 
 =============================== ========= ========= ========= ========= =======
-225 web pages containing identifiable dates (as of 2020-07-29)
+225 web pages containing identifiable dates (as of 2020-11-03)
 -------------------------------------------------------------------------------
 Python Package                  Precision Recall    Accuracy  F-Score   Time
 =============================== ========= ========= ========= ========= =======
-articleDateExtractor 0.20       0.817     0.635     0.556     0.714     6.8
-date_guesser 2.1.4              0.809     0.553     0.489     0.657     40.0
-goose3 3.1.6                    0.887     0.441     0.418     0.589     15.5
-htmldate 0.7.0 (fast)           **0.903** 0.907     0.827     0.905     **2.4**
-htmldate[all] 0.7.0 (extensive) 0.889     **1.000** **0.889** **0.941** 3.8
-newspaper 0.2.8                 0.888     0.407     0.387     0.558     81.6
-news-please 1.5.3               0.823     0.660     0.578     0.732     69.6
+articleDateExtractor 0.20       0.817     0.635     0.556     0.714     3.5x
+date_guesser 2.1.4              0.809     0.553     0.489     0.657     21x
+goose3 3.1.6                    0.887     0.441     0.418     0.589     7.7x
+htmldate[all] 0.7.2 (fast)      **0.899** 0.917     0.831     0.908     **1x**
+htmldate[all] 0.7.2 (extensive) 0.893     **1.000** **0.893** **0.944** 1.6x
+newspaper3k 0.2.8               0.888     0.407     0.387     0.558     40x
+news-please 1.5.13              0.823     0.660     0.578     0.732     31x
 =============================== ========= ========= ========= ========= =======
 
 For complete results and explanations see the `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
