@@ -18,8 +18,8 @@ packages = ['htmldate']
 extras = {
     'all': [
         'ciso8601 >= 2.1.3',
-        'dateparser >= 0.7.6',  # 0.5.0 could be faster
-        'regex >= 2020.7.14',
+        'dateparser >= 1.0.0',  # 0.5.0 could be faster
+        'regex >= 2020.11.13',
         ],
 }
 
@@ -74,7 +74,7 @@ setup(
     python_requires='>=3.4',
     install_requires=[
         'lxml == 4.3.5; python_version == "3.4"',
-        'lxml >= 4.5.2; python_version > "3.4"',
+        'lxml >= 4.6.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
         'urllib3 >= 1.25, <2',
     ],
