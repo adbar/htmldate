@@ -73,6 +73,8 @@ setup(
     include_package_data=True,
     python_requires='>=3.4',
     install_requires=[
+        'chardet == 3.0.4; python_version < "3.6"',
+        'chardet >= 3.0.4; python_version >= "3.6"',
         'lxml == 4.3.5; python_version == "3.4"',
         'lxml >= 4.6.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',

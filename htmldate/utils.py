@@ -47,11 +47,9 @@ def detect_encoding(bytesobject):
     if isutf8(bytesobject):
         return 'UTF-8'
     # try one of the installed detectors
-    if cchardet is not None:
-        guess = cchardet.detect(bytesobject)
-        LOGGER.debug('guessed encoding: %s', guess['encoding'])
-        return guess['encoding']
-    return None
+    guess = cchardet.detect(bytesobject)
+    LOGGER.debug('guessed encoding: %s', guess['encoding'])
+    return guess['encoding']
 
 
 def decode_response(response):
