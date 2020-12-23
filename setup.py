@@ -76,8 +76,7 @@ setup(
         'lxml == 4.3.5; python_version == "3.4"',
         'lxml >= 4.5.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
-        'requests == 2.21.0; python_version == "3.4"',
-        'requests >= 2.21.0; python_version > "3.4"',
+        'urllib3 >= 1.25, <2',
     ],
     extras_require=extras,
     entry_points = {

@@ -10,7 +10,6 @@ Module bundling functions related to HTML processing.
 # standard
 import logging
 import re
-import socket
 import urllib3
 
 try:
@@ -19,7 +18,6 @@ try:
 except ImportError:
     cchardet = None
 
-import requests
 from lxml import etree, html
 
 from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
@@ -27,6 +25,7 @@ from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
 LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+HTTP_POOL = urllib3.PoolManager()
 
 HTML_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True, encoding='utf-8')
 RECOVERY_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True)
@@ -56,62 +55,61 @@ def detect_encoding(bytesobject):
 
 
 def decode_response(response):
-    """Read the first chunk of server response and decode it"""
-    guessed_encoding = detect_encoding(response.content)
-    LOGGER.debug('response/guessed encoding: %s / %s', response.encoding, guessed_encoding)
+    """Read the urllib3 object corresponding to the server response,
+       try to guess its encoding and decode it to return a unicode string"""
+    if isinstance(response, bytes):
+        resp_content = response
+    else:
+        resp_content = response.data
+    guessed_encoding = detect_encoding(resp_content)
+    LOGGER.debug('response encoding: %s', guessed_encoding)
     # process
+    htmltext = None
     if guessed_encoding is not None:
         try:
-            htmltext = response.content.decode(guessed_encoding)
+            htmltext = resp_content.decode(guessed_encoding)
         except UnicodeDecodeError:
-            LOGGER.warning('encoding error: %s / %s', response.encoding, guessed_encoding)
-            htmltext = response.text
-    else:
-        htmltext = response.text
+            LOGGER.warning('encoding error: %s', guessed_encoding)
+    # force decoding # ascii instead?
+    if htmltext is None:
+        htmltext = str(resp_content, encoding='utf-8', errors='replace')
     return htmltext
 
 
 def fetch_url(url):
-    """ Fetch page using requests/urllib3
+    """Fetches page using urllib3 and decodes the response.
+
     Args:
-        URL: URL of the page to fetch
+        url: URL of the page to fetch.
+
     Returns:
-        request object (headers + body).
-    Raises:
-        Nothing.
+        HTML code as string, or Urllib3 response object (headers + body), or empty string in case
+        the result is invalid, or None if there was a problem with the network.
+
     """
-    # customize headers
-    headers = {
-        'Connection': 'close',  # another way to cover tracks
-        # 'User-Agent': '',  # your string here
-    }
     # send
     try:
         # read by streaming chunks (stream=True, iter_content=xx)
         # so we can stop downloading as soon as MAX_FILE_SIZE is reached
-        response = requests.get(url, timeout=30, verify=False, allow_redirects=True,
-                                headers=headers)
-    except (requests.exceptions.MissingSchema, requests.exceptions.InvalidURL):
-        LOGGER.error('malformed URL: %s', url)
-    except requests.exceptions.TooManyRedirects:
-        LOGGER.error('redirects: %s', url)
-    except requests.exceptions.SSLError as err:
-        LOGGER.error('SSL: %s %s', url, err)
-    except (socket.timeout, requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout, socket.error, socket.gaierror) as err:
-        LOGGER.error('connection: %s %s', url, err)
-    # except Exception as err:
-    #    logging.error('unknown: %s %s', url, err) # sys.exc_info()[0]
+        response = HTTP_POOL.request('GET', url, timeout=30)
+    except urllib3.exceptions.NewConnectionError as err:
+        LOGGER.error('connection refused: %s %s', url, err)
+    except urllib3.exceptions.MaxRetryError as err:
+        LOGGER.error('retries/redirects: %s %s', url, err)
+    except urllib3.exceptions.TimeoutError as err:
+        LOGGER.error('connection timeout: %s %s', url, err)
+    except Exception as err:
+        logging.error('unknown error: %s %s', url, err) # sys.exc_info()[0]
     else:
         # safety checks
-        if response.status_code != 200:
-            LOGGER.error('not a 200 response: %s', response.status_code)
-        elif response.text is None or len(response.text) < MIN_FILE_SIZE:
-            LOGGER.error('too small/incorrect: %s %s', url, len(response.text))
-        elif len(response.text) > MAX_FILE_SIZE:
-            LOGGER.error('too large: %s %s', url, len(response.text))
+        if response.status != 200:
+            LOGGER.error('not a 200 response: %s for URL %s', response.status, url)
+        elif response.data is None or len(response.data) < MIN_FILE_SIZE:
+            LOGGER.error('too small/incorrect for URL %s', url)
+        elif len(response.data) > MAX_FILE_SIZE:
+            LOGGER.error('too large: length %s for URL %s', len(response.data), url)
         else:
-            return decode_response(response)
+            return decode_response(response.data)
     return None
 
 
