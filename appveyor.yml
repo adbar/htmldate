@@ -1,11 +1,14 @@
 # appveyor.yml
 ---
+image: Visual Studio 2019
+
 environment:
   matrix:
   - TOXENV: py35
   - TOXENV: py36
   - TOXENV: py37
   - TOXENV: py38
+  - TOXENV: py39
 
 build: off
 
