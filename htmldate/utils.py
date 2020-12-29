@@ -12,11 +12,11 @@ import logging
 import re
 import urllib3
 
+# CChardet is faster and can be more accurate
 try:
-    # this module is faster
-    import cchardet
+    import cchardet as chardet
 except ImportError:
-    cchardet = None
+    import chardet
 
 from lxml import etree, html
 
@@ -47,7 +47,7 @@ def detect_encoding(bytesobject):
     if isutf8(bytesobject):
         return 'UTF-8'
     # try one of the installed detectors
-    guess = cchardet.detect(bytesobject)
+    guess = chardet.detect(bytesobject)
     LOGGER.debug('guessed encoding: %s', guess['encoding'])
     return guess['encoding']
 
