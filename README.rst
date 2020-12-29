@@ -17,13 +17,13 @@ htmldate: find the publication date of web pages
     :target: https://travis-ci.org/adbar/htmldate
     :alt: Travis build status
 
-.. image:: https://img.shields.io/appveyor/ci/adbar/htmldate
-    :target: https://ci.appveyor.com/project/adbar/htmldate
-    :alt: Appveyor/Windows build status
-
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
+
+.. image:: https://static.pepy.tech/badge/htmldate/month
+    :target: https://pepy.tech/project/htmldate
+    :alt: Downloads
 
 |
 
