@@ -303,7 +303,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
             if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('parsing result: %s', result)
                 return result.strftime(outputformat)
-        except ValueError:
+        except (OverflowError, ValueError):
             LOGGER.debug('parsing error: %s', string)
     # %Y-%m-%d search
     match = YMD_PATTERN.search(string)
