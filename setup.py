@@ -3,36 +3,45 @@ Seamlessly extract the date of web pages based on header or body.
 http://github.com/adbar/htmldate
 """
 
-# workaround for open() with encoding=''
-from codecs import open
-
-from os import path
+import re
+from pathlib import Path
 from setuptools import setup
-
-
-here = path.abspath(path.dirname(__file__))
-packages = ['htmldate']
 
 
 # some problems with installation solved this way
 extras = {
     'all': [
+        'cchardet == 2.1.4; python_version == "3.4"',
+        'cchardet >= 2.1.7; python_version > "3.4"',
         'ciso8601 >= 2.1.3',
         'dateparser >= 1.0.0',  # 0.5.0 could be faster
         'regex >= 2020.11.13',
         ],
 }
 
+def get_long_description():
+    "Return the README"
+    with open('README.rst', 'r', encoding='utf-8') as filehandle:
+        long_description = filehandle.read()
+    #long_description += "\n\n"
+    #with open("CHANGELOG.md", encoding="utf8") as f:
+    #    long_description += f.read()
+    return long_description
 
-def readme():
-    with open(path.join(here, 'README.rst'), 'r', 'utf-8') as readmefile:
-        return readmefile.read()
+
+def get_version(package):
+    "Return package version as listed in `__version__` in `init.py`"
+    # version = Path(package, '__init__.py').read_text() # Python >= 3.5
+    with open(str(Path(package, '__init__.py')), 'r', encoding='utf-8') as filehandle:
+        initfile = filehandle.read()
+    return re.search('__version__ = [\'"]([^\'"]+)[\'"]', initfile).group(1)
+
 
 setup(
     name='htmldate',
-    version='0.7.2',
+    version=get_version('htmldate'),
     description='Fast and robust extraction of original and updated publication dates from web pages.',
-    long_description=readme(),
+    long_description=get_long_description(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 5 - Production/Stable',
@@ -69,7 +78,7 @@ setup(
     author='Adrien Barbaresi',
     author_email='barbaresi@bbaw.de',
     license='GPLv3+',
-    packages=packages,
+    packages=['htmldate'],
     include_package_data=True,
     python_requires='>=3.4',
     install_requires=[
