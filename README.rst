@@ -114,15 +114,13 @@ This Python package is tested on Linux, macOS and Windows systems, it is compati
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
-A few additional libraries can be installed to enhance coverage and speed, most importantly ``ciso8601`` and ``regex`` (for speed) as well as ``dateparser`` (to go beyond the current focus on English or German). They may not work on all platforms and have thus been singled out although installation is recommended:
+A few additional libraries can be installed to enhance coverage and efficiency: ``cchardet``, ``ciso8601`` and ``regex`` (for speed) and ``dateparser`` (to go beyond the current focus on English or German). They may not work on all platforms and have thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
     $ pip install htmldate[all] # install with all additional functionality
 
 You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
-
-For faster processing of downloads you may also consider installing the ``cchardet`` package as well (currently not working on some macOS versions).
 
 *For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_
 
