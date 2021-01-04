@@ -1,6 +1,10 @@
 ## Changelog
 
 
+### 0.7.3
+- dependencies updated and reduced: switch from `requests` to bare `urllib3`, make `chardet` standard and `cchardet` optional
+- fixes: downloads, `OverflowError` in extraction
+
 ### 0.7.2
 - compatibility with Python 3.9
 - better speed and accuracy
