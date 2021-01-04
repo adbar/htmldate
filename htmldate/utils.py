@@ -25,7 +25,12 @@ from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
 LOGGER = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-HTTP_POOL = urllib3.PoolManager()
+RETRY_STRATEGY = urllib3.util.Retry(
+    total=3,
+    connect=0,
+    status_forcelist=[429, 500, 502, 503, 504],
+)
+HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 
 HTML_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True, encoding='utf-8')
 RECOVERY_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True)
