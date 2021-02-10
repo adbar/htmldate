@@ -42,6 +42,27 @@ from .validators import (check_extracted_reference, compare_values,
 
 LOGGER = logging.getLogger(__name__)
 
+NAME_ATTRIBUTES = set([
+                  'article.created', 'article_date_original',
+                  'article.published', 'created', 'cxenseparse:recs:publishtime',
+                  'date', 'date_published', 'dc.date', 'dc.date.created',
+                  'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time',
+                  'originalpublicationdate', 'parsely-pub-date',
+                  'pubdate', 'publishdate', 'publish_date',
+                  'published-date', 'publication_date', 'sailthru.date',
+                  'timestamp'
+                   ])
+PROPERTY_ATTRIBUTES = set([
+                      'article:published_time', 'bt:pubdate', 'dc:created',
+                      'dc:date', 'og:article:published_time',
+                      'og:published_time', 'sailthru.date', 'rnews:datepublished'
+                      ])
+PROPERTY_MODIFIED = set([
+                    'article:modified_time', 'modified_time',
+                    'og:article:modified_time', 'og:updated_time',
+                    'release_date', 'updated_time'
+                    ])
+
 
 @lru_cache(maxsize=32)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
@@ -115,29 +136,18 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
         if 'property' in elem.attrib and 'content' in elem.attrib:
             # original date
             if original_date is True:
-                if elem.get('property').lower() in (
-                        'article:published_time', 'bt:pubdate', 'dc:created',
-                        'dc:date', 'og:article:published_time',
-                        'og:published_time', 'sailthru.date', 'rnews:datepublished'
-                    ):
+                if elem.get('property').lower() in PROPERTY_ATTRIBUTES:
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = tryfunc(elem.get('content'))
             # modified date: override published_time
             else:
-                if elem.get('property').lower() in (
-                        'article:modified_time', 'og:article:modified_time',
-                        'og:updated_time'
-                    ):
+                if elem.get('property').lower() in PROPERTY_MODIFIED:
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     attempt = tryfunc(elem.get('content'))
                     if attempt is not None:
                         headerdate = attempt
-                elif elem.get('property').lower() in (
-                        'article:published_time', 'bt:pubdate', 'dc:created',
-                        'dc:date', 'og:article:published_time',
-                        'og:published_time', 'sailthru.date',
-                        'rnews:datepublished'
-                    ) and headerdate is None:
+                elif elem.get('property').lower() in PROPERTY_ATTRIBUTES \
+                    and headerdate is None:
                     LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                     headerdate = tryfunc(elem.get('content'))
         # name attribute
@@ -146,15 +156,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
             if elem.get('name').lower() == 'og:url':
                 headerdate = extract_url_date(elem.get('content'), outputformat)
             # date
-            elif elem.get('name').lower() in (
-                    'article.created', 'article_date_original',
-                    'article.published', 'created', 'cxenseparse:recs:publishtime',
-                    'date', 'date_published', 'dc.date', 'dc.date.created',
-                    'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time',
-                    'originalpublicationdate', 'pubdate', 'publishdate', 'publish_date',
-                    'published-date', 'publication_date', 'sailthru.date',
-                    'timestamp'
-                    ):
+            elif elem.get('name').lower() in NAME_ATTRIBUTES:
                 LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
                 headerdate = tryfunc(elem.get('content'))
             # modified
