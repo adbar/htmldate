@@ -14,24 +14,24 @@ from functools import lru_cache
 
 # conditional imports with fallbacks for compatibility
 # coverage for date parsing
-try:
-    import dateparser  # third-party, slow
-    EXTERNAL_PARSER = dateparser.DateDataParser(settings={
-        'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
-        'DATE_ORDER': 'DMY',
-    })
-    # allow_redetect_language=False, languages=['de', 'en'],
-    EXTERNAL_PARSER_CONFIG = {
-        'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
-        'DATE_ORDER': 'DMY'
-    }
-except ImportError:
-    # try dateutil parser
-    from dateutil.parser import parse as full_parse
-    EXTERNAL_PARSER = None
-    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
-else:
-    full_parse = DEFAULT_PARSER_PARAMS = None
+#try:
+import dateparser  # third-party, slow
+EXTERNAL_PARSER = dateparser.DateDataParser(settings={
+    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
+    'DATE_ORDER': 'DMY',
+})
+# allow_redetect_language=False, languages=['de', 'en'],
+EXTERNAL_PARSER_CONFIG = {
+    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
+    'DATE_ORDER': 'DMY'
+}
+#except ImportError:
+#    # try dateutil parser
+#    from dateutil.parser import parse as full_parse
+#    EXTERNAL_PARSER = None
+#    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
+#else:
+full_parse = DEFAULT_PARSER_PARAMS = None
 # iso date parsing speedup
 try:
     from ciso8601 import parse_datetime, parse_datetime_as_naive
@@ -40,10 +40,10 @@ except ImportError:
         from dateutil.parser import parse as full_parse
     parse_datetime = parse_datetime_as_naive = full_parse  # shortcut
 # potential regex speedup
-try:
-    import regex
-except ImportError:
-    regex = re
+#try:
+import regex
+#except ImportError:
+#    regex = re
 
 # own
 from .validators import convert_date, date_validator

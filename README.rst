@@ -114,11 +114,11 @@ This Python package is tested on Linux, macOS and Windows systems, it is compati
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
-A few additional libraries can be installed to enhance coverage and efficiency: ``cchardet``, ``ciso8601`` and ``regex`` (for speed) and ``dateparser`` (to go beyond the current focus on English or German). They may not work on all platforms and have thus been singled out although installation is recommended:
+Additional libraries can be installed to enhance efficiency: ``cchardet`` and ``ciso8601`` (for speed). They may not work on all platforms and have thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
-    $ pip install htmldate[all] # install with all additional functionality
+    $ pip install htmldate[speed] # install with additional functionality
 
 You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
 

@@ -10,12 +10,10 @@ from setuptools import setup
 
 # some problems with installation solved this way
 extras = {
-    'all': [
+    'speed': [
         'cchardet == 2.1.4; python_version == "3.4"',
         'cchardet >= 2.1.7; python_version > "3.4"',
         'ciso8601 >= 2.1.3',
-        'dateparser >= 1.0.0',  # 0.5.0 could be faster
-        'regex >= 2020.11.13',
         ],
 }
 
@@ -83,10 +81,13 @@ setup(
     python_requires='>=3.4',
     install_requires=[
         'chardet == 3.0.4; python_version < "3.6"',
-        'chardet >= 3.0.4; python_version >= "3.6"',
+        'chardet >= 4.0.0; python_version >= "3.6"',
+        'dateparser == 0.7.1; python_version == "3.4"',
+        'dateparser >= 1.0.0; python_version > "3.4"',
         'lxml == 4.3.5; python_version == "3.4"',
         'lxml >= 4.6.2; python_version > "3.4"',
         'python-dateutil >= 2.8.1',
+        'regex >= 2020.11.13',
         'urllib3 >= 1.25, <2',
     ],
     extras_require=extras,
