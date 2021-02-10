@@ -21,24 +21,24 @@ EXTERNAL_PARSER = dateparser.DateDataParser(settings={
     'DATE_ORDER': 'DMY',
 })
 # allow_redetect_language=False, languages=['de', 'en'],
-EXTERNAL_PARSER_CONFIG = {
-    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
-    'DATE_ORDER': 'DMY'
-}
+#EXTERNAL_PARSER_CONFIG = {
+#    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
+#    'DATE_ORDER': 'DMY'
+#}
 #except ImportError:
 #    # try dateutil parser
-#    from dateutil.parser import parse as full_parse
+#    from dateutil.parser import parse as FULL_PARSE
 #    EXTERNAL_PARSER = None
 #    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
 #else:
-full_parse = DEFAULT_PARSER_PARAMS = None
+#FULL_PARSE = DEFAULT_PARSER_PARAMS = None
 # iso date parsing speedup
 try:
     from ciso8601 import parse_datetime, parse_datetime_as_naive
 except ImportError:
-    if not full_parse:
-        from dateutil.parser import parse as full_parse
-    parse_datetime = parse_datetime_as_naive = full_parse  # shortcut
+    #if not FULL_PARSE:
+    from dateutil.parser import parse as FULL_PARSE
+    parse_datetime = parse_datetime_as_naive = FULL_PARSE  # shortcut
 # potential regex speedup
 #try:
 import regex
@@ -62,11 +62,13 @@ DATE_EXPRESSIONS = [
     contains(@class, 'article__date') or contains(@class, 'post_detail') or @class='meta'
     or @class='meta-before' or @class='asset-meta' or
     contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'block-content') or contains(@class, 'byline') or contains(@class, 'subline')
+    or contains(@class, 'block-content') or contains(@class, 'byline') or
+    contains(@class, 'dateline') or contains(@class, 'subline')
     or contains(@class, 'published') or contains(@class, 'posted') or
-    contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')]""",
+    contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')
+    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]""",
     """.//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
-    contains(@class, 'time')]""",
+    contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]""",
     ".//footer|.//*[@class='post-footer' or @class='footer' or @id='footer']",
     ".//small",
     """.//*[contains(@class, 'author') or contains(@class, 'autor') or
@@ -357,10 +359,10 @@ def external_date_parser(string, outputformat):
     LOGGER.debug('send to external parser: %s', string)
     try:
         # dateparser installed or not
-        if EXTERNAL_PARSER is not None:
-            target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
-        else:
-            target = full_parse(string, **DEFAULT_PARSER_PARAMS)
+        #if EXTERNAL_PARSER is not None:
+        target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
+        #else:
+        #    target = FULL_PARSE(string, **DEFAULT_PARSER_PARAMS)
     # 2 types of errors possible
     except (OverflowError, ValueError):
         target = None
