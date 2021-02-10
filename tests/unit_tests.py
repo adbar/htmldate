@@ -613,17 +613,17 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
     assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2018-01-01'
 
 def test_idiosyncrasies():
-    assert find_date('<p><em>Last updated: 5/5/20</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Published: 5/5/2020</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Published in: 05.05.2020</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Son güncelleme: 5/5/20</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Son güncellenme: 5/5/2020</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Yayımlama tarihi: 05.05.2020</em></p>') == '2020-05-05'
-    assert find_date('<p><em>Son güncelleme tarihi: 5/5/20</em></p>') == '2020-05-05'
-    assert find_date('<p><em>5/5/20 tarihinde güncellendi.</em></p>') == '2020-05-05'
-    assert find_date('''<p><em>5/5/20'de güncellendi.</em></p>''') == '2020-05-05'
-    assert find_date('<p><em>5/5/2020 tarihinde yayımlandı.</em></p>') == '2020-05-05'
-    assert find_date('<p><em>05.05.2020 tarihinde yayınlandı.</em></p>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Last updated: 5/5/20</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Published: 5/5/2020</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Published in: 05.05.2020</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Son güncelleme: 5/5/20</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Son güncellenme: 5/5/2020</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Yayımlama tarihi: 05.05.2020</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Son güncelleme tarihi: 5/5/20</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>5/5/20 tarihinde güncellendi.</em></p></body></html>') == '2020-05-05'
+    assert find_date('''<html><body><p><em>5/5/20'de güncellendi.</em></p></body></html>''') == '2020-05-05'
+    assert find_date('<html><body><p><em>5/5/2020 tarihinde yayımlandı.</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>05.05.2020 tarihinde yayınlandı.</em></p></body></html>') == '2020-05-05'
 
 def test_parser():
     '''test argument parsing for the command-line interface'''

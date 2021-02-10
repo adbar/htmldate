@@ -117,15 +117,19 @@ def fetch_url(url):
 
 
 def load_html(htmlobject):
-    """Load object given as input and validate its type.
-    Accepted: LXML tree, bytestring and string (HTML document or URL)
+    """Load object given as input and validate its type
+    (accepted: LXML tree, bytestring and string)
     """
-    tree = None
     # use tree directly
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         return htmlobject
+    tree = None
+    check_flag = False
     # try to detect encoding and convert to string
     if isinstance(htmlobject, bytes):
+        # test
+        if 'html' not in htmlobject[:50].decode(encoding='ascii', errors='ignore').lower():
+            check_flag = True
         guessed_encoding = detect_encoding(htmlobject)
         if guessed_encoding is not None:
             if guessed_encoding == 'UTF-8':
@@ -134,22 +138,16 @@ def load_html(htmlobject):
                 try:
                     htmlobject = htmlobject.decode(guessed_encoding)
                     tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-                except UnicodeDecodeError:
+                except (LookupError, UnicodeDecodeError):  # VISCII encoding
                     LOGGER.warning('encoding issue: %s', guessed_encoding)
                     tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
         else:
             tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
     # use string if applicable
-    if isinstance(htmlobject, str):
-        # the string is a URL, download it
-        if re.search(r'^https?://[^ ]+$', htmlobject):
-            LOGGER.info('URL detected, downloading: %s', htmlobject)
-            htmltext = fetch_url(htmlobject)
-            if htmltext is not None:
-                htmlobject = htmltext
-            else:
-                return None
-        # robust parsing
+    elif isinstance(htmlobject, str):
+        # test
+        if 'html' not in htmlobject[:50].lower():
+            check_flag = True
         try:
             tree = html.fromstring(htmlobject, parser=HTML_PARSER)
         except ValueError:
@@ -161,4 +159,11 @@ def load_html(htmlobject):
         except Exception as err:
             LOGGER.error('parsing failed: %s', err)
     # default to None
+    else:
+        LOGGER.error('this type cannot be processed: %s', type(htmlobject))
+    # further test: is it (well-formed) HTML at all?
+    if tree is not None and check_flag is True:
+        if len(tree) < 2:
+            LOGGER.error('parsed tree length: %s, wrong data type or not valid HTML', len(tree))
+            tree = None
     return tree
