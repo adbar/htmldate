@@ -1,6 +1,11 @@
 ## Changelog
 
 
+### 0.8.0
+- `dateparser` and `regex` modules fully integrated
+- patterns added for coverage
+- smarter HTML doc loading
+
 ### 0.7.3
 - dependencies updated and reduced: switch from `requests` to bare `urllib3`, make `chardet` standard and `cchardet` optional
 - fixes: downloads, `OverflowError` in extraction
