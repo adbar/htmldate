@@ -4,6 +4,7 @@ Unit tests for the htmldate library.
 """
 
 
+import datetime
 import logging
 import os
 import re
@@ -33,7 +34,7 @@ from htmldate.core import compare_reference, find_date, search_page, search_patt
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import fetch_url, load_html
-from htmldate.validators import convert_date, date_validator, output_format_validator
+from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
 
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -144,9 +145,18 @@ def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
     assert load_html('<html><body>XYZ</body></html>') is not None
+    assert load_html('<'*100) is None
     assert load_html(b'<html><body>XYZ</body></html>') is not None
+    assert load_html(b'<'*100) is None
     assert load_html('https://httpbin.org/html') is not None
     assert find_date(None) is None
+    # min and max date output
+    assert get_min_date('2020-02-20') == datetime.date(2020, 2, 20)
+    assert get_min_date(None) == datetime.date(1995, 1, 1)
+    assert get_min_date('3030-30-50') == datetime.date(1995, 1, 1)
+    assert get_max_date('2020-02-20') == datetime.date(2020, 2, 20)
+    assert get_max_date(None) == datetime.date.today()
+    assert get_max_date('3030-30-50') == datetime.date.today()
 
 
 def test_no_date():
@@ -155,9 +165,7 @@ def test_no_date():
     # safe search
     assert find_date(load_mock_page('https://en.support.wordpress.com/'), extensive_search=False) is None
     assert find_date(load_mock_page('https://en.support.wordpress.com/')) is None
-    # problem with LXML: AssertionError: ElementTree not initialized, missing root
-    # assert find_date(' ', outputformat='%X') is None
-    assert find_date('<html><body>XYZ</body></html>', outputformat='%XYZ') is None
+    assert find_date('<html><body>XYZ</body></html>', outputformat='123') is None
     assert find_date('<html><body>XYZ</body></html>', url='http://www.website.com/9999/01/43/') is None
 
 
@@ -549,6 +557,7 @@ def test_regex_parse():
     assert regex_parse("1 Kas 1998") is not None
     assert regex_parse("1 Ara 1998") is not None
 
+
 def test_external_date_parser():
     '''test external date parser'''
     assert external_date_parser('Wednesday, January 1st 2020', OUTPUTFORMAT) == '2020-01-01'
@@ -614,6 +623,7 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
     assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2013-01-01'
     assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2018-01-01'
 
+
 def test_idiosyncrasies():
     assert find_date('<html><body><p><em>Last updated: 5/5/20</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Published: 5/5/2020</em></p></body></html>') == '2020-05-05'
@@ -626,6 +636,7 @@ def test_idiosyncrasies():
     assert find_date('''<html><body><p><em>5/5/20'de güncellendi.</em></p></body></html>''') == '2020-05-05'
     assert find_date('<html><body><p><em>5/5/2020 tarihinde yayımlandı.</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>05.05.2020 tarihinde yayınlandı.</em></p></body></html>') == '2020-05-05'
+
 
 def test_parser():
     '''test argument parsing for the command-line interface'''
