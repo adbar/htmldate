@@ -117,8 +117,9 @@ def fetch_url(url):
 
 
 def load_html(htmlobject):
-    """Load object given as input and validate its type
-    (accepted: LXML tree, bytestring and string)
+    """Load object given as input and validate its type.
+    Accepted: LXML tree, bytestring and string (HTML document or URL).
+    Raises ValueError if a URL is passed without result.
     """
     # use tree directly
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
@@ -145,6 +146,17 @@ def load_html(htmlobject):
             tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
     # use string if applicable
     elif isinstance(htmlobject, str):
+        # the string is a URL, download it
+        if htmlobject.startswith('http'):
+            htmltext = None
+            if re.match(r'https?://[^ ]+$', htmlobject):
+                LOGGER.info('URL detected, downloading: %s', htmlobject)
+                htmltext = fetch_url(htmlobject)
+                if htmltext is not None:
+                    htmlobject = htmltext
+            # log the error and quit
+            if htmltext is None:
+                raise ValueError("URL couldn't be processed: %s", htmlobject)
         # test
         if 'html' not in htmlobject[:50].lower():
             check_flag = True

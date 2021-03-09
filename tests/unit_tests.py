@@ -9,6 +9,8 @@ import os
 import re
 import sys
 
+import pytest
+
 from collections import Counter
 from unittest.mock import patch
 
@@ -676,6 +678,10 @@ def test_download():
 
 def test_readme_examples():
     '''Test README example for consistency'''
+    with pytest.raises(ValueError):
+        find_date('http://')
+    with pytest.raises(ValueError):
+        find_date('https://httpbin.org/status/404')
     assert find_date(load_mock_page('http://blog.python.org/2016/12/python-360-is-now-available.html')) == '2016-12-23'
     assert find_date(load_mock_page('https://creativecommons.org/about/'), extensive_search=False) is None
     htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
