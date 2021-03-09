@@ -81,7 +81,7 @@ setup(
     python_requires='>=3.4',
     install_requires=[
         'chardet == 3.0.4; python_version < "3.6"',
-        'chardet >= 4.0.0; python_version >= "3.6"',
+        'chardet >= 3.0.4; python_version >= "3.6"',
         'dateparser == 0.7.1; python_version == "3.4"',
         'dateparser >= 1.0.0; python_version > "3.4"',
         'lxml == 4.3.5; python_version == "3.4"',
