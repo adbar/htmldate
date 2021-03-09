@@ -20,6 +20,13 @@ EXTERNAL_PARSER = dateparser.DateDataParser(settings={
     'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
     'DATE_ORDER': 'DMY',
 })
+
+# potential regex speedup
+#try:
+import regex
+#except ImportError:
+#    regex = re
+
 # allow_redetect_language=False, languages=['de', 'en'],
 #EXTERNAL_PARSER_CONFIG = {
 #    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
@@ -39,11 +46,6 @@ except ImportError:
     #if not FULL_PARSE:
     from dateutil.parser import parse as FULL_PARSE
     parse_datetime = parse_datetime_as_naive = FULL_PARSE  # shortcut
-# potential regex speedup
-#try:
-import regex
-#except ImportError:
-#    regex = re
 
 # own
 from .validators import convert_date, date_validator

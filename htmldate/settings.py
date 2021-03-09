@@ -21,7 +21,7 @@ MIN_YEAR = MIN_DATE.year
 # latest possible date
 LATEST_POSSIBLE = datetime.date.today()
 # latest possible year
-MAX_YEAR = datetime.date.today().year
+MAX_YEAR = LATEST_POSSIBLE.year
 
 # set an upper limit to the number of candidates
 MAX_POSSIBLE_CANDIDATES = 100

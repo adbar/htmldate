@@ -1,6 +1,9 @@
 ## Changelog
 
 
+### 0.8.1
+- bugfixes
+
 ### 0.8.0
 - `dateparser` and `regex` modules fully integrated
 - patterns added for coverage
