@@ -433,6 +433,8 @@ def test_regex_parse():
     assert custom_parse('2004-12-12', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('33.20.2004', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     assert custom_parse('12.12.2004', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('2019 28 meh', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('2019 28 meh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     #for Nones caused by newlines and duplicates
     assert regex_parse("January 1st, 1998") is not None
     assert regex_parse("February 1st, 1998") is not None
