@@ -407,7 +407,6 @@ def img_search(tree, outputformat, min_date, max_date):
         result = extract_url_date(element.get('content'), outputformat)
         if result is not None and date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
             return result
-    #'.//img[@src]',
     return None
 
 
@@ -448,6 +447,11 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
         pass
     if match and groups: #because len(None) has no len
         if len(match.group(groups[3])) in (2, 4):
+            # switch to MM/DD/YY
+            if int(match.group(groups[2])) > 12:
+                tmp1, tmp2 = groups[1], groups[2]
+                groups[1], groups[2] = tmp2, tmp1
+            # DD/MM/YY
             try:
                 if len(match.group(groups[3])) == 2:
                     candidate = datetime.date(int('20' + match.group(groups[3])),

@@ -307,8 +307,14 @@ def test_exact_date():
     assert find_date(load_mock_page('http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/')) == '2016-09-27'
 
     # URL in IMG
-    assert find_date('<html><meta property="og:image" content="https://example.org/img/2019-05-05/test.jpg><body></body></html>') == '2019-05-05'
-    assert find_date('<html><meta property="og:image" content="https://example.org/img/test.jpg><body></body></html>') is None
+    # header
+    assert find_date('<html><meta property="og:image" content="https://example.org/img/2019-05-05/test.jpg"><body></body></html>') == '2019-05-05'
+    assert find_date('<html><meta property="og:image" content="https://example.org/img/test.jpg"><body></body></html>') is None
+    # body
+    assert find_date('<html><body><img src="https://example.org/img/2019-05-05/test.jpg"/></body></html>') == '2019-05-05'
+    assert find_date('<html><body><img src="https://example.org/img/test.jpg"/></body></html>') is None
+    assert find_date('<html><body><img src="https://example.org/img/2019-05-03/test.jpg"/><img src="https://example.org/img/2019-05-04/test.jpg"/><img src="https://example.org/img/2019-05-05/test.jpg"/></body></html>') == '2019-05-05'
+    assert find_date('<html><body><img src="https://example.org/img/2019-05-05/test.jpg"/><img src="https://example.org/img/2019-05-04/test.jpg"/><img src="https://example.org/img/2019-05-03/test.jpg"/></body></html>') == '2019-05-05'
 
 
 def test_approximate_date():
@@ -631,6 +637,7 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
 
 def test_idiosyncrasies():
     assert find_date('<html><body><p><em>Last updated: 5/5/20</em></p></body></html>') == '2020-05-05'
+    assert find_date('<html><body><p><em>Last updated: 01/23/2021</em></p></body></html>') == '2021-01-23'
     assert find_date('<html><body><p><em>Published: 5/5/2020</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Published in: 05.05.2020</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Son güncelleme: 5/5/20</em></p></body></html>') == '2020-05-05'
