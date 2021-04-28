@@ -306,6 +306,9 @@ def test_exact_date():
     # date not in footer but at the start of the article
     assert find_date(load_mock_page('http://www.wara-enforcement.org/guinee-un-braconnier-delephant-interpelle-et-condamne-a-la-peine-maximale/')) == '2016-09-27'
 
+    # URL in IMG
+    assert find_date('<html><meta property="og:image" content="https://example.org/img/2019-05-05/test.jpg><body></body></html>') == '2019-05-05'
+    assert find_date('<html><meta property="og:image" content="https://example.org/img/test.jpg><body></body></html>') is None
 
 
 def test_approximate_date():

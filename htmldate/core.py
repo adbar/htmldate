@@ -18,7 +18,7 @@ from lxml import etree, html
 # own
 from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
-                         json_search, timestamp_search, try_ymd_date,
+                         img_search, json_search, timestamp_search, try_ymd_date,
                          ADDITIONAL_EXPRESSIONS, DATE_EXPRESSIONS,
                          YEAR_PATTERN, YMD_PATTERN, COPYRIGHT_PATTERN,
                          THREE_PATTERN, THREE_CATCH,
@@ -690,6 +690,13 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         dateresult = extract_partial_url_date(url, outputformat)
         if dateresult is not None:
             return dateresult
+
+    # try image elements
+    img_result = img_search(
+        tree, outputformat, min_date, max_date
+        )
+    if img_result is not None:
+        return img_result
 
     # last resort
     if extensive_search is True:

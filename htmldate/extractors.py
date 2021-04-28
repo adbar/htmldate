@@ -344,6 +344,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     # text match
     dateobject = regex_parse(string)
     # copyright match?
+    #if dateobject is None:
     # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
     # examine
     if dateobject is not None:
@@ -396,6 +397,17 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
         if dateparser_result is not None:
             if date_validator(dateparser_result, outputformat, earliest=min_date, latest=max_date):
                 return dateparser_result
+    return None
+
+
+def img_search(tree, outputformat, min_date, max_date):
+    '''Skim through image elements'''
+    element = tree.find('.//meta[@property="og:image"]')
+    if element is not None and 'content' in element.attrib:
+        result = extract_url_date(element.get('content'), outputformat)
+        if result is not None and date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
+            return result
+    #'.//img[@src]',
     return None
 
 
