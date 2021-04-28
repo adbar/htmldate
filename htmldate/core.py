@@ -41,8 +41,11 @@ from .validators import (check_extracted_reference, compare_values,
 # German/English switch
 
 LOGGER = logging.getLogger(__name__)
+def logstring(element):
+    '''Format the element to be logged to a string.'''
+    return html.tostring(element, pretty_print=False, encoding='unicode').strip()
 
-NAME_ATTRIBUTES = set([
+DATE_ATTRIBUTES = set([
                   'article.created', 'article_date_original',
                   'article.published', 'created', 'cxenseparse:recs:publishtime',
                   'date', 'date_published', 'dc.date', 'dc.date.created',
@@ -50,15 +53,14 @@ NAME_ATTRIBUTES = set([
                   'originalpublicationdate', 'parsely-pub-date',
                   'pubdate', 'publishdate', 'publish_date',
                   'published-date', 'publication_date', 'sailthru.date',
-                  'timestamp'
-                   ])
-PROPERTY_ATTRIBUTES = set([
-                      'article:published_time', 'bt:pubdate', 'dc:created',
-                      'dc:date', 'og:article:published_time',
-                      'og:published_time', 'sailthru.date', 'rnews:datepublished'
-                      ])
+                  'timestamp',
+                  'article:published_time', 'bt:pubdate', 'datecreated',
+                  'dateposted', 'datepublished', 'dc:created', 'dc:date',
+                  'og:article:published_time', 'og:published_time',
+                  'sailthru.date', 'rnews:datepublished'
+                  ])
 PROPERTY_MODIFIED = set([
-                    'article:modified_time', 'modified_time',
+                    'article:modified_time', 'datemodified', 'modified_time',
                     'og:article:modified_time', 'og:updated_time',
                     'release_date', 'updated_time'
                     ])
@@ -134,73 +136,77 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
             continue
         # property attribute
         if 'property' in elem.attrib and 'content' in elem.attrib:
+            attribute = elem.get('property').lower()
             # original date
             if original_date is True:
-                if elem.get('property').lower() in PROPERTY_ATTRIBUTES:
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                if attribute in DATE_ATTRIBUTES:
+                    LOGGER.debug('examining meta property: %s', logstring(elem))
                     headerdate = tryfunc(elem.get('content'))
             # modified date: override published_time
             else:
-                if elem.get('property').lower() in PROPERTY_MODIFIED:
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                    attempt = tryfunc(elem.get('content'))
-                    if attempt is not None:
-                        headerdate = attempt
-                elif elem.get('property').lower() in PROPERTY_ATTRIBUTES \
-                    and headerdate is None:
-                    LOGGER.debug('examining meta property: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                if attribute in PROPERTY_MODIFIED:
+                    LOGGER.debug('examining meta property: %s', logstring(elem))
+                    headerdate = tryfunc(elem.get('content'))
+                elif attribute in DATE_ATTRIBUTES:
+                    LOGGER.debug('examining meta property: %s', logstring(elem))
                     headerdate = tryfunc(elem.get('content'))
         # name attribute
-        elif headerdate is None and 'name' in elem.attrib and 'content' in elem.attrib:
+        elif 'name' in elem.attrib and 'content' in elem.attrib:
             # url
             if elem.get('name').lower() == 'og:url':
                 headerdate = extract_url_date(elem.get('content'), outputformat)
             # date
-            elif elem.get('name').lower() in NAME_ATTRIBUTES:
-                LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+            elif elem.get('name').lower() in DATE_ATTRIBUTES:
+                LOGGER.debug('examining meta name: %s', logstring(elem))
                 headerdate = tryfunc(elem.get('content'))
             # modified
-            elif elem.get('name').lower() in ('lastmodified', 'last-modified') and original_date is False:
-                LOGGER.debug('examining meta name: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = tryfunc(elem.get('content'))
-        elif headerdate is None and 'pubdate' in elem.attrib:
+            elif elem.get('name').lower() in ('lastmodified', 'last-modified'):
+                LOGGER.debug('examining meta name: %s', logstring(elem))
+                if original_date is False:
+                    headerdate = tryfunc(elem.get('content'))
+                else:
+                    reserve = tryfunc(elem.get('content'))
+        elif 'pubdate' in elem.attrib:
             if elem.get('pubdate').lower() == 'pubdate':
-                LOGGER.debug('examining meta pubdate: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                LOGGER.debug('examining meta pubdate: %s', logstring(elem))
                 headerdate = tryfunc(elem.get('content'))
         # other types # itemscope?
-        elif headerdate is None and 'itemprop' in elem.attrib:
-            if elem.get('itemprop').lower() in (
+        elif 'itemprop' in elem.attrib:
+            attribute = elem.get('itemprop').lower()
+            if attribute in (
                     'datecreated', 'datepublished', 'pubyear'
-                ) and headerdate is None:
-                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+                ):
+                LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
                     headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
                     headerdate = tryfunc(elem.get('content'))
             # override
-            elif elem.get('itemprop').lower() == 'datemodified' and original_date is False:
-                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+            elif attribute == 'datemodified' and original_date is False:
+                LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
+                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
-                    attempt = tryfunc(elem.get('content'))
-                if attempt is not None:
-                    headerdate = attempt
+                    headerdate = tryfunc(elem.get('content'))
             # reserve with copyrightyear
-            elif headerdate is None and elem.get('itemprop').lower() == 'copyrightyear':
-                LOGGER.debug('examining meta itemprop: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+            elif attribute == 'copyrightyear':
+                LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'content' in elem.attrib:
                     attempt = '-'.join([elem.get('content'), '01', '01'])
                     if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
                         reserve = attempt
         # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
-        elif headerdate is None and 'http-equiv' in elem.attrib:
-            if original_date is True and elem.get('http-equiv').lower() == 'date':
-                LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
+        elif 'http-equiv' in elem.attrib:
+            attribute = elem.get('http-equiv').lower()
+            if attribute == 'date':
+                LOGGER.debug('examining meta http-equiv: %s', logstring(elem))
                 headerdate = tryfunc(elem.get('content'))
-            if elem.get('http-equiv').lower() in ('date', 'last-modified'):
-                LOGGER.debug('examining meta http-equiv: %s', html.tostring(elem, pretty_print=False, encoding='unicode').strip())
-                headerdate = tryfunc(elem.get('content'))
+            elif attribute == 'last-modified':
+                LOGGER.debug('examining meta http-equiv: %s', logstring(elem))
+                if original_date is False:
+                    headerdate = tryfunc(elem.get('content'))
+                else:
+                    reserve = tryfunc(elem.get('content'))
         # exit loop
         if headerdate is not None:
             break
@@ -270,8 +276,7 @@ def try_expression(expression, outputformat, extensive_search, min_date, max_dat
     if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
         return None
     # try the beginning of the string
-    attempt = try_ymd_date(textcontent[:48], outputformat, extensive_search, min_date, max_date)
-    return attempt
+    return try_ymd_date(textcontent[:48], outputformat, extensive_search, min_date, max_date)
 
 
 @lru_cache(maxsize=32)
@@ -390,6 +395,19 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
     return None
 
 
+def normalize_match(match):
+    '''Normalize string output by adding "0" if necessary.'''
+    if len(match.group(1)) == 1:
+        day = '0' + match.group(1)
+    else:
+        day = match.group(1)
+    if len(match.group(2)) == 1:
+        month = '0' + match.group(2)
+    else:
+        month = match.group(2)
+    return day, month
+
+
 def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     """
     Opportunistically search the HTML text for common text patterns
@@ -445,14 +463,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     replacement = dict()
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})', item)
-        if len(match.group(1)) == 1:
-            day = '0' + match.group(1)
-        else:
-            day = match.group(1)
-        if len(match.group(2)) == 1:
-            month = '0' + match.group(2)
-        else:
-            month = match.group(2)
+        day, month = normalize_match(match)
         candidate = '-'.join([match.group(3), month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -474,14 +485,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     replacement = dict()
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.]([01]?[0-9])[/.]([0-9]{2})', item)
-        if len(match.group(1)) == 1:
-            day = '0' + match.group(1)
-        else:
-            day = match.group(1)
-        if len(match.group(2)) == 1:
-            month = '0' + match.group(2)
-        else:
-            month = match.group(2)
+        day, month = normalize_match(match)
         if match.group(3)[0] == '9':
             year = '19' + match.group(3)
         else:
@@ -504,6 +508,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
             if copyear == 0 or int(bestmatch.group(1)) >= copyear:
                 LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
+
     # 2 components, second option
     candidates = plausible_year_filter(htmlstring, MMYYYY_PATTERN, MMYYYY_YEAR, original_date)
     # revert DD-MM-YYYY patterns before sorting
@@ -580,8 +585,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
     find_date.extensive_search = extensive_search
-    min_date = get_min_date(min_date)
-    max_date = get_max_date(max_date)
+    min_date, max_date = get_min_date(min_date), get_max_date(max_date)
 
     # safety
     if tree is None:
@@ -690,7 +694,6 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
-        pagedate = search_page(htmlstring, outputformat, original_date, min_date, max_date)
-        return pagedate
+        return search_page(htmlstring, outputformat, original_date, min_date, max_date)
 
     return None
