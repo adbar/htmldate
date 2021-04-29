@@ -155,7 +155,7 @@ TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi
 
 # extensive search patterns
 YEAR_PATTERN = re.compile(r'^\D?(199[0-9]|20[0-9]{2})')
-COPYRIGHT_PATTERN = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*([12][0-9]{3})\D')
+COPYRIGHT_PATTERN = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*(?:[12][0-9]{3}-)?([12][0-9]{3})\D')
 THREE_PATTERN = re.compile(r'/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]')
 THREE_CATCH = re.compile(r'([0-9]{4})/([0-9]{2})/([0-9]{2})')
 THREE_LOOSE_PATTERN = re.compile(r'\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D')

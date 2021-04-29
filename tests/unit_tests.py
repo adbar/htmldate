@@ -633,6 +633,7 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
     assert search_page('<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) is None
     assert search_page('<html><body><p>© The Web Association 2013.</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2013-01-01'
     assert search_page('<html><body><p>Next © Copyright 2018</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2018-01-01'
+    assert search_page('<html><body><p> © Company 2014-2019 </p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2019-01-01'
 
 
 def test_idiosyncrasies():

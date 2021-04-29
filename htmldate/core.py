@@ -35,10 +35,6 @@ from .validators import (check_extracted_reference, compare_values,
                          get_min_date, get_max_date, output_format_validator,
                          plausible_year_filter)
 
-# TODO:
-# from og:image or <img>?
-# time-ago datetime= relative-time datetime=
-# German/English switch
 
 LOGGER = logging.getLogger(__name__)
 def logstring(element):
@@ -427,9 +423,6 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     :return: Returns a valid date expression as a string, or None
 
     """
-    # init
-    # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
-    # date ultimate rescue for the rest: most frequent year/month comination in the HTML
 
     # copyright symbol
     LOGGER.debug('looking for copyright/footer information')
@@ -437,11 +430,9 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
-        pagedate = '-'.join([bestmatch.group(0), '07', '01'])
         if date_validator(bestmatch.group(0), '%Y', latest=max_date) is True:
-            LOGGER.debug('date found for copyright/footer pattern "%s": %s', COPYRIGHT_PATTERN, pagedate)
+            LOGGER.debug('copyright year/footer pattern found: %s', bestmatch.group(0))
             copyear = int(bestmatch.group(0))
-            # return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # 3 components
     LOGGER.debug('3 components')
@@ -528,6 +519,11 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     if result is not None:
         return result
 
+    # catchall
+    if copyear != 0:
+        LOGGER.debug('using copyright year as default')
+        return convert_date('-'.join([str(copyear), '01', '01']), '%Y-%m-%d', outputformat)
+
     # 1 component, last try
     LOGGER.debug('switching to one component')
     bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
@@ -538,10 +534,6 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
                 LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
                 return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
-    # catchall
-    if copyear != 0:
-        pagedate = '-'.join([str(copyear), '01', '01'])
-        return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 
