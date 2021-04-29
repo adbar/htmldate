@@ -438,13 +438,13 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     LOGGER.debug('3 components')
     # target URL characteristics
     bestmatch = search_pattern(htmlstring, THREE_PATTERN, THREE_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, THREE_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # more loosely structured data
     bestmatch = search_pattern(htmlstring, THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, THREE_LOOSE_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -460,13 +460,13 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     candidates = Counter(replacement)
     # select
     bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SELECT_YMD_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
     # valid dates strings
     bestmatch = search_pattern(htmlstring, DATESTRINGS_PATTERN, DATESTRINGS_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, DATESTRINGS_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -485,7 +485,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, SLASHES_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -515,7 +515,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     candidates = Counter(replacement)
     # select
     bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, original_date, min_date, max_date)
-    result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, copyear, outputformat, min_date, max_date)
+    result = filter_ymd_candidate(bestmatch, MMYYYY_PATTERN, original_date, copyear, outputformat, min_date, max_date)
     if result is not None:
         return result
 
@@ -676,6 +676,14 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
     if text_result is not None:
         return text_result
+
+    # title
+    for expr in ['.//title', './/h1']:
+        title_elem = cleaned_html.find(expr)
+        if title_elem is not None:
+            attempt = try_ymd_date(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
+            if attempt is not None:
+                return attempt
 
     # last try: URL 2
     if url is not None:

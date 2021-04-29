@@ -258,6 +258,8 @@ def test_exact_date():
 
     ## in document body
     assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
+    #assert find_date(load_mock_page('https://github.com/adbar/htmldate'), original_date=True) == '2016-07-12'
+
     assert find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'
     assert find_date(load_mock_page('https://www.eff.org/files/annual-report/2015/index.html')) == '2016-05-04'
@@ -315,6 +317,8 @@ def test_exact_date():
     assert find_date('<html><body><img src="https://example.org/img/test.jpg"/></body></html>') is None
     assert find_date('<html><body><img src="https://example.org/img/2019-05-03/test.jpg"/><img src="https://example.org/img/2019-05-04/test.jpg"/><img src="https://example.org/img/2019-05-05/test.jpg"/></body></html>') == '2019-05-05'
     assert find_date('<html><body><img src="https://example.org/img/2019-05-05/test.jpg"/><img src="https://example.org/img/2019-05-04/test.jpg"/><img src="https://example.org/img/2019-05-03/test.jpg"/></body></html>') == '2019-05-05'
+    # in title
+    assert find_date('<html><head><title>Bericht zur Coronalage vom 22.04.2020 – worauf wartet die Politik? – DIE ACHSE DES GUTEN. ACHGUT.COM</title></head></html>') == '2020-04-22'
 
 
 def test_approximate_date():
