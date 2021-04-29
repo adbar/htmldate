@@ -245,16 +245,16 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
         if date_validator(str(year1), '%Y', earliest=min_date, latest=max_date) is False:
             if date_validator(str(year2), '%Y', earliest=min_date, latest=max_date) is True:
                 # LOGGER.debug('first candidate not suitable: %s', year1)
-                match = catch.match(second_pattern)
+                match = catch.search(second_pattern)
             else:
                 LOGGER.debug('no suitable candidate: %s %s', year1, year2)
                 return None
         # safety net: newer date but up to 50% less frequent
         if year2 != year1 and second_count/first_count > 0.5:
-            match = catch.match(second_pattern)
+            match = catch.search(second_pattern)
         # not newer or hopefully not significant
         else:
-            match = catch.match(first_pattern)
+            match = catch.search(first_pattern)
     return match
 
 
