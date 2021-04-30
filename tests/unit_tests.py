@@ -319,7 +319,9 @@ def test_exact_date():
     assert find_date('<html><body><img src="https://example.org/img/2019-05-05/test.jpg"/><img src="https://example.org/img/2019-05-04/test.jpg"/><img src="https://example.org/img/2019-05-03/test.jpg"/></body></html>') == '2019-05-05'
     # in title
     assert find_date('<html><head><title>Bericht zur Coronalage vom 22.04.2020 – worauf wartet die Politik? – DIE ACHSE DES GUTEN. ACHGUT.COM</title></head></html>') == '2020-04-22'
-
+    # in unknown div
+    assert find_date('<html><body><div class="spip spip-block-right" style="text-align:right;">Le 26 juin 2019</div></body></html>', extensive_search=False) is None
+    assert find_date('<html><body><div class="spip spip-block-right" style="text-align:right;">Le 26 juin 2019</div></body></html>', extensive_search=True) == '2019-06-26'
 
 def test_approximate_date():
     '''this page should return an approximate date'''

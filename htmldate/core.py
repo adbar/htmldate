@@ -678,12 +678,10 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         return text_result
 
     # title
-    for expr in ['.//title', './/h1']:
-        title_elem = cleaned_html.find(expr)
-        if title_elem is not None:
-            attempt = try_ymd_date(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
-            if attempt is not None:
-                return attempt
+    for title_elem in cleaned_html.iterfind('.//title|.//h1'):
+        attempt = try_ymd_date(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
+        if attempt is not None:
+            return attempt
 
     # last try: URL 2
     if url is not None:
@@ -701,6 +699,12 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
+        # div
+        for textpart in [t for t in cleaned_html.xpath('.//div/text()') if 0 < len(t) < 80]:
+            attempt = try_ymd_date(textpart, outputformat, extensive_search, min_date, max_date)
+            if attempt is not None:
+                return attempt
+        # search page HTML
         return search_page(htmlstring, outputformat, original_date, min_date, max_date)
 
     return None
