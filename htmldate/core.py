@@ -73,27 +73,34 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
     if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
         return None
     # loop through the elements to analyze
+    attempt = None
     for elem in elements:
         # trim
         textcontent = re.sub(r'[\n\r\s\t]+', ' ', elem.text_content(), re.MULTILINE).strip()
         # simple length heuristics
-        if not textcontent or len(textcontent) < 6:
-            continue
-        # shorten and try the beginning of the string
-        # trim non-digits at the end of the string
-        toexamine = re.sub(r'\D+$', '', textcontent[:48])
-        # more than 4 digits required # list(filter(str.isdigit, toexamine))
-        if len([c for c in toexamine if c.isdigit()]) < 4:
-            continue
-        LOGGER.debug('analyzing (HTML): %s', html.tostring(
-            elem, pretty_print=False, encoding='unicode').translate(
-                {ord(c): None for c in '\n\t\r'}
-            ).strip()[:100])
-        attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
-        if attempt is not None:
-            return attempt
+        if textcontent is not None and len(textcontent) > 6:
+            # shorten and try the beginning of the string
+            # trim non-digits at the end of the string
+            toexamine = re.sub(r'\D+$', '', textcontent[:48])
+            # more than 4 digits required # list(filter(str.isdigit, toexamine))
+            #if len([c for c in toexamine if c.isdigit()]) < 4:
+            #    continue
+            LOGGER.debug('analyzing (HTML): %s', html.tostring(
+                elem, pretty_print=False, encoding='unicode').translate(
+                    {ord(c): None for c in '\n\t\r'}
+                ).strip()[:100])
+            attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
+            if attempt is not None:
+                break
+        # try link title (Blogspot)
+        title_attr = elem.get('title')
+        if title_attr is not None and len(title_attr) > 0:
+            toexamine = re.sub(r'\D+$', '', title_attr[:48])
+            attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
+            if attempt is not None:
+                break
     # catchall
-    return None
+    return attempt
 
 
 def examine_header(tree, outputformat, extensive_search, original_date, min_date, max_date):
