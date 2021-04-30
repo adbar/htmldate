@@ -706,11 +706,15 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
-        # div
-        for textpart in [t for t in cleaned_html.xpath('.//div/text()') if 0 < len(t) < 80]:
-            attempt = try_ymd_date(textpart, outputformat, extensive_search, min_date, max_date)
-            if attempt is not None:
-                return attempt
+        # div and p elements?
+        # TODO: check all and decide according to original_date
+        reference = 0
+        for textpart in [t for t in cleaned_html.xpath('.//div/text()|.//p/text()') if 0 < len(t) < 80]:
+            reference = compare_reference(reference, textpart, outputformat, extensive_search, original_date, min_date, max_date)
+        # return
+        converted = check_extracted_reference(reference, outputformat, min_date, max_date)
+        if converted is not None:
+            return converted
         # search page HTML
         return search_page(htmlstring, outputformat, original_date, min_date, max_date)
 

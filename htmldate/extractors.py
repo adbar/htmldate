@@ -145,10 +145,10 @@ TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
                'Aralık': '12', 'Ara': '12'}
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
-NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}-[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
+NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
 
 # use of regex module for speed
-EN_PATTERNS = regex.compile(r'(?:updated|published) *?(?:in)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
+EN_PATTERNS = regex.compile(r'(?:[Dd]ate[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
 DE_PATTERNS = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
 ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)'''.replace('\n', ''), re.I)
@@ -380,11 +380,13 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
     # list(filter(str.isdigit, string))
-    if not string or len(string) < 6 or len([c for c in string if c.isdigit()]) < 4 \
-    or not TEXT_DATE_PATTERN.search(string):
+    if not string or len(string) < 6:
         return None
-    # just time/single year, not a date
-    if NO_TEXT_DATE_PATTERN.match(string):
+    digits_num = len([c for c in string if c.isdigit()])
+    if not 4 <= digits_num <= 18:
+        return None
+    # just time/single year or digits, not a date
+    if not TEXT_DATE_PATTERN.search(string) or NO_TEXT_DATE_PATTERN.match(string):
         return None
     # faster
     customresult = custom_parse(string, outputformat, extensive_search, min_date, max_date)
@@ -439,6 +441,7 @@ def timestamp_search(htmlstring, outputformat, min_date, max_date):
 
 def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_date):
     '''Look for a precise pattern throughout the web page'''
+    candidate = None
     match = idiosyncrasy.search(htmlstring)
     groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
     try:
@@ -446,7 +449,11 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
     except IndexError:
         pass
     if match and groups: #because len(None) has no len
-        if len(match.group(groups[3])) in (2, 4):
+        if match.group(1) is not None and len(match.group(1)) == 4:
+            candidate = datetime.date(int(match.group(groups[1])),
+                                      int(match.group(groups[2])),
+                                      int(match.group(groups[3])))
+        elif len(match.group(groups[3])) in (2, 4):
             # switch to MM/DD/YY
             if int(match.group(groups[2])) > 12:
                 tmp1, tmp2 = groups[1], groups[2]
@@ -463,10 +470,10 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
                                               int(match.group(groups[1])))
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
-            else:
-                if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-                    LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
-                    return convert_date(candidate, '%Y-%m-%d', outputformat)
+    if candidate is not None:
+        if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
+            LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
+            return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
 
 
