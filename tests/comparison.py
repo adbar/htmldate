@@ -31,14 +31,10 @@ from tabulate import tabulate
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 
-#the new set
-with open("eval_pages_200.json") as f:
+#load the pages here
+with open("eval_mediacloud_200.json") as f:
     EVAL_PAGES = json.load(f)
 
-#the orginal set
-#comment the above and uncomment this for the original output.
-with open("eval_pages_200.json") as f:
-    EVAL_PAGES = json.load(f)
 
 def load_document(filename):
     '''load mock page from samples'''
