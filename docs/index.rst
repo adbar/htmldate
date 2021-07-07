@@ -77,7 +77,7 @@ Features
 
 The output is thouroughly verified in terms of plausibility and adequateness and the library outputs a date string, corresponding to either the last update or the original publishing statement (the default), in the desired format (defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_).
 
--  Should be compatible with all recent versions of Python (currently 3.4 to 3.9)
+-  Compatible with all recent versions of Python (currently 3.5 to 3.9)
 -  Designed to be computationally efficient and used in production on millions of documents
 -  Batch processing of a list of URLs
 -  Switch between original and updated date
@@ -88,7 +88,7 @@ Markup-based extraction is multilingual by nature, text-based refinements for be
 Installation
 ------------
 
-This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.4 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 

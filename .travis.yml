@@ -5,10 +5,6 @@ cache: pip
 
 matrix:
   include:
-    - name: "Python 3.4 on Linux"
-      python: 3.4
-      env: TOXENV=py34
-      env: MINIMAL=true
     - name: "Python 3.5 on Linux"
       python: 3.5
       env: TOXENV=py35
@@ -72,15 +68,15 @@ matrix:
         - sw_vers
         - python3 --version
         - pip3 --version
-    - name: "Python 3 on macOS"
-      os: osx
-      osx_image: xcode11
-      language: shell
-      env: MINIMAL=false
-      before_install:
-        - sw_vers
-        - python3 --version
-        - pip3 --version
+#    - name: "Python 3 on macOS"
+#      os: osx
+#      osx_image: xcode11
+#      language: shell
+#      env: MINIMAL=false
+#      before_install:
+#        - sw_vers
+#        - python3 --version
+#        - pip3 --version
     - name: "Python 3 on recent macOS"
       os: osx
       osx_image: xcode12.2

@@ -1,6 +1,12 @@
 ## Changelog
 
 
+### 0.9.0
+- improved exhaustive search
+- simplified code
+- bug fixes
+- removed support for Python 3.4
+
 ### 0.8.1
 - bugfixes
 

@@ -11,8 +11,7 @@ from setuptools import setup
 # some problems with installation solved this way
 extras = {
     'speed': [
-        'cchardet == 2.1.4; python_version == "3.4"',
-        'cchardet >= 2.1.7; python_version > "3.4"',
+        'cchardet >= 2.1.7', # ; python_version > "3.4"
         'ciso8601 >= 2.1.3',
         ],
 }
@@ -55,7 +54,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -78,16 +76,14 @@ setup(
     license='GPLv3+',
     packages=['htmldate'],
     include_package_data=True,
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     install_requires=[
         'chardet == 3.0.4; python_version < "3.6"',
-        'chardet >= 3.0.4; python_version >= "3.6"',
-        'dateparser == 0.7.1; python_version == "3.4"',
-        'dateparser >= 1.0.0; python_version > "3.4"',
-        'lxml == 4.3.5; python_version == "3.4"',
-        'lxml >= 4.6.2; python_version > "3.4"',
+        'chardet >= 4.0.0; python_version >= "3.6"',
+        'dateparser >= 1.0.0',
+        'lxml >= 4.6.3',
         'python-dateutil >= 2.8.1',
-        'regex >= 2020.11.13',
+        'regex >= 2021.4.4',
         'urllib3 >= 1.25, <2',
     ],
     extras_require=extras,
