@@ -30,9 +30,9 @@ from tabulate import tabulate
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-
+evalpath = os.path.join(TEST_DIR, 'eval_mediacloud_2020.json')
 #load the pages here
-with open("eval_mediacloud_2020.json") as f:
+with open(evalpath) as f:
     EVAL_PAGES = json.load(f)
 
 
@@ -72,7 +72,6 @@ def run_htmldate_fast(htmlstring):
 
 def run_newspaper(htmlstring):
     '''try with the newspaper module'''
-    ## does not work!
     myarticle = Article(htmlstring)
     myarticle.html = htmlstring
     myarticle.download_state = ArticleDownloadState.SUCCESS
