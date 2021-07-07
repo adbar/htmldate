@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="sv" id="load_css">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/css/critical.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2" id="criticalCss"/>
+<link id="css_placeholder" />
+
+<script>
+    // dynamic preloading of css using loadCSS
+    (function(w){"use strict";var loadCSS=function(href,before,media){var doc=w.document;var ss=doc.createElement("link");var ref;if(before){ref=before}else{var refs=(doc.body||doc.getElementsByTagName("head")[0]).childNodes;ref=refs[refs.length-1]}var sheets=doc.styleSheets;ss.rel="stylesheet";ss.href=href;ss.media="only x";function ready(cb){if(doc.body){return cb()}setTimeout(function(){ready(cb)})}ready(function(){ref.parentNode.insertBefore(ss,before?ref:ref.nextSibling)});var onloadcssdefined=function(cb){var resolvedHref=ss.href;var i=sheets.length;while(i--){if(sheets[i].href===resolvedHref){return cb()}}setTimeout(function(){onloadcssdefined(cb)})};function loadCB(){if(ss.addEventListener){ss.removeEventListener("load",loadCB)}ss.media=media||"all"}if(ss.addEventListener){ss.addEventListener("load",loadCB)}ss.onloadcssdefined=onloadcssdefined;onloadcssdefined(loadCB);return ss};if(typeof exports!=="undefined"){exports.loadCSS=loadCSS}else{w.loadCSS=loadCSS}})(typeof global!=="undefined"?global:this);
+    var KSFcssLoader = {};
+    KSFcssLoader.mobilequery = window.matchMedia('screen and (max-width: 939px)');
+    if(KSFcssLoader.mobilequery.matches) {
+        window.loadCSS(
+            "/wp-content/themes/ksf/assets/css/mobile.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2",
+            document.getElementById("css_placeholder")
+        );
+        // console.log('mobile');
+    }
+    KSFcssLoader.tabletquery = window.matchMedia('screen and (min-width: 480px)');
+    if(KSFcssLoader.tabletquery.matches) {
+        window.loadCSS(
+            "/wp-content/themes/ksf/assets/css/tablet.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2",
+            document.getElementById("css_placeholder")
+        );
+        // console.log('tablet');
+    }
+
+    KSFcssLoader.desktopquery = window.matchMedia('screen and (min-width: 940px)');
+    if(KSFcssLoader.desktopquery.matches) {
+        window.loadCSS(
+            "/wp-content/themes/ksf/assets/css/desktop.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2",
+            document.getElementById("css_placeholder")
+        );
+        // console.log('desktop');
+    }
+
+    /*! onloadCSS. (onload callback for loadCSS) [c]2017 Filament Group, Inc. MIT License */
+    /* global navigator */
+    /* exported onloadCSS */
+    window.onloadCSS = function( ss, callback ) {
+        var called;
+        function newcb(){
+            if (!called && callback) {
+                called = true;
+                callback.call( ss );
+            }
+        }
+        if (ss.addEventListener) {
+            ss.addEventListener( "load", newcb );
+        }
+        if (ss.attachEvent) {
+        ss.attachEvent( "onload", newcb );
+        }
+
+        // This code is for browsers that don’t support onload
+        // No support for onload (it'll bind but never fire):
+        //	* Android 4.3 (Samsung Galaxy S4, Browserstack)
+        //	* Android 4.2 Browser (Samsung Galaxy SIII Mini GT-I8200L)
+        //	* Android 2.3 (Pantech Burst P9070)
+
+        // Weak inference targets Android < 4.4
+        if( "isApplicationInstalled" in navigator && "onloadcssdefined" in ss ) {
+            ss.onloadcssdefined( newcb );
+        }
+    }
+    var mainCss = window.loadCSS(
+        "/wp-content/themes/ksf/assets/css/main.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2",
+        document.getElementById("css_placeholder")
+    );
+    window.onloadCSS( mainCss, function() {
+        if(document.getElementById('load_css')){
+            document.getElementById('load_css').removeAttribute('id');
+        }
+    });
+</script>
+
+<noscript>
+    <link rel="stylesheet" media="screen and (min-width: 940px)" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/css/desktop.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2">
+    <link rel="stylesheet" media="screen and (min-width: 480px)" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/css/tablet.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2">
+    <link rel="stylesheet" media="screen and (max-width: 939px)" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/css/mobile.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2">
+</noscript>
+    <title>BBC: Premier League omstart 17 juli</title>
+
+              <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" /><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"5038e11bc4",applicationID:"15459821"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(f(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(4),f=e(5),c=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",d=l+"ixn-";a(p,function(e,n){s[n]=i(l+n,!0,"api")}),s.addPageAction=i(l+"addPageAction",!0),s.setCurrentRouteName=i(l+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(d+"tracer",[u.now(),e,t],r),function(){if(c.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw c.emit("fn-err",[arguments,this,e],t),e}finally{c.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(d+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?c("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&c("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&c("lcp",[t[t.length-1]])}function o(e){if(e instanceof s&&!l){var n,t=Math.round(e.timeStamp);n=t>1e12?Date.now()-t:u.now()-t,l=!0,c("timing",["fi",t,{type:e.type,fid:n}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var a,f,c=e("handle"),u=e("loader"),s=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),f=new PerformanceObserver(i);try{a.observe({entryTypes:["paint"]}),f.observe({entryTypes:["largest-contentful-paint"]})}catch(p){}}if("addEventListener"in document){var l=!1,d=["click","keydown","mousedown","pointerdown","touchstart"];d.forEach(function(e){document.addEventListener(e,o,!1)})}}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf("Chrome")===-1&&f.indexOf("Chromium")===-1&&(i="Safari",o=c[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],5:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],6:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?c(e,f,o):o()}function t(t,r,i,o){if(!l.aborted||o){e&&e(t,r,i);for(var a=n(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function d(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return p[e]=p[e]||i(t)}function w(e,n){u(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var h={},y={},b={on:d,addEventListener:d,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(l.aborted=!0,s=l.backlog={})}var f="nr@context",c=e("gos"),u=e(4),s={},p={},l=n.exports=i();l.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(y,function(n,t){e[n]||(e[n]=t)}),c("mark",["onload",a()+E.offset],null,"api");var t=d.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function i(){"complete"===d.readyState&&o()}function o(){c("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=e("handle"),u=e(4),s=e("ee"),p=e(3),l=window,d=l.document,m="addEventListener",v="attachEvent",g=l.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:g,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1167.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),e(2),d[m]?(d[m]("DOMContentLoaded",o,!1),l[m]("load",r,!1)):(d[v]("onreadystatechange",i),l[v]("onload",r)),c("mark",["firstbyte",f],null,"api");var x=0,O=e(6)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(5),a="nr@original",f=Object.prototype.hasOwnProperty,c=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f="function"==typeof t?t(r,a):t||{}}catch(u){l([u,"",[r,a,i],f])}s(n+"start",[r,a,i],f);try{return c=e.apply(a,r)}catch(p){throw s(n+"err",[r,a,p],f),p}finally{s(n+"end",[r,a,c],f)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,p(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,f,c,u="-"===i.charAt(0);for(c=0;c<n.length;c++)f=n[c],a=e[f],r(a)||(e[f]=t(a,u?f+i:i,o,f))}function s(t,r,i){if(!c||n){var o=c;c=!0;try{e.emit(t,r,i,n)}catch(a){l([a,t,r,i])}c=o}}function p(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){l([r])}for(var i in e)f.call(e,i)&&(n[i]=e[i]);return n}function l(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+    <meta name="google-site-verification" content="Sq3LyW3WxDevNU8Rm9fwwABKeamO04Mww4QJ40rnMX4" />
+
+        <meta property="fb:pages" content="114629395235317">    <meta property="fb:pages" content="601358736631058">    <meta property="fb:pages" content="110733948949552">    <meta property="fb:pages" content="656545957743561">    <meta property="fb:pages" content="290286677671799">    <meta property="fb:pages" content="130615210453756">    <meta property="fb:pages" content="1508189836059583">    <!--  Google DFP header code  -->
+    <script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+    <!--  /Google DFP header code  -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,600' rel='stylesheet' type='text/css'>
+    <!--[if IE]><link rel="icon" type="image/x-icon" href="/wp-content/themes/ksf/assets/icons/favicon.ico" /><![endif]-->
+    <link rel="icon" type="image/png" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/favicon_64.png">
+    <link rel="mask-icon" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/hbl-pinned-tab-mask-icon.svg" color="black" />
+    <link rel="apple-touch-icon" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/apple-touch-icon.png">
+    <!-- @affresco/ksf-login -->
+<script src="https://d1v9u0bgi1uimx.cloudfront.net/static/sso_lite.js"></script>
+<script type="text/javascript" src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/js/login/login.js?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/8.0.10/css/basscss-cp.css">
+<link rel="stylesheet" type="text/css" href="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/js/login/login.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2">
+    <script type="text/javascript">
+        var KSF_JSvars = {};
+                KSF_JSvars.serverUnixTimestampMS = 1590677521 * 1000;
+    </script>
+    <!--<link rel="manifest" href="/manifest.json">-->
+    <link rel="canonical" href="https://www.hbl.fi/artikel/bbc-premier-league-omstart-17-juli/" />    
+  <link rel="stylesheet" href="/wp-content/themes/ksf/assets/src/less/lib/plyr/plyr.css" />
+  <script>
+  window.loadCSS("/wp-content/themes/ksf/assets/css/article.css?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2", document.getElementById("criticalCss"));
+  </script>
+  <script defer src="/wp-content/themes/ksf/assets/js/article.min.js?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2"></script>
+
+        
+                          <script>
+        var ajaxUrl = 'https://www.hbl.fi/ajax.php';
+        
+        var ksfarticle = {
+          'article_priority': "2",
+          'authors': [],
+          'headline': "BBC: Premier League omstart 17 juli",
+          'category': "Sport",
+          'categories': "Fotboll",
+          'brand': "hbl.fi",
+          'tags': ["Premier League"],
+          'content_id': "39868f86-9f48-45bf-a4f9-6efb9f079022",
+          'publish_date': "2020-05-28T17:43:00+03:00",
+          'update_date': "2020-05-28T17:43:48+03:00",
+          'comments': 0,
+          'version': "2",
+          'is_authenticated': false,
+          'is_paywalled': false,
+          'is_entitled': false
+        }
+        var ksf = {
+          settings: {
+            brand: {
+              bid:7,
+              id:'hbl',
+              short:'HBL',
+              name:'Hufvudstadsbladet',
+              visiolink_domain:'etidningen.hbl.fi',
+              visiolink_teaser_img:'https://www.e-pages.dk/hbl/teasers/3271/medium.jpg',
+              visiolink_latest_publication:'/titles/hbl/3271/publications/latest',
+              image_placeholder:'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAABLAAD/4QMvaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzExMSA3OS4xNTgzMjUsIDIwMTUvMDkvMTAtMDE6MTA6MjAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEMEI1RkZBQ0I4ODAxMUU2QjMzMUQ5M0M5RjEwQ0UwRSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEMEI1RkZBREI4ODAxMUU2QjMzMUQ5M0M5RjEwQ0UwRSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkQwQjVGRkFBQjg4MDExRTZCMzMxRDkzQzlGMTBDRTBFIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkQwQjVGRkFCQjg4MDExRTZCMzMxRDkzQzlGMTBDRTBFIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+/+4ADkFkb2JlAGTAAAAAAf/bAIQAAwICAgICAwICAwUDAwMFBQQDAwQFBgUFBQUFBggGBwcHBwYICAkKCgoJCAwMDAwMDA4ODg4OEBAQEBAQEBAQEAEDBAQGBgYMCAgMEg4MDhIUEBAQEBQREBAQEBARERAQEBAQEBEQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQ/8AAEQgBnwLhAwERAAIRAQMRAf/EAHAAAQADAQEBAAAAAAAAAAAAAAADBAUCAQkBAQEBAAAAAAAAAAAAAAAAAAACARABAAECAwQJBQADAQAAAAAAAAECAxExBNFyMwUhUXGBkbHBEhVBYaFSE/BCIxQRAQEBAAAAAAAAAAAAAAAAAAARAf/aAAwDAQACEQMRAD8A+koAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK+r1Fen9vsiJ92OOP2ZrVf5G9+tP52spFjSamvUe73xEe3DDD7twWJ6Ixaxn/I3v1p/O1NbHscwvTOHtp/O0pF6uqaaKqoziJnwUxQ+RvfrT+dqa2HyN79afztKQ+RvfrT+dpSO6OYz/AL0eElItWr1u9GNE9sfWFMdgpXdddouVURTThTMxGe1Na4+RvfrT+dpSL1mublqmuc5jGcFMdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApcyyt9/ozW4pJau8tzud3q3GauzlKmMVCnsZwDXvcKvdnyVqWOlQAADq1cqtVxXTnANemqK6YqjKYxhaWVqOPc3pQpGDW03At9kLSkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABS5llb7/AEZrcUktXeW53O71bjNXZylTGKhT2M4Br3uFXuz5K1LHSp3YjG/RE/tAxqzat1RhNMTHYtjL1NqLN6qiMs470NRjWrpJx09H+fVWJZ2o49zelKkYNbTcC32QtKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFLmWVvv8ARmtxSS1b0Fyi3NfvqinHDDHvbjNW51FjCf8ApT4qYyUKexnANe9wq92fJWpY6VJNPx7e9HmMalVy3TGNVURHatjL1F2L12quMso7IQ1HETMxEdMzlA1r2aP52qaOqOlaWZqOPc3pQpGDW03At9kLSkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABS5llb7/RmtxSS0AAB7GcA173Cr3Z8laljpUAAAu6KnT44xONz79Hg3GLqmMnUce5vShSMGtpuBb7IWlIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAClzLK33+jNbiklqS1YuXsf5xjhn0jHf8A4tR+seMNhUDGvYzgGve4Ve7PkrUsdKnVuj+ldNGOHumIxBbnls4dFfT94bGVUuUVW65orjCYY1zEzTMTE4TGUg1tPd/tapr+uU9qks3Uce5vSlSMGtpuBb7IWlIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAClzLK33+jNbiklq7y3O53ercZq7OUqYxUKexnANe9wq92fJWpY6VJNPx7e9HmMay2M/mOH9aevDp8U63FVjWhy6f+VUff0VjNU9Rx7m9KWowa2m4FvshaUgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKXMsrff6M1uKSWrvLc7nd6txmrs5SpjFQp7GcA173Cr3Z8laljpU6tVRRcprnKJiZBfnmFnDoirwVWRRvXar1ya6u6OqEtcA0dBThYx/aZn0VjFLUce5vSlqMF21rrdu3TRNMzNMYfRtY6+Rt/rP4bSJbGqov1TTTExhGPSViZoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApcyyt9/ozW4pJau8tzud3q3GauzlKmMVCnsZwDXvcKvdnyVqWOlQAACSxYrv1+2nL6z1A1aKYopiinKOiFpZWo49zelCkYAALXLuNVu+sNxmtBTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEd7T0X8PfMx7ccMPuwRfH2OurxjYRtSWdPRYx9kzPuzx+xGJZ6YwaK3x9jrq8Y2MjaRy+xHTjV4xsIVYqpiqmaZymMJaxX+PsddXjGxkbT4+x11eMbCFPj7HXV4xsIV7TodPTOMxNXbOwgnpppoj20xhHVDWPQV69DZrrmuZqxqnGemNjI158fY66vGNhCnx9jrq8Y2EKfH2OurxjYQruzpbdiqaqJnGYw6SMTNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
+            },
+          }
+        };
+                  var adSection = 'sport';
+            </script>
+    <script>
+     /*
+      * System for registering riot mounts.
+      */
+     var riot_mounts = {};
+
+     if (window.localStorage.personaUser) {
+       try {
+         window.personaUser = JSON.parse(window.localStorage.personaUser);
+       }
+       catch (e) {
+         window.personaUser = null;
+         window.localStorage.removeItem('personaUser');
+       }
+     } else {
+       window.personaUser = null;
+     }
+
+    // HACK:
+    // Delete personaUser if wipe_local_storage cookie is set and personaUser is found in local storage
+    // (we are in an inconsistent state because wipe_local_storage is set only when user is not authenticated),
+    // We use the wipe_local_storage cookie because we cannot read the persona cookie from javascript.
+    // NOTE:
+    // To finish the job, we need to logout but we set the window.personaUser asap otherwise the name will be
+    // displayed in the navbar. This logout happens at the end of this file.
+    if (document.cookie.match(/wipe_local_storage/) && window.localStorage.getItem('personaUser')) {
+        window.personaUser = null;
+    }
+
+    /*
+     * Tag spec can be the tagname or the id of the tag to mount.
+     */
+    function add_riot_mount(tag_spec, opts) {
+        if(!tag_spec) {
+            console.log('cannot mount an empty tag!')
+            return;
+        }
+        if(!opts)
+            opts = {};
+        riot_mounts[tag_spec] = opts;
+    }
+
+    function mount_riots() {
+        for(key in riot_mounts) {
+            var opts = riot_mounts[key];
+            //console.log('mounting', key, opts);
+            if(typeof opts === "function") {
+                opts = opts(); // unravel the callback
+            }
+            riot.mount(key, opts);
+        }
+    }
+    add_riot_mount('ksf-user-login', function(){
+        return {
+            'brand': ksf.settings.brand.id,
+            'paywall_status' : 'active',
+            'entitled' : false
+        };
+    });
+
+    add_riot_mount('ksf-prenpuff', function(){
+        return {
+            'brand': ksf.settings.brand.id,
+            'entitled' : false
+        };
+    });
+
+    add_riot_mount('ksf-tagpage', function() {
+        return {
+        };
+    });
+
+    add_riot_mount('ksf-search-field', function() {
+        return {
+            'api': window.ajax_api
+        };
+    });
+
+
+    add_riot_mount('ksf-comments', function() {
+        return {
+            'api': window.ajax_api,
+            'user': window.ksfuser ? window.ksfuser : {}
+        };
+    });
+
+    add_riot_mount('ksf-disqus-sso', function() {
+        return {
+            'api': window.ajax_api,
+            'user': window.personaUser ? window.personaUser : {},
+            'paywall_status' : 'active'
+        };
+    });
+
+    add_riot_mount('ksf-referrer', function() {
+        return {
+            'sites': [
+                {'siteName': 'HBL', 'url': '//www.hbl.fi', 'shortName': 'hbl'},
+                {'siteName': 'Västra Nyland', 'url': '//www.vastranyland.fi', 'shortName': 'vn'},
+                {'siteName': 'Östnyland', 'url': '//www.ostnyland.fi', 'shortName': 'on'}
+            ]
+        };
+    });
+
+    add_riot_mount('ksf-articlelist');
+    add_riot_mount('ksf-mostread-articlelist');
+
+    add_riot_mount('ksf-trending-tags', function() {
+        return {
+            'ksf_user': window.ksfuser,
+            'ajax_api': window.ajax_api
+        };
+    });
+
+    add_riot_mount('ksf-janrain-password-form', function(){
+        return {
+            'type' : 'display'
+        }
+    });
+
+    add_riot_mount('ksf-email-subscription');
+
+    add_riot_mount('ksf-job-ads');
+    add_riot_mount('ksf-finland-100');
+    add_riot_mount('ksf-adblockers');
+    add_riot_mount('ksf-forgot-password');
+    add_riot_mount('ksf-opinion-disclaimer');
+    add_riot_mount('ksf-loading-ellipsis-animated');
+    add_riot_mount('ksf-blogs');
+    add_riot_mount('ksf-tax-data');
+    add_riot_mount('ksf-tweets');
+
+    function on_google_api_loaded() {
+        riot.mount('ksf-auth-modal', {});
+        riot.mount('ksf-link-social-account', {});
+        // Warning: HACK.
+        // At this point we know for sure that window.logout will work, so safe to call here.
+        // In case you missed it, look at context on why we're doing this at the top of the file.
+        if (document.cookie.match(/wipe_local_storage/) && window.localStorage.getItem('personaUser')) {
+            window.logout();
+        }
+
+    }
+    add_riot_mount('gdpr-notice', function(){
+        return {};
+    });
+    add_riot_mount('ksf-collapsible');
+    add_riot_mount('ksf-collapsible-factbox')
+    add_riot_mount('ie-notice');
+    add_riot_mount('ksf-articles-by-list');
+    add_riot_mount('ksf-visiolink-epaper');
+</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/js/head.min.js?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2"></script>
+        <!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '114561438875396'); // Insert your pixel ID here.
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=114561438875396&ev=PageView&noscript=1"
+/></noscript>
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+        <meta name="uuid" content="39868f86-9f48-45bf-a4f9-6efb9f079022" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.hbl.fi/artikel/bbc-premier-league-omstart-17-juli/" />
+    <meta property="og:title" content="BBC: Premier League omstart 17 juli" />
+    <meta name="description" content="Den 17 juni spelas det återigen Premier League-fotboll i England. Det ska klubbarna ha kommit fram till på ett möte under torsdagen, rapporterar både BBC och The Telegraph. " />
+    <meta property="og:description" content="Den 17 juni spelas det återigen Premier League-fotboll i England. Det ska klubbarna ha kommit fram till på ett möte under torsdagen, rapporterar både BBC och The Telegraph. " />
+    <meta property="fb:app_id" content="235480736468260"/>
+
+        
+                                                                                            <meta property="og:image" content="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=f8206868-7407-4677-9df0-c282dc96c02f&function=hardcrop&width=500&height=261&q=80" />
+                <meta name="twitter:image" content="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=f8206868-7407-4677-9df0-c282dc96c02f&function=hardcrop&width=500&height=261&q=80" />
+                <meta property="og:image:width" content="500" />
+                <meta property="og:image:height" content="261" />
+                                                
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@hblwebb">
+    <meta name="twitter:title" content="BBC: Premier League omstart 17 juli" />
+    <meta name="twitter:description" content="Den 17 juni spelas det återigen Premier League-fotboll i England. Det ska klubbarna ha kommit fram till på ett möte under torsdagen, rapporterar både BBC och The Telegraph. " />
+
+        <meta name="apple-itunes-app" content="app-id=1473028619">
+<meta name="smartbanner:title" content="HBL Nyheter">
+<meta name="smartbanner:author" content="KSF Media">
+<meta name="smartbanner:price" content="GRATIS">
+<meta name="smartbanner:price-suffix-apple" content=" - på App Store">
+<meta name="smartbanner:price-suffix-google" content=" - på Google Play">
+<meta name="smartbanner:icon-apple" content="/wp-content/themes/ksf/assets/icons/app_icon_hbl.png">
+<meta name="smartbanner:icon-google" content="/wp-content/themes/ksf/assets/icons/app_icon_hbl.png">
+<meta name="smartbanner:button" content="Ladda">
+<meta name="smartbanner:button-url-apple" content="https://apps.apple.com/fi/app/id1473028619">
+<meta name="smartbanner:button-url-google" content="https://play.google.com/store/apps/details?id=fi.ksfmedia.hbl">
+<meta name="smartbanner:enabled-platforms" content="android">
+<meta name="smartbanner:close-label" content="Stäng">
+
+<link rel="stylesheet" href="/wp-content/themes/ksf/assets/src/less/lib/smartbanner/smartbanner.css">
+<script src="/wp-content/themes/ksf/assets/js/smartbanner.js"></script>
+      
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "NewsArticle",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://www.hbl.fi/artikel/bbc-premier-league-omstart-17-juli/"
+        },
+        "headline": "BBC: Premier League omstart 17 juli",
+        "name": "Hufvudstadsbladet",
+        "image": {
+            "@type": "ImageObject",
+                                
+                                            "url": "https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&amp;type=preview&amp;source=false&amp;function=hardcrop&amp;width=500&amp;height=375&amp;q=80",
+                "height": 800,
+                "width": 800
+            
+
+                },
+        "datePublished": "2020-05-28T17:43:00+03:00",
+        "dateModified": "2020-05-28T17:43:48+03:00",
+        "author": {
+                        "@type": "Person",
+                        "name": ""
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "KSF Media",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://custom.hbl.fi/logotyper/KSFMedia/jpg/ksfmedia.jpg",
+                "width": 100,
+                "height": 60
+            }
+        },
+        "description": "Den 17 juni spelas det återigen Premier League-fotboll i England. Det ska klubbarna ha kommit fram till på ett möte under torsdagen, rapporterar både BBC och The Telegraph. "
+    }
+</script></head>
+<body class=" hbl  en_US    single-article">
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KB4TVP"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KB4TVP');</script>
+<!-- End Google Tag Manager -->
+<!-- Facebook SDK -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/sv_SE/sdk.js#xfbml=1&version=v2.12&appId=1742585382627694";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+<!-- END Facebook SDK -->
+<!-- Google API -->
+<script src="https://apis.google.com/js/platform.js?onload=on_google_api_loaded" async defer></script>
+<!-- END Google API -->
+
+  <!-- Just to check Bootstrap breakpoints -->
+  <div id="breakpoint-checker">
+      <div data-breakpoint="xs" class="device-xs visible-xs"></div>
+      <div data-breakpoint="sm" class="device-sm visible-sm"></div>
+      <div data-breakpoint="md" class="device-md visible-md"></div>
+      <div data-breakpoint="lg" class="device-lg visible-lg"></div>
+  </div>
+
+<!-- Loading screen -->
+<script>
+  function loadingScreenClick(event) {
+    event.stopPropagation();
+  }
+  function setLoadingScreen() {
+    document.getElementById('loading-screen').style.display = 'block';
+  }
+</script>
+<div id="loading-screen" onclick="loadingScreenClick"></div>
+<!-- END Loading screen -->
+
+  <div id="body-wrapper">
+    <div class="ksf-interstitial-header dfp-wrapper" style="position: absolute;top:0;">
+<div id='INTERMOB'  style="width:100%;margin: 0 auto;height: auto;"></div></div>
+<div class="ksf-interstitial-header dfp-wrapper" style="position: absolute;top:0;"><div id='INTERSTIT'  style="width:100%;margin: 0 auto;height: auto;"></div></div>
+  <div id="MOBPARAD"  class="ksfDFPad" style="height: auto;width:300px;margin: 0 auto;"></div>
+  <div id="MAXPARAD"  class="ksfDFPad" style="width: 980px;height:auto;margin: 0 auto;"></div>
+ <div id="StickyBox"><div id="STICKY"  class="ksfDFPad" style="width: 300px;height:auto;margin: 0px auto;"></div></div>
+    
+            <ie-notice></ie-notice>
+        <div id="header-nav-menus">
+          <div id="header-nav-menus-wrapper">
+            <nav id="ksf-panel-menu">
+	<div id="search-small" class="container-fluid visible-xs visible-sm">
+		<div class="row">
+			<div class="col-sm-20">
+				<form>
+					<input id="header-menu-mobile-search" type="search-small-for" value="Sök..." name="search-for" />
+				</form>
+                <a class="toggle-menu close-mobile-menu hidden-sm" href="#"><img alt="Stäng meny" src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/images/icon_close_white.png" /></a>
+			</div>
+		</div>
+	</div>
+	<div class="magazines">
+		<ul class="mags">
+			<li >
+				<a href="//www.hangotidningen.fi">
+					<span class="logo">
+                        <svg
+                           xmlns:dc="http://purl.org/dc/elements/1.1/"
+                           xmlns:cc="http://creativecommons.org/ns#"
+                           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                           xmlns:svg="http://www.w3.org/2000/svg"
+                           xmlns="http://www.w3.org/2000/svg"
+                           viewBox="0 0 75.016296 76.243683"
+                           height="76.243683"
+                           width="75.016296"
+                           id="svg64"
+                           version="1.1">
+                          <metadata
+                             id="metadata70">
+                            <rdf:RDF>
+                              <cc:Work
+                                 rdf:about="">
+                                <dc:format>image/svg+xml</dc:format>
+                                <dc:type
+                                   rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                                <dc:title></dc:title>
+                              </cc:Work>
+                            </rdf:RDF>
+                          </metadata>
+                          <defs
+                             id="defs68" />
+                          <path
+                             id="path74-3"
+                             d="M 37.507812 0 A 37.508148 38.039017 0 0 0 0 38.039062 A 37.508148 38.039017 0 0 0 25.015625 73.857422 L 25.015625 57.75 L 26.142578 57.75 L 26.142578 28.283203 L 25.324219 28.283203 L 25.324219 26.537109 L 26.142578 26.537109 L 26.142578 24.380859 L 31.845703 24.380859 L 30.533203 22.431641 L 30.337891 22.431641 L 30.337891 11.845703 L 27.785156 11.826172 L 38.402344 4.7714844 L 48.339844 11.982422 L 45.787109 11.962891 L 45.787109 22.431641 L 45.591797 22.431641 L 44.279297 24.380859 L 49.164062 24.380859 L 49.164062 26.537109 L 49.982422 26.537109 L 49.982422 28.283203 L 49.164062 28.283203 L 49.164062 57.75 L 50.291016 57.75 L 50.291016 73.765625 A 37.508148 38.039017 0 0 0 75.015625 38.039062 A 37.508148 38.039017 0 0 0 37.507812 0 z "
+                             style="fill:#000000;stroke-width:1.06640315" />
+                        </svg>
+					</span><br>
+					<span class="title hidden-xs">HT | HL</span>
+				</a>
+			</li>
+			<li >
+				<a href="//www.vastranyland.fi">
+					<span class="logo">
+						<svg xmlns="https://www.w3.org/2000/svg" width="41" height="24.97" viewBox="0 0 41 24.97">
+						  <g>
+						    <path class="cls-1" d="M2026.39,4684.14c-0.79-2.61-1.28-3.28-3.4-3.7v-0.42h8.69v0.45c-2.65.15-3.04,0.99-2.45,3.03l4.97,16.81h0.13l4.64-15.26c0.89-2.89.56-4.05-1.96-4.58v-0.45h6.48v0.45c-1.93.43-2.72,1.55-3.89,5.21l-6.02,19.28h-0.85Zm21.22-.6h-0.04v15.73c0,3.07.59,4.33,3.44,4.83v0.46h-7.52v-0.46c2.61-.53,3.33-1.76,3.33-4.83v-14.82c0-2.14-.95-3.94-3.33-4.01v-0.42h5.55l11.04,19.22h0.03v-13.98c0-3.06-.88-4.33-3.66-4.82v-0.42H2064v0.42c-2.61.56-3.14,1.76-3.14,4.82v19.75h-0.81Z" transform="translate(-2023 -4680.03)"/>
+						  </g>
+						</svg>
+					</span><br>
+					<span class="title hidden-xs">Västra Nyland</span>
+				</a>
+			</li>
+			<li  class="active">
+				<a href="//www.hbl.fi">
+					<span class="logo">
+						<svg xmlns="https://www.w3.org/2000/svg" width="48" height="26" viewBox="0 0 48 26">
+						  <g>
+						    <path id="HBL_logo" data-name="HBL logo" class="cls-1" d="M240.784,550.824V529.992h-5.94v26H248v-5.167h-7.217ZM210.2,540.035h-4.331V529.992H200v26h5.873V545.428H210.2v10.563h5.873v-26H210.2v10.043Zm19.72,2.294-0.145-.074,0.159-.143a4.573,4.573,0,0,0,3.441-4.466V535.7c0-6.3-6.981-5.694-6.981-5.694H218.04v25.972h9.281s6.561,0.514,6.561-5.82v-2.43C233.882,542.62,229.923,542.329,229.923,542.329ZM224,535.038c0.878-.029,1.8,0,1.8,0a2.129,2.129,0,0,1,2.014,1.461,7.614,7.614,0,0,1,.014,2.285,1.611,1.611,0,0,1-1.561,1.29,15.144,15.144,0,0,1-2.263.057v-5.093Zm4.159,14.267a1.73,1.73,0,0,1-1.706,1.473s-0.907.049-2.453-.008V544.6c0.952-.033,1.946,0,1.946,0a2.255,2.255,0,0,1,2.235,1.863A11.409,11.409,0,0,1,228.155,549.3Z" transform="translate(-200 -530)"/>
+						  </g>
+						</svg>
+					</span><br>
+					<span class="title hidden-xs">Hufvudstadsbladet</span>
+				</a>
+			</li>
+			<li >
+				<a href="//www.ostnyland.fi">
+					<span class="logo">
+						<svg xmlns="https://www.w3.org/2000/svg" width="52" height="33.03" viewBox="0 0 52 33.03">
+						  <g>
+						    <path class="cls-1" d="M213.93,4675.96a2.933,2.933,0,1,1,2.915,2.95,3.011,3.011,0,0,1-2.915-2.95m6.124,16.86c0-3.95-2.4-7.01-6.6-7.01s-6.6,3.06-6.6,7.01,2.4,7.05,6.6,7.05,6.6-3.1,6.6-7.05m-13.243-16.86a3.016,3.016,0,0,1,2.951-2.96,2.955,2.955,0,0,1,0,5.91,3.007,3.007,0,0,1-2.951-2.95m-6.824,16.86c0-7.56,6.235-12.84,13.465-12.84s13.463,5.28,13.463,12.84-6.233,12.88-13.463,12.88-13.465-5.31-13.465-12.88m35.742,0.04v12.51h-6.308v-25.43c0-.22.11-0.4,0.516-0.07l15.752,12.99v-12.59H252v25.47c0,0.29-.11.4-0.515,0.07Z" transform="translate(-200 -4673)"/>
+						  </g>
+						</svg>
+					</span><br>
+					<span class="title hidden-xs">Östnyland</span>
+				</a>
+			</li>
+		</ul>
+		<a class="toggle-menu" href="#"><img src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/icon-close-lg.svg" alt="Stäng menyn" class="close-menu hidden-xs"></a>
+	</div>
+	<div class="container">
+		<div class="free">
+						<ul class="sections">
+									<li class="">
+						<a href="https://www.hbl.fi/nyheter/" class="">Nyheter<span class="toggle"></span></a>
+						<ul class="subsections">
+															<li><a href="https://www.hbl.fi/tagg/finland/" class="">Finland</a></li>
+															<li><a href="https://www.hbl.fi/tagg/huvudstadsregionen/" class="">Huvudstadsregionen</a></li>
+															<li><a href="https://www.hbl.fi/norden-och-varlden/" class="">Norden och världen</a></li>
+															<li><a href="https://www.hbl.fi/tagg/ekonomi/" class="">Ekonomi</a></li>
+															<li><a href="https://www.hbl.fi/miljo-och-natur/" class="">Miljö och natur</a></li>
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/livsstil/" class="">Livsstil<span class="toggle"></span></a>
+						<ul class="subsections">
+															<li><a href="/tagg/resor" class="">Resor</a></li>
+															<li><a href="https://www.hbl.fi/mat-och-dryck/" class="">Mat och dryck</a></li>
+															<li><a href="https://www.hbl.fi/trafik/" class="">Trafik</a></li>
+															<li><a href="https://www.hbl.fi/relationer-och-halsa/" class="">Relationer och hälsa</a></li>
+															<li><a href="https://www.hbl.fi/hem/" class="">Hem</a></li>
+															<li><a href="https://www.hbl.fi/bloggar-poddar/" class="">Bloggar &amp; Poddar</a></li>
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/opinion/" class="">Opinion<span class="toggle"></span></a>
+						<ul class="subsections">
+															<li><a href="https://www.hbl.fi/tagg/ledare/" class="">Ledare</a></li>
+															<li><a href="https://www.hbl.fi/tagg/kolumner/" class="">Kolumner</a></li>
+															<li><a href="https://www.hbl.fi/tagg/debatt/" class="">Debatt</a></li>
+															<li><a href="https://www.hbl.fi/kronikor/" class="">Krönikor</a></li>
+															<li><a href="https://www.hbl.fi/skriv-en-insandare/" class="">Skriv en insändare</a></li>
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/kultur/" class="">Kultur<span class="toggle"></span></a>
+						<ul class="subsections">
+															<li><a href="https://www.hbl.fi/tagg/litteratur/" class="">Litteratur</a></li>
+															<li><a href="https://www.hbl.fi/tagg/musik/" class="">Musik</a></li>
+															<li><a href="https://www.hbl.fi/tagg/scen/" class="">Scen</a></li>
+															<li><a href="https://www.hbl.fi/tagg/konst/" class="">Konst</a></li>
+															<li><a href="https://www.hbl.fi/tagg/film-och-tv/" class="">Film och TV</a></li>
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/sport/" class="">Sport<span class="toggle"></span></a>
+						<ul class="subsections">
+															<li><a href="https://www.hbl.fi/tagg/handboll/" class="">Handboll</a></li>
+															<li><a href="https://www.hbl.fi/tagg/ishockey/" class="">Ishockey</a></li>
+															<li><a href="https://www.hbl.fi/tagg/fotboll/" class="">Fotboll</a></li>
+															<li><a href="https://www.hbl.fi/tagg/motorsport/" class="">Motorsport</a></li>
+															<li><a href="https://www.hbl.fi/tagg/friidrott/" class="">Friidrott</a></li>
+															<li><a href="https://www.hbl.fi/tagg/skidsport/" class="">Skidsport</a></li>
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/poddar/" class="">Poddar<span class="toggle"></span></a>
+						<ul class="subsections">
+													</ul>
+					</li>
+									<li class="">
+						<a href="https://www.hbl.fi/coachen/" class="">Coachen<span class="toggle"></span></a>
+						<ul class="subsections">
+													</ul>
+					</li>
+									<li class="">
+						<a href="/epaper" class="">E-tidningen<span class="toggle"></span></a>
+						<ul class="subsections">
+													</ul>
+					</li>
+							</ul>
+		</div>
+		<ul class="header-footer">
+							<li class="prenumerera"><a href="https://www.hbl.fi/prenumerera/">Prenumerera</a></li>
+							<li class="kundservice"><a href="https://www.hbl.fi/kundservice/">Kundservice</a></li>
+							<li class="mitt-konto"><a href="https://konto.ksfmedia.fi/">Mitt Konto</a></li>
+							<li class="bruksvillkor"><a href="https://www.hbl.fi/bruksvillkor/">Bruksvillkor</a></li>
+							<li class="fragor-och-svar"><a href="https://www.hbl.fi/fragor-och-svar/">Frågor och svar</a></li>
+							<li class="annonsera"><a href="http://mediekortet.ksfmedia.fi/">Annonsera</a></li>
+							<li class="privatannonser"><a href="https://www.hbl.fi/privatannonsering/">Privatannonser</a></li>
+							<li class="jobba-hos-oss"><a href="https://www.hbl.fi/ledigajobb/#KSF%20Media">Jobba hos oss</a></li>
+							<li class="rattelser"><a href="https://www.hbl.fi/rattelser/">Rättelser</a></li>
+							<li class="dataskyddsbeskrivning"><a href="https://www.ksfmedia.fi/dataskydd/sv.html">Dataskyddsbeskrivning</a></li>
+							<li class="ksf-media-shop"><a href="https://produkter-ksf.myshopify.com/">KSF Media Shop</a></li>
+					</ul>
+	</div>
+</nav>
+            <div class="ksf-main-nav">
+  <div class="container">
+    <div id="logo_home">
+      <a href="/">
+        <svg xmlns="http://www.w3.org/2000/svg"  height="44" widht="83" viewBox="0 0 48 26">
+          <g>
+            <path id="HBL_logo" data-name="HBL logo" class="cls-1" d="M240.784,550.824V529.992h-5.94v26H248v-5.167h-7.217ZM210.2,540.035h-4.331V529.992H200v26h5.873V545.428H210.2v10.563h5.873v-26H210.2v10.043Zm19.72,2.294-0.145-.074,0.159-.143a4.573,4.573,0,0,0,3.441-4.466V535.7c0-6.3-6.981-5.694-6.981-5.694H218.04v25.972h9.281s6.561,0.514,6.561-5.82v-2.43C233.882,542.62,229.923,542.329,229.923,542.329ZM224,535.038c0.878-.029,1.8,0,1.8,0a2.129,2.129,0,0,1,2.014,1.461,7.614,7.614,0,0,1,.014,2.285,1.611,1.611,0,0,1-1.561,1.29,15.144,15.144,0,0,1-2.263.057v-5.093Zm4.159,14.267a1.73,1.73,0,0,1-1.706,1.473s-0.907.049-2.453-.008V544.6c0.952-.033,1.946,0,1.946,0a2.255,2.255,0,0,1,2.235,1.863A11.409,11.409,0,0,1,228.155,549.3Z" transform="translate(-200 -530)"/>
+          </g>
+        </svg>
+      </a>
+    </div>
+    <div id="nav-container">
+      <ul class="main-menu">
+          <li id="menu-item-main">
+              <a class="toggle-menu" href="#">
+                  <svg height="32px" id="Layer_1" style="enable-background:new 0 0 32 32;" version="1.1" viewBox="0 0 32 32" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"/></svg>
+                  Meny
+              </a>
+          </li>
+
+                    <li id="menu-item-7378" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/nyheter/">Nyheter</a></li>
+                    <li id="menu-item-164910" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/livsstil/">Livsstil</a></li>
+                    <li id="menu-item-7209" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/opinion/">Opinion</a></li>
+                    <li id="menu-item-414" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/kultur/">Kultur</a></li>
+                    <li id="menu-item-484" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/sport/">Sport</a></li>
+                    <li id="menu-item-217895" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/poddar/">Poddar</a></li>
+                    <li id="menu-item-209725" class="nav_menu_item  hidden-xs hidden-sm"><a href="https://www.hbl.fi/coachen/">Coachen</a></li>
+                    <li id="menu-item-212994" class="nav_menu_item  hidden-xs hidden-sm"><a href="/epaper">E-tidningen</a></li>
+              </ul>
+      <div class="ksf-main-nav-right" >
+      <ksf-search-field></ksf-search-field>
+      <ksf-user-login></ksf-user-login>
+      </div>
+    </div>
+  </div>
+</div>
+          </div>
+                  <div class="featured-image-data">
+            <div class="container">
+                <a class="col-md-10" href="#void">
+                    <h1></h1>
+                    <h3></h3>
+                </a>
+            </div>
+        </div>
+    </div>
+      
+    <div id="page-wrapper">
+      
+
+            <div class="ksfDfpWrapper">
+        <div id="PARAD"  class="ksfDFPad" style="height: auto;width:980px;margin: 0px auto;"></div>
+      </div>
+            	<div data-uuid="39868f86-9f48-45bf-a4f9-6efb9f079022" class="article container section-sport type-nyhet">
+  <div>
+    <div class="col-xs-20 col-sm-20 col-md-20 col-lg-20 board-col-xs-20 board-col-sm-20 board-col-md-20 board-col-lg-20">
+      <div id="ksf_top_news_ticker-2" class="rendered_board_widget content-size-xs-20 content-size-sm-20 content-size-md-20 content-size-lg-20">
+        <ksf-top-news-ticker brand=""></ksf-top-news-ticker>
+
+<script>
+    add_riot_mount('ksf-top-news-ticker');
+</script>
+      </div> 
+    </div>
+  </div
+  <div class="row">
+    <div class="col-lg-14 col-md-13 col-sm-20 article-body">
+        <div class="ksf-article-header">
+            <div class="article-header">			<div class="textwidget"></div>
+		</div>
+        </div>
+      <ksf-referrer></ksf-referrer>
+      <header>
+        <ul class="departments">
+		  <li><a href="/tagg/premier-league">Premier League</a></li>	</ul>
+                <h1>BBC: Premier League omstart 17 juli</h1>
+      </header>      
+                              
+
+<div class="ksf-article-images ">
+
+    
+                         <div class="ksf-article-image-container">
+      <img
+                    onclick='riot.mount("ksf-image-gallery-overlay", {images: [{"uuid":"f8206868-7407-4677-9df0-c282dc96c02f","photographer":"Dave Thompson \/ AP Photo","caption":"Manchester City-spelarna kan snart vara tillbaka p\u00e5 fotbollsplanen. Arkivbild.","format":"landscape","smallSrc":"https:\/\/imengine.public.prod.ksf.infomaker.io\/imengine\/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=&function=hardcrop&width=240&height=135&q=80","largeSrc":"https:\/\/imengine.public.prod.ksf.infomaker.io\/imengine\/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=&function=hardcrop&width=1200&height=675&q=80","previewSrc":"https:\/\/imengine.public.prod.ksf.infomaker.io\/imengine\/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=&function=hardcrop&width=800&height=533&q=75","originalAspectSrc":"https:\/\/imengine.public.prod.ksf.infomaker.io\/imengine\/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=&function=hardcrop&width=1200&height=800&q=80","fullSrc":"https:\/\/imengine.public.prod.ksf.infomaker.io\/imengine\/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&type=preview&source=&function=hardcrop&width=1600&height=1067&q=75"}]})'
+        class="clickable lazy-load"
+        data-src-lg="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&amp;type=preview&amp;source=f8206868-7407-4677-9df0-c282dc96c02f&amp;function=hardcrop&amp;width=800&amp;height=533&amp;q=80"
+    data-src-md="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&amp;type=preview&amp;source=f8206868-7407-4677-9df0-c282dc96c02f&amp;function=hardcrop&amp;width=688&amp;height=458&amp;q=80"
+            data-src-sm="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&amp;type=preview&amp;source=f8206868-7407-4677-9df0-c282dc96c02f&amp;function=hardcrop&amp;width=784&amp;height=522&amp;q=80"
+        data-source="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=f8206868-7407-4677-9df0-c282dc96c02f&amp;type=preview&amp;source=f8206868-7407-4677-9df0-c282dc96c02f&amp;function=hardcrop&amp;width=267&amp;height=178&amp;q=80"
+    alt=""
+/>
+    </div>
+        <div class="ksf-image-meta"><p>
+   Manchester City-spelarna kan snart vara tillbaka på fotbollsplanen. Arkivbild.
+<span class="ksf-image-photographer">Bild: Dave Thompson / AP Photo </span></p></div>  
+  </div>
+      
+      <div class="ksf-article-metas">
+		<p class="byline">
+		 		<br>
+		<span class="times pubdate"><time datetime="2020-05-28T17:43:00+03:00">28.5.2020 17:43</time></span>
+					<span class="times pubdate">Uppdaterad <time datetime="2020-05-28T17:43:48+03:00">28.5.2020 17:43</time></span>
+					</p>
+		<ksf-sharing></ksf-sharing>
+	<script>
+		add_riot_mount('ksf-sharing', function() {return {'dnt_api': window.dnt_api, 'url': 'https://www.hbl.fi/artikel/bbc-premier-league-omstart-17-juli/' };});
+	</script>
+</div>
+      <p class="ingress">Den 17 juni spelas det återigen Premier League-fotboll i England. Det ska klubbarna ha kommit fram till på ett möte under torsdagen, rapporterar både BBC och The Telegraph. </p>
+      
+      <div class="text">
+          <p>Det är matcherna mellan Manchester City och Arsenal samt Aston Villa–Sheffield United, som alla spelat en omgång mindre än resten av lagen, som ska spelas då.</p><p>Därefter, den 19-20 juni följer en full omgång, enligt uppgifterna.</p><p>Under mötet ska klubbarna även diskutera frågan om upp- eller nedflyttning samt tv-pengarna.</p>
+                                                    
+
+<div class="widget_text article-body"><div class="textwidget custom-html-widget"><div id="DIGIHEL"  class="ksfDFPad" style="height: auto;width:100%;max-width: 620px;margin: 10px auto;"></div>
+<div id="DIGIHELMOB"  class="ksfDFPad" style="height: auto;width:100%;max-width: 300px;margin: 10px auto;"></div></div></div><ksf-collapsible title="{ksfarticle.tags.length} Ämnesord" action_open="Visa ämnesord" action_close="Dölj ämnesord">
+      <div class="ksf-article-tags">
+      <h3>Läs mer om</h3>
+      <ul>
+              <li>
+          <a href="/tagg/premier-league">Premier League</a>
+        </li>
+            </ul>
+    </div>
+    <ksf-trending-tags></ksf-trending-tags>
+</ksf-collapsible>
+
+      </div>
+      <div class="dfp-wrapper">
+        <div id='JATTEBOX' class="ksfDFPad" style='width: 468px;margin: 10px auto;'>
+        </div>
+      </div>
+      <div class="dfp-wrapper">
+        <div id='DUBBELBOX' class="ksfDFPad" style='width: 468px;margin: 10px auto;'>
+        </div>
+      </div>
+      
+    <div class="ksf-article ksf-article-wrapper department-347 section-advertorialer type-advertorial" data-uuid="128b19d7-4762-4da5-81f7-49cdf3cfd7af">
+                <h2 >
+          <a href="https://www.hbl.fi/artikel/aktia-hjalper-dig-att-tanka-framat/">
+                        Aktia hjälper dig att tänka framåt
+          </a>
+        </h2>
+                                <ul class="departments">
+      <li><a href="/tagg/"></a></li>
+      <!--<ksf-reactions url="https://www.hbl.fi/artikel/aktia-hjalper-dig-att-tanka-framat/" uuid="128b19d7-4762-4da5-81f7-49cdf3cfd7af"></ksf-reactions>-->
+  </ul>
+                          <a href="https://www.hbl.fi/artikel/aktia-hjalper-dig-att-tanka-framat/">
+                        <p class="liftup">De flesta finländare har idag koll på att hem, fritidsbostad och fordon behöver försäkras för att hålla ekonomin i balans om allt inte går som planerat. När det kommer till personförsäkringar är läget ett annat. Jämfört med många andra länder har Finland ett bra socialskydd och många förlitar sig på att man får tillräckligt stöd för att klara sig ekonomiskt om något allvarligt inträffar. Men hur långt räcker socialskyddet egentligen? Hur påverkas livet om man insjuknar allvarligt och inte längre kan arbeta? Klarar sig familjen ekonomiskt utan en förälder? 
+                <span class="pubdate">9.4.2020 - 00.00</span>
+            </p>
+        </a>
+                
+
+<div class="ksf-article-images ">
+
+    
+             <a href="https://www.hbl.fi/artikel/aktia-hjalper-dig-att-tanka-framat/">            <div class="ksf-article-image-container">
+      <img
+                    data-width="798"
+        data-height="449"
+        class="lazy-load"
+        data-src-lg="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;type=preview&amp;source=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;function=hardcrop&amp;width=798&amp;height=449&amp;q=80"
+    data-src-md="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;type=preview&amp;source=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;function=hardcrop&amp;width=686&amp;height=386&amp;q=80"
+            data-src-sm="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;type=preview&amp;source=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;function=hardcrop&amp;width=782&amp;height=440&amp;q=80"
+        data-source="https://imengine.public.prod.ksf.infomaker.io/imengine/image.php?uuid=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;type=preview&amp;source=817fefc2-1266-4f19-b4d8-a9d0e7ad0b89&amp;function=hardcrop&amp;width=266&amp;height=150&amp;q=80"
+    alt=""
+/>
+    </div>
+    </a>      
+  </div>
+            </div>
+<div class="article-prefooter">			<div class="textwidget"></div>
+		</div>
+    </div>
+
+    <div class="col-lg-6 col-md-7 col-sm-20">
+      <div class="ksf-sidebar sidebar fill">
+        
+<div class="widget_text article-sidebar"><div class="textwidget custom-html-widget"><div  id='FIRSTBOX' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div  id='MOBMITT' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div  id='BOX' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div id='BOX1' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div id='BOX2' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div id='BOX3' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div id='BOXFORPRINT' class="ksfDFPad" style='width:300px;margin: 5px auto;'> </div>
+<div id='MOBBOX1' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+<div id='MOBBOX2' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+</div></div><div class="widget_text article-sidebar"><div class="textwidget custom-html-widget"><ksf-mostread-articlelist userealtime="true" label="Mest lästa på Hbl.fi" n="10"></ksf-mostread-articlelist></div></div><div class="widget_text article-sidebar"><div class="textwidget custom-html-widget"><div id="STORTAVLA"  class="ksfDFPad" style='height:auto;width: 100%;max-width:160px;max-height:600px;margin: 5px auto;'></div>
+<div id='MOBBOX3' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+<div id='BOX4' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+<div id='MOBBOX4' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+<div id='BOX5' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+<div id='MOBBOX5' class="ksfDFPad" style='width:300px;margin: 5px auto;'></div>
+</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+ <div id="PANORAMA"  class="ksfDFPad" style="height: auto;width:980px;margin: 10px auto;"></div>
+<div class="ksf-article-footer">
+  <div class="container">
+    
+<div class="widget_text article-footer"><div class="textwidget custom-html-widget"><style>
+	div.ksf-article-footer {
+		display:none;
+	}
+</style></div></div><div class="ksf-more-like-this">
+    <div class="col-md-14">
+        <div class="ksf-more-like-this-title"><h2>Mer läsning</h2></div>
+        <div class="ksf-more-like-this-wrapper">
+          <ksf-more-like-this uuid="39868f86-9f48-45bf-a4f9-6efb9f079022" subproduct="hbl.fi"></ksf-more-like-this>
+          <script>
+            add_riot_mount('ksf-more-like-this');
+          </script>
+        </div>
+    </div>
+</div><div class="widget_text article-footer"><div class="textwidget custom-html-widget"><div class="col-md-6">
+<ksf-articlelist label="Senast publicerat på Hbl.fi" prinmarycolor="#f07e26"></ksf-articlelist>
+</div>
+</div></div>
+  </div>
+</div>
+<div class="ksf-article-footer-2">
+  <div class="container">
+    
+<div class="widget_text article-footer-2"><div class="textwidget custom-html-widget"><div class="container">
+	<div class="row">
+		<div class="col-md-14 ksf-default-board-col">
+			<ksf-articles-by-list listid="3613"></ksf-articles-by-list>
+		</div>
+		<div class="col-md-6">
+			<div class="ksf-sidebar sidebar fill">
+				<ksf-mostread-articlelist userealtime="true" n="10" label="Mest lästa på Hbl.fi" linktext={null} linkhref={null} description={null} primarycolor="#f07e26"></ksf-mostread-articlelist>
+				<ksf-mostread-articlelist categories="Sport" label="Sport" primarycolor="#ca007f" linktext="Mera om Sport" linkhref="/sport" description="Mest lästa" userealtime={false} n="5"></ksf-mostread-articlelist>
+				<ksf-mostread-articlelist categories="Kultur" label="Kultur" primarycolor="#ca007f" linktext="Mera om Kultur" linkhref="/kultur" description="Mest lästa" userealtime={false} n="5"></ksf-mostread-articlelist>
+				<ksf-mostread-articlelist categories="Ledare,Kolumn" label="Opinion" primarycolor="#ca007f" linktext="Mera Opinion" linkhref="/opinion" description="Mest lästa" userealtime={false} n="5"></ksf-mostread-articlelist>
+			</div>
+		</div>
+	</div>
+</div>
+</div></div>
+  </div>
+</div>
+    </div>
+
+    <ksf-auth-modal logo_src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/logo-hbl.svg" google_client_id="584250859572-po558qgkq0b4u3j6a1ge40scjhops3oo"></ksf-auth-modal>
+    <ksf-push-notification-dialog icon_src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/icons/icon-alarm.svg" magazine="hbl"></ksf-push-notification-dialog>
+
+        <div id="MOBNER"  class="ksfDFPad" style="height: auto;width:300px;margin: 10px auto;"></div>
+    
+              <footer class="ksf-footer">
+	<div class="container">
+		<div class="logo-wrap">
+			<a href="/">
+				<svg xmlns="https://www.w3.org/2000/svg" width="48" height="26" viewBox="0 0 48 26">
+					<g>
+						<path id="HBL_logo" data-name="HBL logo" class="cls-1" d="M240.784,550.824V529.992h-5.94v26H248v-5.167h-7.217ZM210.2,540.035h-4.331V529.992H200v26h5.873V545.428H210.2v10.563h5.873v-26H210.2v10.043Zm19.72,2.294-0.145-.074,0.159-.143a4.573,4.573,0,0,0,3.441-4.466V535.7c0-6.3-6.981-5.694-6.981-5.694H218.04v25.972h9.281s6.561,0.514,6.561-5.82v-2.43C233.882,542.62,229.923,542.329,229.923,542.329ZM224,535.038c0.878-.029,1.8,0,1.8,0a2.129,2.129,0,0,1,2.014,1.461,7.614,7.614,0,0,1,.014,2.285,1.611,1.611,0,0,1-1.561,1.29,15.144,15.144,0,0,1-2.263.057v-5.093Zm4.159,14.267a1.73,1.73,0,0,1-1.706,1.473s-0.907.049-2.453-.008V544.6c0.952-.033,1.946,0,1.946,0a2.255,2.255,0,0,1,2.235,1.863A11.409,11.409,0,0,1,228.155,549.3Z" transform="translate(-200 -530)"/>
+					</g>
+				</svg>
+			</a>
+						<div class="footer-branding">
+				<p>En obundet liberalt borgerlig tidning</p>
+			</div>
+					</div>
+		<ul class="sections col-lg-5 visible-lg">
+							<li>
+					<a href="https://www.hbl.fi/nyheter/">Nyheter</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/livsstil/">Livsstil</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/opinion/">Opinion</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/kultur/">Kultur</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/sport/">Sport</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/poddar/">Poddar</a>
+				</li>
+							<li>
+					<a href="https://www.hbl.fi/coachen/">Coachen</a>
+				</li>
+							<li>
+					<a href="/epaper">E-tidningen</a>
+				</li>
+					</ul>
+		
+<div class="widget_text site-footer"><div class="textwidget custom-html-widget"><div class="col-lg-5 col-md-6 col-sm-6 show-hidden-centered">
+<p><b>Besöksadress:</b><br>Mannerheimvägen 18<br>00100 Helsingfors</p>
+<p><span class="label">Växel: </span> <span class="data"><a href="tel:0912531">09 125 31</a></span></p>
+<p><span class="label">E-post: </span> <span class="data">fornamn.efternamn@hbl.fi</span></p>
+<p><span class="label">Prenumerationer och Kundservice: </span><span class="data"><a href="tel:091253500">09 125 35 00</a> (vardagar kl. 8-12 och 13-16), <a href="mailto:pren@hbl.fi">pren@hbl.fi</a></span></p>
+
+<p><span class="label">Annonser: </span> <span class="data"><a href="tel:091253558">09 125 35 58</a>, <a href="mailto:annons@hbl.fi">annons@hbl.fi</a></span></p>
+</div>
+<div class="col-lg-5 col-md-7 col-sm-8 show-hidden-centered">
+<p><span class="label">Chefredaktör och ansvarig utgivare: </span> <span class="data">Susanna Landor</span></p>
+<p><span class="label">Biträdande ansvarig utgivare: </span><span class="data">Lena  Skogberg</span></p>
+<p><span class="label">Nyhetschefer: </span><span class="data">Anna Back och Gunilla Celvin</span></p>
+<p><span class="label">Printchef:  </span><span class="data">Maria Björkqvist</span></p>
+<p><span class="label">Redaktionen: </span> <span class="data"><a href="tel:091253222">09 125 32 22</a>, <a href="mailto:nyheter@hbl.fi">nyheter@hbl.fi</a></span></p>
+<p><span class="label">Insändare: </span> <span class="data"><a href="/skriv-en-insandare/">Skriv din insändare här</a></span></p>
+</div>
+<div class="col-lg-5 col-md-7 col-sm-6 show-hidden-centered">
+<p class="visible-compact">KSF Media ger ut Hufvudstadsbladet, Västra Nyland, Östnyland och Hangötidningen - Hangon lehti.</p>
+<p class="visible-compact"><a href="/ledigajobb/#KSF%20Media">Jobba hos oss</a></p>
+</div></div></div>
+	</div>
+	<ul class="footer-footer">
+					<li><a href="https://www.hbl.fi/prenumerera/">Prenumerera</a></li>
+					<li><a href="https://www.hbl.fi/kundservice/">Kundservice</a></li>
+					<li><a href="https://konto.ksfmedia.fi/">Mitt Konto</a></li>
+					<li><a href="https://www.hbl.fi/bruksvillkor/">Bruksvillkor</a></li>
+					<li><a href="https://www.hbl.fi/fragor-och-svar/">Frågor och svar</a></li>
+					<li><a href="http://mediekortet.ksfmedia.fi/">Annonsera</a></li>
+					<li><a href="https://www.hbl.fi/privatannonsering/">Privatannonser</a></li>
+					<li><a href="https://www.hbl.fi/ledigajobb/#KSF%20Media">Jobba hos oss</a></li>
+					<li><a href="https://www.hbl.fi/rattelser/">Rättelser</a></li>
+					<li><a href="https://www.ksfmedia.fi/dataskydd/sv.html">Dataskyddsbeskrivning</a></li>
+					<li><a href="https://produkter-ksf.myshopify.com/">KSF Media Shop</a></li>
+					</ul>
+</footer>
+            <ksf-adblockers class="single-article"></ksf-adblockers>
+        <gdpr-notice requiredConsent="personalizedAds"></gdpr-notice>      
+              <script src="https://static.ksf.infomaker.io/wp-content/themes/ksf/assets/js/all.js?v=bafd4157e665bc9ae4f123ac24a57d7e88147fa2" type="text/javascript"></script>
+    <script>
+        mount_riots();
+    </script>
+    
+  </div>
+
+  <script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    // ad blocker test, is the entire ad script blocked?
+    if(typeof ksfDfp === "undefined"){
+      var blockSign = document.getElementsByClassName('ksf-adblockers');
+      blockSign[0].className +=" show";
+      console.log('ad blocker detected');
+    } else {
+      console.log('no ad blocker noticed');
+    }
+  });
+  </script>
+
+  <script>
+(function(){
+  jQuery(document).ready(function(){
+    var action = 'miss';
+    
+    if (window.ksf.options.environment !== 'prod') {
+      console.log("Paywall event action: ", action);
+    }
+
+          if (typeof window.tracker.paywall == 'function') {
+        window.tracker.paywall(action);
+      }
+    
+  });
+})()
+</script>
+
+    <script id="dsq-count-scr" src="//hufvudstadsbladet.disqus.com/count.js" async></script>
+  <ksf-image-gallery-overlay></ksf-image-gallery-overlay>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"5038e11bc4","applicationID":"15459821","transactionName":"M1UEbBFWWEAAV00NVwofJ1sXXlldTkdQCl8IVUtZEUNfUA1R","queueTime":0,"applicationTime":337,"atts":"HxIHGllMS04=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<!--[if lte IE 8]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" dir="ltr"  prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# book: http://ogp.me/ns/book# profile: http://ogp.me/ns/profile# video: http://ogp.me/ns/video# product: http://ogp.me/ns/product# content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema# schema: http://schema.org/">
+<!--<![endif]-->
+
+<head profile="http://www.w3.org/1999/xhtml/vocab">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"UwcGWF9ACgIAU1NVAAk=",licenseKey:"0f768372e0",applicationID:"21072778"};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var i=e[n]={exports:{}};t[n][0].call(i.exports,function(e){var i=t[n][1][e];return r(i||e)},i,i.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<n.length;i++)r(n[i]);return r}({1:[function(t,e,n){function r(t){try{c.console&&console.log(t)}catch(e){}}var i,o=t("ee"),a=t(23),c={};try{i=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(c.console=!0,i.indexOf("dev")!==-1&&(c.dev=!0),i.indexOf("nr_dev")!==-1&&(c.nrDev=!0))}catch(s){}c.nrDev&&o.on("internal-error",function(t){r(t.stack)}),c.dev&&o.on("fn-err",function(t,e,n){r(n.stack)}),c.dev&&(r("NR AGENT IN DEVELOPMENT MODE"),r("flags: "+a(c,function(t,e){return t}).join(", ")))},{}],2:[function(t,e,n){function r(t,e,n,r,c){try{p?p-=1:i(c||new UncaughtException(t,e,n),!0)}catch(f){try{o("ierr",[f,s.now(),!0])}catch(d){}}return"function"==typeof u&&u.apply(this,a(arguments))}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function i(t,e){var n=e?null:s.now();o("err",[t,n])}var o=t("handle"),a=t(24),c=t("ee"),s=t("loader"),f=t("gos"),u=window.onerror,d=!1,l="nr@seenError",p=0;s.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(h){"stack"in h&&(t(9),t(8),"addEventListener"in window&&t(5),s.xhrWrappable&&t(10),d=!0)}c.on("fn-start",function(t,e,n){d&&(p+=1)}),c.on("fn-err",function(t,e,n){d&&!n[l]&&(f(n,l,function(){return!0}),this.thrown=!0,i(n))}),c.on("fn-end",function(){d&&!this.thrown&&p>0&&(p-=1)}),c.on("internal-error",function(t){o("ierr",[t,s.now(),!0])})},{}],3:[function(t,e,n){t("loader").features.ins=!0},{}],4:[function(t,e,n){function r(t){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var i=t("ee"),o=t("handle"),a=t(9),c=t(8),s="learResourceTimings",f="addEventListener",u="resourcetimingbufferfull",d="bstResource",l="resource",p="-start",h="-end",m="fn"+p,w="fn"+h,v="bstTimer",g="pushState",y=t("loader");y.features.stn=!0,t(7),"addEventListener"in window&&t(5);var x=NREUM.o.EV;i.on(m,function(t,e){var n=t[0];n instanceof x&&(this.bstStart=y.now())}),i.on(w,function(t,e){var n=t[0];n instanceof x&&o("bst",[n,e,this.bstStart,y.now()])}),a.on(m,function(t,e,n){this.bstStart=y.now(),this.bstType=n}),a.on(w,function(t,e){o(v,[e,this.bstStart,y.now(),this.bstType])}),c.on(m,function(){this.bstStart=y.now()}),c.on(w,function(t,e){o(v,[e,this.bstStart,y.now(),"requestAnimationFrame"])}),i.on(g+p,function(t){this.time=y.now(),this.startPath=location.pathname+location.hash}),i.on(g+h,function(t){o("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),f in window.performance&&(window.performance["c"+s]?window.performance[f](u,function(t){o(d,[window.performance.getEntriesByType(l)]),window.performance["c"+s]()},!1):window.performance[f]("webkit"+u,function(t){o(d,[window.performance.getEntriesByType(l)]),window.performance["webkitC"+s]()},!1)),document[f]("scroll",r,{passive:!0}),document[f]("keypress",r,!1),document[f]("click",r,!1)}},{}],5:[function(t,e,n){function r(t){for(var e=t;e&&!e.hasOwnProperty(u);)e=Object.getPrototypeOf(e);e&&i(e)}function i(t){c.inPlace(t,[u,d],"-",o)}function o(t,e){return t[1]}var a=t("ee").get("events"),c=t("wrap-function")(a,!0),s=t("gos"),f=XMLHttpRequest,u="addEventListener",d="removeEventListener";e.exports=a,"getPrototypeOf"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&&(i(window),i(f.prototype)),a.on(u+"-start",function(t,e){var n=t[1],r=s(n,"nr@wrapped",function(){function t(){if("function"==typeof n.handleEvent)return n.handleEvent.apply(n,arguments)}var e={object:t,"function":n}[typeof n];return e?c(e,"fn-",null,e.name||"anonymous"):n});this.wrapped=t[1]=r}),a.on(d+"-start",function(t){t[1]=this.wrapped||t[1]})},{}],6:[function(t,e,n){function r(t,e,n){var r=t[e];"function"==typeof r&&(t[e]=function(){var t=o(arguments),e={};i.emit(n+"before-start",[t],e);var a;e[m]&&e[m].dt&&(a=e[m].dt);var c=r.apply(this,t);return i.emit(n+"start",[t,a],c),c.then(function(t){return i.emit(n+"end",[null,t],c),t},function(t){throw i.emit(n+"end",[t],c),t})})}var i=t("ee").get("fetch"),o=t(24),a=t(23);e.exports=i;var c=window,s="fetch-",f=s+"body-",u=["arrayBuffer","blob","json","text","formData"],d=c.Request,l=c.Response,p=c.fetch,h="prototype",m="nr@context";d&&l&&p&&(a(u,function(t,e){r(d[h],e,f),r(l[h],e,f)}),r(c,"fetch",s),i.on(s+"end",function(t,e){var n=this;if(e){var r=e.headers.get("content-length");null!==r&&(n.rxSize=r),i.emit(s+"done",[null,e],n)}else i.emit(s+"done",[t],n)}))},{}],7:[function(t,e,n){var r=t("ee").get("history"),i=t("wrap-function")(r);e.exports=r;var o=window.history&&window.history.constructor&&window.history.constructor.prototype,a=window.history;o&&o.pushState&&o.replaceState&&(a=o),i.inPlace(a,["pushState","replaceState"],"-")},{}],8:[function(t,e,n){var r=t("ee").get("raf"),i=t("wrap-function")(r),o="equestAnimationFrame";e.exports=r,i.inPlace(window,["r"+o,"mozR"+o,"webkitR"+o,"msR"+o],"raf-"),r.on("raf-start",function(t){t[0]=i(t[0],"fn-")})},{}],9:[function(t,e,n){function r(t,e,n){t[0]=a(t[0],"fn-",null,n)}function i(t,e,n){this.method=n,this.timerDuration=isNaN(t[1])?0:+t[1],t[0]=a(t[0],"fn-",this,n)}var o=t("ee").get("timer"),a=t("wrap-function")(o),c="setTimeout",s="setInterval",f="clearTimeout",u="-start",d="-";e.exports=o,a.inPlace(window,[c,"setImmediate"],c+d),a.inPlace(window,[s],s+d),a.inPlace(window,[f,"clearImmediate"],f+d),o.on(s+u,r),o.on(c+u,i)},{}],10:[function(t,e,n){function r(t,e){d.inPlace(e,["onreadystatechange"],"fn-",c)}function i(){var t=this,e=u.context(t);t.readyState>3&&!e.resolved&&(e.resolved=!0,u.emit("xhr-resolved",[],t)),d.inPlace(t,g,"fn-",c)}function o(t){y.push(t),h&&(b?b.then(a):w?w(a):(E=-E,R.data=E))}function a(){for(var t=0;t<y.length;t++)r([],y[t]);y.length&&(y=[])}function c(t,e){return e}function s(t,e){for(var n in t)e[n]=t[n];return e}t(5);var f=t("ee"),u=f.get("xhr"),d=t("wrap-function")(u),l=NREUM.o,p=l.XHR,h=l.MO,m=l.PR,w=l.SI,v="readystatechange",g=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"],y=[];e.exports=u;var x=window.XMLHttpRequest=function(t){var e=new p(t);try{u.emit("new-xhr",[e],e),e.addEventListener(v,i,!1)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}return e};if(s(p,x),x.prototype=p.prototype,d.inPlace(x.prototype,["open","send"],"-xhr-",c),u.on("send-xhr-start",function(t,e){r(t,e),o(e)}),u.on("open-xhr-start",r),h){var b=m&&m.resolve();if(!w&&!m){var E=1,R=document.createTextNode(E);new h(a).observe(R,{characterData:!0})}}else f.on("fn-end",function(t){t[0]&&t[0].type===v||a()})},{}],11:[function(t,e,n){function r(t){if(!c(t))return null;var e=window.NREUM;if(!e.loader_config)return null;var n=(e.loader_config.accountID||"").toString()||null,r=(e.loader_config.agentID||"").toString()||null,f=(e.loader_config.trustKey||"").toString()||null;if(!n||!r)return null;var h=p.generateSpanId(),m=p.generateTraceId(),w=Date.now(),v={spanId:h,traceId:m,timestamp:w};return(t.sameOrigin||s(t)&&l())&&(v.traceContextParentHeader=i(h,m),v.traceContextStateHeader=o(h,w,n,r,f)),(t.sameOrigin&&!u()||!t.sameOrigin&&s(t)&&d())&&(v.newrelicHeader=a(h,m,w,n,r,f)),v}function i(t,e){return"00-"+e+"-"+t+"-01"}function o(t,e,n,r,i){var o=0,a="",c=1,s="",f="";return i+"@nr="+o+"-"+c+"-"+n+"-"+r+"-"+t+"-"+a+"-"+s+"-"+f+"-"+e}function a(t,e,n,r,i,o){var a="btoa"in window&&"function"==typeof window.btoa;if(!a)return null;var c={v:[0,1],d:{ty:"Browser",ac:r,ap:i,id:t,tr:e,ti:n}};return o&&r!==o&&(c.d.tk=o),btoa(JSON.stringify(c))}function c(t){return f()&&s(t)}function s(t){var e=!1,n={};if("init"in NREUM&&"distributed_tracing"in NREUM.init&&(n=NREUM.init.distributed_tracing),t.sameOrigin)e=!0;else if(n.allowed_origins instanceof Array)for(var r=0;r<n.allowed_origins.length;r++){var i=h(n.allowed_origins[r]);if(t.hostname===i.hostname&&t.protocol===i.protocol&&t.port===i.port){e=!0;break}}return e}function f(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.enabled}function u(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.exclude_newrelic_header}function d(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&NREUM.init.distributed_tracing.cors_use_newrelic_header!==!1}function l(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.cors_use_tracecontext_headers}var p=t(20),h=t(13);e.exports={generateTracePayload:r,shouldGenerateTrace:c}},{}],12:[function(t,e,n){function r(t){var e=this.params,n=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r<l;r++)t.removeEventListener(d[r],this.listener,!1);e.aborted||(n.duration=a.now()-this.startTime,this.loadCaptureCalled||4!==t.readyState?null==e.status&&(e.status=0):o(this,t),n.cbTime=this.cbTime,u.emit("xhr-done",[t],t),c("xhr",[e,n,this.startTime]))}}function i(t,e){var n=s(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.parsedOrigin=s(e),t.sameOrigin=t.parsedOrigin.sameOrigin}function o(t,e){t.params.status=e.status;var n=w(e,t.lastSize);if(n&&(t.metrics.rxSize=n),t.sameOrigin){var r=e.getResponseHeader("X-NewRelic-App-Data");r&&(t.params.cat=r.split(", ").pop())}t.loadCaptureCalled=!0}var a=t("loader");if(a.xhrWrappable){var c=t("handle"),s=t(13),f=t(11).generateTracePayload,u=t("ee"),d=["load","error","abort","timeout"],l=d.length,p=t("id"),h=t(17),m=t(16),w=t(14),v=window.XMLHttpRequest;a.features.xhr=!0,t(10),t(6),u.on("new-xhr",function(t){var e=this;e.totalCbs=0,e.called=0,e.cbTime=0,e.end=r,e.ended=!1,e.xhrGuids={},e.lastSize=null,e.loadCaptureCalled=!1,t.addEventListener("load",function(n){o(e,t)},!1),h&&(h>34||h<10)||window.opera||t.addEventListener("progress",function(t){e.lastSize=t.loaded},!1)}),u.on("open-xhr-start",function(t){this.params={method:t[0]},i(this,t[1]),this.metrics={}}),u.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid);var n=f(this.parsedOrigin);if(n){var r=!1;n.newrelicHeader&&(e.setRequestHeader("newrelic",n.newrelicHeader),r=!0),n.traceContextParentHeader&&(e.setRequestHeader("traceparent",n.traceContextParentHeader),n.traceContextStateHeader&&e.setRequestHeader("tracestate",n.traceContextStateHeader),r=!0),r&&(this.dt=n)}}),u.on("send-xhr-start",function(t,e){var n=this.metrics,r=t[0],i=this;if(n&&r){var o=m(r);o&&(n.txSize=o)}this.startTime=a.now(),this.listener=function(t){try{"abort"!==t.type||i.loadCaptureCalled||(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof e.onload))&&i.end(e)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}};for(var c=0;c<l;c++)e.addEventListener(d[c],this.listener,!1)}),u.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),u.on("xhr-load-added",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),u.on("xhr-load-removed",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),u.on("addEventListener-end",function(t,e){e instanceof v&&"load"===t[0]&&u.emit("xhr-load-added",[t[1],t[2]],e)}),u.on("removeEventListener-end",function(t,e){e instanceof v&&"load"===t[0]&&u.emit("xhr-load-removed",[t[1],t[2]],e)}),u.on("fn-start",function(t,e,n){e instanceof v&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=a.now()))}),u.on("fn-end",function(t,e){this.xhrCbStart&&u.emit("xhr-cb-time",[a.now()-this.xhrCbStart,this.onload,e],e)}),u.on("fetch-before-start",function(t){function e(t,e){var n=!1;return e.newrelicHeader&&(t.set("newrelic",e.newrelicHeader),n=!0),e.traceContextParentHeader&&(t.set("traceparent",e.traceContextParentHeader),e.traceContextStateHeader&&t.set("tracestate",e.traceContextStateHeader),n=!0),n}var n,r=t[1]||{};"string"==typeof t[0]?n=t[0]:t[0]&&t[0].url&&(n=t[0].url),n&&(this.parsedOrigin=s(n),this.sameOrigin=this.parsedOrigin.sameOrigin);var i=f(this.parsedOrigin);if(i&&(i.newrelicHeader||i.traceContextParentHeader))if("string"==typeof t[0]){var o={};for(var a in r)o[a]=r[a];o.headers=new Headers(r.headers||{}),e(o.headers,i)&&(this.dt=i),t.length>1?t[1]=o:t.push(o)}else t[0]&&t[0].headers&&e(t[0].headers,i)&&(this.dt=i)})}},{}],13:[function(t,e,n){var r={};e.exports=function(t){if(t in r)return r[t];var e=document.createElement("a"),n=window.location,i={};e.href=t,i.port=e.port;var o=e.href.split("://");!i.port&&o[1]&&(i.port=o[1].split("/")[0].split("@").pop().split(":")[1]),i.port&&"0"!==i.port||(i.port="https"===o[0]?"443":"80"),i.hostname=e.hostname||n.hostname,i.pathname=e.pathname,i.protocol=o[0],"/"!==i.pathname.charAt(0)&&(i.pathname="/"+i.pathname);var a=!e.protocol||":"===e.protocol||e.protocol===n.protocol,c=e.hostname===document.domain&&e.port===n.port;return i.sameOrigin=a&&(!e.hostname||c),"/"===i.pathname&&(r[t]=i),i}},{}],14:[function(t,e,n){function r(t,e){var n=t.responseType;return"json"===n&&null!==e?e:"arraybuffer"===n||"blob"===n||"json"===n?i(t.response):"text"===n||""===n||void 0===n?i(t.responseText):void 0}var i=t(16);e.exports=r},{}],15:[function(t,e,n){function r(){}function i(t,e,n){return function(){return o(t,[f.now()].concat(c(arguments)),e?null:this,n),e?void 0:this}}var o=t("handle"),a=t(23),c=t(24),s=t("ee").get("tracer"),f=t("loader"),u=NREUM;"undefined"==typeof window.newrelic&&(newrelic=u);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",p=l+"ixn-";a(d,function(t,e){u[e]=i(l+e,!0,"api")}),u.addPageAction=i(l+"addPageAction",!0),u.setCurrentRouteName=i(l+"routeName",!0),e.exports=newrelic,u.interaction=function(){return(new r).get()};var h=r.prototype={createTracer:function(t,e){var n={},r=this,i="function"==typeof e;return o(p+"tracer",[f.now(),t,n],r),function(){if(s.emit((i?"":"no-")+"fn-start",[f.now(),r,i],n),i)try{return e.apply(this,arguments)}catch(t){throw s.emit("fn-err",[arguments,this,t],n),t}finally{s.emit("fn-end",[f.now()],n)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(t,e){h[e]=i(p+e)}),newrelic.noticeError=function(t,e){"string"==typeof t&&(t=new Error(t)),o("err",[t,f.now(),!1,e])}},{}],16:[function(t,e,n){e.exports=function(t){if("string"==typeof t&&t.length)return t.length;if("object"==typeof t){if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if(!("undefined"!=typeof FormData&&t instanceof FormData))try{return JSON.stringify(t).length}catch(e){return}}}},{}],17:[function(t,e,n){var r=0,i=navigator.userAgent.match(/Firefox[\/\s](\d+\.\d+)/);i&&(r=+i[1]),e.exports=r},{}],18:[function(t,e,n){function r(){return c.exists&&performance.now?Math.round(performance.now()):(o=Math.max((new Date).getTime(),o))-a}function i(){return o}var o=(new Date).getTime(),a=o,c=t(25);e.exports=r,e.exports.offset=a,e.exports.getLastTimestamp=i},{}],19:[function(t,e,n){function r(t,e){var n=t.getEntries();n.forEach(function(t){"first-paint"===t.name?d("timing",["fp",Math.floor(t.startTime)]):"first-contentful-paint"===t.name&&d("timing",["fcp",Math.floor(t.startTime)])})}function i(t,e){var n=t.getEntries();n.length>0&&d("lcp",[n[n.length-1]])}function o(t){t.getEntries().forEach(function(t){t.hadRecentInput||d("cls",[t])})}function a(t){if(t instanceof h&&!w){var e=Math.round(t.timeStamp),n={type:t.type};e<=l.now()?n.fid=l.now()-e:e>l.offset&&e<=Date.now()?(e-=l.offset,n.fid=l.now()-e):e=l.now(),w=!0,d("timing",["fi",e,n])}}function c(t){d("pageHide",[l.now(),t])}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var s,f,u,d=t("handle"),l=t("loader"),p=t(22),h=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){s=new PerformanceObserver(r);try{s.observe({entryTypes:["paint"]})}catch(m){}f=new PerformanceObserver(i);try{f.observe({entryTypes:["largest-contentful-paint"]})}catch(m){}u=new PerformanceObserver(o);try{u.observe({type:"layout-shift",buffered:!0})}catch(m){}}if("addEventListener"in document){var w=!1,v=["click","keydown","mousedown","pointerdown","touchstart"];v.forEach(function(t){document.addEventListener(t,a,!1)})}p(c)}},{}],20:[function(t,e,n){function r(){function t(){return e?15&e[n++]:16*Math.random()|0}var e=null,n=0,r=window.crypto||window.msCrypto;r&&r.getRandomValues&&(e=r.getRandomValues(new Uint8Array(31)));for(var i,o="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx",a="",c=0;c<o.length;c++)i=o[c],"x"===i?a+=t().toString(16):"y"===i?(i=3&t()|8,a+=i.toString(16)):a+=i;return a}function i(){return a(16)}function o(){return a(32)}function a(t){function e(){return n?15&n[r++]:16*Math.random()|0}var n=null,r=0,i=window.crypto||window.msCrypto;i&&i.getRandomValues&&Uint8Array&&(n=i.getRandomValues(new Uint8Array(31)));for(var o=[],a=0;a<t;a++)o.push(e().toString(16));return o.join("")}e.exports={generateUuid:r,generateSpanId:i,generateTraceId:o}},{}],21:[function(t,e,n){function r(t,e){if(!i)return!1;if(t!==i)return!1;if(!e)return!0;if(!o)return!1;for(var n=o.split("."),r=e.split("."),a=0;a<r.length;a++)if(r[a]!==n[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,s=c.match(a);s&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(i="Safari",o=s[1])}e.exports={agent:i,version:o,match:r}},{}],22:[function(t,e,n){function r(t){function e(){t(a&&document[a]?document[a]:document[i]?"hidden":"visible")}"addEventListener"in document&&o&&document.addEventListener(o,e,!1)}e.exports=r;var i,o,a;"undefined"!=typeof document.hidden?(i="hidden",o="visibilitychange",a="visibilityState"):"undefined"!=typeof document.msHidden?(i="msHidden",o="msvisibilitychange"):"undefined"!=typeof document.webkitHidden&&(i="webkitHidden",o="webkitvisibilitychange",a="webkitVisibilityState")},{}],23:[function(t,e,n){function r(t,e){var n=[],r="",o=0;for(r in t)i.call(t,r)&&(n[o]=e(r,t[r]),o+=1);return n}var i=Object.prototype.hasOwnProperty;e.exports=r},{}],24:[function(t,e,n){function r(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,i=n-e||0,o=Array(i<0?0:i);++r<i;)o[r]=t[e+r];return o}e.exports=r},{}],25:[function(t,e,n){e.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(t,e,n){function r(){}function i(t){function e(t){return t&&t instanceof r?t:t?s(t,c,o):o()}function n(n,r,i,o){if(!l.aborted||o){t&&t(n,r,i);for(var a=e(i),c=m(n),s=c.length,f=0;f<s;f++)c[f].apply(a,r);var d=u[y[n]];return d&&d.push([x,n,r,a]),a}}function p(t,e){g[t]=m(t).concat(e)}function h(t,e){var n=g[t];if(n)for(var r=0;r<n.length;r++)n[r]===e&&n.splice(r,1)}function m(t){return g[t]||[]}function w(t){return d[t]=d[t]||i(n)}function v(t,e){f(t,function(t,n){e=e||"feature",y[n]=e,e in u||(u[e]=[])})}var g={},y={},x={on:p,addEventListener:p,removeEventListener:h,emit:n,get:w,listeners:m,context:e,buffer:v,abort:a,aborted:!1};return x}function o(){return new r}function a(){(u.api||u.feature)&&(l.aborted=!0,u=l.backlog={})}var c="nr@context",s=t("gos"),f=t(23),u={},d={},l=e.exports=i();l.backlog=u},{}],gos:[function(t,e,n){function r(t,e,n){if(i.call(t,e))return t[e];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return t[e]=r,r}var i=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(t,e,n){function r(t,e,n,r){i.buffer([t],r),i.emit(t,e,n)}var i=t("ee").get("handle");e.exports=r,r.ee=i},{}],id:[function(t,e,n){function r(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:a(t,o,function(){return i++})}var i=1,o="nr@id",a=t("gos");e.exports=r},{}],loader:[function(t,e,n){function r(){if(!b++){var t=x.info=NREUM.info,e=l.getElementsByTagName("script")[0];if(setTimeout(f.abort,3e4),!(t&&t.licenseKey&&t.applicationID&&e))return f.abort();s(g,function(e,n){t[e]||(t[e]=n)});var n=a();c("mark",["onload",n+x.offset],null,"api"),c("timing",["load",n]);var r=l.createElement("script");r.src="https://"+t.agent,e.parentNode.insertBefore(r,e)}}function i(){"complete"===l.readyState&&o()}function o(){c("mark",["domContent",a()+x.offset],null,"api")}var a=t(18),c=t("handle"),s=t(23),f=t("ee"),u=t(21),d=window,l=d.document,p="addEventListener",h="attachEvent",m=d.XMLHttpRequest,w=m&&m.prototype;NREUM.o={ST:setTimeout,SI:d.setImmediate,CT:clearTimeout,XHR:m,REQ:d.Request,EV:d.Event,PR:d.Promise,MO:d.MutationObserver};var v=""+location,g={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1184.min.js"},y=m&&w&&w[p]&&!/CriOS/.test(navigator.userAgent),x=e.exports={offset:a.getLastTimestamp(),now:a,origin:v,features:{},xhrWrappable:y,userAgent:u};t(15),t(19),l[p]?(l[p]("DOMContentLoaded",o,!1),d[p]("load",r,!1)):(l[h]("onreadystatechange",i),d[h]("onload",r)),c("mark",["firstbyte",a.getLastTimestamp()],null,"api");var b=0},{}],"wrap-function":[function(t,e,n){function r(t){return!(t&&t instanceof Function&&t.apply&&!t[a])}var i=t("ee"),o=t(24),a="nr@original",c=Object.prototype.hasOwnProperty,s=!1;e.exports=function(t,e){function n(t,e,n,i){function nrWrapper(){var r,a,c,s;try{a=this,r=o(arguments),c="function"==typeof n?n(r,a):n||{}}catch(f){l([f,"",[r,a,i],c])}u(e+"start",[r,a,i],c);try{return s=t.apply(a,r)}catch(d){throw u(e+"err",[r,a,d],c),d}finally{u(e+"end",[r,a,s],c)}}return r(t)?t:(e||(e=""),nrWrapper[a]=t,d(t,nrWrapper),nrWrapper)}function f(t,e,i,o){i||(i="");var a,c,s,f="-"===i.charAt(0);for(s=0;s<e.length;s++)c=e[s],a=t[c],r(a)||(t[c]=n(a,f?c+i:i,o,c))}function u(n,r,i){if(!s||e){var o=s;s=!0;try{t.emit(n,r,i,e)}catch(a){l([a,n,r,i])}s=o}}function d(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){l([r])}for(var i in t)c.call(t,i)&&(e[i]=t[i]);return e}function l(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=i),n.inPlace=f,n.flag=a,n}},{}]},{},["loader",2,12,4,3]);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta property="fb:admins" content="100008016031098" />
+  <meta name="google-site-verification" content="64YzaSIKUvOcgG1DccSNNzlWDqXwjSx4lDDgbgtDLJE" />
+  <!--[if IE]><![endif]-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="article:author" content="Claudia Tan" />
+<link rel="shortcut icon" href="https://www.businesstimes.com.sg/sites/default/files/favicon-5.png" type="image/png" />
+<meta name="article:published_time" content="2020-10-14T05:50:00+08:00" />
+<meta name="article:sph-accessflag" content="0" />
+<meta name="article:modified_time" content="2020-10-14T16:54:03+08:00" />
+<meta name="article_tags" content="" />
+<link rel="image_src" href="https://www.businesstimes.com.sg/sites/default/files/styles/article_img_retina/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=yqt0De4l" />
+<meta name="author" content="Claudia Tan" />
+<meta name="article:description" content="SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 &quot;severely disrupted&quot; all business segments including property, which has been a key revenue driver for the group as its media business remains challenged amid declines in advertising revenue.
+" />
+<meta name="article_id" content="318187" />
+<meta name="article:articleid" content="318187" />
+<meta name="article:title" content="S$232m fair value loss pushes SPH into the red for first time" />
+<link rel="image_src" href="https://www.businesstimes.com.sg/sites/all/themes/custom/businesstimes/images/BTdefault800.png" />
+<meta name="articleid" content="318187" />
+<link rel="amphtml" href="https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time?amp" />
+<script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time"
+    },
+    "headline": "S$232m fair value loss pushes SPH into the red for first time",
+    "datePublished": "2020-10-14T05:50:00+08:00",
+    "dateModified": "2020-10-14T16:54:03+08:00",
+    "image": [
+        "https://www.businesstimes.com.sg/sites/default/files/styles/article_img_retina/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg"
+    ],
+    "publisher": {
+        "@type": "Organization",
+        "name": "The Business Times",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.businesstimes.com.sg/sites/default/files/styles/amp_metadata_logo_600x60/public/bt-logo-72.png?itok=TQjdkEfZ"
+        }
+    },
+    "author": [
+        {
+            "@type": "Person",
+            "name": "Claudia Tan"
+        }
+    ],
+    "description": "SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 \u0022severely disrupted\u0022 all business segments including property, which has been a key revenue driver for the group as its media business remains challenged amid declines in advertising revenue.\n"
+}</script>
+<meta name="article:pageclass" content="article" />
+<meta name="description" content="SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 &quot;severely disrupted&quot; all business segments including property, which has been a key revenue driver for the group as its media business remains challenged amid declines in advertising revenue. Read more at The Business Times." />
+<meta name="keywords" content="SPH, financial results, student accommodation, media" />
+<meta name="article:sph-keywords" content="SPH,financial results,student accommodation,media" data-separator="," />
+<meta name="news_keywords" content="SPH, financial results, student accommodation, media" />
+<meta property="created" content="1602625800" />
+<meta property="updated" content="1602665643" />
+<meta property="og:image:height" content="509" />
+<meta property="og:image" content="https://www.businesstimes.com.sg/sites/default/files/styles/article_img_retina/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=yqt0De4l" />
+<meta property="og:image:width" content="763" />
+<link rel="image_src" href="https://www.businesstimes.com.sg/sites/default/files/styles/article_img_retina/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg" />
+<link rel="canonical" href="https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" />
+<meta property="fb:pages" content="288031731262011" />
+<link rel="shortlink" href="https://www.businesstimes.com.sg/node/318187" />
+<meta property="fb:app_id" content="328386607332790" />
+<meta property="og:site_name" content="The Business Times" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="S$232m fair value loss pushes SPH into the red for first time" />
+<meta property="og:url" content="https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" />
+<meta property="og:description" content="SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 &quot;severely disrupted&quot; all business segments including property, which has been a key revenue driver for the group as its media business remains challenged amid declines in advertising revenue. Read more at The Business Times." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@BusinessTimes" />
+<meta name="twitter:title" content="S$232m fair value loss pushes SPH into the red for first time, Top" />
+<meta name="twitter:description" content="SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 &quot;severely disrupted&quot; all business segments including property," />
+<meta name="twitter:image" content="https://www.businesstimes.com.sg/sites/default/files/styles/article_img_retina/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg" />
+<meta name="twitter:app:country" content="US" />
+<meta name="twitter:app:id:iphone" content="531275824" />
+<meta name="twitter:app:url:iphone" content="com.sph.bt://url=https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" />
+<meta name="twitter:app:id:ipad" content="531283825" />
+<meta name="twitter:app:url:ipad" content="com.sph.bt://url=https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" />
+<meta name="twitter:app:id:googleplay" content="com.ps.bt" />
+<meta name="twitter:app:url:googleplay" content="com.sph.bt://url=https://www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" />
+<meta name="sector" content="News" />
+<meta name="industry" content="NA" />
+<meta name="sentiment" content="Neutral" />
+  <title>S$232m fair value loss pushes SPH into the red for first time, Companies & Markets - THE BUSINESS TIMES</title>
+
+  <!-- Mobile icons for iOS 7 or prior (legacy) -->
+  <link rel="apple-touch-icon" sizes="144x144" href="/icons/bt-apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/icons/bt-apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/icons/bt-apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="/icons/bt-apple-touch-icon-57x57.png">
+
+  <!-- Mobile icons for iOS 8 and later -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/bt-apple-touch-icon-180x180.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/bt-apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/bt-apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/icons/bt-apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/icons/bt-apple-touch-icon-60x60.png">
+
+  <link type="text/css" rel="stylesheet" href="/sites/default/files/advagg_css/css__9cWqptSUNYq5YedfIwh33VxtugFVWjDdEsblT8GhLKI__quUjyhSfbEukHj8a0hYvzm9VTmPALmSZvA0xfM_Oxzo__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="/sites/default/files/advagg_css/css__ciZ2USmhsP49-Kz3wCZomCino4f99FHY3947p35X11k__1CMyuetdJPjWw4rAU-2WFEfvnBBO65Bgw2yOu2qUgF8__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="/sites/default/files/advagg_css/css__fF2imilNogMUwkjvdnvrPAsFbiEr_uo1Yt4VqDFKf-c__trhk9AsmcwhUt56sQsK4VTIRL5AJtIv1vdhNMNR-72g__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="/sites/default/files/advagg_css/css__2GqyO9TNB-0R-l_9t2-nIRWxtKiY0xzg2W9yWVkYz3c__0bkgLr-qZQ4yxGSfG8SzHISby_BepYhvirNscHaB12k__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="/sites/default/files/advagg_css/css__7dbnB1CcwSqw08q6q2LaZ0KPTDZCuLjJ3MepLbYSqQc__s1PpYrVQTyJ97VRrUfAjHt2fQTTigACgdS9-n0CEEKs__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.css" media="all" />
+  <link
+    href='https://fonts.googleapis.com/css?family=Poppins:600|Raleway:700|Open+Sans:300,400,600,700,700i,400i,300i|Lato:400,700|Playfair+Display:400,700,700italic,400italic|PT+Sans:400,400i,700,700i|PT+Serif:400,400i,700,700i|Heebo:500,700'
+    rel='stylesheet' type='text/css'>
+  <!-- HTML5 element support for IE6-8 //-->
+  <!--[if lte IE 8]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+
+  <!-- Google Optimize  -->
+  <style>
+  .async-hide {
+    opacity: 0 !important
+  }
+  </style>
+  <script>
+  (function(a, s, y, n, c, h, i, d, e) {
+    s.className += ' ' + y;
+    h.start = 1 * new Date;
+    h.end = i = function() {
+      s.className = s.className.replace(RegExp(' ?' + y), '')
+    };
+    (a[n] = a[n] || []).hide = h;
+    setTimeout(function() {
+      i();
+      h.end = null
+    }, c);
+    h.timeout = c;
+  })(window, document.documentElement, 'async-hide', 'dataLayer', 4000, {
+    'GTM-TD3P2LC': true
+  });
+  </script>
+
+  <!-- [start] asean/garage widget -->
+  <script>
+  window.showAseanGarage = true;
+  if (document.cookie.indexOf("topoverlayDisplayed=") == -1) {
+    window.showAseanGarage = false;
+  }
+  </script>
+  <!-- [end] asean/garage widget -->
+
+  <!-- Modified Analytics tracking code with Optimize plugin -->
+  <script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+  ga('create', 'UA-21603044-1', 'auto');
+  ga('require', 'GTM-TD3P2LC');
+  </script>
+  <!-- End Google Optimize -->
+
+  <!-- Google Tag Manager -->
+  <script>
+  (function(w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({
+      'gtm.start': new Date().getTime(),
+      event: 'gtm.js'
+    });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != 'dataLayer' ? '&l=' + l : '';
+    j.async = true;
+    j.src =
+      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-WH9XNQW');
+  </script>
+  <!-- End Google Tag Manager -->
+  <!-- [start] PRE-BID TAGS -->
+    <script>
+  var articlepage = 1;
+  </script>
+  
+  <!-- For ads -->
+  <script type="text/javascript">
+  var show_overlay = 0;
+  /** Get cookie by name */
+  window.getCookieByName = function(name) {
+    match = document.cookie.match(new RegExp(name + '=([^;]+)'));
+    if (match) return match[1];
+  }
+
+  var overlay_validity = 4;
+  var catfish_validity = 4;
+  var postitial_validity = 4;
+  var topOverlayImpressions = 3;
+  var topOverlayImpressionsServed = 0;
+
+  if (window.getCookieByName("topOverlayImpressionsServed") != undefined) {
+    var topOverlayImpressionsServed = parseInt(window.getCookieByName("topOverlayImpressionsServed"));
+  }
+
+  if (window.getCookieByName("mySPHUserType") != undefined) {
+    topOverlayImpressionsServed = 2;
+  }
+  </script>
+
+  <!-- START SMX -->
+    <script type="text/javascript">
+  var loaded_dfp_tags = '{"imu2":{"adunit":"\/5908\/bt\/imu2\/companies-markets","slotname":"dfp-ad-imu2","size":"300x250, 300x600"},"imu1":{"adunit":"\/5908\/bt\/imu1\/companies-markets","slotname":"dfp-ad-imu1","size":"fluid,300x250"},"midarticlespecial":{"adunit":"\/5908\/bt\/midarticlespecial\/companies-markets","slotname":"dfp-ad-midarticlespecial","size":"1x1,fluid,640x480,300x169,300x225,480x270,480x360,640x360"},"lb1":{"adunit":"\/5908\/bt\/lb1\/companies-markets","slotname":"dfp-ad-lb1","size":"970x90,728x90,970x250,320x50,320x100,320x250"},"catfish":{"adunit":"\/5908\/bt\/catfish\/companies-markets","slotname":"dfp-ad-catfish","size":"1x1"},"prestitial":{"adunit":"\/5908\/bt\/prestitial\/companies-markets","slotname":"dfp-ad-prestitial","size":"1x1"}}';
+  </script>
+  <!-- END SMX -->
+  <script>
+  var outbrain_enable = 1;
+  </script>
+  <script src="//www.googletagservices.com/tag/js/gpt.js"></script>
+  <script src="//adtag.sphdigital.com/tag/smx/prebid.js"></script>
+  <script src="//adtag.sphdigital.com/tag/smx/smx_prebid.js"></script>
+
+  <!-- [end] PRE-BID TAGS -->
+
+  <!-- QueryDFP preview-->
+  <script type="text/javascript">
+  function querydfp_preview(e) {
+    for (var n, r = new RegExp("(?:\\?|&)" + e + "=(.*?)(?=&|$)", "gi"), c = []; null != (n = r.exec(document.location
+        .search));) c[c.length] = n[1];
+    return c
+  }
+  var dfp_preview_ids = querydfp_preview('dfp_preview');
+  </script>
+  <!-- QueryDFP preview -->
+
+  <!-- Get referrer -->
+  <script type="text/javascript">
+  function getreferrer() {
+    var e = "direct",
+      r = "";
+    return document.referrer.split("/")[2] && (r = document.referrer.split("/")[2], e = /google/i.test(r) ? "google" :
+      /facebook/i.test(r) ? "facebook" : "others"), e
+  }
+  var tarref = getreferrer();
+  </script>
+  <!-- Get referrer -->
+
+  <script type="text/javascript" src="/sites/default/files/advagg_js/js__8c_EPWbFb6mspxIs2B3rW40hmuSM_PDqlaeGNbhqaoc__cF4r9ykoSmuvBlskdYkpwHuXe0yTMIPBYdr_U9eoDaY__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var gs_channels='no_category'; gs_channels=['gs_business_misc','gs_covid19','gs_home_property'];
+
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+googletag.slots = googletag.slots || {};
+//--><!]]>
+</script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__9ici6QMeDS-cROq8R0RhuICsMGMP2wcJZNQQFsqQi44__kScSwG4RXGl1LXnj4qqt0ZxtNX4Gh2TK5W-o8Uup4SA__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__zXZ0Yvy42K7udiW5xjyBxeZBj8Wep4qhDMuxmxHlWxQ___JoZKG2tX2dF8fiXLh0LcjlTpf6fXM6wzAygSAqDjUI__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+googletag.cmd.push(function() {
+var mapping = googletag.sizeMapping()
+  .addSize([1024, 0], [[970, 90], [728, 90], [970, 250]])
+  .addSize([740, 0], [728, 90])
+  .addSize([320, 0], [[320, 50], [320, 100], [320, 250]])
+  .addSize([0, 0], [[320, 50], [320, 100], [320, 250]])
+  .build();
+googletag.slots["lb1"] = googletag.defineSlot("/5908/bt/lb1/companies-markets", [[970, 90], [728, 90], [970, 250], [320, 50], [320, 100], [320, 250]], "dfp-ad-lb1")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "1")
+  .setTargeting("btprint", "1")
+  .setTargeting("weight", "1")
+  .defineSizeMapping(mapping);});
+
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var show_catfish=0; if (document.cookie.indexOf("catfishDisplayed=") == -1 || (dfp_preview_ids!= undefined && dfp_preview_ids.length!=0) ) { if(screen.width<=740) { googletag.cmd.push(function() {
+googletag.slots["catfish"] = googletag.defineSlot("/5908/bt/catfish/companies-markets", [1, 1], "dfp-ad-catfish")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "catfish")
+  .setTargeting("weight", "3")
+  .setTargeting("btprint", "1");});
+expiry = new Date();expiry.setTime(expiry.getTime() + (catfish_validity*60*60*1000));
+                document.cookie = "catfishDisplayed=yes;path=/; expires=" + expiry.toGMTString(); show_catfish=1;}}
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+
+        var show_overlay=0;
+        if ( topOverlayImpressionsServed < topOverlayImpressions && document.cookie.indexOf("topoverlayDisplayed=") == -1 || (dfp_preview_ids!= undefined && dfp_preview_ids.length!=0 ) ) {
+          if ( screen.width > 740) { googletag.cmd.push(function() {
+googletag.slots["prestitial"] = googletag.defineSlot("/5908/bt/prestitial/companies-markets", [1, 1], "dfp-ad-prestitial")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "prestitial")
+  .setTargeting("btprint", "1")
+  .setTargeting("weight", "3");});
+expiry = new Date();
+            expiry.setTime(expiry.getTime() + (overlay_validity*60*60*1000));
+            topOverlayImpressionsServed++;
+
+            if ( topOverlayImpressionsServed == topOverlayImpressions) {
+              document.cookie = "topoverlayDisplayed=yes;path=/; expires=" + expiry.toGMTString();
+              document.cookie = "topOverlayImpressionsServed=0;path=/; expires=" + expiry.toGMTString();
+            }
+            else {
+              document.cookie = "topOverlayImpressionsServed="+topOverlayImpressionsServed+";path=/; expires=" + expiry.toGMTString();
+            }
+
+            show_overlay=1;
+          }
+        }
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+googletag.cmd.push(function() {
+googletag.slots["midarticlespecial"] = googletag.defineSlot("/5908/bt/midarticlespecial/companies-markets", [[1, 1], 'fluid', [640, 480], [300, 169], [300, 225], [480, 270], [480, 360], [640, 360]], "dfp-ad-midarticlespecial")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "midarticlespecial")
+  .setTargeting("btprint", "1")
+  .setTargeting("weight", "4");});
+
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+googletag.cmd.push(function() {
+googletag.slots["imu1"] = googletag.defineSlot("/5908/bt/imu1/companies-markets", ['fluid', [300, 250]], "dfp-ad-imu1")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "1")
+  .setTargeting("btprint", "1")
+  .setTargeting("weight", "5");});
+
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+googletag.cmd.push(function() {
+googletag.slots["imu2"] = googletag.defineSlot("/5908/bt/imu2/companies-markets", [[300, 250], [300, 600]], "dfp-ad-imu2")
+  .addService(googletag.pubads())
+  .setTargeting("pos", "2")
+  .setTargeting("btprint", "1")
+  .setTargeting("weight", "6");});
+
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+
+    googletag.cmd.push(function() {
+      googletag.pubads().setTargeting("gs_channels", gs_channels);
+    });
+    var viewPortTag=document.createElement('meta');
+    viewPortTag.id="grapeshot";
+    viewPortTag.name = "grapeshot_tag";
+    viewPortTag.property = "grapeshot_tag";
+    viewPortTag.content = gs_channels;
+    document.getElementsByTagName('head')[0].appendChild(viewPortTag);
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+document.createElement( "picture" );
+//--><!]]>
+</script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__itVlJRiBWUIzduiCTp-9doIUL_kQmVr1D-3t1TZAAog__mern2tsMfxus6yHm_299LbQeQ_45fMbmxj5jdr9NyFs__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+googletag.cmd.push(function() {
+  googletag.pubads().enableAsyncRendering();
+  googletag.pubads().enableSingleRequest();
+  googletag.pubads().collapseEmptyDivs();
+  googletag.pubads().setTargeting("btarticleid", "318187");
+  googletag.pubads().setTargeting("bttags", ["SPH","financial results","student accommodation","media"]);
+ /** START BETTER AD CHANGES */  
+googletag.pubads().addEventListener('slotRenderEnded', function(event) { 
+    if(googletag.slots["prestitial"] == event.slot || googletag.slots["asean_prestitial"] == event.slot ) { 
+                console.log("Better Ad -  slotRenderEnded Event");
+                console.log("slotRenderEnded event.isEmpty - " + event.isEmpty);
+      if (event.isEmpty){   console.log("event.isEmpty " + event.isEmpty);
+        document.getElementById("MyPageOverlay").className = "";    
+        reloadScrollBars();
+      } else {    console.log("Kill the prestitial_timer");
+        //Kill the prestitial_timer  
+        window.clearTimeout(prestitial_timer);
+      }
+    }
+  });
+ googletag.pubads().setTargeting("referrer", tarref);
+ /** END BETTER AD CHANGES */  
+
+function getMetatagContent(name) { 
+   var metas = document.getElementsByTagName('meta'); 
+
+   for (var i=0; i<metas.length; i++) { 
+      if (metas[i].getAttribute("name") == name ) { 
+         return metas[i].getAttribute("content"); 
+      } 
+   } 
+    return "";
+}
+var articleid = getMetatagContent( "article_id" );
+var articletags = getMetatagContent( "article_tags" );
+if( articleid && window.location.href.indexOf("asean-business") > -1) {
+  googletag.pubads().setTargeting( "articleid", "ab_" + articleid );
+  googletag.pubads().setTargeting( "tag", articletags );
+}
+
+if (articleid ) {
+  googletag.pubads().setTargeting("page", "article");
+}
+googletag.enableServices();});
+
+//--><!]]>
+</script>
+<script type="text/javascript" src="/sites/all/themes/custom/businesstimes/js/ads_checker.js?qi1owq"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var ad_blocker = 0; if(typeof ads_enabled == "undefined"){ ad_blocker = 1 }; var data4 = {"adblocker": ad_blocker};
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var data3 = {mc: "", np: ""};
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+  (function ($) {
+      jQuery.ajax({
+        type: 'POST',
+        url: '/ldap/details',
+        dataType: 'json',
+        cache: true,
+        async: false,
+        beforeSend: function (){},
+        success: function (data) {
+          ac = data.service_type; visitorcat = data.service_type;
+          at = data.ldapw;
+          if(at == "undefined" || typeof at === "undefined") {
+            at = "";
+            visitorcat = 1;
+          }
+
+          // DMP
+          var meta = document.createElement('meta');
+          meta.id = 'ldapw';
+          meta.name = 'ldapw';
+          meta.content = data.ldapw ? data.ldapw : '';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+        },
+        error: function (){
+          ac = ""; visitorcat = 1; at = "";
+
+          // DMP
+          var meta = document.createElement('meta');
+          meta.id = 'ldapw';
+          meta.name = 'ldapw';
+          meta.content = '';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+        }
+      });
+  })(jQuery);var data1 = {ac: ac, at: at, visitorcat: visitorcat};var data2 = {"homepage":false,"title":"S$232m_fair_value_loss_pushes_SPH_into_the_red_for_first_time","contentcat":1,"contenttype_ga":"article","contenttype":1,"articleid":"318187","pubdate":"2020-10-14 05:50:00","chapter1":"Companies_Markets, Top_Stories, Real_Estate","level2":"18","author":"Claudia Tan","printcat":"true","dfp":{"section":"companies-markets","adunit":{"topspecial":null,"bottomspecial":null}},"data-widget-id-ar":"AR_1","data-widget-id-sb":"SB_1","keyword":"sph,financial results,student accommodation,media"};var _data = jQuery.extend( true, data1, data2, data3, data4);
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var localStoragePid = window.localStorage.getItem("_cc_id") || "";
+//--><!]]>
+</script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__iK8jxmagQ5Ty2udWOmSKj9XLKqR7AAOX43HfJ8UZFE8__HrkVXFbD6JLsMLv2SjQn5GOuecalnAdzDyzl2eMvFPs__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript" src="//adtag.sphdigital.com/tag/bt/js/bt_tags.js"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__QlY__jNJAs-GEFVa22KCtLNQH507DJXJUdF8llc_nMg__O56mKj4tDIIKDodyM-JRL7gSk-cAQOvv-EKMSaWe2Ik__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__15qMXDc1WIO_1zIlUZBX4qEFJAv0dl3ncJ8t0F5uSaE__p_VN8tkrkcD3BcitrklqEkAQyBdjvRE2RqKUO8sLEvs__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__Squ_SCHAffBRphRYgFp3xg7eHIR_SwciWlcHkKAUmlk__xWOlPCFkqAwkQIkxL6B8K5C1v7mKPTc5lORfMQvaXOE__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+<!-- Facebook Pixel Code -->
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','//connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '1714621078759983');
+fbq('track', "PageView");
+<!-- End Facebook Pixel Code -->
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var scriptTag = document.createElement('SCRIPT');
+scriptTag.src = '//cdn.optimizely.com/js/8478633212.js';
+document.head.appendChild(scriptTag);
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"businesstimes","theme_token":"cfrQRUsLAQVX1hxlRyCmtPMR0gBv7DAxWhQGj7qGGQM","css":{"modules\/system\/system.base.css":1,"misc\/ui\/jquery.ui.core.css":1,"misc\/ui\/jquery.ui.theme.css":1,"misc\/ui\/jquery.ui.tabs.css":1,"misc\/ui\/jquery.ui.accordion.css":1,"sites\/all\/modules\/contrib\/cache_consistent\/css\/cache_consistent.css":1,"sites\/all\/modules\/contrib\/date\/date_api\/date.css":1,"sites\/all\/modules\/contrib\/date\/date_popup\/themes\/datepicker.1.7.css":1,"sites\/all\/modules\/contrib\/date\/date_repeat_field\/date_repeat_field.css":1,"modules\/field\/theme\/field.css":1,"sites\/all\/modules\/contrib\/iib\/css\/iib.css":1,"sites\/all\/modules\/contrib\/scald\/modules\/fields\/mee\/css\/editor-global.css":1,"modules\/node\/node.css":1,"sites\/all\/modules\/contrib\/panopoly_theme\/css\/panopoly-featured.css":1,"sites\/all\/modules\/contrib\/panopoly_theme\/css\/panopoly-accordian.css":1,"sites\/all\/modules\/contrib\/picture\/picture_wysiwyg.css":1,"sites\/all\/modules\/custom\/sph_ubs\/.\/css\/sph_ubs.css":1,"sites\/all\/modules\/contrib\/views\/css\/views.css":1,"sites\/all\/modules\/contrib\/back_to_top\/css\/back_to_top.css":1,"sites\/all\/modules\/contrib\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/libraries\/bootstrap\/css\/bootstrap.min.css":1,"sites\/all\/libraries\/bootstrap\/css\/bootstrap-theme.min.css":1,"sites\/all\/modules\/contrib\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/contrib\/formtips\/formtips.css":1,"sites\/all\/modules\/contrib\/linkedin\/linkedin_status\/linkedin_status.css":1,"sites\/all\/modules\/contrib\/oembed\/oembed.base.css":1,"sites\/all\/modules\/contrib\/oembed\/oembed.theme.css":1,"sites\/all\/modules\/contrib\/panels\/css\/panels.css":1,"sites\/all\/modules\/contrib\/rate\/rate.css":1,"sites\/all\/themes\/custom\/businesstimes\/js\/magnific-popup\/magnific-popup.css":1,"sites\/all\/themes\/custom\/businesstimes\/css\/style.css":1},"js":{"sites\/all\/modules\/contrib\/picture\/picturefill2\/picturefill.js":1,"sites\/all\/modules\/contrib\/picture\/picture.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/businesstimes-article.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/magnific-popup\/jquery.magnific-popup.js":1,"sites\/all\/themes\/contrib\/bootstrap\/js\/bootstrap.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery\/1.10\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/ui\/minified\/jquery.ui.core.min.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/ui\/minified\/jquery.ui.widget.min.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/ui\/minified\/jquery.ui.effect.min.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/ui\/minified\/jquery.ui.tabs.min.js":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/ui\/ui\/minified\/jquery.ui.accordion.min.js":1,"sites\/all\/modules\/contrib\/admin_menu\/admin_devel\/admin_devel.js":1,"sites\/all\/modules\/contrib\/panopoly_theme\/js\/panopoly-accordion.js":1,"sites\/all\/modules\/custom\/sph_ubs\/.\/js\/sph_ubs.js":1,"sites\/all\/modules\/contrib\/back_to_top\/js\/back_to_top.js":1,"\/sites\/all\/themes\/custom\/businesstimes\/js\/ads_checker.js":1,"sites\/all\/libraries\/bootstrap\/js\/bootstrap.min.js":1,"sites\/all\/modules\/contrib\/formtips\/hoverintent.minified.js":1,"sites\/all\/modules\/contrib\/formtips\/formtips.js":1,"sites\/all\/modules\/contrib\/scald\/modules\/providers\/scald_image\/scald_image.js":1,"misc\/autocomplete.js":1,"\/\/adtag.sphdigital.com\/tag\/bt\/js\/bt_tags.js":1,"sites\/all\/modules\/contrib\/field_group\/field_group.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/jquery.marquee.min.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/typekit.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/businesstimes.js":1,"sites\/all\/themes\/custom\/businesstimes\/js\/affix.js":1,"sites\/all\/themes\/contrib\/bootstrap\/js\/misc\/autocomplete.js":1}},"formtips":{"selectors":[""],"interval":"0","sensitivity":"3","timeout":"0","max_width":"500px","trigger_action":"hover"},"field_group":{"div":"news_article","html-element":"news_article"},"urlIsAjaxTrusted":{"\/":true},"better_exposed_filters":{"views":{"articles":{"displays":{"panel_pane_35":{"filters":{"field_tags_tid":{"required":false}}}}},"recommended":{"displays":{"panel_pane_2":{"filters":[]}}},"supplement":{"displays":{"supplement_header_and_main_sponsor":{"filters":[]}}},"more":{"displays":{"related_articles_v2":{"filters":[]}}}}},"back_to_top":{"back_to_top_button_trigger":"100","back_to_top_button_text":"Back to top","#attached":{"library":[["system","ui"]]}},"bootstrap":{"anchorsFix":1,"anchorsSmoothScrolling":1,"formHasError":1,"popoverEnabled":1,"popoverOptions":{"animation":1,"html":0,"placement":"right","selector":"","trigger":"click","triggerAutoclose":1,"title":"","content":"","delay":0,"container":"body"},"tooltipEnabled":1,"tooltipOptions":{"animation":1,"html":0,"placement":"auto left","selector":"","trigger":"hover focus","delay":0,"container":"body"}}});
+//--><!]]>
+</script>
+
+  <!-- Begin Lotame ID -->
+  <link rel="preconnect" href="https://tags.crwdcntrl.net" />
+  <link rel="preconnect" href="https://bcp.crwdcntrl.net" />
+  <link rel="dns-prefetch" href="https://tags.crwdcntrl.net" />
+  <link rel="dns-prefetch" href="https://bcp.crwdcntrl.net" />
+
+  <script>
+    try {
+      var storedAuds = window.localStorage.getItem("lotame_4342_auds") || "";
+      if (storedAuds) {
+        googletag.cmd.push(function () {
+          window.googletag.pubads().setTargeting("audid", storedAuds.split(","));
+        });
+      }
+
+      var localStoragePid = window.localStorage.getItem("_cc_id") || "";
+      if (localStoragePid) {
+        googletag.cmd.push(function () {
+          window.googletag.pubads().setTargeting("dfp_cc_id", localStoragePid);
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    // Callback when targeting audience is ready to push latest audience data
+    var audienceReadyCallback = function (profile) {
+      // Get audiences as an array
+      var lotameAudiences = profile.getAudiences() || [];
+
+      // Set the new target audiences for call to Google
+      googletag.cmd.push(function () {
+        window.googletag.pubads().setTargeting("audid", lotameAudiences);
+      });
+
+      var lotamePid = profile.getProfileId() || "";
+      if (lotamePid) {
+        googletag.cmd.push(function () {
+          window.googletag.pubads().setTargeting("dfp_cc_id", lotamePid);
+        });
+      }
+    };
+
+    var data = null;
+    if (_data.at) {
+      data = {
+        behaviors: {
+          int: ["A1ldap"]
+        },
+        ruleBuilder: {
+          bt_ldapType: [_data.visitorcat.toString()]
+        },
+        thirdParty: {
+          namespace: "SPHN",
+          value: _data.at    // ldap hashed id
+        }
+      }
+    }
+
+    // Lotame config
+    var lotameClientId = "4342";
+    var lotameTagInput = {
+      data: data,
+      config: {
+        clientId: Number(lotameClientId),
+        // audiences will write to localStorage under the key lotame_4342_auds
+        audienceLocalStorage: true,
+        onProfileReady: audienceReadyCallback
+      }
+    };
+
+    // Lotame initialization
+    var lotameConfig = lotameTagInput.config || {};
+    var namespace = window["lotame_" + lotameConfig.clientId] = {};
+    namespace.config = lotameConfig;
+    namespace.data = lotameTagInput.data || {};
+    namespace.cmd = namespace.cmd || [];
+  </script>
+
+  <script async src="https://tags.crwdcntrl.net/lt/c/4342/lt.min.js"></script>
+  <!-- End Lotame ID -->
+
+  <!--Visual Revenue Reader Response Tracking Script (v6) -->
+  
+  <!--Smart App Banner implementation -->
+  <script type="text/javascript">
+  if (/(iPad).*AppleWebKit.*Mobile.*Safari/.test(navigator.userAgent)) {
+    var headNode = document.getElementsByTagName("head")[0];
+    var sbNode = document.createElement('meta');
+    sbNode.name = 'apple-itunes-app';
+    sbNode.content = 'app-id=531283825';
+    headNode.appendChild(sbNode);
+  } else if (/(iPhone|iPod).*AppleWebKit.*Mobile.*Safari/.test(navigator.userAgent)) {
+    var headNode = document.getElementsByTagName("head")[0];
+    var sbNode = document.createElement('meta');
+    sbNode.name = 'apple-itunes-app';
+    sbNode.content = 'app-id=531275824';
+    headNode.appendChild(sbNode);
+  }
+  </script>
+
+  <script src="/sites/all/themes/custom/businesstimes/js/ads_checker.js"></script>
+  <!--End -->
+
+  <!--Web Push Notification-->
+    <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+  <script>
+  var OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "fb44e344-8dc0-48e7-8bf5-63be6a351f6b",
+    });
+  });
+  </script>
+  <!-- End Web Push Notification-->
+
+
+  <!--Start - Remove subscribe and google play -->
+    <!--End - Remove subscribe and google play -->
+
+
+
+  <!--Better ad implementation-->
+  <script type="text/javascript">
+  var postitial_redirecturl;
+  var prestitial_timer;
+
+  function reloadScrollBars() {
+    document.documentElement.style.overflowY = 'auto'; // firefox, chrome
+    if (navigator.appVersion.indexOf("MSIE") != -1) {
+      document.body.scroll = "yes";
+    } // ie only
+  }
+
+  function unloadScrollBars() {
+    prestitial_timer = window.setTimeout(continueToSite, 15000);
+
+    document.documentElement.style.overflowY = 'hidden'; // firefox, chrome
+    if (navigator.appVersion.indexOf("MSIE") != -1) {
+      document.body.scroll = "no";
+    } // ie only
+  }
+
+  function continueToSite() {
+    document.getElementById("MyPageOverlay").className = "";
+    reloadScrollBars();
+  }
+
+  function kill_postitial() {
+    window.location.href = postitial_redirecturl;
+  }
+
+  window.addEventListener('message', closetopoverlay, false);
+
+  function closetopoverlay(evt) {
+
+    if (evt.data == 'close' || evt.data == 'bz-interstitial-close') {
+      console.log("close event called");
+      if (postitial_redirecturl) {
+        window.location.href = postitial_redirecturl;
+      } else {
+        document.getElementById("MyPageOverlay").className = "";
+        reloadScrollBars();
+      }
+    }
+  }
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  var postitial_redirecturl;
+
+  function bindPostitial() {
+    console.log("bindPostitial");
+    //googletag.destroySlots([googletag.slots["topoverlay"]])
+    document.addEventListener('click', function(event) {
+      console.log("click event called");
+      var anchor = event.target.closest("a"); // Find closest Anchor (or self)
+      var currentdomain = window.location.href.split('/')[2];
+
+      if (anchor !== null) {
+        var anchorHref = anchor.getAttribute('href');
+
+        if (!getParameterByName("page", anchorHref) && !getParameterByName("itok", anchorHref)) {
+          console.log(anchorHref);
+          if (anchorHref.indexOf(currentdomain) !== -1 || anchorHref.charAt(0) == "/" || anchorHref.match(
+              /http(s)*\:\/\/traffic.outbrain.com\//) != null) {
+            event.preventDefault(); // Don't navigate!
+            postitial_redirecturl = anchorHref;
+            console.log(postitial_redirecturl);
+            var dfpadunits = JSON.parse(loaded_dfp_tags);
+            var dynamic_postitial = dfpadunits['lb1']['adunit'];
+            if (typeof dynamic_postitial !== "undefined") {
+              console.log("dynamic_postitial");
+              dynamic_postitial = dynamic_postitial.replace("/lb1/", "/postitial/");
+
+
+              if (topOverlayImpressionsServed < topOverlayImpressions && document.cookie.indexOf(
+                  "postitialDisplayed=") == -1 || (dfp_preview_ids != undefined && dfp_preview_ids.length != 0)) {
+                document.getElementById("MyPageOverlay").className = "overlayWhite";
+                googletag.cmd.push(function() {
+                  var slot_topoverlay = googletag.defineSlot(dynamic_postitial, [1, 1], 'postitial_holder')
+                    .addService(googletag.pubads()).setTargeting("pos", "postitial");
+
+                  if (document.body.classList.contains('node-type-article') == true) {
+                    slot_topoverlay.setTargeting("bttags", googletag["slots"].lb1.getTargeting("bttags"));
+                    slot_topoverlay.setTargeting("btarticleid", googletag["slots"].lb1.getTargeting(
+                      "btarticleid"));
+                    slot_topoverlay.setTargeting("gs_channels", googletag["slots"].lb1.getTargeting(
+                      "gs_channels "));
+                  }
+
+                  googletag.pubads().addEventListener('slotRenderEnded', function(eventtopoverlay) {
+                    if (slot_topoverlay == eventtopoverlay.slot) {
+                      if (eventtopoverlay.isEmpty) {
+                        console.log("empty postitial");
+                        window.location.href = postitial_redirecturl;
+                      } else {
+                        var expiry = new Date();
+                        expiry.setTime(expiry.getTime() + (postitial_validity * 60 * 60 * 1000));
+                        topOverlayImpressionsServed++;
+
+                        if (topOverlayImpressionsServed == topOverlayImpressions) {
+                          document.cookie = "postitialDisplayed=yes;path=/; expires=" + expiry
+                            .toGMTString();
+                          document.cookie = "topOverlayImpressionsServed=0;path=/; expires=" + expiry
+                            .toGMTString();
+                        } else {
+                          document.cookie = "topOverlayImpressionsServed=" + topOverlayImpressionsServed +
+                            ";path=/; expires=" + expiry.toGMTString();
+                        }
+
+                        window.clearTimeout(postitial_timer);
+                      }
+                    }
+                  });
+                  googletag.cmd.push(function() {
+                    googletag.display('postitial_holder');
+                    googletag.pubads().refresh([slot_topoverlay], {
+                      changeCorrelator: false
+                    });
+                  });
+                });
+              } else {
+                console.log("Postitial frequency cap from cookie");
+                window.location.href = postitial_redirecturl;
+              }
+              var postitial_timer = window.setTimeout(kill_postitial, 15000);
+            }
+          } else {
+            event.returnValue = true;
+          }
+        }
+      }
+
+    }, true);
+  }
+
+  if (window.ads_enabled !== undefined && screen.width <= 740) {
+    bindPostitial();
+  }
+  </script>
+  <style>
+  .overlayWhite {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 10000001;
+    top: 0;
+    left: 0;
+    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 1);
+    overflow-y: hidden;
+  }
+  </style>
+  <!--Better ad implementation End-->
+
+  <!-- MYSPH login popup
+  <script type="text/javascript">var myObj;</script>-->
+</head>
+
+<body class="html not-front not-logged-in no-sidebars page-node page-node- page-node-318187 node-type-article news-article beta role-anonymous-user" >
+
+  <!--Better ad implementation Start-->
+  <div id="MyPageOverlay"></div>
+  <div id="postitial_holder" style="padding:1px;"></div>
+
+  <script>
+  if (window.ads_enabled !== undefined && (show_overlay == 1 || (dfp_preview_ids != undefined && dfp_preview_ids
+      .length != 0)) && screen.width > 740) {
+    document.getElementById("MyPageOverlay").className = "overlayWhite";
+    unloadScrollBars();
+  }
+  </script>
+  <!--Better ad implementation End-->
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WH9XNQW" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+    <div id="dfp-ad-prestitial-wrapper" class="dfp-tag-wrapper">
+    <div id="dfp-ad-prestitial" class="dfp-tag-wrapper">
+      <script type="text/javascript">
+      if (window.ads_enabled !== undefined && (show_overlay == 1 || (dfp_preview_ids != undefined && dfp_preview_ids
+          .length != 0)) && screen.width > 740) {
+        googletag.cmd.push(function() {
+          googletag.display("dfp-ad-prestitial");
+        });
+      }
+      </script>
+    </div>
+  </div>
+    <!-- mySPH++ alert Start-->
+  <div class="hidden mysph-unverified alert">
+    <a class="close" data-dismiss="alert" href="#">×</a>
+    <p><i class="text-red fa fa-bell"></i> Hello, your email is unverified. Please confirm <b
+        class="unverifiedemail"></b> for access to all your SPH accounts. <a
+        class="mysph_verify_email mysph-resend mysph-ga-verify" event-label="Top Banner" href="javascript:;">RESEND
+        VERIFICATION EMAIL</a></p>
+  </div>
+  <!-- mySPH++ alert End-->
+
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible element-focusable">Skip to main content</a>
+  </div>
+    
+
+<header id="navbar" role="banner" class="master-header">
+<div class="container relative">
+
+  <div class="top-first hidden-xs hidden-sm">
+    <div class="society">
+      <div class="google-translate">
+        <style type="text/css">
+          .goog-te-gadget,
+          .goog-te-menu-frame {
+            font-family: inherit !important;
+          }
+
+          .goog-te-gadget-simple {
+            padding:10px;
+            border:0;
+            background-color: transparent;
+          }
+        </style>
+        <div id="google_translate_element"></div>
+        <script type="text/javascript">
+          function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,id,jv,ms,ta,tl,hi,zh-CN,zh-TW', gaTrack: true, gaId: 'UA-21603044-1'}, 'google_translate_element');
+          }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+      </div>
+    </div>
+    <time class="header-date">Wed, Oct 14, 2020</time>
+    <div class="login-info-desktop text-center "></div>
+  </div>
+
+  <div class="top-next visible-md visible-lg
+sub-header-on">
+          <div class="anniversary">
+        <a href="/">
+          <img class="black" src="/sites/all/themes/custom/businesstimes/images/vectors/bt-icon-black.svg" width="190" />
+        </a>
+      </div>
+    
+          <div><h2 class="header-category "><a href="/companies-markets">Companies &amp; Markets</a></h2></div>
+      </div>
+
+</div>
+
+<div class="new-nav-bar fixed-nav-bar ">
+
+  <div>
+          <h2 class="visible-xs visible-sm mobile-header"><a href="/companies-markets">Companies &amp; Markets</a></h2>
+    
+    <div class="top-menu container">
+      <a href="#" class="hamburger-btn btn btn-primary">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <form class="search-form">
+        <div class="search-wrap">
+          <a class="search-close fa fa-times fa-lg hidden"></a>
+          <a class="search-btn fa fa-search fa-lg"></a>
+        </div>
+      </form>
+      <a href="/" class="hidden-md hidden-lg bt-logo hidden-md hidden-lg">
+                  <img src="/sites/all/themes/custom/businesstimes/images/vectors/bt-mobile-icon-white.svg" height="25" />
+              </a>
+      <ul class="list-inline visible-md-flex visible-lg-flex">
+        <li><span id="item1" class="menu-links nolink">ALL NEWS</span></li><li class='hidden-xs hidden-sm'><span id="item2" class="menu-links nolink">WEEKLY</span></li><li><a href="/breaking-news">BREAKING</a></li><li><a href="/todays-paper">TODAY&#039;S PAPER</a></li><li><a href="/lifestyle">LIFESTYLE</a></li><li><a href="/opinion">OPINION</a></li><li><a href="/garage">GARAGE</a></li><li class='hidden-md'><a href="/sme">SME</a></li><li><a href="/asean-business">ASEAN</a></li><li class='hidden-md'><a href="/wealth">WEALTH</a></li><li><a href="/hub">HUB</a></li><li><a href="/notices-announcements" class="hidden">NOTICES</a></li><li class='right menu hidden-md' style='margin-left: auto;'><ul class='list-inline'><li><a href="/podcasts/money-hacks" title="Podcasts" class="fa fa-podcast text-normal fa-lg"></a></li><li><a href="/infographics" title="INFOGRAPHICS" class="fa fa-pie-chart text-normal fa-lg"></a></li><li><a href="/videos" title="VIDEOS" class="fa fa-video-camera text-normal fa-lg"></a></li><li><a href="http://epaper.businesstimes.com.sg" title="E-PAPER" class="fa fa-file-pdf-o text-normal fa-lg" target="_blank"></a></li></ul></li>      </ul>
+    </div>
+
+    <div id="searchbox" style="display:none;">
+      <div class="search-wrapper">
+        <form role="search">
+          <div class="input-group add-on">
+            <input class="form-control" placeholder="Search..." name="search-term" id="search-term" type="text" required>
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="menu" class="hidden">
+
+      <div class="container">
+        <div class="list-group row" id="MainMenu">
+
+          <div class="panel panel-main-1 col-md-8">
+
+            <a href="#menu1" class="list-group-item collapsed hidden-md hidden-lg" data-toggle="collapse" data-parent="#MainMenu">News<span class="menu-arrow-bottom"></span></a>
+            <div id="menu1" class="row">
+
+              <div id="SubMenu" class="col-md-3 main-list">
+                <a href="/breaking-news" target="" class="list-group-item ">BREAKING</a><a href="/todays-paper" target="" class="list-group-item ">TODAY'S PAPER</a><a href="/lifestyle" target="" class="list-group-item ">LIFESTYLE</a><a href="/opinion" target="" class="list-group-item ">OPINION</a><a href="/garage" target="" class="list-group-item ">GARAGE</a><a href="/sme" target="" class="list-group-item hidden-md">SME</a><a href="/asean-business" target="" class="list-group-item ">ASEAN</a><a href="/wealth" target="" class="list-group-item hidden-md">WEALTH</a><a href="/hub" target="" class="list-group-item ">HUB</a><a href="/podcasts/money-hacks" target="" class="list-group-item ">PODCASTS</a><a href="/infographics" target="" class="list-group-item ">INFOGRAPHICS</a><a href="/videos" target="" class="list-group-item ">VIDEOS</a><a href="http://epaper.businesstimes.com.sg" target="_blank" class="list-group-item ">E-PAPER</a><a href="/notices-announcements" target="" class="list-group-item ">NOTICES</a>                <a href="https://www.sgsme.sg/" target="_blank" class="list-group-item">SGSME.SG</a>
+              </div>
+
+              <div id="SubMenu" class="col-md-9">
+                <div class="list-group row" id="SubMenuNav">
+                  <div class="panel panel-news col-md-6">
+                    <a href="#SubMenu1" class="list-group-item collapsed" data-toggle="collapse" data-parent="#SubMenuNav">All News<span class="menu-arrow-bottom"></span></i></a>
+                    <div class="list-group-submenu" id="SubMenu1">
+                      <a href="/top-stories" target="" class="list-group-item ">Top Stories</a><a href="/companies-markets" target="" class="list-group-item ">Companies & Markets</a><a href="/stocks" target="" class="list-group-item ">Stocks</a><a href="/real-estate" target="" class="list-group-item ">Real Estate</a><a href="/banking-finance" target="" class="list-group-item ">Banking & Finance</a><a href="/energy-commodities" target="" class="list-group-item ">Energy & Commodities</a><a href="/technology" target="" class="list-group-item ">Technology</a><a href="/consumer" target="" class="list-group-item ">Consumer</a><a href="/transport" target="" class="list-group-item ">Transport</a><a href="/government-economy" target="" class="list-group-item ">Government & Economy</a><a href="/wealth-investing" target="" class="list-group-item ">Wealth & Investing</a><a href="/leadership-management" target="" class="list-group-item ">Leadership & Management</a><a href="/opinion" target="" class="list-group-item ">Opinion</a><a href="/life-culture" target="" class="list-group-item ">Life & Culture</a><a href="/taking-heart" target="" class="list-group-item ">Taking Heart</a><a href="/focus" target="" class="list-group-item ">Focus</a><a href="/magazines" target="" class="list-group-item ">Magazines</a>                    </div>
+                  </div>
+
+                  <div class="panel panel-weekly col-md-6">
+                    <a href="#SubMenu2" class="list-group-item collapsed" data-toggle="collapse" data-parent="#SubMenuNav">Weekly<span class="menu-arrow-bottom"></span></i></a>
+                    <div class="list-group-submenu" id="SubMenu2">
+                      <a href="/views-from-the-top" target="" class="list-group-item ">Views From the Top</a><a href="/dining-out" target="" class="list-group-item ">Dining Out</a><a href="/sme" target="" class="list-group-item ">SME</a><a href="/the-raffles-conversation" target="" class="list-group-item ">The Raffles Conversation</a><a href="/brunch" target="" class="list-group-item ">Brunch</a>                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="panel panel-main-2 col-md-3 col-md-push-1">
+
+            <a href="/lifestyle" class="list-group-item ls-label-color hidden-xs hidden-sm">Lifestyle<span class="menu-arrow-bottom"></span></a>
+            <a href="#menu2" class="list-group-item collapsed hidden-md hidden-lg" data-toggle="collapse" data-parent="#MainMenu">Lifestyle<span class="menu-arrow-bottom"></span></a>
+            <div id="menu2" class="row">
+
+              <div class="col-xs-12">
+                <a href="/lifestyle/bt-luxe" target="" class="list-group-item ">BT Luxe</a><a href="/lifestyle/feature" target="" class="list-group-item ">Feature</a><a href="/lifestyle/weekend-interview" target="" class="list-group-item ">Weekend Interview</a><a href="/lifestyle/food-drink" target="" class="list-group-item ">F&B</a><a href="/lifestyle/design" target="" class="list-group-item ">Design</a><a href="/lifestyle/style" target="" class="list-group-item ">Style</a><a href="/lifestyle/wellness" target="" class="list-group-item ">Wellness</a><a href="/lifestyle/arts" target="" class="list-group-item ">Arts</a><a href="/lifestyle/movies" target="" class="list-group-item ">Movies</a><a href="/lifestyle/travel" target="" class="list-group-item ">Travel</a><a href="/lifestyle/city-buzz" target="" class="list-group-item ">City Buzz</a><a href="/lifestyle/nostalgia" target="" class="list-group-item ">Nostalgia</a>              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-login hidden-md hidden-lg">
+  <div class="login-info text-center "></div>
+</div>
+
+</header>
+<div class="main-container container ">
+<h2 class="element-invisible">You are here</h2><div class="breadcrumb"><span class="inline odd first"><a href="/">Home</a></span> <span class="delimiter">&gt;</span> <span class="inline even last"><a href="/companies-markets">Companies &amp; Markets</a></span></div>   <header role="banner" id="page-header">
+    
+      <div class="region region-header">
+    <section id="block-dfp-lb1" class="block block-dfp text-center margin-top-20 margin-bottom-10 clearfix">
+
+      
+  <div id="dfp-ad-lb1-wrapper" class="dfp-tag-wrapper">
+<div  id="dfp-ad-lb1" class="dfp-tag-wrapper">
+    <script type="text/javascript">
+                    googletag.cmd.push(function() {
+          googletag.display("dfp-ad-lb1");
+        });
+            </script>
+</div>
+</div>
+</section>
+<section id="block-dfp-catfish" class="block block-dfp clearfix">
+
+      
+  <div id="dfp-ad-catfish-wrapper" class="dfp-tag-wrapper">
+<div  id="dfp-ad-catfish" class="dfp-tag-wrapper">
+    <script type="text/javascript">
+                  if ( window.ads_enabled !== undefined && screen.width<=740  && (show_catfish==1 || (dfp_preview_ids!= undefined && dfp_preview_ids.length!=0)) ) {
+              googletag.cmd.push(function() {
+              googletag.display("dfp-ad-catfish");
+            });
+        }
+            </script>
+</div>
+</div>
+</section>
+  </div>
+  </header> <!-- /#page-header -->
+
+  <div class="row">
+
+    
+    <section class="col-sm-12">
+            <a id="main-content"></a>
+
+      
+                                              <div class="region region-content">
+    <section id="block-system-main" class="block block-system clearfix">
+
+      
+  <div  about="/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-news_article  has-image clearfix">
+
+  
+  <div class="group-headlines field-group-html-element" id="node-article-news-article-group-headlines"><div class="field field-name-title field-type-ds field-label-hidden"><div class="field-items"><div class="field-item even" property="schema:name"><h1 class="headline">S$232m fair value loss pushes SPH into the red for first time</h1></div></div></div>
+  <div class="field field-name-field-subheadline field-type-text-long field-label-hidden">
+    Covid-19 &quot;severely disrupts&quot; all business segments including property, the group&#039;s key revenue driver  </div>
+</div><div class="ob-readmore-collapse"><div class="group-middle-content field-group-html-element row margin-top-20" id="node-article-news-article-group-middle-content"><div class="group-column-1 field-group-div col-xs-12 col-md-6 col-lg-7 col-md-push-1" id="node-article-news-article-group-column-1"><div class="group-article-timestamp"><div class="article-post-date">Wed, Oct 14, 2020 - 5:50 AM</div></div><div class="authors"><div  about="/authors/claudia-tan" typeof="sioc:Item foaf:Document" class="ds-1col node node-author view-mode-full  has-no-image clearfix">
+
+  
+  <span class="author-title" itemprop="author" itemscope itemtype="http://schema.org/Person"><a href="/authors/claudia-tan">Claudia Tan</a></span><span class="author-email"><a href="mailto:claudiat@sph.com.sg"><span>claudiat@sph.com.sg</span></a></span><span class="author-twitter"><a href="https://www.twitter.com/@ClaudiaTanBT" target="_blank"><span>@ClaudiaTanBT</span></a></span></div>
+
+</div>
+  <div class="field field-name-field-scald-image field-type-atom-reference field-label-hidden">
+    <!-- scald=219937:article_news_image_2017 --><div id="scald-atom-image-article-news-image-2017-group-caption-block" class="collapsible group-caption-block field-group-div speed-fast effect-none">
+      <h3><span class="field-group-format-toggler"></span></h3>
+      <div class="field-group-format-wrapper" style="display: block;"><picture   title="BT_20201014_SPH_4281830.jpg" class="img-responsive">
+<!--[if IE 9]><video style="display: none;"><![endif]-->
+<source srcset="/sites/default/files/styles/680x453/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=7yF5j-Dr 1x" media="(min-width: 1170px)" />
+<source srcset="/sites/default/files/styles/475x316/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=f8l81F8c 1x" media="(min-width: 960px)" />
+<source srcset="/sites/default/files/styles/720x479/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=Xd_ennJS 1x" media="(min-width: 768px)" />
+<source srcset="/sites/default/files/styles/500x300/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=9aH3aMgq 1x" media="(max-width: 767px)" />
+<source srcset="" />
+<!--[if IE 9]></video><![endif]-->
+<img class="img-responsive" src="/sites/default/files/styles/article_img/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=6Vkhs8sI" srcset="/sites/default/files/styles/article_img/public/image/2020/10/14/BT_20201014_SPH_4281830.jpg?itok=6Vkhs8sI 680w" alt="BT_20201014_SPH_4281830.jpg" title="BT_20201014_SPH_4281830.jpg" />
+</picture>
+  <div class="field field-name-field-caption field-type-text-long field-label-hidden">
+    SPH remains operationally profitable. For the full year, operating profit fell 41 per cent to S$110.2 million.  </div>
+
+  <div class="field field-name-field-copyright field-type-text field-label-hidden">
+    BT FILE PHOTO  </div>
+</div></div><!-- END scald=219937 -->  </div>
+
+  <div class="field field-name-field-attachment field-type-file field-label-hidden">
+    <span class="file"><img class="file-icon" alt="" title="application/pdf" src="/sites/all/themes/custom/businesstimes/images/application-pdf.png" /> <a href="https://www.businesstimes.com.sg/sites/default/files/graphics/2020/10/14/BT_20201014_SPH_4281826.pdf" type="application/pdf; length=215303" target="_blank">SPH</a></span>  </div>
+
+  <div class="field field-name-body field-type-text-with-summary field-label-hidden">
+    <p>Singapore</p>
+<p>SINGAPORE Press Holdings (SPH) on Tuesday reported its first-ever net loss of S$83.7 million for the full year ended Aug 31, as Covid-19 "severely disrupted" all business segments including property, which has been a key revenue driver for the group as its media business remains challenged amid declines in advertising revenue.</p>
+<p>The company, which publishes The Business Times (BT), took a hit from non-cash fair value losses of S$232 million - mostly on its malls and purpose-built student accommodation (PBSA) assets.</p>
+<p>The valuation of its retail malls fell by S$196.5 million, while that of its PBSA assets slid by S$31.9 million.</p><p><div class="text-center stripes hidden-print margin-bottom-20"><div id="dfp-ad-imu1-wrapper" class="dfp-tag-wrapper">
+<div  id="dfp-ad-imu1" class="dfp-tag-wrapper">
+    <script type="text/javascript">
+    googletag.cmd.push(function() {
+      googletag.display("dfp-ad-imu1");
+    });
+  </script>
+</div>
+</div></div></p>
+<p>These fair value losses were partially mitigated by S$68.5 million received from government schemes, including the Jobs Support Scheme.</p><p><div class="view view-more view-id-more view-display-id-related_articles_v2 related-articles view-dom-id-773c3c3f50a2ae129f46106286d27d77" >
+        
+  
+  
+      <div class="view-content">
+            
+  
+    
+      <a href="/real-estate/mediacorps-former-caldecott-hill-site-up-for-sale-gross-land-value-exceeds-s400m" target="_blank" class="related">
+  <h3>SEE ALSO</h3>
+  <h2 class="title">Mediacorp&#039;s former Caldecott Hill site up for sale; gross land value exceeds S$400m</h2>
+</a>
+  
+      </div>
+  
+  
+  
+  
+  
+  
+</div><section id="block-block-107" class="block block-block no-margin-top xs-mt-0 clearfix">
+
+      
+  <div class="newsletter-wrapper inbody">
+  <div class="messages_wrapper"></div>
+  <div class="newsletter signup">
+    <h4>Stay updated with<br class="hidden-xs" /> BT newsletters</h4>
+      <form id="newsletter-signup" action="/" class="flex flex-wrap justify-content-center">
+        <div class="flex align-items-center" style="-ms-flex-wrap: wrap !important; flex-wrap: wrap !important;">
+          <div class="group">
+            <input type="email" class="form-control" id="newsletter-email" placeholder="Your email address" required>
+          </div>
+          <div class="action">
+            <button type="submit" class="btn btn-green">Sign up</button>
+          </div>
+          <div class="terms" style="font-size: 12px; text-align: center; width: 100%;">
+            <p class="no-margin-bottom xs-mb-0">By signing up, you agree to our <a href="https://sph.com.sg/legal/sph_privacy.html" target="_blank">Privacy Policy</a> and <a href="https://www.sph.com.sg/legal/website_tnc.html" target="_blank">Terms and Conditions</a>.</p>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>
+
+  <div class="touchpoint row padding-top-20 padding-lef-10 padding-lef-10 xs-py-20 xs-px-10">
+    <div class="col-xs-12 col-sm-2 text-center xs-mb-20 sm-mb-0">
+      <img src="/sites/all/themes/custom/businesstimes/images/vectors/icon-feedback.svg" height="47" width="47" class="img-responsive center-block" />
+    </div>
+    <div class="col-xs-12 col-sm-10 text-center sm-text-left">
+      <p style="font-size: 14px; line-height: normal;" class="no-margin-bottom xs-mb-0"><b>Your feedback is important to us</b></p>
+      <p style="font-size: 14px; border-bottom: 1px solid #d8d8d8;" class="xs-mb-0 xs-pb-10 no-margin-bottom padding-bottom-10">Tell us what you think. Email us at <a href="mailto:btuserfeedback@sph.com.sg">btuserfeedback@sph.com.sg</a></p>
+    </div>
+  </div>
+  <style>@media (min-width: 768px) { .sm-text-left {text-align: left; } }</style>
+</section>
+<div id="innity-in-post"></div><div id="dfp-ad-midarticlespecial-wrapper" class="dfp-tag-wrapper">
+<div  id="dfp-ad-midarticlespecial" class="dfp-tag-wrapper">
+    <script type="text/javascript">
+    googletag.cmd.push(function() {
+      googletag.display("dfp-ad-midarticlespecial");
+    });
+  </script>
+</div>
+</div></p>
+<p>The group, however, remains operationally profitable. For the full year, operating profit fell 41 per cent to S$110.2 million.</p>
+<p>SPH chief executive officer Ng Yat Chung said in a media briefing on Tuesday that the fair value adjustments on its assets as a result of the pandemic are "in line with the market".</p>
+<p>He added: "So when things improve, we look forward to the assets being revalued upwards."</p>
+<p>With the property business still bringing in the bulk of the group's operating profit, Mr Ng said that SPH will focus on improving recurring income from its existing assets and be on the lookout for good opportunities.</p>
+<p>Operating revenue for the year declined 9.8 per cent to S$865.7 million as media advertisement revenue fell 31.4 per cent.</p>
+<p>Total costs were 6.8 per cent higher at S$844.4 million in part due to the increased operational costs of running an expanded Reit (real estate investment trust) and PBSA portfolio, property tax rebates passed on to tenants, and retrenchment costs.</p>
+<p>For the full year, revenue for the media business shrank 22.8 per cent to S$445.1 million due to a 32.9 per cent decline in newspaper print advertisement revenue. Circulation held steady due to the 52.5 per cent increase in daily average newspaper digital sales, which partially offset the 12.6 per cent drop in print copies.</p>
+<p>Loss before taxation for the segment was S$11.4 million, compared with a profit of S$54.7 million for FY19, after taking into account retrenchment costs of S$16.6 million.</p>
+<p>Revenue from the property business rose 10.3 per cent to S$327.2 million, boosted by the acquisition of the Westfield Marion mall and the Student Castle PBSA portfolio. However, rental waivers of S$33.8 million to tenants in Singapore eroded the gains from the retail sector. Meanwhile, revenue from the PBSA sector climbed 60.6 per cent.</p>
+<p>Loss before taxation for the property segment was S$75.8 million, compared with a profit of S$263 million in FY19, due to the fair value losses.</p>
+<p>Revenue from the Others segment grew 8.7 per cent to S$93.3 million, aided by higher sales of personal protective equipment from its aged care business. The segment posted a pre-tax profit of S$1.9 million partly due to the S$25.7 million divestment gain on the Media Centre.</p>
+<p>A final dividend of one Singapore cent per share was declared, versus last year's 5.5 cents. SPH had also paid a special dividend of one cent for FY19. The dividend is payable on Dec 18. Together with the interim dividend of 1.5 cents, the total dividend payout for FY20 will be 2.5 cents.</p>
+<p>Full-year loss per share was S$0.07, compared with earnings per share of S$0.13 in the last financial year. Net asset value per share was S$2.06 as at Aug 31, down from S$2.16 as at Aug 31 last year.</p>
+<p>Asked if there are further cost control measures to be taken, Mr Ng said that such measures have already been taken to ensure losses are contained. SPH had in August shed about 140 jobs, or 5 per cent of the media group's headcount to restructure its media sales and magazine operations. Mr Ng said that the move had put the group in a "good position to deal with the decline in advertising".</p>
+<p>He added that the media business will remain difficult until advertising revenue returns with the resumption of consumer spending.</p>
+<p>However, the 9.4 per cent growth in circulation numbers from its News Tablet digital product and higher readership are encouraging for the company, said Mr Ng.</p>
+<p>"We are intensifying our digitalisation efforts to transform the news content business in response to evolving demands from our audience," he noted. "We will continue to take a prudent and disciplined approach to liquidity and capital management to weather the Covid-19 crisis with all our stakeholders."</p>
+<p>DBS analyst Alfie Yeo told BT that the group's core revenue fell within expectations but core operating profit fell short due to higher-than-expected operating costs.</p>
+<p>Going forward, the property segment will continue to be SPH's "key earnings contributor", said Mr Yeo.</p>
+<p>However, potential losses from the media business would drag contributions from the property segment, he noted, adding: "If SPH can make the media segment more profitable again, it would add to the property income and help to support the group's earnings."</p>
+<p>SPH shares closed flat at S$1.05 on Tuesday before the results were released.</p>
+</p></p><p>  </div>
+<div class="field field-name-ds-cxense-dynamic-paywall field-type-ds field-label-hidden"><div class="field-items"><div class="field-item even">
+<!-- Begin custom paywall -->
+<div id="cx_custom"></div>
+<script type="text/javascript">
+function getMeta(metaName) {
+  const metas = document.getElementsByTagName('meta');
+
+  for (let i = 0; i < metas.length; i++) {
+    if (metas[i].getAttribute('name') === metaName) {
+      return metas[i].getAttribute('content');
+    }
+  }
+  return '';
+}
+var accessflag = getMeta('article:sph-accessflag');
+var keywords = getMeta('article:sph-keywords');
+jQuery(document).ready(function() {
+  var sph_keywords = keywords.toLowerCase().split(',');
+  var ajax_url = "/cxense/custom/data?accessflag=" + accessflag
+  if( jQuery.inArray('covid-19', sph_keywords) != -1) {
+    ajax_url += "&keyword=covid-19";
+  }
+  jQuery.ajax({
+    type: "GET",
+    url: ajax_url,
+    dataType: "json",
+    cache: true,
+    success: function(data) {
+      if (data.success) {
+        jQuery('#cx_custom').html(data.template);
+        //jQuery('.cxense_wall').hide();
+      } else {
+        jQuery('#cx_custom').hide();
+      }
+    },
+    error: function(error) {
+      // -- Error
+    }
+  });
+});
+</script>
+<!-- End custom paywall -->
+
+<div class="telegram row padding-top-20 padding-bottom-10 padding-lef-10 padding-lef-10 xs-py-20 xs-px-10" style="border-top: 1px solid  #2d2d2d;">
+  <div class="col-xs-2 text-center">
+    <a href="https://t.me/BizTimes" target="_blank"><img src="/sites/all/themes/custom/businesstimes/images/vectors/icon-telegram.svg" width="51" height="51" class="img-responsive center-block"></a>
+  </div>
+  <div class="col-xs-10">
+    <p style="font-style: normal;font-weight: bold;font-size: 16px;line-height: 30px;color: #000000;" class="no-margin-bottom xs-mb-0"><b>BT is now on Telegram!</b></p>
+    <p style="font-style: normal;font-weight: normal;font-size: 14px;line-height: 18px;color: #000000;" class="xs-mb-0 xs-pb-10 no-margin-bottom padding-bottom-10">For daily updates on weekdays and specially selected content for the weekend. Subscribe to <a href="https://t.me/BizTimes" target="_blank" style="color: #007bad;">t.me/BizTimes</a></p>
+  </div>
+</div>
+
+</div></div></div><div class="visible-sm">
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style text-center" data-a2a-url="https://bt.sg/46mm" data-a2a-title="S$232m fair value loss pushes SPH into the red for first time">
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_whatsapp"></a>
+    <a class="a2a_button_pinterest"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_email"></a>
+    <a class="a2a_button_print"></a>
+  </div>
+</div>
+
+<div class="visible-xs">
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style text-center mobile" data-a2a-url="https://bt.sg/46mm" data-a2a-title="S$232m fair value loss pushes SPH into the red for first time">
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_whatsapp"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+</div>
+
+<style>
+    .a2a_kit.mobile {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: center;
+            -ms-justify-content: center;
+                justify-content: center;
+    }
+</style><ul class="keywords-list margin-top-10 no-margin-bottom"><li class="keyword-item"><a href="/keywords/sph" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">SPH</a></li><li class="keyword-item"><a href="/keywords/financial-results" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">financial results</a></li><li class="keyword-item"><a href="/keywords/student-accommodation" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">student accommodation</a></li><li class="keyword-item"><a href="/keywords/media" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">media</a></li></ul></div><div class="group-column-2 field-group-div col-md-1 col-md-pull-6 col-lg-pull-7 col-xs-12" id="node-article-news-article-group-column-2"><div class="field field-name-ds-addtoany field-type-ds field-label-hidden"><div class="field-items"><div class="field-item even"><div class="hidden-xs hidden-sm a2a_wrapper">
+  <div class="hidden-xs hidden-sm" id="a2a_sticky">
+    <div class="a2a_kit a2a_kit_size_32 a2a_vertical_style text-center" data-a2a-url="https://bt.sg/46mm" data-a2a-title="S$232m fair value loss pushes SPH into the red for first time">
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_linkedin"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_pinterest"></a>
+      <a class="a2a_button_reddit"></a>
+      <a class="a2a_button_email"></a>
+      <a class="a2a_button_print"></a>
+    </div>
+  </div>
+</div>
+
+<script async src="https://static.addtoany.com/menu/page.js"></script>
+<style type="text/css">
+  .a2a_kit a:not(:nth-last-child(2)) { margin-right: 5px; }
+  .a2a_svg {
+    border-radius: 100% !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 5px !important;
+  }
+
+@media ( min-width: 990px ) {.a2a_wrapper {height: 384px;}}
+  </style></div></div></div></div><div class="group-column-3 field-group-div col-md-4 col-xs-12 hidden-print" id="node-article-news-article-group-column-3"><div class="text-center padding-20 stripe_bg"><section id="block-dfp-imu2" class="block block-dfp clearfix">
+
+      
+  <div id="dfp-ad-imu2-wrapper" class="dfp-tag-wrapper">
+<div  id="dfp-ad-imu2" class="dfp-tag-wrapper">
+    <script type="text/javascript">
+                    googletag.cmd.push(function() {
+          googletag.display("dfp-ad-imu2");
+        });
+            </script>
+</div>
+</div>
+</section>
+</div><div class="sidebar-block hidden--description hidden--kicker hidden--widget-action time-visible meta-pull-left widget--title--color-3b3b3b"><div class="media-object--category-hidden text-left media-object--widget-divided margin-top-10 hidden--updated media-object--title--smaller"><h2 class="title"><a href="/breaking-news">BREAKING NEWS</a></h2><div class="view view-articles view-id-articles view-display-id-panel_pane_35 view-dom-id-30ae9720cb836f4bdc00e7c8d02513e8" >
+        
+  
+  
+      <div class="view-content">
+        <dl class="media-object-contents">
+      <div  about="/stocks/hong-kong-shares-end-higher-as-xis-speech-lifts-tech-stocks" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-global_media_without_image  has-no-image clearfix">
+
+  
+  <div class="widget"><div class="widget__content"><div class="widget__meta"><div class="hidden widget__time">04:56 PM</div><div class="widget__date">Oct 14, 2020 04:56 PM</div><div class="widget__kicker"></div><div class="widget__category"><a href="/stocks" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Stocks</a></div></div><h2 class="widget__title">
+<a href="/stocks/hong-kong-shares-end-higher-as-xis-speech-lifts-tech-stocks">Hong Kong: Shares end higher as Xi's speech lifts tech stocks</a></h2><div class="widget__description"><p>[BEIJING] Hong Kong shares recovered lost ground to close higher on Wednesday, as tech stocks climbed after Chinese...</p></div>
+</div></div></div>
+
+        <div  about="/government-economy/gic-looks-to-integrate-climate-change-into-all-investment-processes" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-global_media_without_image  has-no-image clearfix">
+
+  
+  <div class="widget"><div class="widget__content"><div class="widget__meta"><div class="hidden widget__time">04:43 PM</div><div class="widget__date">Oct 14, 2020 04:43 PM</div><div class="widget__kicker"></div><div class="widget__category"><a href="/government-economy" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Government &amp; Economy</a></div></div><h2 class="widget__title">
+<a href="/government-economy/gic-looks-to-integrate-climate-change-into-all-investment-processes">GIC looks to integrate climate change into all investment processes</a></h2><div class="widget__description"><p>AS the world starts to recognise the impact of climate change, investors can no longer afford to dismiss risks...</p></div>
+</div></div></div>
+
+        <div  about="/real-estate/million-dollar-hdb-flats-make-up-03-of-total-resale-flats-sold" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-global_media_without_image  has-image clearfix">
+
+  
+  <div class="widget"><div class="widget__content"><div class="widget__meta"><div class="hidden widget__time">04:39 PM</div><div class="widget__date">Oct 14, 2020 04:39 PM</div><div class="widget__category"><a href="/real-estate" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Real Estate</a></div></div><h2 class="widget__title">
+<a href="/real-estate/million-dollar-hdb-flats-make-up-03-of-total-resale-flats-sold">Million-dollar HDB flats make up 0.3% of total resale flats sold</a></h2><div class="widget__description"><p>[SINGAPORE] Housing Board (HDB) flats sold for at least S$1 million made up 0.3 per cent of total resale...</p></div>
+</div></div></div>
+
+        <div  about="/real-estate/mediacorps-former-caldecott-hill-site-up-for-sale-gross-land-value-exceeds-s400m" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-global_media_without_image  has-image clearfix">
+
+  
+  <div class="widget"><div class="widget__content"><div class="widget__meta"><div class="hidden widget__time">04:17 PM</div><div class="widget__date">Oct 14, 2020 04:17 PM</div><div class="widget__category"><a href="/real-estate" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Real Estate</a></div></div><h2 class="widget__title">
+<a href="/real-estate/mediacorps-former-caldecott-hill-site-up-for-sale-gross-land-value-exceeds-s400m">Mediacorp's former Caldecott Hill site up for sale; gross land value exceeds S$400m</a></h2><div class="widget__description"><p>THE sprawling seven-hectare leasehold plot that used to house the iconic Caldecott Broadcast Centre has been offered...</p></div>
+  <div class="widget__meta widget__updated">
+    <div class="widget__updated text-red text-normal">
+      UPDATED 13 min ago    </div>
+  </div>
+</div></div></div>
+
+        <div  about="/life-culture/tiktok-video-propels-fleetwood-mac-classic-into-top-100" typeof="schema:NewsArticle sioc:Item foaf:Document" class="ds-1col node node-article view-mode-global_media_without_image  has-image clearfix">
+
+  
+  <div class="widget"><div class="widget__content"><div class="widget__meta"><div class="hidden widget__time">04:14 PM</div><div class="widget__date">Oct 14, 2020 04:14 PM</div><div class="widget__category"><a href="/life-culture" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Life &amp; Culture</a></div></div><h2 class="widget__title">
+<a href="/life-culture/tiktok-video-propels-fleetwood-mac-classic-into-top-100">TikTok video propels Fleetwood Mac classic into top 100</a></h2><div class="widget__description"><p>[LOS ANGELES] A viral TikTok video featuring a laid-back skateboarder lip-synching to Fleetwood Mac's Dreams has...</p></div>
+</div></div></div>
+
+    </dl>
+    </div>
+  
+  
+  
+  
+  
+  
+</div></div></div><div class="margin-top-30 media-object--title--smaller widget--title--color-3b3b3b media-object--widget-divided sidebar-block"><h2 class="title">RECOMMENDED FOR YOU</h2><div class="view view-recommended view-id-recommended view-display-id-panel_pane_2 recommended-list view-dom-id-b95d94ce3a87b46d5ccdc15156e45fed" >
+        
+  
+  
+      <div class="view-content">
+        <dl class="media-object-contents">
+    <div class="widget-wrapper first odd">
+      
+      <div class="widget">
+  
+    
+      <div class='widget__content'>
+  <h3 class='widget__title'><a href="/companies-markets/hot-stock-sph-shares-dip-below-s1-after-posting-first-net-loss">Hot stock: SPH shares dip below S$1 after posting first net loss</a></h3>
+</div>
+      </div>
+  
+    </div>
+      <div class="widget-wrapper even">
+      
+      <div class="widget">
+  
+    
+      <div class='widget__content'>
+  <h3 class='widget__title'><a href="/companies-markets/the-pines-members-sue-peter-kwee-hearing-dates-in-nov-and-dec">The Pines members sue Peter Kwee; hearing dates in Nov and Dec</a></h3>
+</div>
+      </div>
+  
+    </div>
+      <div class="widget-wrapper odd">
+      
+      <div class="widget">
+  
+    
+      <div class='widget__content'>
+  <h3 class='widget__title'><a href="/stocks/hong-kong-stocks-reopen-with-gains">Hong Kong: Stocks reopen with gains</a></h3>
+</div>
+      </div>
+  
+    </div>
+      <div class="widget-wrapper even">
+      
+      <div class="widget">
+  
+    
+      <div class='widget__content'>
+  <h3 class='widget__title'><a href="/companies-markets/hot-stock-medtecs-gains-74-on-active-trading-after-earnings-boom">Hot stock: Medtecs gains 7.4% on active trading after earnings boom</a></h3>
+</div>
+      </div>
+  
+    </div>
+      <div class="widget-wrapper last odd">
+      
+      <div class="widget">
+  
+    
+      <div class='widget__content'>
+  <h3 class='widget__title'><a href="/stocks/stocks-to-watch-medtecs-sph-frasers-property-wilmar-top-glove-ifast">Stocks to watch: Medtecs, SPH, Frasers Property, Wilmar, Top Glove, iFast</a></h3>
+</div>
+      </div>
+  
+    </div>
+    </dl>
+    </div>
+  
+  
+  
+  
+  
+  
+</div></div><div class="sidebar-block margin-top-30"><div class="newslink_wrapper margin-top-20">
+	<a href="https://newspost.newslink.sg/?publication=BT&date=14/10/2020&title=S$232m fair value loss pushes SPH into the red for first time" target="_blank">
+		<img src="/sites/all/themes/custom/businesstimes/images/news-post-icon.png"></legend>
+		<span>Purchase this article <i class="fa fa-shopping-cart" aria-hidden="true"></i></span>
+	</a>
+</div>
+</div></div></div></div><div class="field field-name-outbrain-news-article- field-type-ds field-label-hidden"><div class="field-items"><div class="field-item even"><div id="obwrapper"></div>
+<script>
+  var ob = document.createElement( "div" );
+  ob.setAttribute( "class", "OUTBRAIN");
+  ob.setAttribute( "data-src", "www.businesstimes.com.sg/companies-markets/s232m-fair-value-loss-pushes-sph-into-the-red-for-first-time");
+  ob.setAttribute( "data-widget-id", "AR_4");
+  ob.setAttribute( "data-ob-template", "BusinessTimes");
+  
+  var obscript = document.createElement( "script" );
+  obscript.setAttribute( "type", "text/javascript" );
+  obscript.setAttribute( "async", "async" );
+  obscript.setAttribute( "src", "https://widgets.outbrain.com/outbrain.js" );
+
+  if ( outbrain_enable ) {
+    var obwrapper = document.querySelector( "#obwrapper" );
+    obwrapper.appendChild( ob );
+    obwrapper.appendChild( obscript );
+  }
+</script></div></div></div></div>
+
+
+</section>
+  </div>
+    </section>
+
+    
+  </div>
+
+    <div class="region region-footertop">
+    <section id="block-block-79" class="block block-block clearfix">
+
+      
+  	<div class="new-footer-wrapper margin-top-50 hidden-print app_sorce">
+    <div class="main wrapper" style="position: relative;">
+      <div class="content container">
+        <h4 class="subheadline">STAY UPDATED</h4>
+        <h5>Choose which free BT newsletters to sign up for <a href="/newsletter/sign-up" target="_blank">here</a>, or get them all below:</h5>
+
+        
+        <form action="" id="newsletter_submit_form_2" name="newsletter_submit_form_2">
+          <div class="choices input-field">
+            
+            <div class="choice">
+              <label style="cursor: default;">
+                <span><b>Breakfast Brief</b></span>
+                <span class="hint">every morning</span>
+              </label>
+            </div>
+            
+            <div class="choice">
+              <label style="cursor: default;">
+                <span><b>Daily Debrief</b></span>
+                <span class="hint">every evening</span>
+              </label>
+            </div>
+            
+            <div class="choice">
+              <label style="cursor: default;">
+                <span><b>Garage</b></span>
+                <span class="hint">weekly</span>
+              </label>
+            </div>
+            
+            <div class="choice">
+              <label style="cursor: default;">
+                <span><b>BT Lifestyle</b></span>
+                <span class="hint">weekly</span>
+              </label>
+            </div>
+            
+            <div class="choice">
+              <label style="cursor: default;">
+                <span><b>Asean Business</b></span>
+                <span class="hint">weekly</span>
+              </label>
+            </div>
+            
+          </div>
+          
+          <div class="email input-field">
+            <div class="message hidden"></div>
+            <input required type="email" value="" placeholder="Your email address" id="email_footer" name="email" class="form-field">  		
+            <button type="submit" name="submit" id="newsletter_submit">SIGN UP</button>
+          </div>
+          
+        </form>
+
+        <div class="terms">
+          <p>By signing up, you agree to our <a href="https://sph.com.sg/legal/sph_privacy.html" target="_blank">Privacy Policy</a> and <a href="https://www.sph.com.sg/legal/website_tnc.html" target="_blank">Terms and Conditions</a>.</p>
+        </div>
+
+      </div>
+    </div>
+		<div class="top-wrap">
+			<div class="left-colm col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="footer-img-left pull-left app_sorce"><img src="https://www.businesstimes.com.sg/sites/default/files/bt-website-print.png" width=255 border="0"></div>
+				<div class="app_sorce">
+					<div class="footer-title">subscribe to</div>
+					<div class="footer-title bold">The Business Times</div>
+					<div class="footer-text visible-lg visible-md">
+						<div>Stay connected with The Business Times</div>
+						<div>premium content on your favourite platforms</div>
+					</div>
+					<div class="footer-text-call">CALL 6388 3838</div>
+					<a href="https://www.sphsubscription.com.sg/eshop/?r=products/newsubscriptionpackages&pcode=bt&utm_campaign=bt_subscription&utm_medium=sph-publication&utm_source=bt&utm_content=subscribebutton-homepagefooter" class="btn btn-orange btn-square find-out-more app_sorce">SUBSCRIBE NOW</a>
+				</div>
+			</div>
+			<div class="right-colm col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="footer-img-right pull-right"><img src="https://www.businesstimes.com.sg/sites/default/files/BTNT-tablet-lite-hr.png" width=160 border="0"></div>
+				<div>
+					<div  class="footer-title">Download Our</div>
+					<div  class="footer-title bold">Apps</div>
+					<div class="footer-text">
+						<div>Stay up to date with <span class="nowrap">The Business Times</span> for</div>
+						<div>
+							<a class="app-store-link iphone-link" href="https://itunes.apple.com/sg/app/business-times-for-iphone/id531275824" target="blank">iPhone</a> |
+							<a class="app-store-link ipad-link" href="https://itunes.apple.com/sg/app/business-times-for-ipad/id531283825" target="blank">iPad</a> |
+							<a class="app-store-link app_sorce" href="https://play.google.com/store/apps/details?id=com.ps.bt&amp;hl=en" target="blank">Android</a>
+						</div>
+					</div>
+					<div class="app-store-buttons">
+						<div class="iphone-app pull-left margin-right-10 app-store">
+							<a class="app-store-link iphone-link" href="https://itunes.apple.com/sg/app/business-times-for-iphone/id531275824" target="blank">
+								<img src="/sites/all/themes/custom/businesstimes/images/download-itunes.png" style="height:40px; width:125px" />
+							</a>
+							<a class="app-store-link ipad-link" href="https://itunes.apple.com/sg/app/business-times-for-ipad/id531283825" style="display:none" target="blank">
+								<img src="/sites/all/themes/custom/businesstimes/images/download-itunes.png" style="height:40px; width:125px" />
+							</a>
+						</div>
+
+						<div class="android-app pull-left margin-right-20">
+							<a class="app-store-link app_sorce" href="https://play.google.com/store/apps/details?id=com.ps.bt&amp;hl=en" target="blank">
+								<img src="/sites/all/themes/custom/businesstimes/images/download-play.png" style="height:40px; width:125px" />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+
+    
+	</div>
+<style>
+.footer .seven-day-archive h3.category{
+  font-weight:bold;
+}
+.front .badge,
+.wealth .badge{
+	display:none !important;
+}
+@media only screen and (max-width: 600px) {
+    .newsletterlist .tdR{
+       padding-left: 8px ;
+       padding-right: 8px ;
+  }
+   .newsletterlist .tdL{
+    padding-right: 8px;
+  }
+}
+.main.wrapper:before {
+    content: "";
+    height: 1px;
+    background-color: #f2f2f2;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+}
+</style>
+</section>
+  </div>
+</div>
+
+<div class="foot-nav container app_sorce">
+  <div class="row">
+    <div class="panel-main-1 col-md-8">
+      <div class="row">
+        <div class="logo col-md-12">
+          <a href="/">
+            <img src="/sites/all/themes/custom/businesstimes/images/vectors/bt-icon-white.svg" height="29" />
+          </a>
+        </div>
+        <div class="col-md-4 visible-md visible-lg">
+          <ul class="main list-group">
+            <li class="list-group-item "><a href="/breaking-news" target="">BREAKING</a></li><li class="list-group-item "><a href="/todays-paper" target="">TODAY'S PAPER</a></li><li class="list-group-item "><a href="/lifestyle" target="">LIFESTYLE</a></li><li class="list-group-item "><a href="/opinion" target="">OPINION</a></li><li class="list-group-item "><a href="/garage" target="">GARAGE</a></li><li class="list-group-item hidden-md"><a href="/sme" target="">SME</a></li><li class="list-group-item "><a href="/asean-business" target="">ASEAN</a></li><li class="list-group-item hidden-md"><a href="/wealth" target="">WEALTH</a></li><li class="list-group-item "><a href="/hub" target="">HUB</a></li><li class="list-group-item "><a href="/podcasts/money-hacks" target="">PODCASTS</a></li><li class="list-group-item "><a href="/infographics" target="">INFOGRAPHICS</a></li><li class="list-group-item "><a href="/videos" target="">VIDEOS</a></li><li class="list-group-item "><a href="http://epaper.businesstimes.com.sg" target="_blank">E-PAPER</a></li><li class="list-group-item "><a href="/notices-announcements" target="">NOTICES</a></li>            <li class="list-group-item"><a href="https://www.sgsme.sg/" target="_blank">SGSME.SG</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 visible-md visible-lg">
+          <ul class="list-group">
+            <li class="list-group-item li-label">News</li>
+                                      <li class="list-group-item">
+                <a href="/top-stories">Top Stories</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/companies-markets">Companies & Markets</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/stocks">Stocks</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/real-estate">Real Estate</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/banking-finance">Banking & Finance</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/energy-commodities">Energy & Commodities</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/technology">Technology</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/consumer">Consumer</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/transport">Transport</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/government-economy">Government & Economy</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/wealth-investing">Wealth & Investing</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/leadership-management">Leadership & Management</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/opinion">Opinion</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/life-culture">Life & Culture</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/taking-heart">Taking Heart</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/focus">Focus</a>
+                </li>
+                          <li class="list-group-item">
+                <a href="/magazines">Magazines</a>
+                </li>
+                      </ul>
+        </div>
+        <div class="col-md-4 visible-md visible-lg">
+          <ul class="list-group">
+            <li class="list-group-item li-label">Weekly</li>
+                                      <li class="list-group-item">
+                <a href="/views-from-the-top">Views From the Top</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/dining-out">Dining Out</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/sme">SME</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/the-raffles-conversation">The Raffles Conversation</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/brunch">Brunch</a>
+              </li>
+                    </ul>
+        </div>
+      </div>
+    </div>
+    <div class="panel-main-2 col-md-3 col-md-push-1">
+      <div class="row">
+        <div class="logo col-md-12">
+          <a href="/lifestyle">
+            <img src="/sites/all/themes/custom/businesstimes/images/vectors/bt-lifestyle-icon-white-v2.svg" height="35" />
+          </a>
+        </div>
+        <div class="col-md-6 ls-1 visible-md visible-lg">
+          <ul class="list-group">
+            <li class="list-group-item li-label"><a href="/lifestyle">Lifestyle</a></li>
+                                      <li class="list-group-item">
+                <a href="/lifestyle">Lifestyle Home</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/food-drink">F&B</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/arts">Arts</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/movies">Movies</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/design">Design</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/style">Style</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/travel">Travel</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/wellness">Wellness</a>
+              </li>
+                          <li class="list-group-item">
+                <a href="/lifestyle/gadgets">Gadgets</a>
+              </li>
+                      </ul>
+        </div>
+        <div class="col-md-6 ls-2 visible-md visible-lg">
+          <ul class="list-group">
+                                      <li class="list-group-item"><a href="/lifestyle/feature">Feature</a></li>
+                          <li class="list-group-item"><a href="/lifestyle/weekend-interview">Weekend Interview</a></li>
+                          <li class="list-group-item"><a href="/lifestyle/city-buzz">City Buzz</a></li>
+                          <li class="list-group-item"><a href="/lifestyle/reviews">Reviews</a></li>
+                          <li class="list-group-item"><a href="/lifestyle/jaimeeats">JaimEEats</a></li>
+                          <li class="list-group-item"><a href="/lifestyle/nostalgia">Nostalgia</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer container app_sorce">
+  <div class="row">
+    <div class="col-xs-12">
+      <ul class="social-icons-footer list-inline">
+        <li><a href="https://www.facebook.com/thebusinesstimes" target="_blank" class="fa fa-facebook"><span>Facebook</span></a></li>
+        <li><a href="https://twitter.com/businesstimes" target="_blank" class="fa fa-twitter"><span>Twitter</span></a></li>
+        <li><a href="https://t.me/BizTimes " target="_blank" class="fa fa-telegram"><span>Telegram</span></a></li>
+        <li><a href="https://www.instagram.com/btlifestyle/" target="_blank" class="fa fa-instagram"><span>Instagram</span></a></li>
+        <li><a href="https://www.linkedin.com/showcase/the-business-times" target="_blank" class="fa fa-linkedin"><span>Linkedin</span></a></li>
+        <li><a href="/rss-feeds" target="_blank" class="fa fa-rss"><span>RSS</span></a></li>
+        <li><a href="https://epaper.businesstimes.com.sg" target="_blank" class="fa fa-newspaper-o"><span>E-paper</span></a></li>
+      </ul>
+    </div>
+  </div>
+    <div class="region region-footer">
+    <section id="block-seven-day-archive-seven-day-archive" class="block block-seven-day-archive archive-block clearfix">
+
+      
+  <div class='seven-day-archive center-block'><ul><li>PRINT ARCHIVE</li><li><a href='/todays-paper/20201012' class=''>Mon</a></li><li><a href='/todays-paper/20201013' class=''>Tue</a></li><li><a href='/todays-paper/20201007' class=''>Wed</a></li><li><a href='/todays-paper/20201008' class=''>Thu</a></li><li><a href='/todays-paper/20201009' class=''>Fri</a></li><li><a href='/todays-paper/20201010' class=''>Sat</a></li></ul></div>
+</section>
+<section id="block-block-53" class="block block-block col-lg-12 copyright-block clearfix">
+
+      
+  <div class="print_page"></div>
+<div class="copyright-text">
+<div class="text-center">
+<ul class="list-inline">
+  
+            <a href="/content/about-us">About Us</a>           
+      
+            <a href="/content/contact-us">Contact Us</a>           
+      
+            <a href="/help">Help</a>           
+              <a href="https://www.sph.com.sg/legal/website_tnc.html">Terms & Conditions</a>        
+      
+            <a href="/sph-websites">SPH Websites</a>           
+              <a href="https://www.sph.com.sg/legal/pdpa.html">Data Protection Policy</a>        
+    </ul >
+</div>
+<p class="text-center">SPH Digital News</p>
+<p class="text-center">&copy; 2020 SINGAPORE PRESS HOLDINGS LTD. REGN NO. 198402668E</p>
+</div>
+</section>
+  </div>
+</footer>
+  <script type="text/javascript" src="/sites/default/files/advagg_js/js__nqIzhTzHqngWOCzYpMEF6J8fV2kzBRNr4ydYpI8BycU__otT7O46U_CSOIezDKQNPsM2mFOP5q0PdOtdhG3Zodd0__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js" async="async"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__e1fPYU8LLNhqhYUPT-bJ6hxkAu10tXcuuK0QfZN4Es0__nYZvx8hN2-jcLwoUINXLVcmuG9gozjDPU1-e9JBbSkk__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+<script type="text/javascript" src="/sites/default/files/advagg_js/js__ChUT0Cpt3ch0T35nhZgMgH5BzBQ5oyaFF27cnXxe7aU__S79mhsO6q7fWONLNt9XSEZx-JmiQeAEtuPkuVxIEjpY__dd3S9GTwy0OpssQ1-F6lsXCXAJlSzYV6yiUY9wVVTeE.js"></script>
+
+        <img src="//amplifypixel.outbrain.com/pixel?mid=00529a8e9e01c3bfad3c4bd7ec1ab148f6" />
+
+  <!-- MYSPH login popup
+  <div id="mysph" svc="bts"  lan="en"></div>
+  <script src="https://ds-acc-reg.sphdigital.com/MySPH/built/bundle.js"></script>-->
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"0f768372e0","applicationID":"21072778","transactionName":"NFRQMEZXDBBVAkZYWg0ecwdAXw0NGwVBblAbRUAFR2kMDFAEbUFUBFRtEl1TFQ==","queueTime":0,"applicationTime":4184,"atts":"GBNTRg5NHx4=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+
+
+<!-- START ldap sso-->
+<script type="text/javascript">
+function trySingleSignOnLogin() {
+  var f = document.createElement('iframe');
+  f.src = "/ldap/login.php";
+  f.style.width = "0px";
+  f.style.height = "0px";
+  f.style.border = "none";
+  jQuery('body').append(f);
+}
+
+function loadSubscriberContent() {
+  jQuery.post("/ldap/login_details?article_id=" + _data.articleid, function(data) {
+    //data = JSON.parse(data);
+    var current_url = window.location.pathname;
+    if (data.loginid) {
+      // var login_info = '<ul>'+
+      // '<li class="header-home-group subscribe-link">Hi <a class="mysph_user_name" href="#" id="sph_user_name" >'+data.loginid+'</a></li>'+
+      // '<li class="header-home-group login-link"><a class="mysph_logout" href="#">Log out</a></li></ul>';
+      // // Append login info
+      // jQuery(".login-info").html(login_info);
+
+      var unverified_bell = '';
+      var unverified_menu = '';
+      if (data.usertype == 'y-reg' && data.userstatus != 'verified') {
+        unverified_bell = '<i class="fa fa-bell text-red"></i> ';
+        unverified_menu =
+          '<li><a href="javascript:;" class="mysph_verify_email text-red mysph-ga-verify" event-label="Dropdown Login Menu">Please verify your email</a></li>';
+
+        jQuery("#paywall-resent-email").removeClass('hidden');
+        jQuery(".cxense_wall").hide();
+
+        // Show the unverified email banner on top of the site
+        jQuery(".mysph-unverified").removeClass("hidden");
+        jQuery(".mysph-unverified .unverifiedemail").html(data.loginid);
+      }
+
+      login_info = '<div class="dropdown">' + unverified_bell +
+        'HI <a href="javascript:;" class="dropdown-toggle login_user_name"  data-toggle="dropdown"><span id="sph_user_name">' +
+        data.loginid +
+        '</span><i class="caret-icon fa fa-caret-down un"></i></a><ul class="dropdown-menu"><i class="fa fa-caret-up dw"></i>' +
+        unverified_menu +
+        '<li><a class="mysph_user_name"  href="javascript:;">Update your password</a></li><li><a class="mysph_logout" href="javascript:;">Logout</a></li></ul></div>';
+      login_info_mobile = unverified_bell +
+        'HI <a class="login_user_name" data-toggle="collapse" href="#collapseLogin" aria-expanded="false" aria-controls="collapseLogin"><span id="sph_user_name">' +
+        data.loginid +
+        '</span><i class="caret-icon fa fa-caret-down un"></i></a><div class="collapse" id="collapseLogin"><ul>' +
+        unverified_menu +
+        '<li style="padding-bottom: 15px; border-right: 0px;"><a class="mysph_user_name"  href="javascript:;">Update your password</a></li><li><a class="mysph_logout" href="javascript:;">Logout</a></li></ul></div>';
+
+
+      jQuery(".login-info-desktop").html(login_info);
+      jQuery(".mobile-login .login-info").html(login_info_mobile);
+
+
+      // Update full content
+      if (data.paid && data.full_content != "") {
+        //jQuery(".field-name-body").html(data.full_content);
+        jQuery(".field-name-body #block-block-82").remove();
+        jQuery(".field-name-body .body-copy").replaceWith(data.full_content);
+      }
+    }
+  });
+}
+</script>
+<!-- END ldap sso -->
+
+
+
+
+</html>

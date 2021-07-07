@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html class="noie8" xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es" xmlns:fb="http://www.facebook.com/2008/fbml" itemid="https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad" itemtype="http://schema.org/NewsArticle" itemscope xmlns:og="http://opengraphprotocol.org/schema/">
+	<head prefix="og: http://ogp.me/ns#">
+		<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-messaging.js"></script>
+		
+		<script>
+		var config = {
+			messagingSenderId: "716211658086"
+		};
+		
+		window.onload = function () {
+			firebase.initializeApp(config);
+			const pushModal = document.querySelector('.notificacion-modal');
+			const messaging = firebase.messaging();
+			messaging.usePublicVapidKey("BKu0qCj8fKENAAqUvQDPOisA25HTJjylaJrVn6nPeRgKAQNxwHk7cXmGsDgDiVuL-OUmEvXc4j03iUXkZtNCSkc");
+		
+			if(pushModal){	
+				if ('serviceWorker' in navigator && 'PushManager' in window) {
+					console.log('Service Worker and Push is supported');
+					navigator.serviceWorker.register("/sw.js?messagingSenderId=716211658086&version=D")
+					.then(function(registration) {
+		
+						if (!navigator.serviceWorker.controller) {
+							return;
+						}
+		
+						var preventDevToolsReloadLoop;
+						navigator.serviceWorker.addEventListener('controllerchange', function (event) {
+							if (preventDevToolsReloadLoop) return;
+							preventDevToolsReloadLoop = true;
+							console.log('Controller loaded');
+							window.location.reload();
+						});
+		
+						console.log('Service Worker is registered', registration);
+						messaging.useServiceWorker(registration); 
+					})
+					.catch(function (error) {
+						console.error('Service Worker Error', error);
+					}); 
+		
+					pushModal.querySelector('.btn--link').addEventListener('click', function () {
+						createCookie("notificacion", 'false', 1);
+						pushModal.style.display = "none";
+					});
+		
+					if (!readCookie("notificacion") && Notification.permission == 'default') {
+						pushModal.style.display = "block";
+						pushModal.querySelector('.aceptar').addEventListener('click', function () {
+							pushModal.style.display = "none";
+							requestNotification();
+						});
+					}
+		
+					if (Notification.permission != 'default') requestNotification();
+				} else {
+					console.warn('Push messaging is not supported');
+				}
+			}
+			else{
+		
+				/*---------------*/
+				if ('serviceWorker' in navigator && 'PushManager' in window) {
+					console.log('Service Worker and Push is supported');
+					navigator.serviceWorker.register("/sw.js?messagingSenderId=716211658086&version=D")
+						.then(function (registration) {
+							console.log('Service Worker is registered', registration);
+							messaging.useServiceWorker(registration);
+		
+							requestNotification();
+						})
+						.catch(function (error) {
+							console.error('Service Worker Error', error);
+						});
+				} else {
+					console.warn('Push messaging is not supported');
+				}
+			}
+		
+			function doPost(url, body, get) {
+				var xhr = new XMLHttpRequest();
+				if (get)
+					xhr.open("GET", url);
+				else
+					xhr.open("POST", url);
+				xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+				if (body)
+					xhr.send(JSON.stringify(body));
+				else
+					xhr.send("");
+			}
+		
+			function requestNotification() {
+				messaging
+					.requestPermission()
+					.then(function () {
+						console.log("Notification permission granted firebase.");
+						messaging.getToken().then(function (currentToken) {
+							if (currentToken) {
+								sendTokenToServer(currentToken);
+							} else {
+								console.log('No Instance ID token available. Request permission to generate one.');
+								updateUIForPushPermissionRequired();
+								setTokenSentToServer(false);
+							}
+						}).catch(function (err) {
+							console.log('An error occurred while retrieving token. ', err);
+							setTokenSentToServer(false);
+						});
+					})
+					.catch(function (err) {
+						console.log("Unable to get permission to notify.", err);
+					});
+			}
+		
+			messaging.onMessage(function(payload) {
+				console.log("onMessage" , payload)
+				const notificationTitle = "EL DÍA";
+				const notificationOptions = {
+					icon: 'img/push/notification.png',
+					badge: 'img/push/badge.png',
+					vibrate: [100, 50, 100],
+					data: {
+						dateOfArrival: Date.now(),
+						nota: payload.data.nota,
+						id_notificacion: payload.data.id_notificacion
+					},
+					body : payload.data.body
+				};
+		
+				if (payload.data.image)
+					notificationOptions.image = payload.data.image
+		
+				if (!("Notification" in window)) {
+					console.log("This browser does not support system notifications");
+				} else if (Notification.permission === "granted") {
+					try {
+						var notification = new Notification(notificationTitle,notificationOptions);
+						//setTimeout(function() {
+							doPost("/webpush/" + payload.data.id_notificacion + "/show", null, true)
+						//}, (Math.floor(Math.random() * 90) + 5) * 1000)
+						notification.onclick = function(event) {
+							event.preventDefault();
+							if (payload.data.nota)
+								window.open(payload.data.nota, '_blank');
+							notification.close();
+							doPost("/webpush/" + payload.data.id_notificacion + "/click", null, true)
+						}
+					}
+					catch(e) { //TODO MOSTRAR LA NOTIFICACION EN EL HTML ?
+						console.log("Error al mostrar notificacion en primer plano", e)
+					}
+				}
+			});
+		
+			messaging.onTokenRefresh(function() {
+				messaging
+					.getToken()
+					.then(function(refreshedToken) {
+						console.log("Token refreshed.");
+						setTokenSentToServer(false);
+						sendTokenToServer(refreshedToken);
+					})
+					.catch(function(err) {
+						console.log("Unable to retrieve refreshed token ", err);
+						showToken("Unable to retrieve refreshed token ", err);
+					});
+			});
+		
+			function sendTokenToServer(currentToken) {
+				if (!isTokenSentToServer()) {
+					console.log("Sending token to server...");
+					setTokenSentToServer(true);
+		
+					doPost("/webpush/subscribe", {
+						token: currentToken
+					});
+				} else {
+					console.log(
+						"Token already sent to server so won't send it again " +
+							"unless it changes"
+					);
+				}
+			}
+		
+			function isTokenSentToServer() {
+				return window.localStorage.getItem("sentToServer") === 1;
+			}
+		
+			function setTokenSentToServer(sent) {
+				window.localStorage.setItem("sentToServer", sent ? 1 : 0);
+			}
+		}
+		</script>
+		<link rel="manifest" href="/manifest.json">		<title>En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste - La Ciudad</title>
+		<link rel="icon" type="image/x-icon" href="/img/favicon.ico?86">
+		<meta name="description" content="la-ciudad,la ciudad de la plata,noticias de la plata">
+		<meta name="keywords" content="noticias,la plata,la-ciudad,la ciudad de la plata,noticias de la plata">
+		<meta name="author" content="Diario El Dia de La Plata www.eldia.com">
+		<meta name="google-site-verification" content="eFr6nE36EcDc-H303pBQaZc7YCsIroGw2NaJYncPeac">
+		<meta name="google-site-verification" content="2gT-EbkYM1QkorrXioZPd3Z7gJQqAREDrm0MtwZZjss">
+		<meta name="google-signin-client_id" content="337765608282-upv6c1aq09ngqp2q3ckj5eui8qdq64fv.apps.googleusercontent.com">
+		<meta property="fb:pages" content="132138033496358">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:site" content="@eldialp">
+		<meta itemscope itemprop="mainEntityOfPage" itemtype="https://schema.org/WebPage">
+		<meta name="robots" content="all">
+		<meta name="geo.region" content="AR-B">
+		<meta name="geo.placename" content="Buenos Aires">
+		<meta name="geo.position" content="-34.59;-58.38">
+		<meta name="ICBM" content="-34.59, -58.38">
+		<meta http-equiv="content-language" content="es">
+		<meta name="DC.Title" content="Diario El Dia de La Plata www.eldia.com">
+		<meta name="DC.Description" content="EL DIA, diario de La Plata, Provincia de Buenos Aires, Argentina. Información actualizada de La Plata, de la Argentina y el mundo.">
+		<meta name="DC.Publisher" content="Diario El Dia de La Plata www.eldia.com">
+		<meta name="DC.Type" scheme="DCMIType" content="Text">
+		<meta name="DC.Format.Medium" content="text/html">
+		<meta name="DC.Relation.isPartOf" content="http://www.eldia.com/">
+		<meta name="DC.Language" content="es">
+		<meta name="DC.Rights" content="© 1998-2016 - El Día SA - Todos los derechos reservados">
+		<meta name="theme-color" content="#7a7474">
+		<meta name="google-signin-scope" content="profile email">
+		<meta name="google-signin-client_id" content="">
+		<meta name="google-site-verification" content="3yqvDkFUKrSR1NWjr1MAoT4wP6Dj-ZIapnlnlsyk3Mg">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png">
+		<meta property="og:image:width" content="600">
+		<meta property="og:image:height" content="365">
+		<meta property="og:type" content="article">
+		<meta itemprop="author" content="El Dia">
+		
+		<meta property="og:title" content="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste">
+		<meta itemprop="name" content="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste">
+		<meta name="twitter:title" content="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste">
+		<title>En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste</title>
+		
+		
+		<meta name="keywords" content="activan, protocolo, emergencia, colectivo, línea, oeste">
+		<meta name="news_keywords" content="activan, protocolo, emergencia, colectivo, línea, oeste">
+		
+		<meta property="fb:admins" content="1264553364">
+		<meta property="fb:admins" content="603150013">
+		<meta property="fb:admins" content="757701578">
+		
+		<meta property="fb:app_id" content="">
+		<meta property="fb:pages" content="">
+		<meta itemprop="headline" content="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste">
+		<link rel="shortcut icon" href="https://www.eldia.com/favicon.ico">
+		<link rel="manifest" href="https://www.eldia.com/img/favicons/manifest.json">
+		<meta name="application-name" content="El Dia">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="msapplication-TileImage" content="https://www.eldia.com/img/favicons/ms-icon-144x144.png">
+		
+		<link rel="canonical" href="https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad">
+		<meta property="og:url" content="https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad">
+		<link rel="amphtml" href="https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad/amp">
+		<meta property="og:type" content="article">
+		<meta property="og:description" content="  Personal especializado de la Municipalidad de La Plata activ&#xF3; el protocolo de emergencia en un micro de L&#xED;nea Oeste que transitaba por Ruta 36 y Aven...  ">
+		<meta name="description" content="  Personal especializado de la Municipalidad de La Plata activ&#xF3; el protocolo de emergencia en un micro de L&#xED;nea Oeste que transitaba por Ruta 36 y Aven...  ">
+		<meta property="description" content="  Personal especializado de la Municipalidad de La Plata activ&#xF3; el protocolo de emergencia en un micro de L&#xED;nea Oeste que transitaba por Ruta 36 y Aven...  ">
+		<meta name="twitter:description" content="  Personal especializado de la Municipalidad de La Plata activ&#xF3; el protocolo de emergencia en un micro de L&#xED;nea Oeste que transitaba por Ruta 36 y Aven...  ">
+		<meta itemprop="datePublished" content="2020-04-15T19:05:00.000Z">
+		<meta itemprop="dateModified" content="2020-04-15T19:13:31.354Z">
+		<meta property="og:image" content="https://cdn1.eldia.com/042020/1586977649483.jpg?cw=600&ch=365">
+		<meta property="twitter:image" content="https://cdn1.eldia.com/042020/1586977649483.jpg?cw=600&ch=365">
+		<meta property="og:image:width" content="600">
+		<meta property="og:image:height" content="365">
+		<div style="display:none" itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+		    <img itemprop="url" src="https://cdn1.eldia.com/042020/1586977649483.jpg?cw=600&ch=365">
+		</div> 
+		
+		<div style="display:none" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+		    <div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+		        <meta itemprop="url" content="https://www.eldia.com/img/datos_estructurados.png">
+		        <meta itemprop="width" content="391">
+		        <meta itemprop="height" content="41">
+		    </div>
+		    <meta itemprop="name" content="Diario El Dia de La Plata">
+		</div>			<link rel="stylesheet" type="text/css" href="/css/style.min.css?86">
+		
+		
+		<script async src="https://contributor.google.com/scripts/b08aee778d1f5caa/loader.js"></script>
+		<script>(function(){"use strict";var s=this,f=/^[\w+/_-]+[=]{0,2}$/,h=null,r=function(){},a=function(t){var n=typeof t;if("object"==n){if(!t)return"null";if(t instanceof Array)return"array";if(t instanceof Object)return n;var e=Object.prototype.toString.call(t);if("[object Window]"==e)return"object";if("[object Array]"==e||"number"==typeof t.length&&void 0!==t.splice&&void 0!==t.propertyIsEnumerable&&!t.propertyIsEnumerable("splice"))return"array";if("[object Function]"==e||void 0!==t.call&&void 0!==t.propertyIsEnumerable&&!t.propertyIsEnumerable("call"))return"function"}else if("function"==n&&void 0===t.call)return"object";return n},t=Date.now||function(){return+new Date},n=function(t,r){function n(){}n.prototype=r.prototype,t.m=r.prototype,t.prototype=new n,(t.prototype.constructor=t).j=function(t,n,e){for(var o=Array(arguments.length-2),i=2;i<arguments.length;i++)o[i-2]=arguments[i];return r.prototype[n].apply(t,o)}},l=function(){return Math.floor(2147483648*Math.random()).toString(36)+Math.abs(Math.floor(2147483648*Math.random())^t()).toString(36)},d=function(){this.a="",this.b=p},p={},i=function(t){var n=new d;return n.a=t,n},o=function(t){this.a=t||s.document||document};o.prototype.appendChild=function(t,n){t.appendChild(n)};var y=function(t,n,e,o,i,r){try{var a=t.a,l=t.a.createElement("SCRIPT");l.async=!0,u=n,(c=l).src=u instanceof d&&u.constructor===d&&u.b===p?u.a:"type_error:TrustedResourceUrl",null===h&&(h=(u=(u=s.document).querySelector&&u.querySelector("script[nonce]"))&&(u=u.nonce||u.getAttribute("nonce"))&&f.test(u)?u:""),(u=h)&&c.setAttribute("nonce",u),a.head.appendChild(l),l.addEventListener("load",function(){i(),o&&a.head.removeChild(l)}),l.addEventListener("error",function(){0<e?y(t,n,e-1,o,i,r):(o&&a.head.removeChild(l),r())})}catch(t){r()}var c,u},c=s.atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vaW1hZ2VzL2ljb25zL21hdGVyaWFsL3N5c3RlbS8xeC93YXJuaW5nX2FtYmVyXzI0ZHAucG5n"),u=s.atob("WW91IGFyZSBzZWVpbmcgdGhpcyBtZXNzYWdlIGJlY2F1c2UgYWQgb3Igc2NyaXB0IGJsb2NraW5nIHNvZnR3YXJlIGlzIGludGVyZmVyaW5nIHdpdGggdGhpcyBwYWdlLg=="),b=s.atob("RGlzYWJsZSBhbnkgYWQgb3Igc2NyaXB0IGJsb2NraW5nIHNvZnR3YXJlLCB0aGVuIHJlbG9hZCB0aGlzIHBhZ2Uu"),m=function(t,n,e){this.b=t,this.f=new o(this.b),this.a=null,this.c=[],this.g=!1,this.i=n,this.h=e},g=function(t){if(t.b.body&&!t.g){var n=function(){e(t),s.setTimeout(function(){return Z(t,3)},50)};y(t.f,t.i,2,!0,function(){s[t.h]||n()},n),t.g=!0}},e=function(t){for(var n=N(1,5),e=0;e<n;e++){var o=x(t);t.b.body.appendChild(o),t.c.push(o)}(n=x(t)).style.bottom="0",n.style.left="0",n.style.position="fixed",n.style.width=N(100,110).toString()+"%",n.style.zIndex=N(2147483544,2147483644).toString(),n.style["background-color"]=W(249,259,242,252,219,229),n.style["box-shadow"]="0 0 12px #888",n.style.color=W(0,10,0,10,0,10),n.style.display="flex",n.style["justify-content"]="center",n.style["font-family"]="Roboto, Arial",(e=x(t)).style.width=N(80,85).toString()+"%",e.style.maxWidth=N(750,775).toString()+"px",e.style.margin="24px",e.style.display="flex",e.style["align-items"]="flex-start",e.style["justify-content"]="center",(o=t.f.a.createElement("IMG")).className=l(),o.src=c,o.style.height="24px",o.style.width="24px",o.style["padding-right"]="16px";var i=x(t),r=x(t);r.style["font-weight"]="bold",r.textContent=u;var a=x(t);for(a.textContent=b,v(t,i,r),v(t,i,a),v(t,e,o),v(t,e,i),v(t,n,e),t.a=n,t.b.body.appendChild(t.a),n=N(1,5),e=0;e<n;e++)o=x(t),t.b.body.appendChild(o),t.c.push(o)},v=function(t,n,e){for(var o=N(1,5),i=0;i<o;i++){var r=x(t);n.appendChild(r)}for(n.appendChild(e),e=N(1,5),o=0;o<e;o++)i=x(t),n.appendChild(i)},N=function(t,n){return Math.floor(t+Math.random()*(n-t))},W=function(t,n,e,o,i,r){return"rgb("+N(Math.max(t,0),Math.min(n,255)).toString()+","+N(Math.max(e,0),Math.min(o,255)).toString()+","+N(Math.max(i,0),Math.min(r,255)).toString()+")"},x=function(t){return(t=t.f.a.createElement("DIV")).className=l(),t},Z=function(t,n){n<=0||null!=t.a&&0!=t.a.offsetHeight&&0!=t.a.offsetWidth||(S(t),e(t),s.setTimeout(function(){return Z(t,n-1)},50))},S=function(t){var n,e,o=t.c,i="undefined"!=typeof Symbol&&Symbol.iterator&&o[Symbol.iterator];for(i=(o=i?i.call(o):{next:(n=o,e=0,function(){return e<n.length?{done:!1,value:n[e++]}:{done:!0}})}).next();!i.done;i=o.next())(i=i.value)&&i.parentNode&&i.parentNode.removeChild(i);t.c=[],(o=t.a)&&o.parentNode&&o.parentNode.removeChild(o),t.a=null},w=function(t,n,e){var o,i;t=s.btoa(t+n),o=t,i=e,Object.defineProperty(s,o,{configurable:!1,get:function(){return i},set:r})},M=function(n,e,t,o,i){var r=V(t),a=function(t){document.body?(document.body.appendChild(r),s.setTimeout(function(){r?(0!==r.offsetHeight&&0!==r.offsetWidth?e():n(),r.parentNode&&r.parentNode.removeChild(r)):n()},o)):0<t?s.setTimeout(function(){a(t-1)},i):e()};a(3)},V=function(t){var n=document.createElement("div");return n.className=t,n.style.width="1px",n.style.height="1px",n.style.position="absolute",n.style.left="-10000px",n.style.top="-10000px",n.style.zIndex="-10000",n},X=null,I=function(){},C="function"==typeof Uint8Array,G=function(t,n){t.b=null,n||(n=[]),t.l=void 0,t.f=-1,t.a=n;t:{if(n=t.a.length){--n;var e=t.a[n];if(!(null===e||"object"!=typeof e||"array"==a(e)||C&&e instanceof Uint8Array)){t.g=n-t.f,t.c=e;break t}}t.g=Number.MAX_VALUE}t.i={}},L=[],R=function(t,n){if(n<t.g){n+=t.f;var e=t.a[n];return e===L?t.a[n]=[]:e}if(t.c)return(e=t.c[n])===L?t.c[n]=[]:e},Y=function(t,n){var e=J;if(t.b||(t.b={}),!t.b[n]){var o=R(t,n);o&&(t.b[n]=new e(o))}return t.b[n]};I.prototype.h=C?function(){var t=Uint8Array.prototype.toJSON;Uint8Array.prototype.toJSON=function(){if(!X){X={};for(var t=0;t<65;t++)X[t]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(t)}t=X;for(var n=[],e=0;e<this.length;e+=3){var o=this[e],i=e+1<this.length,r=i?this[e+1]:0,a=e+2<this.length,l=a?this[e+2]:0,c=o>>2;o=(3&o)<<4|r>>4,r=(15&r)<<2|l>>6,l&=63,a||(l=64,i||(r=64)),n.push(t[c],t[o],t[r],t[l])}return n.join("")};try{return JSON.stringify(this.a&&this.a,j)}finally{Uint8Array.prototype.toJSON=t}}:function(){return JSON.stringify(this.a&&this.a,j)};var j=function(t,n){return"number"!=typeof n||!isNaN(n)&&1/0!==n&&-1/0!==n?n:String(n)};I.prototype.toString=function(){return this.a.toString()};var J=function(t){G(this,t)};n(J,I);var U=function(t){G(this,t)};n(U,I);var F=function(t,n){this.g=new o(t);var e=Y(n,11);e=i(R(e,4)||""),this.b=new m(t,e,R(n,10)),this.a=n,this.f=R(this.a,1),this.c=!1},z=function(t,n,e,o){n=new J(n?JSON.parse(n):null),n=i(R(n,4)||""),y(t.g,n,3,!1,e,function(){M(function(){g(t.b),o(!1)},function(){o(!0)},R(t.a,12),R(t.a,5),R(t.a,3))})},E=function(t){this.h=s.document,this.a=new F(this.h,t),this.f=R(t,1),this.g=Y(t,2),this.c=!1,this.b=t};E.prototype.start=function(){try{A(),(o=this.a).c||(w(o.f,"internal_api_load_with_sb",function(t,n,e){z(o,t,n,e)}),w(o.f,"internal_api_sb",function(){g(o.b)}),o.c=!0),s.googlefc=s.googlefc||{},"callbackQueue"in s.googlefc||(s.googlefc.callbackQueue=[]),T(this)}catch(t){g(this.a.b)}var o};var H,A=function(){var n=function(){if(!s.frames.googlefcPresent)if(document.body){var t=document.createElement("iframe");t.style.display="none",t.style.width="0px",t.style.height="0px",t.style.border="none",t.style.zIndex="-1000",t.style.left="-1000px",t.style.top="-1000px",t.name="googlefcPresent",document.body.appendChild(t)}else s.setTimeout(n,5)};n()},T=function(i){var r=t();z(i.a,i.g.h(),function(){var t,n=i.f,e=s[s.btoa(n+"cached_js")];if(e){e=s.atob(e),e=parseInt(e,10),n=s.btoa(n+"cached_js").split(".");var o=s;n[0]in o||void 0===o.execScript||o.execScript("var "+n[0]);for(;n.length&&(t=n.shift());)n.length?o=o[t]&&o[t]!==Object.prototype[t]?o[t]:o[t]={}:o[t]=null;t=(t=Math.abs(r-e))<1728e5?0:t}else t=-1;0!=t&&(function(t,n,e){for(var o=[],i=2;i<arguments.length;++i)o[i-2]=arguments[i];if(i=s.btoa(t+n),i=s[i],"function"!=a(i))throw Error("API not exported.");i.apply(null,o)}(i.f,"internal_api_sb"),_(i,R(i.b,9)))},function(t){_(i,R(i.b,t?7:8))})},_=function(t,n){t.c||(t.c=!0,(t=new s.XMLHttpRequest).open("GET",n,!0),t.send())};s[H="__475an521in8a__"]=function(t){for(var n=[],e=0;e<arguments.length;++e)n[e-0]=arguments[e];s[H]=r,function(t){"function"==typeof s.atob&&(t=s.atob(t),t=new U(t?JSON.parse(t):null),new E(t).start())}.apply(null,n)}}).call(this),window.__475an521in8a__("WyJiMDhhZWU3NzhkMWY1Y2FhIixbbnVsbCxudWxsLG51bGwsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2YvQUdTS1d4VzUyanJ5VEtmb19QWkVSaF9FWGdOeWxtZWZUR3haTElhc2dwX29nRlA5RmZmYXRVZVp0NXR6VmFwS2tnWWg0SFExM0dUX2ltSlNlTlVKaEJyMyJdCiwyMCxudWxsLDEwMCxudWxsLCJodHRwczovL2Z1bmRpbmdjaG9pY2VzbWVzc2FnZXMuZ29vZ2xlLmNvbS9sL0FHU0tXeFhJYVhOVHg1WEs3X29saEZpc3hLQVgwbHVnR3NZb3NMSjRZX0Z1UGNaRW9hWDNmU203aGJxWXUwVjlwdElSVjd5OWg2VmJ4dWZvalB3QS1ESTA/YWJcdTAwM2QxIiwiaHR0cHM6Ly9mdW5kaW5nY2hvaWNlc21lc3NhZ2VzLmdvb2dsZS5jb20vbC9BR1NLV3hYNE9uNzFjRmFiMDNjNnVNel95eU1pa1NCMWcxd1ZoSmU3aFBzWmo4ZTJkSTBYdGxNQ3NrajZ3YWhJbmFIbmo2eXkzQzhmOGVKUXp2RlEySnhRP2FiXHUwMDNkMlx1MDAyNnNiZlx1MDAzZDEiLCJodHRwczovL2Z1bmRpbmdjaG9pY2VzbWVzc2FnZXMuZ29vZ2xlLmNvbS9sL0FHU0tXeFdQUHdJSW9oZzhFeWh6X3hZYUF5eW5CRXdXMXo1Und0bHJra05EZFlCVUE1TGdDMmNhZnpkcHlmZVVGalpmLUt5eTlNOXpITHdpV1JlNE5LTVU/c2JmXHUwMDNkMiIsIllqQTRZV1ZsTnpjNFpERm1OV05oWVFcdTAwM2RcdTAwM2QiLFtudWxsLG51bGwsbnVsbCwiaHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vMGVtbi9mL3AvYjA4YWVlNzc4ZDFmNWNhYS5qcz91c3FwXHUwMDNkQ0FrIl0KLCJkaXYtZ3B0LWFkIl0K")</script>
+		
+		
+		
+		
+		
+		<script type="text/javascript">var googletag=googletag||{};function defer(e){window.jQuery?e():setTimeout(function(){defer(e)},50)}function eplAD4Sync(e){"function"==typeof eplAD4SyncDefer?eplAD4SyncDefer(e):setTimeout(function(){eplAD4Sync(e)},50)}function insSync(e){"function"==typeof $.ins?e():setTimeout(function(){insSync(e)},50)}function createCookie(e,n,t){if(t){var o=new Date;o.setTime(o.getTime()+24*t*60*60*1e3);var a="; expires="+o.toGMTString()+";domain=.eldia.com"}else a="";document.cookie=e+"="+n+a+"; path=/"}function readCookie(e){for(var n=e+"=",t=document.cookie.split(";"),o=0;o<t.length;o++){for(var a=t[o];" "==a.charAt(0);)a=a.substring(1,a.length);if(0==a.indexOf(n))return a.substring(n.length,a.length)}return null}googletag.cmd=googletag.cmd||[],-1<window.location.href.indexOf("?")&&(console.log(window.location.href.indexOf("?"),window.location.pathname),window.history.replaceState({},window.location.pathname,window.location.pathname)),eplsection="LaCiudad",proxy_images_path="https://cdn1.eldia.com",info_urlTapaDiario="1586924468210.jpg",disqus_shortname="diarioelda",disqus_identifier="2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad";var disqus_config=function(){this.page.remote_auth_s3="",this.page.url="https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad",this.page.identifier="2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad",this.page.api_key="ZPFo6OnV7Dpg4dW8lyw8F6E139XgA3vVoRENNr1BKkJkRo4RyAeEwJvll0cNLLRw"};!function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="//diarioelda.disqus.com/embed.js",(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(e)}(),function(e,n,t,o,a,i,c){e.GoogleAnalyticsObject=a,e.ga=e.ga||function(){(e.ga.q=e.ga.q||[]).push(arguments)},e.ga.l=1*new Date,i=n.createElement(t),c=n.getElementsByTagName(t)[0],i.async=1,i.src="https://www.google-analytics.com/analytics.js",c.parentNode.insertBefore(i,c)}(window,document,"script",0,"ga");var user_id=readCookie("userToken");user_id?(ga("create","UA-6833689-2",{userId:user_id}),ga("set","dimension1",user_id)):ga("create","UA-6833689-2","auto");var _sf_async_config=_sf_async_config||{};_sf_async_config.uid=parseInt(16140),_sf_async_config.domain="eldia.com.ar",_sf_async_config.useCanonical=!0,_sf_async_config.sections=window.location.pathname,function(){function e(){var e=document.createElement("script");e.setAttribute("language","javascript"),e.setAttribute("type","text/javascript"),e.setAttribute("src","//static.chartbeat.com/js/chartbeat.js"),document.body.appendChild(e)}var n=window.onload;window.onload="function"!=typeof window.onload?e:function(){n(),e()}}()</script>
+		
+		<script>var ads={styles:{},light:!0};ads.styles.push={iconsStyle:"width:62px;position:absolute;left:900px;top:0;border:1px solid #ccc;font-family:Arial;font-size:11px;padding:3px;background-color:white;text-align:center",openIconHTML:"[OPEN]",closeIconHTML:"[CLOSE]"}</script>
+		
+		<script async src="https://www.googletagservices.com/tag/js/gpt.js"></script>
+		<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+		<script async defer="defer" src="//platform.instagram.com/en_US/embeds.js"></script>
+		<script async defer="defer" src="https://www.google.com/recaptcha/api.js?onload=onLoadRecaptcha&render=explicit"></script>
+		<script async="async" src="https://www.google.com/adsense/search/ads.js"></script>
+		
+		<script type="text/javascript" charset="utf-8">!function(n,o){n[o]=n[o]||function(){(n[o].q=n[o].q||[]).push(arguments)},n[o].t=1*new Date}(window,"_googCsa")</script>
+		
+		
+		<script>function menu_click(){var e=document.getElementsByClassName("menu_vertical"),c=document.querySelector(".menu_vertical .sub_side ul.side_ul");e[0].classList&&e[0].classList.toggle("view"),c.style.display="none"}document.getElementsByClassName(".menu_click .checkbox").checked=!1</script>
+		
+		
+		<script>var _comscore=_comscore||[];_comscore.push({c1:"2",c2:"33135242"}),function(){var c=document.createElement("script"),e=document.getElementsByTagName("script")[0];c.async=!0,c.src=("https:"==document.location.protocol?"https://sb":"http://b")+".scorecardresearch.com/beacon.js",e.parentNode.insertBefore(c,e)}()</script>
+		<noscript>
+		<img src="https://sb.scorecardresearch.com/p?c1=2&c2=33135242&cv=2.0&cj=1">
+		</noscript>
+		
+		
+		<script async type="text/javascript" src="/js/all.min.js?86"></script>
+	</head>
+	<body>
+		<div id="LoginWall">
+			<img id="LoginWall_cruz" src="/img/cruz.png" onclick='$("#opacityBody, #LoginWall").hide()'>
+			<label class="LoginWall_texto">Gracias</label>
+			<div class="LoginWall_linea"></div>
+			<div class="LoginWall_title">
+				<p>Estimado lector, muchas gracias por su interés en nuestras notas. Hemos incorporado el registro con el objetivo de mejorar la información que le brindamos de acuerdo a sus intereses. Para más información haga clic <a href="/suscripcion/preguntas-frecuentes">aquí</a></p>
+			</div>
+		
+			<div class="LoginWall_linea"></div>
+			<div id="LoginWall_iconos">
+				<a href="#" onclick="loginWallSugerencia()">
+					<div class="LoginWallSobre"></div>
+					<div class="LoginWallInterior">Enviar Sugerencia</div>
+				</a>
+				<a href="/whatsapp">
+					<div class="LoginWallWhatsapp"></div>
+					<div class="LoginWallInterior">Conectarse a través de Whatsapp</div>
+				</a>
+			</div>
+			<div class="LoginWall_footer">
+				<i class="sprite sprite-logo"></i>
+			</div>
+		</div>
+		
+		<div id="contact-form-LoginWall" class="contact-form" style="display:none">
+		    <form>
+		        <input type="hidden" name="_csrf" value="kPmGNXdjklVqodRnwjz1xyC3FPqL+CmfPYcdDfP1AFI=">
+		        <fieldset>
+		            <div class="form-row">
+		                <div class="form-property">
+		                    <label for="message">
+		                        <h6 style="color:#fff">Mensaje</h6>
+		                    </label>
+		                </div>
+		                <div class="form-value">
+		                    <textarea name="message" cols="60" rows="5"></textarea>
+		                </div>
+		                <div class="clear"></div>
+		            </div>
+		            <div class="form-row">
+		                <div class="form-property">
+		                    <label for="email">
+		                        <h6 style="color:#fff">Su email</h6>
+		                    </label>
+		                </div>
+		                <div class="form-value">
+		                    <input name="email" type="email" required="">
+		                </div>
+		                <div class="clear"></div>
+		            </div>
+		            <div class="recaptcha-load" id="loginwall_contacto"></div>
+		            <div class="form-row form-row-submit">
+		                <input class="boton sending-button" value="Enviar" type="submit">
+		            </div>
+		        </fieldset>
+		    </form>
+		</div>
+		<input type="hidden" id="loginWallEnabled" value="true">
+
+		<div class="anuncio_previo">
+			<div data-spot="58a9fa3feaffec000ff1ce70" data-id="58a9fa546266ce000f6eda4b" data-pos="H0" data-width="300" data-height="auto;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:300px;height:auto" class="ppp ppp_H0"><div style=""><div id="AnuncioPrevio"></div> 
+<script>eplAD4Sync("AnuncioPrevio")</script></div></div>
+		</div>
+
+		<div class="publi_epl">
+	  		
+  		</div>
+		<div class="panel-overlay"></div>
+
+		<div class="navbar">
+			<div class="navbar-inner">
+				<a id="menu-responsive" data-panel="left" class="open-panel sprite sprite-menu-responsive"></a>
+				<a data-link="/" class="tab-link-prev" href="#tab-portada">
+					<img style="margin-top:10px" src="/mobile/img/logo_small2.png">
+				</a>
+			</div>
+		</div>
+
+		<div class="panel panel-left panel-reveal">
+			<div class="content-block">
+				<div class="cont_logo" id="closemenu_mobile" style="cursor:pointer">
+					<img src="/mobile/img/logo_small2.png">
+				</div>
+				
+				<ul class="side_ul">
+				
+					<li class="sub_side nolink">
+						<span style="color:#00b0f0">Secciones</span>
+						<ul class="side_ul">
+							<li data-link="/seccion/la-ciudad" class="tab-link-prev tab-link" href="#tab-seccion-la-ciudad">La Región</li>	
+							<li data-link="/seccion/deportes" class="tab-link-prev tab-link" href="#tab-seccion-deportes">Deportes</li>
+							<li data-link="/seccion/policiales" class="tab-link-prev tab-link" href="#tab-seccion-policiales">Policiales</li>
+							<li data-link="/seccion/espectaculos" class="tab-link-prev tab-link" href="#tab-seccion-espectaculos">Espectáculos</li>
+							<li data-link="/seccion/politica-y-economia" class="tab-link-prev tab-link" href="#tab-seccion-politica-y-economia">Política Y
+								Economía</li>
+							<li data-link="/seccion/el-mundo" class="tab-link-prev" href="#tab-seccion-el-mundo">El Mundo</li>
+							<li data-link="/seccion/informacion-general" class="tab-link-prev" href="#tab-seccion-informacion-general">Sociedad</li>
+							<li data-link="/seccion/opinion" class="tab-link-prev" href="#tab-seccion-opinion">Opinión</li>
+						</ul>
+					</li>
+					<li class="sub_side nolink">
+						<span style="color:#00b0f0">Suplementos</span>
+						<ul class="side_ul">
+							<li data-link="/seccion/deco" class="tab-link-prev tab-link" href="#tab-seccion-deco">Deco</li>
+							<li data-link="/seccion/gourmet" class="tab-link-prev tab-link" href="#tab-seccion-gourmet">Gourmet</li>
+							<li data-link="/seccion/hogar" class="tab-link-prev tab-link" href="#tab-seccion-hogar">Hogar</li>
+							
+							<li data-link="/seccion/mujer-platense" class="tab-link-prev tab-link" href="#tab-seccion-mujer-platense">Mujer Platense</li>
+							
+							<li data-link="/seccion/toda-la-semana" class="tab-link-prev tab-link" href="#tab-seccion-toda-la-semana">Toda la semana</li>
+				
+							<li data-link="/seccion/norte" class="tab-link-prev tab-link" href="#tab-seccion-norte">Norte</li>
+							<li data-link="/seccion/pesca" class="tab-link-prev tab-link" href="#tab-seccion-pesca">Pesca</li>
+							<li data-link="/seccion/revista-domingo" class="tab-link-prev tab-link" href="#tab-seccion-revista-domingo">Revista Domingo</li>
+							<li data-link="/seccion/salud" class="tab-link-prev tab-link" href="#tab-seccion-salud">Salud</li>
+							<li data-link="/seccion/septimo-dia" class="tab-link-prev tab-link" href="#tab-seccion-septimo-dia">Séptimo Día</li>
+							<li data-link="/seccion/sociales" class="tab-link-prev tab-link" href="#tab-seccion-sociales">Sociales</li>
+							<li data-link="/seccion/turismo" class="tab-link-prev tab-link" href="#tab-seccion-turismo">Turismo</li>
+							<li data-link="/seccion/vehiculos" class="tab-link-prev tab-link" href="#tab-seccion-vehiculos">Vehículos</li>
+						</ul>
+					</li>
+					<li class="sub_side nolink">
+						<span style="color:#00b0f0">Avisos</span>
+						<ul class="side_ul">			
+							<li href="http://clasificados.eldia.com" class="tab-link-prev external">Clasificados</li>	
+							<li data-link="/edictos" class="tab-link-prev external" href="https://www.eldia.com/edictos">Edictos</li>	
+							<li href="http://funebres.eldia.com/funemovil.aspx" class="tab-link-prev external">Fúnebres</li>
+						</ul>
+					</li>
+					<li class="sub_side nolink">
+						<span style="color:#00b0f0">Servicios</span>
+						<ul class="side_ul">
+							<li data-link="/clima-la-plata" class="tab-link-prev external" href="https://www.eldia.com/clima-la-plata">Clima
+							</li>
+							<li data-link="/search" class="tab-link-prev external" href="https://www.eldia.com/search">Buscar en El Día</li>			
+							<li data-link="/publidad" class="tab-link-prev external" href="https://www.eldia.com/trenes">Horario de Trenes</li>
+							<li data-link="/telefonos" class="tab-link-prev external" href="https://www.eldia.com/telefonos">Teléfonos Útiles</li>
+							<li data-link="/farmacias" class="tab-link-prev external" href="https://www.eldia.com/farmacias">Turnos de Farmacias</li>
+							<li data-link="/farmacias" class="tab-link-prev external" href="https://www.eldia.com/cines">Cartelera de cines</li>
+							
+						</ul>
+					</li>
+					<li class="sub_side nolink">
+						<span style="color:#00b0f0">Entretenimientos</span>
+						<ul class="side_ul">
+							<li data-link="/sudoku" class="tab-link-prev external" href="https://www.eldia.com/sudoku">Sudoku</li>
+							<li data-link="/cruci" class="tab-link-prev external" href="https://www.eldia.com/cruci">Crucigrama</li>
+							<li data-link="/horoscopo" class="tab-link-prev external" href="https://www.eldia.com/horoscopo">Horóscopo Zodiacal</li>
+							<li data-link="/suerte" class="tab-link-prev external" href="https://www.eldia.com/suerte">Suerte</li>
+							<li data-link="/chino" class="tab-link-prev external" href="https://www.eldia.com/chino">Predicciones Astrochinas</li>
+						</ul>
+					</li>
+					<li class="sub_side">
+						<span style="color:#00b0f0">Otros sitios</span>
+						<ul class="side_ul" style="overflow-y:scroll">
+							<li data-link="http://fmlaredonda.com" class="tab-link-prev external" href="http://fmlaredonda.com">FM la redonda</li>
+							<li data-link="http://motoresargentinos.com" class="tab-link-prev external" href="http://motoresargentinos.com">Motores
+								Argentinos</li>
+							<li data-link="http://viviendas.eldia.com.ar" class="tab-link-prev external" href="http://viviendas.eldia.com.ar">
+								Viviendas Platense</li>
+							<li data-link="/la99" class="tab-link-prev external" href="https://www.eldia.com/la99">FM ÉXITO</li>
+				
+							<li data-link="/receptorias" class="tab-link-prev external" href="https://www.eldia.com/receptorias">Receptorías</li>
+							<li data-link="http://clasificados.eldia.com/clasificados/como_publicar.html" class="tab-link-prev external" href="http://clasificados.eldia.com/clasificados/como_publicar.html">Publique ahora</li>
+						</ul>
+					</li>
+					<li data-link="https://api.whatsapp.com/send?phone=5492214779896" class="tab-link-prev external" href="https://api.whatsapp.com/send?phone=5492214779896" style="color:#88ba3f">Whatsapp</li>
+					<li data-link="/titulos" class="tab-link-prev external" href="https://www.eldia.com/titulos">Edición Impresa</li>
+					<li data-link="http://club.eldia.com" class="tab-link-prev external" href="http://club.eldia.com">Club El Día</li>
+					<li data-link="/seccion/podcast" class="tab-link-prev tab-link" href="#tab-seccion-podcast">Podcast</li>
+					<li data-link="/blogs" class="tab-link-prev tab-link" href="#tab-blogs">Blogs</li>
+					
+				
+					
+				
+				
+				
+				</ul>			</div>
+		</div>
+		
+		<div class="mk_cont">
+			<div class="ads_izq">
+				<div data-spot="58247f2260c16e000f81d576" data-id="5824807c60c16e000f81d593" data-pos="H0.1" data-width="160" data-height="600px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:160px;height:600px" class="ppp ppp_H0.1"><div style=""><div id="SolapaIzq"></div> 
+<script>eplAD4Sync("SolapaIzq")</script></div></div>
+			</div>
+
+			<div class="ads_der">
+				<div data-spot="58247f4360c16e000f81d57c" data-id="5824804e60c16e000f81d587" data-pos="H0.2" data-width="160" data-height="600px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:160px;height:600px" class="ppp ppp_H0.2"><div style=""><div id="SolapaDer"></div> 
+<script>eplAD4Sync("SolapaDer")</script></div></div>
+			</div>
+		</div>
+
+
+		<div class="container header">		
+			<div class="menu_vertical">
+				<div class="cont_logo" id="closemenu_mobile" style="cursor:pointer">
+					<img src="/img/header/eldia.png" style="width:150px">
+				</div>
+				<ul class="side_ul">
+					<li><a href="http://clasificados.eldia.com" class="tab-link-prev external">Clasificados</a></li>	
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Secciones <b>></b></span>
+						<ul class="side_ul">
+							<span style="color:#09c">Secciones</span>
+							<li><a href="/seccion/la-ciudad" class="tab-link-prev"> La Región</a></li>	
+							<li><a href="/seccion/deportes" class="tab-link-prev">Deportes</a></li>
+							<li><a href="/seccion/policiales" class="tab-link-prev">Policiales</a></li>
+							<li><a href="/seccion/espectaculos" class="tab-link-prev">Espectáculos</a> </li>
+							<li><a href="/seccion/politica-y-economia" class="tab-link-prev">Política Y
+								Economía</a> </li>
+							<li><a href="/seccion/el-mundo" class="tab-link-prev">El Mundo</a> </li>
+							<li><a href="/seccion/informacion-general" class="tab-link-prev">Sociedad</a> </li>
+							<li><a href="/seccion/opinion" class="tab-link-prev">Opinión</a> </li>
+						</ul>
+					</li>
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Suplementos <b>></b></span>
+						<ul class="side_ul">
+							<span style="color:#09c">Suplementos</span>
+							<li> <a href="/seccion/deco" class="tab-link-prev" data_href="#tab-seccion-deco"> Deco </a></li>
+							<li> <a href="/seccion/gourmet" class="tab-link-prev" data_href="#tab-seccion-gourmet"> Gourmet</a></li>
+							<li> <a href="/seccion/hogar" class="tab-link-prev" data_href="#tab-seccion-hogar"> Hogar</a></li>
+							<li> <a href="/seccion/mujer-platense" class="tab-link-prev" data_href="#tab-seccion-mujer-platense"> Mujer Platense</a></li>
+							<li> <a href="/seccion/toda-la-semana" class="tab-link-prev" data_href="#tab-seccion-toda-la-semana"> Toda la semana</a></li>
+							<li> <a href="/seccion/norte" class="tab-link-prev" data_href="#tab-seccion-norte"> Norte</a></li>
+							<li> <a href="/seccion/pesca" class="tab-link-prev" data_href="#tab-seccion-pesca"> Pesca</a></li>
+							<li> <a href="/seccion/revista-domingo" class="tab-link-prev" data_href="#tab-seccion-revista-domingo"> Revista Domingo</a></li>
+							<li> <a href="/seccion/salud" class="tab-link-prev" data_href="#tab-seccion-salud"> Salud</a></li>
+							<li> <a href="/seccion/septimo-dia" class="tab-link-prev" data_href="#tab-seccion-septimo-dia"> Séptimo Día</a></li>
+							<li> <a href="/seccion/sociales" class="tab-link-prev" data_href="#tab-seccion-sociales"> Sociales</a></li>
+							<li> <a href="/seccion/turismo" class="tab-link-prev" data_href="#tab-seccion-turismo"> Turismo</a></li>
+							<li> <a href="/seccion/vehiculos" class="tab-link-prev" data_href="#tab-seccion-vehiculos"> Vehículos</a></li>
+						</ul>
+					</li>
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Avisos <b>></b></span>
+						<ul class="side_ul">			
+							<span style="color:#09c">Avisos</span>
+							
+							<li><a data-link="/edictos" class="tab-link-prev external" href="https://www.eldia.com/edictos">Edictos</a></li>	
+							<li><a href="http://funebres.eldia.com" class="tab-link-prev external">Fúnebres</a></li>
+						</ul>
+					</li>
+					
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Servicios <b>></b></span>
+						<ul class="side_ul">
+							<span style="color:#09c">Servicios</span>
+							<li> <a data-link="/clima-la-plata" class="tab-link-prev external" href="https://www.eldia.com/clima-la-plata">Clima</a>
+							</li>
+							<li><a data-link="/search" class="tab-link-prev external" href="https://www.eldia.com/search">Buscar en El Día</a></li>			
+							<li><a data-link="/trenes" class="tab-link-prev external" href="https://www.eldia.com/trenes">Horario de Trenes</a></li>
+							<li><a data-link="/telefonos" class="tab-link-prev external" href="https://www.eldia.com/telefonos">Teléfonos Útiles</a></li>
+							<li><a data-link="/farmacias" class="tab-link-prev external" href="https://www.eldia.com/farmacias">Turnos de Farmacias</a></li>
+							<li><a data-link="/cines" class="tab-link-prev external" href="https://www.eldia.com/cines">Cartelera de cines</a></li>
+							<li><a data-link="/teatros" class="tab-link-prev external" href="https://www.eldia.com/teatros">Cartelera de teatros</a></li>
+						</ul>
+					</li>
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Entretenimientos <b>></b></span>
+						<ul class="side_ul">
+							<span style="color:#09c">Entretenimientos</span>
+							<li><a data-link="/sudoku" class="tab-link-prev external" href="https://www.eldia.com/sudoku">Sudoku</a></li>
+							<li><a data-link="/cruci" class="tab-link-prev external" href="https://www.eldia.com/cruci">Crucigrama</a></li>
+							<li><a data-link="/horoscopo" class="tab-link-prev external" href="https://www.eldia.com/horoscopo">Horóscopo Zodiacal</a></li>
+							<li><a data-link="/suerte" class="tab-link-prev external" href="https://www.eldia.com/suerte">Suerte</a></li>
+							<li><a data-link="/chino" class="tab-link-prev external" href="https://www.eldia.com/chino">Predicciones Astrochinas</a></li>
+						</ul>
+					</li>
+					<li class="sub_side con_submenu">
+						<span style="color:#09c" class="con_submenu">Otros sitios <b>></b></span>
+						<ul class="side_ul">
+							<span style="color:#09c">Otros sitios</span>
+							<li><a data-link="http://fmlaredonda.com" class="tab-link-prev external" href="http://fmlaredonda.com">FM la redonda</a></li>
+							<li><a data-link="http://motoresargentinos.com" class="tab-link-prev external" href="http://motoresargentinos.com">Motores
+								Argentinos</a></li>
+							<li>
+								<a data-link="http://viviendas.eldia.com.ar" class="tab-link-prev external" href="http://viviendas.eldia.com.ar">Viviendas Platense</a></li>
+							<li><a data-link="/la99" class="tab-link-prev external" href="https://www.eldia.com/la99">FM ÉXITO</a></li>
+			
+							<li><a data-link="/receptorias" class="tab-link-prev external" href="https://www.eldia.com/receptorias">Receptorías</a></li>
+							<li><a data-link="http://clasificados.eldia.com/clasificados/como_publicar.html" class="tab-link-prev external" href="http://clasificados.eldia.com/clasificados/como_publicar.html">Publique ahora</a></li>
+						</ul>
+					</li>
+					<li><a data-link="https://api.whatsapp.com/send?phone=5492214779896" class="tab-link-prev external" href="https://api.whatsapp.com/send?phone=5492214779896" style="color:#88ba3f">Whatsapp</a></li>
+					<li><a data-link="/titulos" class="tab-link-prev external" href="https://www.eldia.com/titulos">Edición Impresa</a></li>
+					<li><a data-link="http://club.eldia.com" class="tab-link-prev external" href="http://club.eldia.com">Club El Día</a></li>
+			
+					<li><a href="/seccion/podcast" class="tab-link-prev">Podcast</a></li>
+					<li><a href="/blogs" class="tab-link-prev">Blogs</a></li>
+				</ul>
+			</div>
+			<div class="banda_top newmenu">
+				<div class="contenedor grid">
+					<div class="item-4">
+						<ul class="lista"> 				
+							<li class="menu_click" onclick="menu_click()">
+								<div id="amp-burger" class="menu_click">
+									<div class="lines">
+								    	<input type="checkbox" class="checkbox">
+								    	<div class="lines-icon" data-menu="">
+								      		<div class="icon-left"></div>
+								      		<div class="icon-right"></div>
+								    	</div>
+								  	</div>						
+								</div>	
+					        </li>
+							<li class="clima-cont">
+								<div class="clima">
+									<a href="/clima-la-plata" title="Soleado">
+											<img alt="Soleado" src="/img/clima/clima_sol.jpg" title="">
+										<p>
+											<strong>19 °C</strong> La Plata					
+											<br>
+											Miércoles 15 de Abril, 2020
+										</p>
+									</a>			
+								</div>
+							</li>
+						
+						</ul>
+					</div>
+					<div class="item-4">
+						<div class="cont-logo">
+							<a href="/" class="logo">
+									<img src="/img/header/eldia.png" alt="El Día">
+							</a>			
+						</div>
+					</div>
+					<div class="item-4">
+						<ul class="sociales">
+							<li class="buscar b_buscar"><img class="b_buscar" src="/img/header/buscar.png" alt="Buscar"></li>	    	
+							<li class="user">
+					    		<div class="dropdown" id="container-login">
+					    			<img src="/img/header/usuario.png" alt="Usuarios">
+							    	<button class="dropbtn">Ingresar 
+							      		<img src="/img/header/flecha.png">
+							    	</button>
+							    	<div class="dropdown-content">
+							      		<a class="button-login login">Iniciar Sesión</a>
+							      		<a class="button-login register button-login-out">Registrarse</a>			      			      	
+							    	</div>
+							  	</div> 
+							  	<div class="dropdown" id="container-logeado" style="display:none">
+					    			<img src="/img/header/usuario.png" alt="Usuarios">
+							    	<button class="dropbtn"><span>Ingresar</span> 
+							      		<img src="/img/header/flecha.png">
+							    	</button>
+							    	<div class="dropdown-content">
+							      		<a class="button-login button-login-out" id="cerrar-sesion">Cerrar sesión</a>
+							      		<a href="/perfil" class="button-login-user noAjax">Mi perfil</a>	
+							      		<a class="button-login button-login-suscripcion" href="/suscripcion">Suscribirme</a>			      	
+							    	</div>
+							  	</div> 
+					    	</li>
+					    	
+							<li style="height:28px"><a href="/suscripcion" class="btn_suscribirme">Suscribirme</a></li>			
+						</ul>
+					</div>
+				</div>
+			
+				<div class="contenedor cont_buscar_2">
+					<script>!function(){window.__gcse={callback:function(){try{$("input.gsc-input").keyup(function(e){13!=e.keyCode&&13!=e.which||(console.log("enter"),$("body > .container.header").css("z-index","999999999"))}),$("button.gsc-search-button.gsc-search-button-v2").on("click",function(e){console.log("clicked"),$("body > .container.header").css("z-index","999999999")})}catch(e){console.log("ERROR EN BUSCADOR DE GOOGLE",e)}}};var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src=("https:"==document.location.protocol?"https:":"http:")+"//www.google.com/cse/cse.js?cx=001843346108188438810:ikgib0iphqe";var c=document.getElementsByTagName("script")[0];c.parentNode.insertBefore(e,c)}()</script>
+				    <gcse:search></gcse:search>
+				</div>
+			</div>						<div class="ultimo-momento">
+				          <div class="contenedor-momento">
+
+							<div class="cont">
+								<img src="/img/multimedia/bell.png" alt="">
+							 	<p class="chapita"></p>
+					              	<h2 class="titulo">    <a href="https://www.eldia.com/nota/2020-3-25-16-34-0-si-desea-recibir-el-diario-el-dia-en-su-casa-llame-al-425-0101-la-ciudad">Si desea recibir el diario EL DIA en su casa, llame al 425-0101 </a></h2>
+							</div>
+				            <div class="close-button"></div>
+				          </div>
+				        </div>
+	    </div>
+		
+
+		<div class="container containerfirst">
+			<div class="aux_header"></div>
+			<div id="sitio" class="sitio" style="">				
+				
+
+
+
+
+<script>PPP_HEADER="%3Cdiv%20data-spot%3D1531245501840-5b44f3bd3e753f0013ec0a09%20data-id%3D5b44f4dd3e753f0013ec0b42%20data-pos%3DP30%20data-width%3D'468'%20data-height%3D'90px%3B'%20data-fixed%3D'undefined'%20style%3D'margin-bottom%3A%2010px%3Btext-align%3A%20center%3B%20width%3A%20468px%3B%20height%3A%2090px%3B'%20class%3D'ppp%20ppp_P30'%3E%3Cdiv%20style%3D''%3E%3Cdiv%20class%3D%22gpt-load%22%20data-gpt%3D%22%2F40860203%2F468x90_top_seccion%2F468x90_top_seccion_laciudad%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2Fdiv%3E"</script>
+
+
+<input id="title" type="hidden" value="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste - La Ciudad">
+
+<input id="disqus_public_key" type="hidden" value="ZPFo6OnV7Dpg4dW8lyw8F6E139XgA3vVoRENNr1BKkJkRo4RyAeEwJvll0cNLLRw">
+<input id="disqus_shortname" type="hidden" value="diarioelda">
+<input id="eplsection" type="hidden" value="LaCiudad">
+<input id="imagenSeccion" type="hidden" value="">
+<input id="urlSeccion" type="hidden" value="la-ciudad">
+<input type="hidden" id="nota" data-id="5e975ae35697780015e0a8cf" data-tipo_de_nota="comun" data-hash="00b1dd8f98ea384f422e208c9df16a2e" data-comentada="" data-comentada_fb="" data-share_fb="" data-compartidas="" data-link="2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad" data-prevlink="" data-server_public_url="http://www.eldia.com" data-disquslink="2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad">
+
+<input type="hidden" id="page_sitio" class="datos_ubicacion" data-ubicacion="nota" data-titulo="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste" data-id="5e975ae35697780015e0a8cf" data-ucreador="Martín Cabrera" data-fecha_c="2020-04-15 16:05:00">
+
+<style></style>
+  <div class="fila_100">
+
+      
+
+     
+      <div class="chapa_nota">
+            <span><a class="heading" href="/seccion/la-ciudad">La Ciudad</a></span>
+        
+      </div>
+      
+     
+  </div>
+
+<div class="newnotapage notapage">
+  <div class="columan_one">
+      <div class="titulo_nota">En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste</div>            
+      <p class="bajada" itemprop="description">        
+          
+      </p>  
+  </div>
+  <div class="columan_two">
+  </div>
+</div>
+
+<div class="newnotapage notapage">
+  <div class="columan_one">
+          <div class="main_image">
+            <img alt="En ruta 36 y 520 activan protocolo de emergencia en un colectivo de la línea Oeste" style="width:auto;height:auto" src="https://cdn1.eldia.com/042020/1586977649483.jpg">
+                                    
+          </div>
+
+
+      <div class="actions" style="overflow:hidden"></div>
+              <div class="autor_nota">
+               <div class="imagen">
+              </div>
+              <div class="fecha">15 de Abril de 2020 | 16:05   </div>
+            </div>
+
+    
+
+
+
+
+
+
+      <div class="body text-resizable cuerpo_nota"><p>Personal especializado de la Municipalidad de La Plata activ&#xF3; el protocolo de emergencia en un micro de L&#xED;nea Oeste que transitaba por Ruta 36 y Avenida 520, ante la presencia de una mujer con s&#xED;ntomas compatibles con Coronavirus. Es el segundo caso en pocos que sucede lo mismo en un colectivo de dicha empresa y en lugar cercano.</p><p>Seg&#xFA;n se inform&#xF3;, en el marco de un operativo de control vehicular dispuesto por la Secretar&#xED;a de Seguridad del Municipio&#xA0;-para el control de automovilistas y pasajeros-&#xA0;se detect&#xF3; a bordo de un micro de la L&#xED;nea Oeste&#xA0;la presencia de <strong>una mujer de 20 a&#xF1;os&#xA0;que&#xA0;present&#xF3; fiebre alta</strong>.&#xA0;<br>En ese marco, se activ&#xF3; un protocolo de prevenci&#xF3;n y emergencia, dando intervenci&#xF3;n al SAME La Plata y aislando a los 4 pasajeros que se encontraban abordo junto con el chofer de la unidad.&#xA0;<br>Al tomar intervenci&#xF3;n&#xA0;el equipo m&#xE9;dico del SAME -que se encontraba con todas las normas de bioseguridad dispuestas- asisti&#xF3; a la mujer, quien debi&#xF3; ser derivada a un centro de salud para cumplir con el hisopado correspondiente, que determinar&#xE1; si sus s&#xED;ntomas corresponden al COVID-19.&#xA0;<br>Por otra parte, se orden&#xF3; aislar al resto de los pasajeros y el chofer del colectivo, quienes fueron trasladados a sus hogares a los fines de que hagan cumplimiento del aislamiento social obligatorio.&#xA0;<br>Al mismo tiempo que el SAME, tom&#xF3; sus datos personales para hacerles un seguimiento durante los pr&#xF3;ximos d&#xED;as a los fines de verificar que no presenten s&#xED;ntomas compatibles con el Coronavirus.</p></div>
+    <div class="mensaje_suscripcion_nota">
+      <div class="mensaje">
+       <p> Las noticias locales nunca fueron tan importantes <br>SUSCRIBITE</p>
+      </div>
+      <div class="boton_subs">
+          <a href="/suscripcion" class="btn_suscribirme_nota">Suscribirme</a>
+      </div>
+    </div>
+
+
+
+
+      
+
+
+          <div class="tags conttags_button">
+                <div class="social-nota-top">
+                <div class="col_100 social-bar">
+                	<a class="sprite icon icon-fb" target="_blank" onclick='myPopup("https://www.facebook.com/dialog/feed?app_id=273012503131272&amp;link=https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad&amp;name=En%20ruta%2036%20y%20520%20activan%20protocolo%20de%20emergencia%20en%20un%20colectivo%20de%20la%20l%C3%ADnea%20Oeste&amp;description=&amp;display=popup&amp;picture=https://cdn1.eldia.com/042020/1586977649483.jpg&amp;redirect_uri=https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad%2F%23close_window")'>
+                	</a>
+                
+                	<a class="sprite icon icon-wsp" target="_blank" onclick='myPopup("https://api.whatsapp.com/send?text=En%20ruta%2036%20y%20520%20activan%20protocolo%20de%20emergencia%20en%20un%20colectivo%20de%20la%20l%C3%ADnea%20Oeste - https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad")' href="">
+                	</a>
+                
+                	<a class="sprite icon icon-tw" target="_blank" onclick='myPopup("https://twitter.com/intent/tweet?url=https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad&amp;text=En%20ruta%2036%20y%20520%20activan%20protocolo%20de%20emergencia%20en%20un%20colectivo%20de%20la%20l%C3%ADnea%20Oeste")'>
+                	</a>
+                
+                	<a class="sprite icon icon-li" target="_blank" onclick='return myPopup("https://www.linkedin.com/shareArticle?=mini=true&url=https://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad"),!1'></a>
+                </div>              </div>
+          </div>
+    
+  </div>
+  <div class="columan_two">
+
+
+         <div class="auto-articles">
+           <div class="auto-articles-item">
+            <h2><a href="/seccion/extravios-hallazgos">Extravíos Hallazgos</a></h2>
+          </div>
+          <div class="auto-articles-item">
+            <h2><a href="/seccion/saludos">Saludos</a></h2>
+          </div>
+         </div>
+   
+      
+      <div data-spot="582330f4caba6d000f3b564f" data-id="5936cf5d6b774d00108f8c12" data-pos="P2" data-width="300" data-height="250px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:300px;height:250px" class="ppp ppp_P2"><div style=""><div id="300x250"></div> 
+<script>eplAD4Sync("300x250")</script></div></div>
+      <div data-spot="59d7b9380475e20011820fa2" data-id="5b45089d3e753f0013ec1738" data-pos="P4" data-width="300" data-height="250px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:300px;height:250px" class="ppp ppp_P4"><div style=""><div class="gpt-load" data-gpt="/40860203/300x250_2Articulo-Seccion/300x250_2Articulo-Seccion_LaCiudad"></div></div></div>  
+      <div class="modulo-blog">
+        
+      </div>
+      
+
+      
+      <div class="ad_box">
+      	<a href="/whatsapp" title="Conectate con EL DIA a través de WhatsApp">
+      		<img src="/img/publis/whatsapp1-752a401309cc475c23da98b92ab4ae41.jpg" title="" alt="">
+      	</a>
+      </div>      
+        <div data-spot="1529103770448-5b24459a96b0be001369f5fb" data-id="5b4509943e753f0013ec1759" data-pos="P3" data-width="300" data-height="250px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:300px;height:250px" class="ppp ppp_P3"><div style=""><div class="gpt-load" data-gpt="/40860203/300x250_3Articulo-Seccion/300x250_3Articulo-Seccion_LaCiudad"></div></div></div>
+        
+      <div data-spot="595123cca4714b00101ca04b" data-id="59512893a4714b00101ca055" data-pos="P9" data-width="300" data-height="600px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:300px;height:600px" class="ppp ppp_P9"><div style=""><div class="gpt-load-hidden" data-gpt="/40860203/300x600_3Articulo-Seccion"></div></div></div>
+    </div>
+
+</div>
+
+
+
+    
+
+<div class="section group row_content newnota_relleno"> 
+
+
+    
+    <div class="chapanotapage_item"><b>+</b> Comentarios</div>
+    <div class="comments-heading-block">
+      <p class="comments-msg">Debe iniciar sesión para continuar</p>
+      <div id="comments-login">
+        <span id="comments-links">
+          <strong>
+            <a class="basic">Iniciar sesión</a> | 
+            <a href="/suscripcion" class="basic">Registrarse</a>
+          </strong>
+        </span>
+      </div>
+    </div>
+
+    <div id="disqus_thread"></div>
+
+    <div class="fb-comments" data-href="http://www.eldia.com/nota/2020-4-15-16-5-0-en-ruta-36-y-520-activan-protocolo-de-emergencia-en-un-colectivo-de-la-linea-oeste-la-ciudad" data-width="970" data-num-posts="20" data-order-by="time">
+    </div>
+
+    <div id="fb-root"></div>
+
+
+  
+  
+  	
+  				<div class="links">
+  					<div class="chapanotapage_item">Más Noticias</div>
+  
+  					<div class="links_notas_container">
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-9-30-0-una-cola-interminable-desde-la-madrugada-y-mucho-frio-las-penurias-de-los-jubilados-para-vacunarse-en-la-plat-la-ciudad">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-9-30-0-una-cola-interminable-desde-la-madrugada-y-mucho-frio-las-penurias-de-los-jubilados-para-vacunarse-en-la-plat-la-ciudad">
+  										<h3>En La Plata se agotaron los lotes de la vacuna contra la gripe y la campaña continuaría el lunes</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-8-35-0-la-carta-abierta-de-una-medica-formada-en-la-plata-al-presidente-tener-vocacion-no-es-sinonimo-de-gratuito--informacion-general">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-8-35-0-la-carta-abierta-de-una-medica-formada-en-la-plata-al-presidente-tener-vocacion-no-es-sinonimo-de-gratuito--informacion-general">
+  										<h3>&quot;Si yo vivo con 40 mil pesos, su clase política podría vivir por unos meses con el 25% menos de su sueldo&quot;</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-9-20-0-con-tres-nuevos-fallecidos-por-coronavirus-la-cifra-asciende-a-108-en-el-pais-informacion-general">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586953569429.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-9-20-0-con-tres-nuevos-fallecidos-por-coronavirus-la-cifra-asciende-a-108-en-el-pais-informacion-general">
+  										<h3>Con cuatro nuevos muertos por coronavirus, la cifra en el país asciende a 109</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-11-8-0-en-la-plata-hasta-las-estatuas-de-evita-y-alfonsin-amanecieron-con-protectores-faciales-la-ciudad">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586961089249.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-11-8-0-en-la-plata-hasta-las-estatuas-de-evita-y-alfonsin-amanecieron-con-protectores-faciales-la-ciudad">
+  										<h3>En La Plata, hasta las estatuas de Evita y Alfonsín amanecieron con protectores faciales</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-1-48-20--por-que-estan-liberando-presos-de-las-carceles-de-la-provincia--policiales">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-1-48-20--por-que-estan-liberando-presos-de-las-carceles-de-la-provincia--policiales">
+  										<h3>¿Por qué están liberando presos de las cárceles de la Provincia?</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-5-4-18-un-diputado-k-quiso-chicanear-a-canosa-y-le-salio-muy-mal-espectaculos">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-5-4-18-un-diputado-k-quiso-chicanear-a-canosa-y-le-salio-muy-mal-espectaculos">
+  										<h3>Un diputado k quiso chicanear a Canosa y le salió muy mal</h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-15-12-4-0-playstation-regala-dos-de-sus-juegos-clasicos-para-combatir-el-confinamiento--informacion-general">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586963225254.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-15-12-4-0-playstation-regala-dos-de-sus-juegos-clasicos-para-combatir-el-confinamiento--informacion-general">
+  										<h3>PlayStation regala dos de sus juegos clásicos para combatir el confinamiento </h3>
+  									</a>
+  								</div>
+  						        <div class="links_notas">
+  					
+  									<a href="/nota/2020-4-14-11-14-0-como-usar-y-manipular-adecuadamente-barbijos-y-tapabocas-informacion-general">
+  										<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586875537252/barbijos1.jpg?&cw=1200&ch=750 1200w">
+  									</a>
+  
+  									<a href="/nota/2020-4-14-11-14-0-como-usar-y-manipular-adecuadamente-barbijos-y-tapabocas-informacion-general">
+  										<h3>Cómo usar y manipular adecuadamente barbijos y tapabocas</h3>
+  									</a>
+  								</div>
+  					</div>
+  				</div>
+  
+  
+    <div class="links">
+      <div class="chapanotapage_item"><b>+</b> Leidas</div>
+      <div class="links_notas_container">
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-6-10-35-0-como-hacer-barbijos-en-casa-informacion-general">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586182760105.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-6-10-35-0-como-hacer-barbijos-en-casa-informacion-general">
+              <h3>Cómo hacer &quot;tapabocas&quot; en casa</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-13-29-0-clausuran-una-distribuidora-de-golosinas-de-la-plata-por-caso-de-coronavirus-y-ponen-a-todos-en-cuarentena-la-ciudad">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-13-29-0-clausuran-una-distribuidora-de-golosinas-de-la-plata-por-caso-de-coronavirus-y-ponen-a-todos-en-cuarentena-la-ciudad">
+              <h3>Por caso de coronavirus, clausuran una distribuidora de golosinas en La Plata y ponen a todos en cuarentena</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-8-35-0-la-carta-abierta-de-una-medica-formada-en-la-plata-al-presidente-tener-vocacion-no-es-sinonimo-de-gratuito--informacion-general">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586952891032.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-8-35-0-la-carta-abierta-de-una-medica-formada-en-la-plata-al-presidente-tener-vocacion-no-es-sinonimo-de-gratuito--informacion-general">
+              <h3>&quot;Si yo vivo con 40 mil pesos, su clase política podría vivir por unos meses con el 25% menos de su sueldo&quot;</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-2-9-43--nos-dieron-via-libre-y-no-dudamos-en-volver--deportes">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586927386398.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-2-9-43--nos-dieron-via-libre-y-no-dudamos-en-volver--deportes">
+              <h3>Bautista Cascini: “Nos dieron vía libre y no dudamos en volver”</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-9-30-0-una-cola-interminable-desde-la-madrugada-y-mucho-frio-las-penurias-de-los-jubilados-para-vacunarse-en-la-plat-la-ciudad">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586955113187.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-9-30-0-una-cola-interminable-desde-la-madrugada-y-mucho-frio-las-penurias-de-los-jubilados-para-vacunarse-en-la-plat-la-ciudad">
+              <h3>En La Plata se agotaron los lotes de la vacuna contra la gripe y la campaña continuaría el lunes</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-5-4-18-un-diputado-k-quiso-chicanear-a-canosa-y-le-salio-muy-mal-espectaculos">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/5e9687bd5697780015df4f85/1586937894842.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-5-4-18-un-diputado-k-quiso-chicanear-a-canosa-y-le-salio-muy-mal-espectaculos">
+              <h3>Un diputado k quiso chicanear a Canosa y le salió muy mal</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-2-8-43-mascherano-le-fue-al-hueso-a-marcos-rojo--deportes">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/5e9687bd5697780015df4f84/1586926752119.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-2-8-43-mascherano-le-fue-al-hueso-a-marcos-rojo--deportes">
+              <h3>Mascherano “le fue al hueso” a Marcos Rojo...</h3>
+            </a>
+          </div>
+          <div class="links_notas">
+            
+            <a href="/nota/2020-4-15-1-48-20--por-que-estan-liberando-presos-de-las-carceles-de-la-provincia--policiales">
+              <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586946989517.jpg?&cw=1200&ch=750 1200w">
+            </a>
+  
+            <a href="/nota/2020-4-15-1-48-20--por-que-estan-liberando-presos-de-las-carceles-de-la-provincia--policiales">
+              <h3>¿Por qué están liberando presos de las cárceles de la Provincia?</h3>
+            </a>
+          </div>
+      </div>
+    </div>
+  
+  
+  
+  
+  
+  	<div class="links">
+  		<div class="chapanotapage_item"><b>+</b> Artículos de La Ciudad</div>
+  
+  		<div class="links_notas_container">
+  				<div class="links_notas">
+  					
+  					<a href="/nota/2020-4-15-15-27-0-otro-profesional-de-la-salud-dio-positivo-y-son-25-los-casos-en-la-plata-la-ciudad">
+  						<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586977321247.jpg?&cw=1200&ch=750 1200w">
+  					</a>
+  
+  					<a href="/nota/2020-4-15-15-27-0-otro-profesional-de-la-salud-dio-positivo-y-son-25-los-casos-en-la-plata-la-ciudad">
+  						<h3>Otro profesional de la salud dio positivo y son 25 los casos en La Plata</h3>
+  					</a>
+  				</div>
+  				<div class="links_notas">
+  					
+  					<a href="/nota/2020-4-15-15-4-0-un-posible-caso-de-coronavirus-encendio-las-alarmas-en-un-frigorifico-platense-la-ciudad">
+  						<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586976583256.jpeg?&cw=1200&ch=750 1200w">
+  					</a>
+  
+  					<a href="/nota/2020-4-15-15-4-0-un-posible-caso-de-coronavirus-encendio-las-alarmas-en-un-frigorifico-platense-la-ciudad">
+  						<h3>Un posible caso de coronavirus encendió las alarmas en un frigorífico platense</h3>
+  					</a>
+  				</div>
+  				<div class="links_notas">
+  					
+  					<a href="/nota/2020-4-15-13-29-0-clausuran-una-distribuidora-de-golosinas-de-la-plata-por-caso-de-coronavirus-y-ponen-a-todos-en-cuarentena-la-ciudad">
+  						<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586968465206.jpg?&cw=1200&ch=750 1200w">
+  					</a>
+  
+  					<a href="/nota/2020-4-15-13-29-0-clausuran-una-distribuidora-de-golosinas-de-la-plata-por-caso-de-coronavirus-y-ponen-a-todos-en-cuarentena-la-ciudad">
+  						<h3>Por caso de coronavirus, clausuran una distribuidora de golosinas en La Plata y ponen a todos en cuarentena</h3>
+  					</a>
+  				</div>
+  				<div class="links_notas">
+  					
+  					<a href="/nota/2020-4-15-13-17-0-cortes-de-luz-programados-en-varias-zonas-de-la-ciudad-la-ciudad">
+  						<img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586968280235.jpg?&cw=1200&ch=750 1200w">
+  					</a>
+  
+  					<a href="/nota/2020-4-15-13-17-0-cortes-de-luz-programados-en-varias-zonas-de-la-ciudad-la-ciudad">
+  						<h3>Una amplia zona de la Ciudad sin luz por un corte programado</h3>
+  					</a>
+  				</div>
+  		</div>
+  	</div>
+
+
+  <div class="col span_8_of_8 col_margin">
+      
+
+    <div data-spot="5823333acaba6d000f3b5661" data-id="594abe4551f828001011db13" data-pos="P7" data-width="653" data-height="258px;" data-fixed="undefined" style="margin-bottom:10px;text-align:center;width:653px;height:258px" class="ppp ppp_P7"><div style=""><iframe class="motores" src="//www.eldia.com/proxyppp/2" style="margin:-8px 0 0 0!important"></iframe></div></div>
+    
+  </div>
+
+
+
+
+  <div class="bloquemasnoticias" style="width:100%">
+      <div class="bloque_masnoticias">
+        <div class="chapanotapage_item"> <a class="heading" href="/seccion/informacion-general">Información General</a></div>
+          <div class="caja_masnotashome h_primero">
+            <a href="/nota/2020-4-15-14-12-0-piden-al-gobierno-que-aumenten-los-testeos-a-profesionales-de-la-salud-informacion-general">Piden al Gobierno que aumenten los testeos a profesionales de la salud</a>
+                <a href="/nota/2020-4-15-14-12-0-piden-al-gobierno-que-aumenten-los-testeos-a-profesionales-de-la-salud-informacion-general">
+                   <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586970818587.jpg?&cw=1200&ch=750 1200w">
+
+                  </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-13-55-0-la-madre-y-la-suegra-de-dos-platenses-varadas-en-madrid-hizo-un-desesperado-pedido-informacion-general">La madre y la suegra de dos platenses varadas en Madrid hizo un desesperado pedido</a>
+                  <a href="/nota/2020-4-15-13-55-0-la-madre-y-la-suegra-de-dos-platenses-varadas-en-madrid-hizo-un-desesperado-pedido-informacion-general">
+                      <img src="https://cdn1.eldia.com/042020/1586975452290.jpeg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-13-23-0-la-justicia-platense-rechazo-un-pedido-para-liberar-a-todos-los-internos-de-un-pabellon-informacion-general">La Justicia platense rechazó un pedido para liberar a todos los internos de un pabellón</a>
+                  <a href="/nota/2020-4-15-13-23-0-la-justicia-platense-rechazo-un-pedido-para-liberar-a-todos-los-internos-de-un-pabellon-informacion-general">
+                      <img src="https://cdn1.eldia.com/042020/1586968293919.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-12-29-0-dia-por-dia-que-hizo-la-oms-para-frenar-al-covid-19-hasta-que-se-declaro-la-pandemia-informacion-general">Día por día, qué hizo la OMS para frenar al Covid-19 hasta que se declaró la pandemia</a>
+                  <a href="/nota/2020-4-15-12-29-0-dia-por-dia-que-hizo-la-oms-para-frenar-al-covid-19-hasta-que-se-declaro-la-pandemia-informacion-general">
+                      <img src="https://cdn1.eldia.com/042020/1586965020514.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-12-28-0-las-muertes-por-el-coronavirus-en-iran-casi-duplican-a-las-cifras-reportadas-informacion-general">Las muertes por el coronavirus en Irán casi duplican a las cifras reportadas</a>
+                          <a href="/nota/2020-4-15-12-28-0-las-muertes-por-el-coronavirus-en-iran-casi-duplican-a-las-cifras-reportadas-informacion-general"><img alt="imagen" class="panel_imagen lazy" src="https://cdn1.eldia.com/012019/1546977480463.jpg?cw=100&ch=85"></a>
+
+          </div>
+      </div>
+      <div class="bloque_masnoticias">
+        <div class="chapanotapage_item"> <a class="heading" href="/seccion/policiales">Policiales</a></div>
+          <div class="caja_masnotashome h_primero">
+            <a href="/nota/2020-4-15-12-15-0-aplican-doble-proceso-de-desinfeccion-en-mercaderias-y-encomiendas-que-ingresan-a-penales-policiales">Aplican doble proceso de desinfección en mercaderías y encomiendas que ingresan a penales</a>
+                <a href="/nota/2020-4-15-12-15-0-aplican-doble-proceso-de-desinfeccion-en-mercaderias-y-encomiendas-que-ingresan-a-penales-policiales">
+                   <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586963824125.jpeg?&cw=1200&ch=750 1200w">
+
+                  </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-10-59-0-horror-en-moreno-hallan-asesinada-y-enterrada-a-una-joven-que-estaba-desaparecida-policiales">Horror en Moreno: hallan asesinada y enterrada a una joven que estaba desaparecida</a>
+                  <a href="/nota/2020-4-15-10-59-0-horror-en-moreno-hallan-asesinada-y-enterrada-a-una-joven-que-estaba-desaparecida-policiales">
+                      <img src="https://cdn1.eldia.com/042020/1586959270248.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-9-1-0-en-una-red-social-pregunto-por-un-saqueo-y-ahora-tiene-una-causa-por-intimidacion-publica-policiales">En una red social preguntó  por un  saqueo y ahora tiene una causa por intimidación pública</a>
+                  <a href="/nota/2020-4-15-9-1-0-en-una-red-social-pregunto-por-un-saqueo-y-ahora-tiene-una-causa-por-intimidacion-publica-policiales">
+                      <img src="https://cdn1.eldia.com/042020/1586952503822.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-8-53-0-investigan-las-causas-de-un-incendio-que-costo-la-vida-a-un-hombre-en-berisso-policiales">Investigan las causas de un incendio que costó la vida a un hombre en Berisso</a>
+                  <a href="/nota/2020-4-15-8-53-0-investigan-las-causas-de-un-incendio-que-costo-la-vida-a-un-hombre-en-berisso-policiales">
+                      <img src="https://cdn1.eldia.com/042020/1586951927251.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-1-54-20-brusca-caida-del-delito-en-la-plata-desde-que-arranco-la-cuarentena-policiales">Brusca caída del delito en La Plata desde que arrancó la cuarentena</a>
+                  <a href="/nota/2020-4-15-1-54-20-brusca-caida-del-delito-en-la-plata-desde-que-arranco-la-cuarentena-policiales">
+                      <img src="https://cdn1.eldia.com/5e9687bd5697780015df4fc6/1586926115648.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+      </div>
+      <div class="bloque_masnoticias">
+        <div class="chapanotapage_item"> <a class="heading" href="/seccion/espectaculos">Espectáculos</a></div>
+          <div class="caja_masnotashome h_primero">
+            <a href="/nota/2020-4-15-5-9-18--del-sunderland-hasta-la-muerte-un-fracaso-que-afirmara-tu-amor-por-el-futbol-espectaculos">“Del Sunderland hasta la muerte”: un fracaso que afirmará tu amor por el fútbol</a>
+                <a href="/nota/2020-4-15-5-9-18--del-sunderland-hasta-la-muerte-un-fracaso-que-afirmara-tu-amor-por-el-futbol-espectaculos">
+                   <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586938162863.jpg?&cw=1200&ch=750 1200w">
+
+                  </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-5-8-18--unidos-una-fabula-agil-pero-poco-inspirada-que-plantea-la-pregunta-que-le-pasa-a-pixar--espectaculos">“Unidos”: una fábula ágil pero poco inspirada que plantea la pregunta: ¿qué le pasa a Pixar?</a>
+                  <a href="/nota/2020-4-15-5-8-18--unidos-una-fabula-agil-pero-poco-inspirada-que-plantea-la-pregunta-que-le-pasa-a-pixar--espectaculos">
+                      <img src="https://cdn1.eldia.com/042020/1586938160060.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-5-7-18--chau-chau-chau-en-una-fuerte-interna-tras-el-valija-gate-tinelli-analiza-irse-de-el-trece-espectaculos">¿Chau chau chau?: en una fuerte interna tras el valija-gate, Tinelli analiza irse de El Trece</a>
+                  <a href="/nota/2020-4-15-5-7-18--chau-chau-chau-en-una-fuerte-interna-tras-el-valija-gate-tinelli-analiza-irse-de-el-trece-espectaculos">
+                      <img src="https://cdn1.eldia.com/042020/1586938161800.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-5-6-18-emma-watson-los-30-anos-de-una-actriz-que-supo-reinventarse-espectaculos">Emma Watson: los 30 años de una actriz que supo reinventarse</a>
+                  <a href="/nota/2020-4-15-5-6-18-emma-watson-los-30-anos-de-una-actriz-que-supo-reinventarse-espectaculos">
+                      <img src="https://cdn1.eldia.com/042020/1586938163551.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-5-5-18-la-version-remasterizada-de-la-dolce-vita-se-podra-ver-por-internet-espectaculos">La versión remasterizada de “La Dolce Vita” se podrá ver por internet</a>
+                  <a href="/nota/2020-4-15-5-5-18-la-version-remasterizada-de-la-dolce-vita-se-podra-ver-por-internet-espectaculos">
+                      <img src="https://cdn1.eldia.com/042020/1586938165273.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+      </div>
+      <div class="bloque_masnoticias">
+        <div class="chapanotapage_item"> <a class="heading" href="/seccion/deportes">Deportes</a></div>
+          <div class="caja_masnotashome h_primero">
+            <a href="/nota/2020-4-15-9-26-0-ya-aparecieron-los-barbijos-con-disenos-futboleros-deportes">Ya aparecieron los barbijos con diseños futboleros</a>
+                <a href="/nota/2020-4-15-9-26-0-ya-aparecieron-los-barbijos-con-disenos-futboleros-deportes">
+                   <img class="lazyload" data-sizes="auto" data-sizes="auto" data-src="https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=320&ch=200" data-srcset="https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=320&ch=200 320w,              https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=480&ch=300 480w,              https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=600&ch=375 600w,              https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=960&ch=600 960w,              https://cdn1.eldia.com/042020/1586953697799.jpg?&cw=1200&ch=750 1200w">
+
+                  </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-9-25-0-cambios-obligados-la-captacion-de-nuevos-futbolistas-se-hace-por-whatsapp-deportes">Cambios obligados: la captación de nuevos futbolistas se hace por WhatsApp</a>
+                          <a href="/nota/2020-4-15-9-25-0-cambios-obligados-la-captacion-de-nuevos-futbolistas-se-hace-por-whatsapp-deportes"><img alt="imagen" class="panel_imagen lazy" src="https://cdn1.eldia.com/012019/1546977480463.jpg?cw=100&ch=85"></a>
+
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-9-21-0-pandemia-el-dt-argentino-que-fue-despedido-por-la-crisis-economica-deportes">Pandemia: el DT argentino que fue despedido por la crisis económica</a>
+                  <a href="/nota/2020-4-15-9-21-0-pandemia-el-dt-argentino-que-fue-despedido-por-la-crisis-economica-deportes">
+                      <img src="https://cdn1.eldia.com/042020/1586953350567.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-9-20-0-todo-lleva-a-pensar-que-sera-un-ano-en-blanco-para-la-seleccion-deportes">Todo lleva a pensar que será un año en blanco para la Selección</a>
+                  <a href="/nota/2020-4-15-9-20-0-todo-lleva-a-pensar-que-sera-un-ano-en-blanco-para-la-seleccion-deportes">
+                      <img src="https://cdn1.eldia.com/042020/1586953274848.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+          <div class="caja_masnotashome">
+            <a href="/nota/2020-4-15-9-19-0-el-dardo-venenoso-de-un-ex-jugador-de-boca-dijo-que-a-river-lo-beneficiaron--deportes">El dardo venenoso de un ex jugador de Boca: dijo que a River &quot;lo beneficiaron&quot;</a>
+                  <a href="/nota/2020-4-15-9-19-0-el-dardo-venenoso-de-un-ex-jugador-de-boca-dijo-que-a-river-lo-beneficiaron--deportes">
+                      <img src="https://cdn1.eldia.com/042020/1586953170705.jpg?&cw=100&ch=85" class="" alt="">
+                    </a>
+          </div>
+      </div>
+  </div>
+
+
+
+
+  
+
+  
+
+  <div style="display:none" class="datos_estrutrurados">
+      <div itemprop="description"></div>
+
+      <div itemprop="alternativeHeadline"></div>
+       <div itemprop="articleBody"></div>
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div style="display:none" class="datos_estrutrurados">
+    <div itemprop="description"></div>
+    <div itemprop="alternativeHeadline"></div>
+     <div itemprop="articleBody"></div>
+</div>
+
+
+				
+			</div>
+
+			<div id="load">
+				<img src="/img/loading.gif" alt="cargando...">
+			</div>
+			
+			
+			<div class="section group row_other_sites footer container">
+			    <div class="col span_8_of_8">
+			        <div class="other_sites">
+			            <ul>
+			                <li><a href="http://viviendas.eldia.com.ar/" title="Viviendas La Plata, el mejor lugar para comprar, vender o alquilar su inmueble en La Plata" target="_blank">Viviendas La Plata</a>
+			                </li>
+			                <li><a href="/la99" title="Éxito FM 99.1, la radio que todos escuchan en La Plata" target="_blank">Éxito FM 99.1</a>
+			                </li>
+			               
+			                <li><a href="http://www.fmlaredonda.com" title="La Redonda, la radio deportiva de La Plata" target="_blank">FM La Redonda</a>
+			                </li>
+			                <li><a href="http://www.motoresargentinos.com/" title="MotoresArgentinos.com. La forma más fácil de llegar a su próximo vehículo" target="_blank">Motores Argentinos</a>
+			                </li>
+			                <li><a href="http://www.quilmespresente.com" title="El sitio de Quilmes" target="_blank">Quilmes Presente</a>
+			                </li>
+			            </ul>
+			        </div>
+			    </div>
+			</div>
+			
+			<div class="section row_footer_menu footer">
+			
+			    <footer>
+			        <div class="span10">
+			            <div class="top">
+			                <ul class="cols">
+			                    <li class="col">
+			                        <h6>Usuarios</h6>
+			                        <ul>                            
+			                            <li class="item"><a href="/registro" class="noAjax"><h6>Registro</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/perfil" class="noAjax"><h6>Mi Perfil</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/condiciones" _itemprop="usageTerms"><h6>Condiciones de Uso</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/privacidad" _itemprop="copyrightNotice"><h6>Política de privacidad</h6></a>
+			                            </li>
+			                        </ul>
+			                    </li>
+			
+			                     <li class="col">
+			                        <h6>Varios</h6>
+			                        <ul>
+			                            
+			                            <li class="item"> <a href="/blogs" title="Indice de Blogs"><h6>Nuestros blogs</h6></a>
+			                            </li>
+			                            <li class="item"> <a href=".rss" target="_blank" title="Feed El Día"><h6>Noticias RSS</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/suscripcion" target="_blank" title="Suscripciones en PDF"><h6>Suscripciones en PDF</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/lectores"><h6>Cartas de Lectores</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/titulos" title="Todos los títulos de la Edición Impresa"><h6>Todos los Títulos</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/search" title="Archivo"><h6>Archivo</h6></a>
+			                            </li>
+			                        </ul>
+			                    </li>
+			
+			                    <li class="col">
+			                        <h6>Contacto</h6>
+			                        <ul>
+			                            <li class="item"> <a href="/contacto"><h6>Contáctenos</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/receptorias"><h6>Receptorías</h6></a>
+			                            </li>
+			                            <li class="item"> <a href="/publicidad"><h6>Publicidad</h6></a>
+			                            </li>                            
+			                        </ul>
+			                    </li>
+			
+			                   
+			
+			                  
+			                </ul>
+			                
+			                <ul class="social_profiles">
+			                    <li><a href="http://www.facebook.com/eldialp" class="facebook sprite sprite-facebook-f287a7622f2bfe1a15852eca88498e4a"></a>
+			                    </li>
+			                    <li><a href="https://api.whatsapp.com/send?phone=5492214779896"><img src="/img/header/whatsapp-logo.png"></a>
+			                    </li>
+			                    <li><a href="http://www.twitter.com/eldialp" class="twitter sprite sprite-twitter-3596b49ebfc9cc3c9d175d478d282e5f"></a>
+			                    </li>
+			                    <li><a href="https://www.instagram.com/eldialp/" class="instagram sprite sprite-instagram-eb78df5e8edd489e929465d022fa99ef"></a>
+			                    </li>     
+			                </ul>
+			            </div>
+			
+			        </div>
+			        <div class="span5 splitter_footer">
+			            <img src="https://cdn1.eldia.com/unico/1586924468210.jpg?cw=300" title="Tapa de la Edición Impresa" alt="Tapa de la Edición Impresa" id="medium-15-modal">
+			        </div>
+			    </footer>
+			</div>
+			
+			
+			<div class="suscripcion_container">		
+					<div class="suscripcion_div">
+						<div class="suscripcion_info">
+							<div class="div-left">
+								<div class="titulo">
+									Plan Básico
+								</div>
+								<div class="items">
+										<div>Acceso ilimitado a www.eldia.com</div>
+								</div>
+							</div>
+							<div class="precio">
+								<span>$64.-</span>
+								<p class="p_mes">POR MES*</p>	
+			                    <div class="suscripcion_boton">
+							        <a href="/suscripcion" class="external btn--info btn--generico">SUSCRIBIRME</a>
+						        </div>
+							</div>
+						</div>
+					
+							<div class="bottom_info">
+								*Costo por 3 meses. Luego $194.-/mes
+							</div>
+					</div>
+				</div>
+			
+			<div class="copyright">
+			     <a href="http://qr.afip.gob.ar/?qr=FaU6pl7vGxE5lt8pFOZv6A,," target="_F960AFIPInfo">
+			        <img src="/img/DATAWEBeldia.jpg" border="0" width="35px">
+			    </a>
+			    <div class="texto">
+			        <p>© 1998-2018  <a href="/">El Día </a> SA - Todos los derechos reservados. </p>
+			        <p>Registro D.N.D.A Nº RL-2019-04027819-APN-DNDA#MJ Propietario El Día SAICYF. Edición Nro. <span id="numeroEdicion">6986</span> Director: Raúl Kraiselburd. Diag. 80 Nro. 815 - La Plata - Pcia. de Bs. As.</p>
+			    </div>
+			</div>
+			
+			
+			    <div class="col mustang_div">        
+			        <a target="_blank" href="https://www.mustang.cloud/">
+			          <span>Mustang Cloud - CMS para portales de noticias</span>
+			        </a>
+			    </div>
+			</div>		
+		<div id="toTop" style="display:inline">
+	</div>
+
+	<div id="cerrar-sesion-popup" class="popup">
+		<div class="close-popup">x</div>
+		<div class="panel-p" style="text-align:center">
+			<span class="message">¿Está seguro/a que desea cerrar su sesión en ElDía.com?</span>
+			
+			<div class="form-actions clearfix" style="margin:20px 0 10px">
+				<a style="float:left;width:49%;height:65px" class="button cancel close-popup">No, volver a la página principal</a>
+				<a style="float:right;width:49%;height:65px;font-size:22px" id="cerrarSesion" class="button confirm">Sí, cerrar mi sesión</a>
+			</div>
+		</div>
+	</div>	<div id="login-popup" class="login-popup popup">
+		<div class="close-popup">x</div>
+		
+		<div class="medium-12 text-center">
+			<div class="medium-12">
+				<img src="/img/logo-mini.jpg" alt="">
+			</div>
+			<div class="medium-12">
+				<p class="loginBienvenido">Bienvenido</p>
+			</div>
+		</div>
+	
+		<div class="medium-6">
+			<p class="mensajeLoginWall">Estimado lector, muchas gracias por su interés en nuestras notas. Hemos incorporado el registro con el objetivo de mejorar la información que le brindamos de acuerdo a sus intereses. Para más información haga clic <a style="font-weight:700" href="/suscripcion/preguntas-frecuentes">aquí</a></p>
+			
+			<form accept-charset="UTF-8" id="login_user" class="simple_form session">
+				<div class="row">
+					<div class="medium-12 columns">
+						<div class="row">
+							<p class="celeste">Si ya tiene cuenta en www.eldia.com, ingrese sus datos</p>
+	
+							<div class="input string optional session_username medium-10 medium-centered columns">
+								<label class="string optional control-label" for="session_username">Usuario/Correo electrónico</label>
+								<input autofocus="autofocus" class="string optional" id="session_username" name="username" type="text" required="">
+							</div>
+	
+							<div class="input password optional session_password medium-10 medium-centered columns">
+								<label class="password optional control-label" for="session_password">Clave</label>
+								<input class="password optional" id="session_password" name="password" type="password" required="">
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="form-actions clearfix sign-up medium-12">				
+					<div class="medium-6">
+						<input class="button button success right" name="commit" type="submit" value="Iniciar sesión" style="background-color:#09c">
+					</div>
+					<a id="olvideClave">Olvidé mis datos</a>
+					<p>Si aún no tiene cuenta en El Día, haga click en el siguiente botón:</p>
+					<div class="medium-6">
+						<a class="button register" style="background-color:#699">Registrarse</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	
+		<div class="medium-6">
+			<p></p><div id="message-login" class="alert-box notice"></div><p></p>
+	
+			<div class="redes">
+				<div class="login-services text-center">				
+					<div class="rede">
+						<a id="login-fb" href="/auth/facebook" class="noAjax">
+							<i class="facebook sprite sprite-facebook-f287a7622f2bfe1a15852eca88498e4a"></i>
+						</a>
+						<a id="login-fb" href="/auth/facebook" class="noAjax button radius small" style="background-color:#2566b6">
+							Ingresá con Facebook
+						</a>
+					</div>
+					<div class="rede">
+						<a id="login-fb" href="/auth/google" class="noAjax">
+							<i class="google sprite sprite-google-0d4bf3cc002ace072cb4697bd6aa087e"></i>
+						</a>
+						<a id="login-fb" href="/auth/google" class="noAjax button radius small" style="background-color:#0086f9">
+							Ingresá con Google
+						</a>
+					</div>
+					
+					<div class="rede">
+						<a id="login-fb" href="/auth/twitter" class="noAjax">
+							<i class="twitter sprite sprite-twitter-3596b49ebfc9cc3c9d175d478d282e5f"></i>
+						</a>
+						<a id="login-fb" href="/auth/twitter" class="noAjax button radius small" style="background-color:#00a4f4">
+							Ingresá con Twitter
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="medium-12 text-center">
+			<p>Ante cualquier inconveniente durante el inicio de sesión, por favor escribanos a sistemas@eldia.com</p>
+		</div>
+	
+	
+	</div>
+	
+	<div id="register-popup" class="login-popup popup">
+			<div class="close-popup">x</div>
+		
+		<div class="medium-12 text-center registrarseHead">
+			<div class="medium-12">
+				<img src="/img/logo-mini.jpg" alt="">
+			</div>
+			<div class="medium-12">
+				<p class="loginBienvenido">Bienvenido</p>
+			</div>
+			<div class="medium-12">
+				<p class="loginRegistrarse">REGISTRARSE EN ELDIA.COM</p>
+			</div>
+		</div>
+	
+		<div class="medium-12">
+			<div class="medium-12">
+				<p class="celeste">DATOS PERSONALES</p>
+			</div>
+	
+			<form accept-charset="UTF-8" class="simple_form new_user" id="new_user" name="new_user">
+				<div class="row">
+					<div class="input string required user_nombre medium-6 columns">
+						<label class="string required control-label" for="user_nombre"><abbr title="Este campo es requerido">*</abbr> Nombre</label><input class="string required" id="user_nombre" maxlength="50" pattern="^[-'a-zA-ZÀ-ÖØ-öø-ÿ ]+$" title="Sin caracteres especiales. Máximo de 50 caracteres" name="nombre" required="" type="text">
+					</div>
+					<div class="input string required user_apellido medium-6 columns">
+						<label class="string required control-label" for="user_apellido"><abbr title="Este campo es requerido">*</abbr> Apellido</label><input class="string required" id="user_apellido" maxlength="50" pattern="^[-'a-zA-ZÀ-ÖØ-öø-ÿ ]+$" title="Sin caracteres especiales. Máximo de 50 caracteres" name="apellido" required="" type="text">
+					</div>
+				</div>
+	
+				<div class="row">
+					<div class="input email required user_email medium-6 columns">
+						<label class="email required control-label" for="user_email"><abbr title="Este campo es requerido">*</abbr> E-mail</label><input class="string email required" id="user_email" maxlength="50" name="email" required="" type="email">
+					</div>
+					<div class="noPaste input email optional user_email_confirmation medium-6 columns">
+						<label class="email optional control-label" for="user_email_confirmation">Repetir E-mail</label><input class="string email optional" id="user_email_confirmation" maxlength="50" name="email_confirmation" required="" type="email">
+					</div>
+				</div>
+				<div class="medium-12" style="display:flex">
+					<p class="celeste">NOMRE DE USUARIO Y CLAVE</p>
+					<p class="" style="margin-left:15px">(Entre 6 y 12 caracteres. No se aceptan  ñ-Ñ, tildes, diéresis, símbolos y espacios)</p>
+				</div>
+				<div class="row">
+					<div class="input string required user_usuario medium-4 columns">
+						<label class="string required control-label" for="user_usuario"><abbr title="Este campo es requerido">*</abbr> Usuario</label><input class="string required" id="user_usuario" minlength="6" maxlength="12" pattern="[A-Za-z0-9_]{6,12}" title="Sin caracteres especiales. Entre 6 y 12 caracteres." name="usuario" required="" type="text">
+					</div>
+					<div class="input string optional user_clave user_new_password medium-4 columns">
+						<label class="string optional control-label" for="user_clave">Clave</label><input class="string optional" id="user_clave" maxlength="12" name="clave" pattern="[A-Za-z0-9_]{6,12}" required="" title="Sin caracteres especiales. Entre 6 y 12 caracteres." type="password">
+					</div>
+					<div class="input string optional user_clave_confirmation user_new_password_confirmation medium-4 columns">
+						<label class="string optional control-label" for="user_clave_confirmation">Repetir clave</label><input class="string optional" id="user_clave_confirmation" maxlength="12" name="clave_confirmation" pattern="[A-Za-z0-9_]{6,12}" title="Sin caracteres especiales. Entre 6 y 12 caracteres." required="" type="password">
+					</div>
+				</div>
+	
+		    <div class="medium-12 columns" style="text-align:center">
+		      <div class="switch round">
+		         	<input class="boolean optional" style="width:auto" id="user_titulares" name="titulares" type="checkbox" value="2" checked="checked"> <label for="user_titulares">&nbsp;</label>
+		      		<label class="integer optional control-label" for="user_titulares">Deseo recibir titulares por mail de cada edición</label>
+		       </div>
+		    </div>
+	
+	
+				<div class="form-actions clearfix sign-up" style="display:flex;flex-direction:column;align-items:center;text-align:center">
+					<div class="medium-6">
+						<input class="button success right" name="commit" type="submit" value="Aceptar" style="background-color:#699">
+					</div>
+	
+	
+					<div class="medium-12">
+						<p class="cuentaExistente">Si ya tiene cuenta en El Día, haga click en el siguiente botón:</p>
+					</div>
+					<div class="medium-6">
+						<a class="button login" style="background-color:#09c">Iniciar Sesión</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	
+		<div class="medium-12">
+			<div class="alert-box notice flash-message success">
+				Usuario generado correctamente. Para finalizar, ingrese a su casilla de email y haga clic en el vínculo que le enviamos para activar su cuenta. Recuerde que su cuenta no será habilitada hasta que complete este proceso.
+			</div>
+	
+			<div class="alert-box notice flash-message alert">
+				Error al registrarse, por favor vuelva a intentarlo mas tarde.
+			</div>
+	
+			<div class="medium-12 text-center">
+				<p>Ante cualquier inconveniente durante el inicio de sesión, por favor escribanos a sistemas@eldia.com</p>
+			</div>
+		</div>
+	
+		<div id="message-login" class="alert-box notice">
+		</div>
+	</div>	<div id="recuperar-clave-popup" class="popup">
+		<div class="close-popup">x</div>
+	
+		<div class="medium-12 text-center">
+			<div class="medium-12">
+				<img src="/img/logo-mini.jpg" alt="">
+			</div>
+		</div>
+	
+		<div class="panel-p">
+			<p class="">
+				<span class="message">Se enviará un correo electrónico a la casilla de email que coloque, la cual deberá estar asociada a su cuenta. Luego, siga las instrucciones de dicho correo para continuar con el proceso de restablecimiento de la cuenta.</span>
+			</p>
+			
+			<div class="medium-12">
+				<label class="email required control-label" for="user_email">
+					<abbr title="Este campo es requerido">*</abbr> Correo electrónico
+				</label>
+	
+				<input type="email" name="email" id="email">
+			</div>
+			
+			<div class="form-actions clearfix" style="margin:30px 0 10px;text-align:center;background-color:#699">
+				<a id="recuperarClave" class="button" style="background-color:#699;color:#fff">Recuperar mi clave</a>
+			</div>
+	
+			<div id="message-login" class="alert-box notice"></div>
+		</div>
+	</div>	<div class="notificacion-modal">
+	    <div class="logo">
+	        <img src="data:image/png;base64,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" alt="EL DIA">            
+	    </div>
+	    <p class="text">¿Querés recibir notificaciones de alertas?</p>
+	    <div class="botones">
+	        <button type="button" class="btn--link">No, gracias</button>
+	        <button type="button" class="aceptar btn--primary">Aceptar</button>
+	    </div>
+	</div>	<div class="notificacion-modal-lector-cont">
+		<div class="notificacion-modal-lector-wrapper">
+			<div class="notificacion-modal-lector">
+			    <div class="logo">
+			        <img src="data:image/png;base64,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" alt="EL DIA">            
+			    </div>
+			    <p class="text-titulo"></p>
+			    <p class="text-lector"></p>
+			    <div class="text"></div>
+			    <div class="botones">
+			        <button type="button" class="aceptar btn--primary">Cerrar</button>
+			    </div>
+			</div>
+		</div>
+	</div>	<div id="opacityBody" class="opacityBody"></div>
+
+
+	<div class="mensaje_tablet">
+		<div class="mensaje">Para ver nuestro sitio correctamente gire la pantalla</div>
+	</div>
+
+	<div style="display:none">
+		<div id="div-ad-popup" data-format="interstitial">
+			<script>try{googletag.cmd.push(function(){googletag.display("div-ad-popup")})}catch(o){console.log("google tag no definido",o)}</script>
+		</div>
+	</div>
+  </body>
+  
+</html>

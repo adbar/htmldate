@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"VgYHV1dVGwIBVFlVBQU=",licenseKey:"15ba4da3e8",applicationID:"1108724"};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o||e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(t,e,n){function r(t){try{c.console&&console.log(t)}catch(e){}}var o,i=t("ee"),a=t(21),c={};try{o=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(c.console=!0,o.indexOf("dev")!==-1&&(c.dev=!0),o.indexOf("nr_dev")!==-1&&(c.nrDev=!0))}catch(s){}c.nrDev&&i.on("internal-error",function(t){r(t.stack)}),c.dev&&i.on("fn-err",function(t,e,n){r(n.stack)}),c.dev&&(r("NR AGENT IN DEVELOPMENT MODE"),r("flags: "+a(c,function(t,e){return t}).join(", ")))},{}],2:[function(t,e,n){function r(t,e,n,r,c){try{p?p-=1:o(c||new UncaughtException(t,e,n),!0)}catch(f){try{i("ierr",[f,s.now(),!0])}catch(d){}}return"function"==typeof u&&u.apply(this,a(arguments))}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function o(t,e){var n=e?null:s.now();i("err",[t,n])}var i=t("handle"),a=t(22),c=t("ee"),s=t("loader"),f=t("gos"),u=window.onerror,d=!1,l="nr@seenError",p=0;s.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(h){"stack"in h&&(t(9),t(8),"addEventListener"in window&&t(5),s.xhrWrappable&&t(10),d=!0)}c.on("fn-start",function(t,e,n){d&&(p+=1)}),c.on("fn-err",function(t,e,n){d&&!n[l]&&(f(n,l,function(){return!0}),this.thrown=!0,o(n))}),c.on("fn-end",function(){d&&!this.thrown&&p>0&&(p-=1)}),c.on("internal-error",function(t){i("ierr",[t,s.now(),!0])})},{}],3:[function(t,e,n){t("loader").features.ins=!0},{}],4:[function(t,e,n){function r(t){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var o=t("ee"),i=t("handle"),a=t(9),c=t(8),s="learResourceTimings",f="addEventListener",u="resourcetimingbufferfull",d="bstResource",l="resource",p="-start",h="-end",m="fn"+p,w="fn"+h,v="bstTimer",g="pushState",y=t("loader");y.features.stn=!0,t(7),"addEventListener"in window&&t(5);var x=NREUM.o.EV;o.on(m,function(t,e){var n=t[0];n instanceof x&&(this.bstStart=y.now())}),o.on(w,function(t,e){var n=t[0];n instanceof x&&i("bst",[n,e,this.bstStart,y.now()])}),a.on(m,function(t,e,n){this.bstStart=y.now(),this.bstType=n}),a.on(w,function(t,e){i(v,[e,this.bstStart,y.now(),this.bstType])}),c.on(m,function(){this.bstStart=y.now()}),c.on(w,function(t,e){i(v,[e,this.bstStart,y.now(),"requestAnimationFrame"])}),o.on(g+p,function(t){this.time=y.now(),this.startPath=location.pathname+location.hash}),o.on(g+h,function(t){i("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),f in window.performance&&(window.performance["c"+s]?window.performance[f](u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["c"+s]()},!1):window.performance[f]("webkit"+u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["webkitC"+s]()},!1)),document[f]("scroll",r,{passive:!0}),document[f]("keypress",r,!1),document[f]("click",r,!1)}},{}],5:[function(t,e,n){function r(t){for(var e=t;e&&!e.hasOwnProperty(u);)e=Object.getPrototypeOf(e);e&&o(e)}function o(t){c.inPlace(t,[u,d],"-",i)}function i(t,e){return t[1]}var a=t("ee").get("events"),c=t("wrap-function")(a,!0),s=t("gos"),f=XMLHttpRequest,u="addEventListener",d="removeEventListener";e.exports=a,"getPrototypeOf"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&&(o(window),o(f.prototype)),a.on(u+"-start",function(t,e){var n=t[1],r=s(n,"nr@wrapped",function(){function t(){if("function"==typeof n.handleEvent)return n.handleEvent.apply(n,arguments)}var e={object:t,"function":n}[typeof n];return e?c(e,"fn-",null,e.name||"anonymous"):n});this.wrapped=t[1]=r}),a.on(d+"-start",function(t){t[1]=this.wrapped||t[1]})},{}],6:[function(t,e,n){function r(t,e,n){var r=t[e];"function"==typeof r&&(t[e]=function(){var t=i(arguments),e={};o.emit(n+"before-start",[t],e);var a;e[m]&&e[m].dt&&(a=e[m].dt);var c=r.apply(this,t);return o.emit(n+"start",[t,a],c),c.then(function(t){return o.emit(n+"end",[null,t],c),t},function(t){throw o.emit(n+"end",[t],c),t})})}var o=t("ee").get("fetch"),i=t(22),a=t(21);e.exports=o;var c=window,s="fetch-",f=s+"body-",u=["arrayBuffer","blob","json","text","formData"],d=c.Request,l=c.Response,p=c.fetch,h="prototype",m="nr@context";d&&l&&p&&(a(u,function(t,e){r(d[h],e,f),r(l[h],e,f)}),r(c,"fetch",s),o.on(s+"end",function(t,e){var n=this;if(e){var r=e.headers.get("content-length");null!==r&&(n.rxSize=r),o.emit(s+"done",[null,e],n)}else o.emit(s+"done",[t],n)}))},{}],7:[function(t,e,n){var r=t("ee").get("history"),o=t("wrap-function")(r);e.exports=r;var i=window.history&&window.history.constructor&&window.history.constructor.prototype,a=window.history;i&&i.pushState&&i.replaceState&&(a=i),o.inPlace(a,["pushState","replaceState"],"-")},{}],8:[function(t,e,n){var r=t("ee").get("raf"),o=t("wrap-function")(r),i="equestAnimationFrame";e.exports=r,o.inPlace(window,["r"+i,"mozR"+i,"webkitR"+i,"msR"+i],"raf-"),r.on("raf-start",function(t){t[0]=o(t[0],"fn-")})},{}],9:[function(t,e,n){function r(t,e,n){t[0]=a(t[0],"fn-",null,n)}function o(t,e,n){this.method=n,this.timerDuration=isNaN(t[1])?0:+t[1],t[0]=a(t[0],"fn-",this,n)}var i=t("ee").get("timer"),a=t("wrap-function")(i),c="setTimeout",s="setInterval",f="clearTimeout",u="-start",d="-";e.exports=i,a.inPlace(window,[c,"setImmediate"],c+d),a.inPlace(window,[s],s+d),a.inPlace(window,[f,"clearImmediate"],f+d),i.on(s+u,r),i.on(c+u,o)},{}],10:[function(t,e,n){function r(t,e){d.inPlace(e,["onreadystatechange"],"fn-",c)}function o(){var t=this,e=u.context(t);t.readyState>3&&!e.resolved&&(e.resolved=!0,u.emit("xhr-resolved",[],t)),d.inPlace(t,g,"fn-",c)}function i(t){y.push(t),h&&(b?b.then(a):w?w(a):(E=-E,R.data=E))}function a(){for(var t=0;t<y.length;t++)r([],y[t]);y.length&&(y=[])}function c(t,e){return e}function s(t,e){for(var n in t)e[n]=t[n];return e}t(5);var f=t("ee"),u=f.get("xhr"),d=t("wrap-function")(u),l=NREUM.o,p=l.XHR,h=l.MO,m=l.PR,w=l.SI,v="readystatechange",g=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"],y=[];e.exports=u;var x=window.XMLHttpRequest=function(t){var e=new p(t);try{u.emit("new-xhr",[e],e),e.addEventListener(v,o,!1)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}return e};if(s(p,x),x.prototype=p.prototype,d.inPlace(x.prototype,["open","send"],"-xhr-",c),u.on("send-xhr-start",function(t,e){r(t,e),i(e)}),u.on("open-xhr-start",r),h){var b=m&&m.resolve();if(!w&&!m){var E=1,R=document.createTextNode(E);new h(a).observe(R,{characterData:!0})}}else f.on("fn-end",function(t){t[0]&&t[0].type===v||a()})},{}],11:[function(t,e,n){function r(t){if(!c(t))return null;var e=window.NREUM;if(!e.loader_config)return null;var n=(e.loader_config.accountID||"").toString()||null,r=(e.loader_config.agentID||"").toString()||null,f=(e.loader_config.trustKey||"").toString()||null;if(!n||!r)return null;var h=p.generateSpanId(),m=p.generateTraceId(),w=Date.now(),v={spanId:h,traceId:m,timestamp:w};return(t.sameOrigin||s(t)&&l())&&(v.traceContextParentHeader=o(h,m),v.traceContextStateHeader=i(h,w,n,r,f)),(t.sameOrigin&&!u()||!t.sameOrigin&&s(t)&&d())&&(v.newrelicHeader=a(h,m,w,n,r,f)),v}function o(t,e){return"00-"+e+"-"+t+"-01"}function i(t,e,n,r,o){var i=0,a="",c=1,s="",f="";return o+"@nr="+i+"-"+c+"-"+n+"-"+r+"-"+t+"-"+a+"-"+s+"-"+f+"-"+e}function a(t,e,n,r,o,i){var a="btoa"in window&&"function"==typeof window.btoa;if(!a)return null;var c={v:[0,1],d:{ty:"Browser",ac:r,ap:o,id:t,tr:e,ti:n}};return i&&r!==i&&(c.d.tk=i),btoa(JSON.stringify(c))}function c(t){return f()&&s(t)}function s(t){var e=!1,n={};if("init"in NREUM&&"distributed_tracing"in NREUM.init&&(n=NREUM.init.distributed_tracing),t.sameOrigin)e=!0;else if(n.allowed_origins instanceof Array)for(var r=0;r<n.allowed_origins.length;r++){var o=h(n.allowed_origins[r]);if(t.hostname===o.hostname&&t.protocol===o.protocol&&t.port===o.port){e=!0;break}}return e}function f(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.enabled}function u(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.exclude_newrelic_header}function d(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&NREUM.init.distributed_tracing.cors_use_newrelic_header!==!1}function l(){return"init"in NREUM&&"distributed_tracing"in NREUM.init&&!!NREUM.init.distributed_tracing.cors_use_tracecontext_headers}var p=t(19),h=t(13);e.exports={generateTracePayload:r,shouldGenerateTrace:c}},{}],12:[function(t,e,n){function r(t){var e=this.params,n=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r<l;r++)t.removeEventListener(d[r],this.listener,!1);e.aborted||(n.duration=a.now()-this.startTime,this.loadCaptureCalled||4!==t.readyState?null==e.status&&(e.status=0):i(this,t),n.cbTime=this.cbTime,u.emit("xhr-done",[t],t),c("xhr",[e,n,this.startTime]))}}function o(t,e){var n=s(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.parsedOrigin=s(e),t.sameOrigin=t.parsedOrigin.sameOrigin}function i(t,e){t.params.status=e.status;var n=w(e,t.lastSize);if(n&&(t.metrics.rxSize=n),t.sameOrigin){var r=e.getResponseHeader("X-NewRelic-App-Data");r&&(t.params.cat=r.split(", ").pop())}t.loadCaptureCalled=!0}var a=t("loader");if(a.xhrWrappable){var c=t("handle"),s=t(13),f=t(11).generateTracePayload,u=t("ee"),d=["load","error","abort","timeout"],l=d.length,p=t("id"),h=t(17),m=t(16),w=t(14),v=window.XMLHttpRequest;a.features.xhr=!0,t(10),t(6),u.on("new-xhr",function(t){var e=this;e.totalCbs=0,e.called=0,e.cbTime=0,e.end=r,e.ended=!1,e.xhrGuids={},e.lastSize=null,e.loadCaptureCalled=!1,t.addEventListener("load",function(n){i(e,t)},!1),h&&(h>34||h<10)||window.opera||t.addEventListener("progress",function(t){e.lastSize=t.loaded},!1)}),u.on("open-xhr-start",function(t){this.params={method:t[0]},o(this,t[1]),this.metrics={}}),u.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid);var n=f(this.parsedOrigin);if(n){var r=!1;n.newrelicHeader&&(e.setRequestHeader("newrelic",n.newrelicHeader),r=!0),n.traceContextParentHeader&&(e.setRequestHeader("traceparent",n.traceContextParentHeader),n.traceContextStateHeader&&e.setRequestHeader("tracestate",n.traceContextStateHeader),r=!0),r&&(this.dt=n)}}),u.on("send-xhr-start",function(t,e){var n=this.metrics,r=t[0],o=this;if(n&&r){var i=m(r);i&&(n.txSize=i)}this.startTime=a.now(),this.listener=function(t){try{"abort"!==t.type||o.loadCaptureCalled||(o.params.aborted=!0),("load"!==t.type||o.called===o.totalCbs&&(o.onloadCalled||"function"!=typeof e.onload))&&o.end(e)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}};for(var c=0;c<l;c++)e.addEventListener(d[c],this.listener,!1)}),u.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),u.on("xhr-load-added",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),u.on("xhr-load-removed",function(t,e){var n=""+p(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),u.on("addEventListener-end",function(t,e){e instanceof v&&"load"===t[0]&&u.emit("xhr-load-added",[t[1],t[2]],e)}),u.on("removeEventListener-end",function(t,e){e instanceof v&&"load"===t[0]&&u.emit("xhr-load-removed",[t[1],t[2]],e)}),u.on("fn-start",function(t,e,n){e instanceof v&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=a.now()))}),u.on("fn-end",function(t,e){this.xhrCbStart&&u.emit("xhr-cb-time",[a.now()-this.xhrCbStart,this.onload,e],e)}),u.on("fetch-before-start",function(t){function e(t,e){var n=!1;return e.newrelicHeader&&(t.set("newrelic",e.newrelicHeader),n=!0),e.traceContextParentHeader&&(t.set("traceparent",e.traceContextParentHeader),e.traceContextStateHeader&&t.set("tracestate",e.traceContextStateHeader),n=!0),n}var n,r=t[1]||{};"string"==typeof t[0]?n=t[0]:t[0]&&t[0].url&&(n=t[0].url),n&&(this.parsedOrigin=s(n),this.sameOrigin=this.parsedOrigin.sameOrigin);var o=f(this.parsedOrigin);if(o&&(o.newrelicHeader||o.traceContextParentHeader))if("string"==typeof t[0]){var i={};for(var a in r)i[a]=r[a];i.headers=new Headers(r.headers||{}),e(i.headers,o)&&(this.dt=o),t.length>1?t[1]=i:t.push(i)}else t[0]&&t[0].headers&&e(t[0].headers,o)&&(this.dt=o)})}},{}],13:[function(t,e,n){var r={};e.exports=function(t){if(t in r)return r[t];var e=document.createElement("a"),n=window.location,o={};e.href=t,o.port=e.port;var i=e.href.split("://");!o.port&&i[1]&&(o.port=i[1].split("/")[0].split("@").pop().split(":")[1]),o.port&&"0"!==o.port||(o.port="https"===i[0]?"443":"80"),o.hostname=e.hostname||n.hostname,o.pathname=e.pathname,o.protocol=i[0],"/"!==o.pathname.charAt(0)&&(o.pathname="/"+o.pathname);var a=!e.protocol||":"===e.protocol||e.protocol===n.protocol,c=e.hostname===document.domain&&e.port===n.port;return o.sameOrigin=a&&(!e.hostname||c),"/"===o.pathname&&(r[t]=o),o}},{}],14:[function(t,e,n){function r(t,e){var n=t.responseType;return"json"===n&&null!==e?e:"arraybuffer"===n||"blob"===n||"json"===n?o(t.response):"text"===n||""===n||void 0===n?o(t.responseText):void 0}var o=t(16);e.exports=r},{}],15:[function(t,e,n){function r(){}function o(t,e,n){return function(){return i(t,[f.now()].concat(c(arguments)),e?null:this,n),e?void 0:this}}var i=t("handle"),a=t(21),c=t(22),s=t("ee").get("tracer"),f=t("loader"),u=NREUM;"undefined"==typeof window.newrelic&&(newrelic=u);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",p=l+"ixn-";a(d,function(t,e){u[e]=o(l+e,!0,"api")}),u.addPageAction=o(l+"addPageAction",!0),u.setCurrentRouteName=o(l+"routeName",!0),e.exports=newrelic,u.interaction=function(){return(new r).get()};var h=r.prototype={createTracer:function(t,e){var n={},r=this,o="function"==typeof e;return i(p+"tracer",[f.now(),t,n],r),function(){if(s.emit((o?"":"no-")+"fn-start",[f.now(),r,o],n),o)try{return e.apply(this,arguments)}catch(t){throw s.emit("fn-err",[arguments,this,t],n),t}finally{s.emit("fn-end",[f.now()],n)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(t,e){h[e]=o(p+e)}),newrelic.noticeError=function(t,e){"string"==typeof t&&(t=new Error(t)),i("err",[t,f.now(),!1,e])}},{}],16:[function(t,e,n){e.exports=function(t){if("string"==typeof t&&t.length)return t.length;if("object"==typeof t){if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if(!("undefined"!=typeof FormData&&t instanceof FormData))try{return JSON.stringify(t).length}catch(e){return}}}},{}],17:[function(t,e,n){var r=0,o=navigator.userAgent.match(/Firefox[\/\s](\d+\.\d+)/);o&&(r=+o[1]),e.exports=r},{}],18:[function(t,e,n){function r(t,e){var n=t.getEntries();n.forEach(function(t){"first-paint"===t.name?s("timing",["fp",Math.floor(t.startTime)]):"first-contentful-paint"===t.name&&s("timing",["fcp",Math.floor(t.startTime)])})}function o(t,e){var n=t.getEntries();n.length>0&&s("lcp",[n[n.length-1]])}function i(t){if(t instanceof u&&!l){var e,n=Math.round(t.timeStamp);e=n>1e12?Date.now()-n:f.now()-n,l=!0,s("timing",["fi",n,{type:t.type,fid:e}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var a,c,s=t("handle"),f=t("loader"),u=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),c=new PerformanceObserver(o);try{a.observe({entryTypes:["paint"]}),c.observe({entryTypes:["largest-contentful-paint"]})}catch(d){}}if("addEventListener"in document){var l=!1,p=["click","keydown","mousedown","pointerdown","touchstart"];p.forEach(function(t){document.addEventListener(t,i,!1)})}}},{}],19:[function(t,e,n){function r(){function t(){return e?15&e[n++]:16*Math.random()|0}var e=null,n=0,r=window.crypto||window.msCrypto;r&&r.getRandomValues&&(e=r.getRandomValues(new Uint8Array(31)));for(var o,i="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx",a="",c=0;c<i.length;c++)o=i[c],"x"===o?a+=t().toString(16):"y"===o?(o=3&t()|8,a+=o.toString(16)):a+=o;return a}function o(){return a(16)}function i(){return a(32)}function a(t){function e(){return n?15&n[r++]:16*Math.random()|0}var n=null,r=0,o=window.crypto||window.msCrypto;o&&o.getRandomValues&&Uint8Array&&(n=o.getRandomValues(new Uint8Array(31)));for(var i=[],a=0;a<t;a++)i.push(e().toString(16));return i.join("")}e.exports={generateUuid:r,generateSpanId:o,generateTraceId:i}},{}],20:[function(t,e,n){function r(t,e){if(!o)return!1;if(t!==o)return!1;if(!e)return!0;if(!i)return!1;for(var n=i.split("."),r=e.split("."),a=0;a<r.length;a++)if(r[a]!==n[a])return!1;return!0}var o=null,i=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,s=c.match(a);s&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(o="Safari",i=s[1])}e.exports={agent:o,version:i,match:r}},{}],21:[function(t,e,n){function r(t,e){var n=[],r="",i=0;for(r in t)o.call(t,r)&&(n[i]=e(r,t[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],22:[function(t,e,n){function r(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(o<0?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=r},{}],23:[function(t,e,n){e.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(t,e,n){function r(){}function o(t){function e(t){return t&&t instanceof r?t:t?s(t,c,i):i()}function n(n,r,o,i){if(!l.aborted||i){t&&t(n,r,o);for(var a=e(o),c=m(n),s=c.length,f=0;f<s;f++)c[f].apply(a,r);var d=u[y[n]];return d&&d.push([x,n,r,a]),a}}function p(t,e){g[t]=m(t).concat(e)}function h(t,e){var n=g[t];if(n)for(var r=0;r<n.length;r++)n[r]===e&&n.splice(r,1)}function m(t){return g[t]||[]}function w(t){return d[t]=d[t]||o(n)}function v(t,e){f(t,function(t,n){e=e||"feature",y[n]=e,e in u||(u[e]=[])})}var g={},y={},x={on:p,addEventListener:p,removeEventListener:h,emit:n,get:w,listeners:m,context:e,buffer:v,abort:a,aborted:!1};return x}function i(){return new r}function a(){(u.api||u.feature)&&(l.aborted=!0,u=l.backlog={})}var c="nr@context",s=t("gos"),f=t(21),u={},d={},l=e.exports=o();l.backlog=u},{}],gos:[function(t,e,n){function r(t,e,n){if(o.call(t,e))return t[e];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return t[e]=r,r}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(t,e,n){function r(t,e,n,r){o.buffer([t],r),o.emit(t,e,n)}var o=t("ee").get("handle");e.exports=r,r.ee=o},{}],id:[function(t,e,n){function r(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:a(t,i,function(){return o++})}var o=1,i="nr@id",a=t("gos");e.exports=r},{}],loader:[function(t,e,n){function r(){if(!E++){var t=b.info=NREUM.info,e=p.getElementsByTagName("script")[0];if(setTimeout(u.abort,3e4),!(t&&t.licenseKey&&t.applicationID&&e))return u.abort();f(y,function(e,n){t[e]||(t[e]=n)}),s("mark",["onload",a()+b.offset],null,"api");var n=p.createElement("script");n.src="https://"+t.agent,e.parentNode.insertBefore(n,e)}}function o(){"complete"===p.readyState&&i()}function i(){s("mark",["domContent",a()+b.offset],null,"api")}function a(){return R.exists&&performance.now?Math.round(performance.now()):(c=Math.max((new Date).getTime(),c))-b.offset}var c=(new Date).getTime(),s=t("handle"),f=t(21),u=t("ee"),d=t(20),l=window,p=l.document,h="addEventListener",m="attachEvent",w=l.XMLHttpRequest,v=w&&w.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:w,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var g=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1173.min.js"},x=w&&v&&v[h]&&!/CriOS/.test(navigator.userAgent),b=e.exports={offset:c,now:a,origin:g,features:{},xhrWrappable:x,userAgent:d};t(15),t(18),p[h]?(p[h]("DOMContentLoaded",i,!1),l[h]("load",r,!1)):(p[m]("onreadystatechange",o),l[m]("onload",r)),s("mark",["firstbyte",c],null,"api");var E=0,R=t(23)},{}],"wrap-function":[function(t,e,n){function r(t){return!(t&&t instanceof Function&&t.apply&&!t[a])}var o=t("ee"),i=t(22),a="nr@original",c=Object.prototype.hasOwnProperty,s=!1;e.exports=function(t,e){function n(t,e,n,o){function nrWrapper(){var r,a,c,s;try{a=this,r=i(arguments),c="function"==typeof n?n(r,a):n||{}}catch(f){l([f,"",[r,a,o],c])}u(e+"start",[r,a,o],c);try{return s=t.apply(a,r)}catch(d){throw u(e+"err",[r,a,d],c),d}finally{u(e+"end",[r,a,s],c)}}return r(t)?t:(e||(e=""),nrWrapper[a]=t,d(t,nrWrapper),nrWrapper)}function f(t,e,o,i){o||(o="");var a,c,s,f="-"===o.charAt(0);for(s=0;s<e.length;s++)c=e[s],a=t[c],r(a)||(t[c]=n(a,f?c+o:o,i,c))}function u(n,r,o){if(!s||e){var i=s;s=!0;try{t.emit(n,r,o,e)}catch(a){l([a,n,r,o])}s=i}}function d(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){l([r])}for(var o in t)c.call(t,o)&&(e[o]=t[o]);return e}function l(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=o),n.inPlace=f,n.flag=a,n}},{}]},{},["loader",2,12,4,3]);</script>
+<meta property="og:description" content="Local attorney and activist Andy Brown will be the Democratic nominee for Travis County judge in the November election. Brown won 55.88% of the vote Sunday" />
+<meta property="og:image" content="https://www.kut.org/sites/kut/files/styles/medium/public/202008/screen_shot_2020-08-16_at_6.57.04_pm.png" />
+<meta property="og:url" content="https://www.kut.org/post/local-attorney-andy-brown-will-be-democratic-nominee-county-judge" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Local Attorney Andy Brown Will Be Democratic Nominee For County Judge" />
+<meta property="og:image:height" content="523" />
+<meta property="og:image:width" content="935" />
+<meta content="Local Attorney Andy Brown Will Be Democratic Nominee For County Judge" about="/post/local-attorney-andy-brown-will-be-democratic-nominee-county-judge" property="dc:title" />
+<link rel="shortcut icon" href="//www.kut.org/sites/kut/files/201609/KUT_favicon.ico" type="image/vnd.microsoft.icon" />
+<meta property="twitter:creator" content="@KUTnathan" />
+<meta property="twitter:site" content="@KUT" />
+<meta property="twitter:card" content="summary" />
+<link href="//www.kut.org/sites/kut/files/202008/screen_shot_2020-08-16_at_6.57.04_pm.png" rel="image_src" />
+<meta name="datePublished" content="2020-08-16" />
+<meta name="has_audio" content="0" />
+<meta name="programs" content="none" />
+<link rel="shortlink" href="/node/28204" />
+<link rel="canonical" href="/post/local-attorney-andy-brown-will-be-democratic-nominee-county-judge" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<meta name="category" content="Politics" />
+<meta name="nid" content="28204" />
+<meta name="wordCount" content="439" />
+<meta name="story_id" content="903096479" />
+<meta name="keywords" content="Travis County Judge, Sarah Eckhardt, Democrats, Republicans, Andy Brown" />
+<meta name="org_id" content="0" />
+<meta name="author" content="Nathan Bernier | KUT" />
+<meta name="description" content="Local attorney and activist Andy Brown will be the Democratic nominee for Travis County judge in the November election. Brown won 55.88% of the vote Sunday" />
+<script type="text/javascript">var ssaUrl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'pixel.programmatictrader.com/iap/eadb02c50830a007';new Image().src = ssaUrl;</script>
+<!-- ManyChat --> 
+<script src="//widget.manychat.com/119382780919.js" async="async"> 
+</script>
+    <title>Local Attorney Andy Brown Will Be Democratic Nominee For County Judge | KUT </title>
+    <link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_-UBmiDUEHJLiiX0FhQB71gaCUZe02_yMNMBm1zUFReU.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_ZFlaYqkiQzTmlBPX4mQeT33IFQX3nR-zpGlyqFhtTNM.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_zvGfITuoG3fK_aSXcGzAx6ouMNLTjUVdaj32lyoB1d8.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_Ubq-uA2N4HZ4uoxv3jkYOPkjlMrACkNRrIc_9pSK-RU.css" media="all" />
+<style type="text/css" media="all">
+<!--/*--><![CDATA[/*><!--*/
+.header-region-outer{background-color:#FFFFFF;}.branding .tagline{color:#000000;}.branding .listen-live-toggle > a,.branding .header-utility > a,.branding .header-utility > a.trigger-nav{color:#d1d2d4;}@media screen and (min-width:641px){.branding .trigger-nav{background:#777777;}}@media screen and (max-width:640px){.branding .header-utility > a.trigger-nav,.active-menu .branding .header-utility > a.trigger-nav{color:#777777;}}#listen-live .listen-live-toggle{background-color:#000000;}#listen-live .listen-live-btn{background-color:transparent;color:#d1d2d4;}@media screen and (min-width:640px){#listen-live .listen-live-btn{background-color:#000000;}}.branding .give{background:#FF3300;}
+
+/*]]>*/-->
+</style>
+<link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_xHcPG5Qu_347O0osOLZX--n2la-WjW3Uw3W5Cvss4HQ.css" media="all" />
+<link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,700,700italic,900,italic,regular&amp;subset=latin" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.kut.org/sites/kut.org/files/css/css_T4xRw_hnNeKfgiF46YRK5HS-gCbfs1bMpz7MBUB4dV4.css" media="all" />
+    <script type="text/javascript" src="//www.kut.org/sites/kut/files/js/js_xSpMA4ArVcBKOZ43sPqNRk0gxQZdDVifw27pIUCzWU0.js"></script>
+<script type="text/javascript" src="//www.kut.org/sites/kut/files/js/js_P9u0bgloveAIlc2kutVCUB_xMaRV3YHWhSVHD3IN5tM.js"></script>
+<script type="text/javascript" src="//www.kut.org/sites/kut/files/js/js_f_6-OzlFXjayKlsU5sJKLwjz7LFQvdIZDm-Mt6jKwyM.js"></script>
+<script type="text/javascript" src="//www.kut.org/sites/kut/files/js/js__4npt0PuTlrK-GkTl821OR8Eb7aiGB9GvsSeu1tr7U4.js"></script>
+<script type="text/javascript" src="//www.googletagservices.com/tag/js/gpt.js"></script>
+<script type="text/javascript" src="//www.kut.org/sites/kut/files/js/js_2dNcM7AOxjvvRcbUE79Ori_46FoiMQRv8FpYNMQtVZI.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function() {var ga = document.createElement("script");ga.type = "text/javascript";ga.async = true;ga.src="//stream.publicbroadcasting.net/analytics/aalk.js";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(ga, s);})();
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"responso","theme_token":"1kDsRwNKtKvLaXtYN_9Pwvu-kVHrAk8AUT6Z8Oj2SDs","js":{"0":1,"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery\/1.8\/jquery.min.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/magnific-popup\/jquery.magnific-popup.min.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/foundation\/foundation.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/foundation\/foundation.topbar.js":1,"sites\/all\/modules\/contrib\/google_cse\/google_cse.js":1,"sites\/all\/modules\/custom\/pi_media_types\/pi_audio\/js\/pi-audio.js":1,"sites\/all\/modules\/custom\/pi_hull\/js\/pi-hull.js":1,"sites\/all\/modules\/custom\/pi_hull\/js\/jquery.innerfade.js":1,"sites\/all\/modules\/custom\/pi_hull\/jplayer\/js\/jquery.jplayer.min.js":1,"sites\/all\/modules\/custom\/pi_hull\/jplayer\/js\/main.js":1,"\/\/www.googletagservices.com\/tag\/js\/gpt.js":1,"sites\/all\/modules\/custom\/responsive_ads\/js\/main.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/modernizr.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/media.match.min.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/matchMedia.addListener.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/enquire.min.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/vendor\/fastclick.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/responsive-utilities.mediaqueries.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/responsive-utilities.scripts.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/responsive-utilities.responsiveimages.js":1,"sites\/all\/modules\/custom\/responsive_utilities\/js\/responsive-utilities.js":1,"sites\/all\/modules\/custom\/npr_entities\/npr_fields\/npr_image_gallery\/js\/npr-image-gallery.js":1,"sites\/all\/modules\/custom\/pi_assets\/plugins\/images\/js\/popup.js":1,"sites\/all\/modules\/custom\/pi_guide\/js\/pi_listenlive.js":1,"1":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"sites\/all\/libraries\/magnific-popup\/magnific-popup.css":1,"sites\/all\/modules\/contrib\/date\/date_api\/date.css":1,"sites\/all\/modules\/contrib\/date\/date_popup\/themes\/datepicker.1.7.css":1,"modules\/field\/theme\/field.css":1,"sites\/all\/modules\/contrib\/google_cse\/google_cse.css":1,"modules\/node\/node.css":1,"sites\/all\/modules\/custom\/pi_hull\/pi_outrigger\/css\/pi_outrigger.css":1,"modules\/search\/search.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/contrib\/views\/css\/views.css":1,"sites\/all\/modules\/contrib\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/custom\/pi_guide\/css\/pi_guide.css":1,"sites\/all\/modules\/custom\/pi_hull\/jplayer\/css\/jplayer.npr.css":1,"sites\/all\/modules\/custom\/pi_npr_story\/css\/pi_npr_story.css":1,"sites\/all\/modules\/custom\/pi_views\/pi_reports_views\/css\/pi_reports.css":1,"sites\/all\/modules\/custom\/pi_menus\/css\/flexiMenu.css":1,"sites\/all\/modules\/custom\/responsive_footer\/responsive-footer.admin.css":1,"0":1,"sites\/all\/modules\/custom\/npr_entities\/npr_fields\/npr_image_gallery\/css\/npr-image-gallery.css":1,"\/\/fonts.googleapis.com\/css?family=Lato:300,700,700italic,900,italic,regular\u0026subset=latin":1,"sites\/all\/themes\/responso\/css\/icon-fonts.css":1,"sites\/all\/themes\/responso\/css\/screen.css":1}},"googleCSE":{"cx":"010251366440257945544:scayghfufoi","language":"","resultsWidth":600,"domain":"www.google.com","showWaterMark":true},"responsive_ads":{"networkCode":"41259720","prefix":"KUTrespo","adUnitTypes":{"leaderboard":{"note":"Only shows above 1024; shows 970x90 or 728x90.","sizes":[{"viewportSize":[0,0],"slotSize":[]},{"viewportSize":[1024,200],"slotSize":[[970,90],[970,50],[728,90]]}]},"medium":{"note":"Won't be served on screens smaller than 640x480.","sizes":[{"viewportSize":[0,0],"slotSize":[]},{"viewportSize":[640,200],"slotSize":[300,250]}]},"tablet":{"note":"Won't be served on screens smaller than 640x480 or larger than 1024x768","sizes":[{"viewportSize":[0,0],"slotSize":[]},{"viewportSize":[640,200],"slotSize":[728,90]},{"viewportSize":[1024,200],"slotSize":[]}]},"mobile":{"note":"Won't be served on screens larger than 640x480.","sizes":[{"viewportSize":[0,0],"slotSize":[320,50]},{"viewportSize":[640,200],"slotSize":[]}]}},"adUnits":[{"name":"leaderboard_1","type":"leaderboard","width":728,"height":90},{"name":"player_display","type":"leaderboard","width":728,"height":90},{"name":"medium_1","type":"medium","width":300,"height":250},{"name":"medium_2","type":"medium","width":300,"height":250},{"name":"medium_3","type":"medium","width":300,"height":250},{"name":"tablet_1","type":"tablet","width":728,"height":90},{"name":"mobile_1","type":"mobile","width":320,"height":50}],"placements":{"leaderboard_1":"main#content","medium_1":".sidebar-content","medium_2":".sidebar-content","medium_3":".sidebar-content","tablet_1":"main#content","mobile_1":"#block-pi-responsive-ads-mobile-1 .content"},"persistentPlacements":[],"targeting":{"id":"28204","type":"post","tags":["Travis County Judge","Sarah Eckhardt","Democrats","Republicans","Andy Brown"],"category":"Politics","programs":[]}},"tms_meta":{"has_audio":"0","programs":"none","category":"Politics","nid":28204,"author":"Nathan Bernier | KUT","org_id":0,"keywords":"Travis County Judge, Sarah Eckhardt, Democrats, Republicans, Andy Brown","wordCount":439,"story_id":"903096479","datePublished":"2020-08-16"},"streamCount":1,"streams":[{"stream_mp3":"https:\/\/play.kutx.org\/index.html","popup":"1","width":"885","height":"1150","display":"1","weight":"0","streamName":"kut","description":"KUT","ucs":"50ef24cfe1c87fc0835b59a9"},{"stream_mp3":"https:\/\/play.kutx.org\/index.html","popup":"1","width":"885","height":"1150","display":"1","weight":"0","streamName":"kut","description":"KUT","ucs":"50ef24cfe1c87fc0835b59a9"}],"responsive_utilities":{"body_classes":"html not-front not-logged-in no-sidebars page-node page-node- page-node-28204 node-type-post","custom_vars":{"nid":{"name":"nid","slot":8,"scope_id":3},"pop":{"name":"pop","slot":9,"scope_id":3},"author":{"name":"author","slot":11,"scope_id":3},"keywords":{"name":"tags","slot":12,"scope_id":3},"org_id":{"name":"org_id","slot":13,"scope_id":3},"brand":{"name":"CP_Station","slot":14,"scope_id":2},"has_audio":{"name":"Has_Inline_Audio","slot":15,"scope_id":3},"programs":{"name":"Program","slot":16,"scope_id":3},"category":{"name":"Category","slot":10,"scope_id":3},"datePublished":{"name":"PublishedDate","slot":17,"scope_id":3},"wordCount":{"name":"WordCount","slot":18,"scope_id":3},"story_id":{"name":"API_Story_Id","slot":19,"scope_id":3},"pmp_guid":{"name":"pmp_guid","slot":20,"scope_id":3}},"pagetype_vars":[{"page_type":"Content\/About","regex_pattern":"\/about(-us)?\/?$","pattern_name":"Core Publisher About Page"},{"page_type":"Events","regex_pattern":"\/events(\/|$)","pattern_name":"Core Publisher Events Page"},{"page_type":"People","regex_pattern":"\/people(\/|$)","pattern_name":"Core Publisher People Page"},{"page_type":"Playlist","regex_pattern":"\/search_playlists\/?$","pattern_name":"Core Publisher Playlist Page"},{"page_type":"Program","regex_pattern":"\/programs(\/|$)","pattern_name":"Core Publisher Program Page"},{"page_type":"Schedule","regex_pattern":"\/schedule(\/|$)","pattern_name":"Core Publisher Schedule Page"},{"page_type":"Search","regex_pattern":"\/search\/google\/?","pattern_name":"Core Publisher Search GSA Page"},{"page_type":"Story","regex_pattern":"\/post\/|\/webclip\/","pattern_name":"Core Publisher Story Page"},{"page_type":"Streaming","regex_pattern":"\/listen(-live)?\/?(#|$)","pattern_name":"Core Publisher Listen Live Page"}],"media_queries":{"mobile":"all and (max-width: 40em)","tablet":"screen and (min-width: 40.063em) and (max-width: 64em)","desktop":"screen and (min-width: 64.063em)"}}});
+//--><!]]>
+</script>
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body class="html not-front not-logged-in page-node page-node- page-node-28204 node-type-post" >
+    <header role="banner" class="header">
+  <div class="skiptocontent"><a href="#main-content">skip to main content</a></div>
+    <div class="region region-header">
+    <div id="block-baby-bear-baby-bear-header" class="block block-baby-bear">
+
+    
+  <div class="content">
+    
+<div class="header-region-outer">
+  <section class="header-region-inner row">
+    <div class="branding large-12 columns">
+      <div class="brand-inner-wrapper">
+        <a href="/" rel="home" class="logo" title="KUT  Home"><img typeof="foaf:Image" src="//www.kut.org/sites/kut/files/201609/KUT_LogoC_600x256_RGB.png" alt="KUT  logo" title="KUT  Home" /></a>         <div class="tagline">
+          Austin's NPR Station        </div>
+      </div>
+      <div class="header-utility">
+        <a class="trigger-nav" href="#">
+          <span class="icon-list"></span>
+          <span class="menu-text">Site Menu</span>
+        </a>
+        <a class="give" href="https://kut.secureallegiance.com/kut/WebModule/Donate.aspx?P=KUTOA&PAGETYPE=PLG&CHECK=aI6A0UTYM%2bPiQl%2byqVkEd4HJipnY8PNT" target="_blank">
+  DONATE</a>
+      </div>
+    </div>
+  </section>
+</div>
+  </div>
+</div>
+  </div>
+</header>
+    <div class="nav-wrapper mobile">
+      <nav>
+        <div class="top-bar contain-to-grid" data-topbar>
+          <ul class="title-area">
+            <li class="toggle-topbar menu-icon">
+              <a href="#">Menu</a>
+            </li>
+          </ul>
+          <section class="top-bar-section">
+            <div class="table-queue" id="table-queue-fleximenu">
+  <ul  class="menu dropdown">
+<li class="dd has-dropdown not-click">
+<a href="https://www.kut.org">News</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/covid-19">COVID-19</a>
+</li>
+<li class="left">
+<a href="/term/austin">Austin</a>
+</li>
+<li class="left">
+<a href="/term/crime-justice">Crime &amp; Justice</a>
+</li>
+<li class="left">
+<a href="/term/education">Education</a>
+</li>
+<li class="left">
+<a href="/term/en-espa-ol">En Español</a>
+</li>
+<li class="left">
+<a href="/term/energy-environment">Energy &amp; Environment</a>
+</li>
+<li class="left">
+<a href="/term/health">Health</a>
+</li>
+<li class="left">
+<a href="/term/politics">Politics</a>
+</li>
+<li class="left">
+<a href="/term/transportation">Transportation</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="https://www.kut.org">Features</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/atxplained">ATXplained</a>
+</li>
+<li class="left">
+<a href="/term/black-america">In Black America</a>
+</li>
+<li class="left">
+<a href="/post/listen-our-weekly-podcast">KUT Weekend</a>
+</li>
+<li class="left">
+<a href="https://www.texasstandard.org/" target="_blank">Texas Standard</a>
+</li>
+<li class="left">
+<a href="/topic/two-guys-your-head">Two Guys on Your Head</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/term/life-arts">Life &amp; Arts</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/arts-eclectic">Arts Eclectic</a>
+</li>
+<li class="left">
+<a href="/topic/get-involved">Get Involved</a>
+</li>
+<li class="left">
+<a href="/term/just-say">This Is Just To Say</a>
+</li>
+<li class="left">
+<a href="/topic/views-and-brews">Views &amp; Brews</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="/rss">Podcasts</a>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/support-kut">Support</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/support-kut">Become a Member</a>
+</li>
+<li class="left">
+<a href="/business-circle">Business Circle</a>
+</li>
+<li class="left">
+<a href="/car-donation">Car Donations</a>
+</li>
+<li class="left">
+<a href="/leadership-circle">Leadership Circle</a>
+</li>
+<li class="left">
+<a href="https://kut.secureallegiance.com/kut/OnlineDonor/Login.aspx?AFF=1" target="_blank">Member Login</a>
+</li>
+<li class="left">
+<a href="http://cloud.email.kut.org/KUTSIGNUP" target="_blank">Newsletters</a>
+</li>
+<li class="left">
+<a href="/planned-giving">Planned Giving</a>
+</li>
+<li class="left">
+<a href="http://sponsorkut.org/" target="_blank">Program Sponsorships</a>
+</li>
+<li class="left">
+<a href="/sustaining-membership">Sustaining Members</a>
+</li>
+<li class="left">
+<a href="/post/summer-2020-thank-you-gift">Thank-You Gifts</a>
+</li>
+<li class="left">
+<a href="/volunteer">Volunteer</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/about">About</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/about">About KUT</a>
+</li>
+<li class="left">
+<a href="/contact-directions">Contact</a>
+</li>
+<li class="left">
+<a href="/cpb-funding-overview">CPB FAQ</a>
+</li>
+<li class="left">
+<a href="/term/kut-events">Events</a>
+</li>
+<li class="left">
+<a href="/how-listen">How to Listen</a>
+</li>
+<li class="left">
+<a href="/jobs">Jobs</a>
+</li>
+<li class="left">
+<a href="/mobile-guide">Mobile Guide</a>
+</li>
+<li class="left">
+<a href="/topic/news-releases">Press</a>
+</li>
+<li class="left">
+<a href="/how-listen-kut-your-smart-speaker">Smart Speakers</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="https://kutx.org" target="_blank">Music</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="https://cactuscafe.org" target="_blank">Cactus Cafe</a>
+</li>
+<li class="left">
+<a href="https://kutx.org" target="_blank">KUTX</a>
+</li>
+<li class="left">
+<a href="https://livesessions.npr.org/happening/austin" target="_blank">KUTX Videos</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/schedule">Program Schedule</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/kut-hd2-bbc-schedule">BBC on HD2 Schedule</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="/search">Search</a>
+</li>
+</ul>
+</div>
+          </section>
+        </div>
+      </nav>
+    </div>
+        <div id="page-wrapper">
+            <div id="page-document" role="document" class="page">
+  <div class="nav-wrapper">
+    <nav>
+      <div class="top-bar contain-to-grid" data-topbar>
+        <ul class="title-area">
+          <li class="toggle-topbar menu-icon">
+            <a href="#">Menu</a>
+          </li>
+        </ul>
+        <section class="top-bar-section">
+          <div class="table-queue" id="table-queue-fleximenu">
+  <ul  class="menu dropdown">
+<li class="dd has-dropdown not-click">
+<a href="https://www.kut.org">News</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/covid-19">COVID-19</a>
+</li>
+<li class="left">
+<a href="/term/austin">Austin</a>
+</li>
+<li class="left">
+<a href="/term/crime-justice">Crime &amp; Justice</a>
+</li>
+<li class="left">
+<a href="/term/education">Education</a>
+</li>
+<li class="left">
+<a href="/term/en-espa-ol">En Español</a>
+</li>
+<li class="left">
+<a href="/term/energy-environment">Energy &amp; Environment</a>
+</li>
+<li class="left">
+<a href="/term/health">Health</a>
+</li>
+<li class="left">
+<a href="/term/politics">Politics</a>
+</li>
+<li class="left">
+<a href="/term/transportation">Transportation</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="https://www.kut.org">Features</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/atxplained">ATXplained</a>
+</li>
+<li class="left">
+<a href="/term/black-america">In Black America</a>
+</li>
+<li class="left">
+<a href="/post/listen-our-weekly-podcast">KUT Weekend</a>
+</li>
+<li class="left">
+<a href="https://www.texasstandard.org/" target="_blank">Texas Standard</a>
+</li>
+<li class="left">
+<a href="/topic/two-guys-your-head">Two Guys on Your Head</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/term/life-arts">Life &amp; Arts</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/term/arts-eclectic">Arts Eclectic</a>
+</li>
+<li class="left">
+<a href="/topic/get-involved">Get Involved</a>
+</li>
+<li class="left">
+<a href="/term/just-say">This Is Just To Say</a>
+</li>
+<li class="left">
+<a href="/topic/views-and-brews">Views &amp; Brews</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="/rss">Podcasts</a>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/support-kut">Support</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/support-kut">Become a Member</a>
+</li>
+<li class="left">
+<a href="/business-circle">Business Circle</a>
+</li>
+<li class="left">
+<a href="/car-donation">Car Donations</a>
+</li>
+<li class="left">
+<a href="/leadership-circle">Leadership Circle</a>
+</li>
+<li class="left">
+<a href="https://kut.secureallegiance.com/kut/OnlineDonor/Login.aspx?AFF=1" target="_blank">Member Login</a>
+</li>
+<li class="left">
+<a href="http://cloud.email.kut.org/KUTSIGNUP" target="_blank">Newsletters</a>
+</li>
+<li class="left">
+<a href="/planned-giving">Planned Giving</a>
+</li>
+<li class="left">
+<a href="http://sponsorkut.org/" target="_blank">Program Sponsorships</a>
+</li>
+<li class="left">
+<a href="/sustaining-membership">Sustaining Members</a>
+</li>
+<li class="left">
+<a href="/post/summer-2020-thank-you-gift">Thank-You Gifts</a>
+</li>
+<li class="left">
+<a href="/volunteer">Volunteer</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/about">About</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/about">About KUT</a>
+</li>
+<li class="left">
+<a href="/contact-directions">Contact</a>
+</li>
+<li class="left">
+<a href="/cpb-funding-overview">CPB FAQ</a>
+</li>
+<li class="left">
+<a href="/term/kut-events">Events</a>
+</li>
+<li class="left">
+<a href="/how-listen">How to Listen</a>
+</li>
+<li class="left">
+<a href="/jobs">Jobs</a>
+</li>
+<li class="left">
+<a href="/mobile-guide">Mobile Guide</a>
+</li>
+<li class="left">
+<a href="/topic/news-releases">Press</a>
+</li>
+<li class="left">
+<a href="/how-listen-kut-your-smart-speaker">Smart Speakers</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="https://kutx.org" target="_blank">Music</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="https://cactuscafe.org" target="_blank">Cactus Cafe</a>
+</li>
+<li class="left">
+<a href="https://kutx.org" target="_blank">KUTX</a>
+</li>
+<li class="left">
+<a href="https://livesessions.npr.org/happening/austin" target="_blank">KUTX Videos</a>
+</li>
+</ul>
+</li>
+<li class="dd has-dropdown not-click">
+<a href="/schedule">Program Schedule</a>
+<ul  class="dropdown">
+<li class="left">
+<a href="/kut-hd2-bbc-schedule">BBC on HD2 Schedule</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="/search">Search</a>
+</li>
+</ul>
+</div>
+        </section>
+      </div>
+    </nav>
+  </div>
+
+  <div id="player" class="player">
+    <div id="listen-live" class="listen-live">
+   <div class="listen-live-toggle"><a class="listen-live-btn" href="#"><span class="icon-arrow"></span>Listen Live </a></div>
+  <ul id="on-air-items" class="no-bullet">
+        		<li class="listen-live-streams">
+      <a target="_blank" id="now-on-0" href="https://play.kutx.org/index.html" class="xpopup">
+        <div class="stream_name">KUT</div>
+        <div class="program-text" ></div>
+      </a>
+    </li>
+
+    </ul>
+</div>
+  </div>
+
+  
+      <section class="pre-content">
+      <div>
+          <div class="region region-pre-content">
+    <div id="block-pi-responsive-ads-mobile-1" class="block block-pi-responsive-ads">
+
+    
+  <div class="content">
+      </div>
+</div>
+  </div>
+      </div>
+    </section>
+  
+  
+  
+  <div class="row">
+    <main id="content" role="main" class="main-content small-12 columns">
+      <article class="story">
+        <a id="main-content"></a>
+        
+                                    
+        
+        
+        
+        
+        
+        
+                  <div class="has-sidebar">
+              <div class="region region-content">
+    <div id="block-system-main" class="block block-system">
+
+    
+  <div class="content">
+    <div id="node-28204" class="node node-post node-promoted full row" about="/post/local-attorney-andy-brown-will-be-democratic-nominee-county-judge" typeof="sioc:Item foaf:Document">
+  <div class="small-12 columns">
+        
+    
+    <h1 itemprop="name" class="post-title">
+      Local Attorney Andy Brown Will Be Democratic Nominee For County Judge    </h1>
+
+  	
+    
+          <div class="by-date">
+        <span class="submitted"><span class="submitted-label">By</span> <span class="name"><a href="/people/nathan-bernier-kut" rel="author">Nathan Bernier | KUT</a></span></span>
+        <i class="bullet">&#8226;</i>
+        <span class="pub-date">16 hours ago</span>
+      </div>
+    
+    <div class="row">
+      <div class="large-2 columns sharing-and-programs">
+        
+        <div class="social-share clearfix"><a href="http://facebook.com/sharer.php?u=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge&amp;t=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge" class="social-share-item facebook" title="Share" target="_blank">Share</a><a href="http://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge&amp;text=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge" class="social-share-item twitter" title="Tweet" target="_blank">Tweet</a><a href="mailto:?subject=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge&amp;body=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge" class="social-share-item email" title="Email" target="_blank">Email</a></div>      </div>
+
+      <div class="large-10 columns post-body-container" >
+        <div class="post-body">
+          <div class="field field-name-field-image-gallery field-type-image field-label-hidden"><div class="field-items"><div class="field-item even"><ul class="gallery no-bullet"><li>
+  <figure>
+    <a title="Andy Brown delivered his acceptance speech over Zoom." href="//www.kut.org/sites/kut/files/styles/x_large/public/202008/screen_shot_2020-08-16_at_6.57.04_pm.png" class="noexit lightbox">
+      <img src="//www.kut.org/sites/kut/files/styles/medium/public/202008/screen_shot_2020-08-16_at_6.57.04_pm.png"  alt="Andy Brown ">
+          </a>
+    <div class="image-meta">
+  <figcaption>
+    <div class="caption">Andy Brown delivered his acceptance speech over Zoom.</div>
+      </figcaption>
+</div>
+  </figure>
+</li>
+</ul></div></div></div><div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Local attorney and activist Andy Brown will be the Democratic nominee for Travis County judge in the November election. Brown won 55.88% of the vote Sunday night in an election by party precinct chairs. </p> <p><!--break--></p> <p>The prior county judge, Sarah Eckhardt, resigned to run for a Texas Senate seat vacated by State Senator Kirk Watson (D-Austin). Eckhardt won that race and was <a href="https://twitter.com/sarah_eckhardt/status/1293662794559168515" target="_blank">ceremonially sworn in</a> last week by Texas Lt. Gov. Dan Patrick. </p> <p>If a ballot vacancy happens after the March primary, the nomination is filled by a vote of elected precinct chairs, Travis County Democratic Party Chair Katie Naranjo said. </p> <p>Brown faced two candidates: County Commissioner Jeff Travillion and former Travis County Democratic Party Chair Dyana Limon-Mercado. </p> <p>The selection of a white male over two candidates of color, one of whom is a woman, comes as members of the Democratic Party are trying to grow the diversity of the party’s field of candidates. </p> <p>Some Democrats were not satisfied with the process.</p> <p>“It’s unfortunate that none of the precinct chairs inquired with the actual elected officials regarding our expectations in the new county judge,” Manor Mayor Larry Wallace Jr. said. He was sworn in last year as the city’s first African-American mayor.</p> <p>On the Republican side, the Travis County GOP did not field a candidate for county judge in 2018. Eckhardt won reelection unopposed. This time, Republicans plan to take a shot at one of the most powerful posts in local government. </p> <p>There won’t be a vote by precinct chairs, though. The Travis County Republican Party’s executive committee is allowing the chair to appoint the nominee. Travis GOP Chair Matt Mackowiak says he will announce the candidate likely sometime Monday morning.</p> <p><em><strong>Got a tip? Email Nathan Bernier at nbernier@kut.org. Follow him on Twitter </strong></em><a href="https://twitter.com/kutnathan"><em><strong>@KUTnathan</strong></em></a><em><strong>.</strong></em></p> <p><em>If you found the reporting above valuable, please </em><a href="https://kut.secureallegiance.com/kut/WebModule/Donate.aspx?P=KUTSTORY&amp;PAGETYPE=PLG&amp;CHECK=StPyk2VFS2Ug46mxn0ZwQW3L5BYddGq6PVAl6UEf65g%3d"><em>consider making a donation</em></a><em> to support it. Your gift pays for everything you find on KUT.org. Thanks for donating today.</em></p>  </div></div></div><div class="field field-name-field-tags field-type-taxonomy-term-reference field-label-inline clearfix"><div class="field-label">Tags:&nbsp;</div><div class="field-items"><div class="field-item even"><a href="/term/travis-county-judge" typeof="skos:Concept" property="rdfs:label skos:prefLabel">Travis County Judge</a></div><div class="field-item odd"><a href="/term/sarah-eckhardt" typeof="skos:Concept" property="rdfs:label skos:prefLabel">Sarah Eckhardt</a></div><div class="field-item even"><a href="/term/democrats" typeof="skos:Concept" property="rdfs:label skos:prefLabel">Democrats</a></div><div class="field-item odd"><a href="/term/republicans" typeof="skos:Concept" property="rdfs:label skos:prefLabel">Republicans</a></div><div class="field-item even"><a href="/term/andy-brown" typeof="skos:Concept" property="rdfs:label skos:prefLabel">Andy Brown</a></div></div></div><div class="social-share bottom"><a href="http://facebook.com/sharer.php?u=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge&amp;t=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge" class="social-share-item facebook" title="Share" target="_blank">Share</a><a href="http://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge&amp;text=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge" class="social-share-item twitter" title="Tweet" target="_blank">Tweet</a><a href="mailto:?subject=Local%20Attorney%20Andy%20Brown%20Will%20Be%20Democratic%20Nominee%20For%20County%20Judge&amp;body=https%3A%2F%2Fwww.kut.org%2Fpost%2Flocal-attorney-andy-brown-will-be-democratic-nominee-county-judge" class="social-share-item email" title="Email" target="_blank">Email</a></div>        </div>
+
+        <div class="related">
+          <div class="field-name-field-related-posts"><h3>Related Content</h3>
+<div id="node-27980" class="node-teaser node node-post node-promoted npr_river_card row" about="/post/rep-rodriguez-drops-out-runoff-race-leaving-judge-eckhardt-replace-watson-texas-senate" typeof="sioc:Item foaf:Document">
+  <div class="large-12 columns">
+    <a class="mobile-teaser-link" href="/post/rep-rodriguez-drops-out-runoff-race-leaving-judge-eckhardt-replace-watson-texas-senate"></a>
+    <div class='title-info'>
+      <h2  property="dc:title" datatype="" itemprop="name"><a href="/post/rep-rodriguez-drops-out-runoff-race-leaving-judge-eckhardt-replace-watson-texas-senate">Rep. Rodriguez Drops Out Of Runoff Race, Leaving Judge Eckhardt To Replace Watson In Texas Senate</a></h2>
+              <div class="by-date">
+          <span class="submitted"><span class="submitted-label">By</span> <span class="name"><a href="/people/jimmy-maas-kut" rel="author">Jimmy Maas | KUT</a></span></span>
+          <i class="bullet">&#8226;</i>
+          <span class="pub-date">Jul 27,  2020 </span>
+        </div>
+          </div>
+
+    <div class="content">
+      
+<div class="card-image-container">
+  <figure>
+    <a title="Julia Reihs" href="/post/rep-rodriguez-drops-out-runoff-race-leaving-judge-eckhardt-replace-watson-texas-senate" class="noexit">
+    <img class="multiple" src="https://www.kut.org/sites/kut/files/styles/medium/public/202007/eddie_rodriguez_0.jpg" >
+          </a>
+
+        <div class="image-meta">
+      <figcaption>
+        <div class="credit">
+          Julia Reihs / KUT        </div>
+      </figcaption>
+    </div>
+      </figure>
+</div>
+<div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p><p><a href="https://www.kut.org/post/rodr-guez-abandona-su-candidatura-y-deja-que-la-jueza-eckhardt-reemplace-watson-en-senado-de"><strong>Lee esta historia en español. </strong></a></p> <p>State Rep. Eddie Rodriguez, D-Austin, has dropped out of the runoff with former Travis County Judge Sarah Eckhardt for the state Senate seat left vacant by Kirk Watson.</p> <p></p></div></div></div>    </div>
+
+      </div>
+</div>
+
+<div id="node-26384" class="node-teaser node node-post node-promoted npr_river_card row" about="/post/state-sen-kirk-watson-stepping-down-april-lead-hobby-school-public-affairs" typeof="sioc:Item foaf:Document">
+  <div class="large-12 columns">
+    <a class="mobile-teaser-link" href="/post/state-sen-kirk-watson-stepping-down-april-lead-hobby-school-public-affairs"></a>
+    <div class='title-info'>
+      <h2  property="dc:title" datatype="" itemprop="name"><a href="/post/state-sen-kirk-watson-stepping-down-april-lead-hobby-school-public-affairs">State Sen. Kirk Watson Stepping Down In April To Lead Hobby School Of Public Affairs</a></h2>
+              <div class="by-date">
+          <span class="submitted"><span class="submitted-label">By</span> <span class="name"><a href="/people/andy-jechow" rel="author">Andy Jechow</a></span></span>
+          <i class="bullet">&#8226;</i>
+          <span class="pub-date">Feb 18,  2020 </span>
+        </div>
+          </div>
+
+    <div class="content">
+      
+<div class="card-image-container">
+  <figure>
+    <a title="Julia Reihs" href="/post/state-sen-kirk-watson-stepping-down-april-lead-hobby-school-public-affairs" class="noexit">
+    <img class="multiple" src="https://www.kut.org/sites/kut/files/styles/medium/public/202002/kirk_watson_2018.jpg" alt="Democratic state Sen. Kirk Watson">
+          </a>
+
+        <div class="image-meta">
+      <figcaption>
+        <div class="credit">
+          Julia Reihs / KUT        </div>
+      </figcaption>
+    </div>
+      </figure>
+</div>
+<div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p><p>State Sen. Kirk Watson, who has represented Austin in the Texas Senate since 2007, announced he's resigning this spring to become the founding dean of the <a href="https://uh.edu/news-events/stories/2020/february-2020/02182020-watson-dean-hobby-school.php" target="_blank">Hobby School of Public Affairs</a> at the University of Houston.</p> <p></p></div></div></div>    </div>
+
+      </div>
+</div>
+
+<div id="node-27444" class="node-teaser node node-post node-promoted npr_river_card contains-audio row" about="/post/travis-countys-first-black-judge-speaks-about-systemic-racism-austin" typeof="sioc:Item foaf:Document">
+  <div class="large-12 columns">
+    <a class="mobile-teaser-link" href="/post/travis-countys-first-black-judge-speaks-about-systemic-racism-austin"></a>
+    <div class='title-info'>
+      <h2  property="dc:title" datatype="" itemprop="name"><a href="/post/travis-countys-first-black-judge-speaks-about-systemic-racism-austin">Travis County&#039;s First Black Judge Speaks About Systemic Racism In Austin</a></h2>
+              <div class="by-date">
+          <span class="submitted"><span class="submitted-label">By</span> <span class="name"><a href="/people/nadia-hamdan-kut" rel="author">Nadia Hamdan | KUT</a></span></span>
+          <i class="bullet">&#8226;</i>
+          <span class="pub-date">Jun 4,  2020 </span>
+        </div>
+          </div>
+
+    <div class="content">
+      
+<div class="card-image-container">
+  <figure>
+    <a title="Office of County Judge Sam Biscoe" href="/post/travis-countys-first-black-judge-speaks-about-systemic-racism-austin" class="noexit">
+    <img class="multiple" src="https://www.kut.org/sites/kut/files/styles/medium/public/202006/biscoe__sam2_0.jpg" alt="Sam Biscoe served as Travis County judge for 15 years before returning to the position on an interim basis in May.">
+          </a>
+
+        <div class="image-meta">
+      <figcaption>
+        <div class="credit">
+          Office of County Judge Sam Biscoe        </div>
+      </figcaption>
+    </div>
+      </figure>
+</div>
+<div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p><p class="p1">Sam Biscoe is no stranger to racism. He grew up in the shadow of segregation in Tyler, participated in the civil rights movement and started his career as a lawyer with the National Association for the Advancement of Colored People, or NAACP. </p> <p class="p1"> </p></div></div></div>    </div>
+
+      </div>
+</div>
+</div>        </div>
+      </div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+  </div>
+
+            <!-- In line style code is temporary -->
+            <div class="sidebar">
+              <div class="sidebar-content"></div>
+            </div>
+          </div>
+              </article>
+    </main>
+  </div>
+
+  
+  <div class="bottom-ads">
+    <div class="bottom-ads-inner"></div>
+  </div>
+</div>
+
+<footer class="footer" role="contentinfo">
+  <div class="row">
+    <div class="footer-affiliate-container small-centered columns">
+                  <div class="region region-footer">
+    <div id="block-pi-table-queue-partnerfooter" class="block block-pi-table-queue">
+
+    
+  <div class="content">
+    <div class="table-queue" id="table-queue-partnerfooter">
+  <p class="partnerslabel">
+  </p>
+<div class="item-list"><ul class="partner-logos"><li class="first last"><a href="http://moody.utexas.edu/" target="_blank"><img typeof="foaf:Image" src="//www.kut.org/sites/kut/files/styles/partner_footer_logo/public/201704/Moody-College-KUT-FM-Austin.png" alt="A service of the Moody College of Communication at the University of Texas at Austin" title="A service of the Moody College of Communication at the University of Texas at Austin" /></a></li>
+</ul></div></div>
+  </div>
+</div>
+<div id="block-pi-table-queue-auxiliarylinksfooter" class="block block-pi-table-queue">
+
+    
+  <div class="content">
+    <div class="table-queue" id="table-queue-auxiliarylinksfooter">
+  <div class="item-list"><ul class="auxiliary-links"><li class="first"><span>&copy; 2020 KUT </span></li>
+<li><a href="http://kut.org/schedule" target="_self">Program schedule</a></li>
+<li><a href="http://kut.org/contact-directions" target="_self">Contact</a></li>
+<li class="last"><a href="http://moody.utexas.edu/" target="_blank">A service of the Moody College of Communication at the University of Texas at Austin</a></li>
+</ul></div></div>
+  </div>
+</div>
+  </div>
+          </div>
+  </div>
+</footer>
+      <script type="text/javascript">
+<!--//--><![CDATA[//><!--
+ (function ($) { $(document).foundation({ topbar: { custom_back_text: true, back_text: 'back', mobile_show_parent_link: true } }); }(jQuery));
+//--><!]]>
+</script>
+    </div>
+  <script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"15ba4da3e8","applicationID":"1108724","transactionName":"NlMBMhAECEZRAU1eDg8ZNhQLSg9bVAdBGREJRg==","queueTime":0,"applicationTime":22,"atts":"GhQCRFgeG0g=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-2819983-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'UA-2819983-1');
+  </script>	
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"NRJS-4f0a419aedbbc686c7e",applicationID:"480280797"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(f(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(4),f=e(5),c=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",d=l+"ixn-";a(p,function(e,n){s[n]=i(l+n,!0,"api")}),s.addPageAction=i(l+"addPageAction",!0),s.setCurrentRouteName=i(l+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(d+"tracer",[u.now(),e,t],r),function(){if(c.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw c.emit("fn-err",[arguments,this,e],t),e}finally{c.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(d+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?c("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&c("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&c("lcp",[t[t.length-1]])}function o(e){if(e instanceof s&&!l){var n,t=Math.round(e.timeStamp);n=t>1e12?Date.now()-t:u.now()-t,l=!0,c("timing",["fi",t,{type:e.type,fid:n}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var a,f,c=e("handle"),u=e("loader"),s=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),f=new PerformanceObserver(i);try{a.observe({entryTypes:["paint"]}),f.observe({entryTypes:["largest-contentful-paint"]})}catch(p){}}if("addEventListener"in document){var l=!1,d=["click","keydown","mousedown","pointerdown","touchstart"];d.forEach(function(e){document.addEventListener(e,o,!1)})}}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf("Chrome")===-1&&f.indexOf("Chromium")===-1&&(i="Safari",o=c[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],5:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],6:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?c(e,f,o):o()}function t(t,r,i,o){if(!l.aborted||o){e&&e(t,r,i);for(var a=n(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function d(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return p[e]=p[e]||i(t)}function w(e,n){u(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var h={},y={},b={on:d,addEventListener:d,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(l.aborted=!0,s=l.backlog={})}var f="nr@context",c=e("gos"),u=e(4),s={},p={},l=n.exports=i();l.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(y,function(n,t){e[n]||(e[n]=t)}),c("mark",["onload",a()+E.offset],null,"api");var t=d.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function i(){"complete"===d.readyState&&o()}function o(){c("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=e("handle"),u=e(4),s=e("ee"),p=e(3),l=window,d=l.document,m="addEventListener",v="attachEvent",g=l.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:g,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1167.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),e(2),d[m]?(d[m]("DOMContentLoaded",o,!1),l[m]("load",r,!1)):(d[v]("onreadystatechange",i),l[v]("onload",r)),c("mark",["firstbyte",f],null,"api");var x=0,O=e(6)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(5),a="nr@original",f=Object.prototype.hasOwnProperty,c=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f="function"==typeof t?t(r,a):t||{}}catch(u){l([u,"",[r,a,i],f])}s(n+"start",[r,a,i],f);try{return c=e.apply(a,r)}catch(p){throw s(n+"err",[r,a,p],f),p}finally{s(n+"end",[r,a,c],f)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,p(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,f,c,u="-"===i.charAt(0);for(c=0;c<n.length;c++)f=n[c],a=e[f],r(a)||(e[f]=t(a,u?f+i:i,o,f))}function s(t,r,i){if(!c||n){var o=c;c=!0;try{e.emit(t,r,i,n)}catch(a){l([a,t,r,i])}c=o}}function p(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){l([r])}for(var i in e)f.call(e,i)&&(n[i]=e[i]);return n}function l(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+      <!--link href="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/slick/slick.css.gzip?v1" rel="stylesheet" type="text/css" /-->
+  <!--link rel="stylesheet" type="text/css" href="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/jquery.fancybox.min.css.gzip"-->
+  <link href="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/style.css.gzip?v=22" rel="stylesheet" type="text/css" />
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  
+<!-- This site is optimized with the Yoast SEO Premium plugin v13.0 - https://yoast.com/wordpress/plugins/seo/ -->
+<title>Tuca Almeida, do The Voice Kids, morre baleado | Revista Fórum</title>
+<meta name="description" content="A polícia informou que os autores dos disparos procuravam, supostamente, pelo cunhado da vítima"/>
+<meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
+<link rel="canonical" href="https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/" />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Tuca Almeida, do The Voice Kids, morre baleado | Revista Fórum" />
+<meta property="og:description" content="A polícia informou que os autores dos disparos procuravam, supostamente, pelo cunhado da vítima" />
+<meta property="og:url" content="https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/" />
+<meta property="og:site_name" content="Revista Fórum" />
+<meta property="article:publisher" content="https://www.facebook.com/forumrevista/" />
+<meta property="article:author" content="https://www.facebook.com/forumrevista/" />
+<meta property="article:tag" content="The Voice Kids" />
+<meta property="article:tag" content="Tuca Almeida" />
+<meta property="article:section" content="Brasil" />
+<meta property="article:published_time" content="2020-05-01T13:51:19+00:00" />
+<meta property="article:modified_time" content="2020-05-01T13:51:21+00:00" />
+<meta property="og:updated_time" content="2020-05-01T13:51:21+00:00" />
+<meta property="og:image" content="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png" />
+<meta property="og:image:secure_url" content="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png" />
+<meta property="og:image:width" content="487" />
+<meta property="og:image:height" content="347" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:description" content="A polícia informou que os autores dos disparos procuravam, supostamente, pelo cunhado da vítima" />
+<meta name="twitter:title" content="Tuca Almeida, do The Voice Kids, morre baleado | Revista Fórum" />
+<meta name="twitter:site" content="@revistaforum" />
+<meta name="twitter:image" content="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png" />
+<meta name="twitter:creator" content="@revistaforum" />
+<script type='application/ld+json' class='yoast-schema-graph yoast-schema-graph--main'>{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://revistaforum.com.br/#organization","name":"Revista F\u00f3rum","url":"https://revistaforum.com.br/","sameAs":["https://www.facebook.com/forumrevista/","https://www.instagram.com/revistaforum/","https://www.youtube.com/user/forumrevista","https://twitter.com/revistaforum"],"logo":{"@type":"ImageObject","@id":"https://revistaforum.com.br/#logo","url":"https://revistaforum.com.br/wp-content/uploads/2019/09/logo-revista.jpg","width":960,"height":960,"caption":"Revista F\u00f3rum"},"image":{"@id":"https://revistaforum.com.br/#logo"}},{"@type":"WebSite","@id":"https://revistaforum.com.br/#website","url":"https://revistaforum.com.br/","name":"Revista F\u00f3rum","description":"Outro mundo em debate.","publisher":{"@id":"https://revistaforum.com.br/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://revistaforum.com.br/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"ImageObject","@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#primaryimage","url":"https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png","width":487,"height":347},{"@type":"WebPage","@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#webpage","url":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/","inLanguage":"pt-BR","name":"Tuca Almeida, do The Voice Kids, morre baleado | Revista F\u00f3rum","isPartOf":{"@id":"https://revistaforum.com.br/#website"},"primaryImageOfPage":{"@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#primaryimage"},"datePublished":"2020-05-01T13:51:19+00:00","dateModified":"2020-05-01T13:51:21+00:00","description":"A pol\u00edcia informou que os autores dos disparos procuravam, supostamente, pelo cunhado da v\u00edtima"},{"@type":"NewsArticle","@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#article","isPartOf":{"@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#webpage"},"author":{"@id":"https://revistaforum.com.br/#/schema/person/108c6167ff4d55bf866509a5436f348f"},"headline":"Tuca Almeida, do The Voice Kids, morre baleado","datePublished":"2020-05-01T13:51:19+00:00","dateModified":"2020-05-01T13:51:21+00:00","commentCount":0,"mainEntityOfPage":{"@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#webpage"},"publisher":{"@id":"https://revistaforum.com.br/#organization"},"image":{"@id":"https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/#primaryimage"},"keywords":"The Voice Kids,Tuca Almeida","articleSection":"Brasil,Not\u00edcias","copyrightYear":"2020","copyrightHolder":{"@id":"https://revistaforum.com.br/#organization"}},{"@type":["Person"],"@id":"https://revistaforum.com.br/#/schema/person/108c6167ff4d55bf866509a5436f348f","name":"Reda\u00e7\u00e3o","image":{"@type":"ImageObject","@id":"https://revistaforum.com.br/#authorlogo","url":"https://revistaforum.com.br/wp-content/uploads/2018/02/Redacao.jpg","caption":"Reda\u00e7\u00e3o"},"description":"Direto da Reda\u00e7\u00e3o da Revista F\u00f3rum.","sameAs":["https://www.facebook.com/forumrevista/","https://www.instagram.com/revistaforum/","https://twitter.com/revistaforum","https://www.youtube.com/user/forumrevista"]}]}</script>
+<!-- / Yoast SEO Premium plugin. -->
+
+<link rel="amphtml" href="https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/amp/" /><meta name="generator" content="AMP for WP 1.0.23"/><link rel='dns-prefetch' href='//revistaforum.com.br' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel='stylesheet' id='wp-block-library-css'  href='https://cdn.revistaforum.com.br/wp-includes/css/dist/block-library/style.min.css.gzip?ver=5.3.2' type='text/css' media='all' />
+<link rel='stylesheet' id='contact-form-7-css'  href='https://cdn.revistaforum.com.br/wp-content/plugins/contact-form-7/includes/css/styles.css.gzip?ver=5.1.6' type='text/css' media='all' />
+<link rel='stylesheet' id='crp-public-css'  href='https://cdn.revistaforum.com.br/wp-content/plugins/custom-related-posts/dist/public.css.gzip?ver=1.6.1' type='text/css' media='all' />
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-includes/js/jquery/jquery.js.gzip?ver=1.12.4-wp'></script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-includes/js/jquery/jquery-migrate.min.js.gzip?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var ai_front = {"wp_ai":"5.3.2+2.6.2","insertion_before":"BEFORE","insertion_after":"AFTER","insertion_prepend":"PREPEND CONTENT","insertion_append":"APPEND CONTENT","insertion_replace_content":"REPLACE CONTENT","insertion_replace_element":"REPLACE ELEMENT","cancel":"Cancel","use":"Use","add":"Add","parent":"Parent","cancel_element_selection":"Cancel element selection","select_parent_element":"Select parent element","css_selector":"CSS selector","use_current_selector":"Use current selector","element":"ELEMENT","path":"PATH","selector":"SELECTOR","visible":"VISIBLE","hidden":"HIDDEN","fallback":"FALLBACK","automatically_placed":"Automatically placed by AdSense Auto ads code"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/ad-inserter/includes/js/ai-jquery.js.gzip?ver=5.3.2%2B2.6.2'></script>
+<link rel='https://api.w.org/' href='https://revistaforum.com.br/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://revistaforum.com.br/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://cdn.revistaforum.com.br/wp-includes/wlwmanifest.xml.gzip" /> 
+<meta name="generator" content="WordPress 5.3.2" />
+<link rel='shortlink' href='https://revistaforum.com.br/?p=219054' />
+<link rel="alternate" type="application/json+oembed" href="https://revistaforum.com.br/wp-json/oembed/1.0/embed?url=https%3A%2F%2Frevistaforum.com.br%2Fbrasil%2Ftuca-almeida-do-the-voice-kids-morre-baleado%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://revistaforum.com.br/wp-json/oembed/1.0/embed?url=https%3A%2F%2Frevistaforum.com.br%2Fbrasil%2Ftuca-almeida-do-the-voice-kids-morre-baleado%2F&#038;format=xml" />
+<meta http-equiv="refresh" content="900" /><script type="text/javascript"><!--
+function powerpress_pinw(pinw_url){window.open(pinw_url, 'PowerPressPlayer','toolbar=0,status=0,resizable=1,width=460,height=320');	return false;}
+//-->
+</script>
+<script type="text/javascript">
+           var ajaxurl = "https://revistaforum.com.br/wp-admin/admin-ajax.php";
+         </script>      <meta name="onesignal" content="wordpress-plugin"/>
+            <script>
+
+      window.OneSignal = window.OneSignal || [];
+
+      OneSignal.push( function() {
+        OneSignal.SERVICE_WORKER_UPDATER_PATH = "OneSignalSDKUpdaterWorker.js.php";
+        OneSignal.SERVICE_WORKER_PATH = "OneSignalSDKWorker.js.php";
+        OneSignal.SERVICE_WORKER_PARAM = { scope: '/' };
+
+        OneSignal.setDefaultNotificationUrl("https://revistaforum.com.br");
+        var oneSignal_options = {};
+        window._oneSignalInitOptions = oneSignal_options;
+
+        oneSignal_options['wordpress'] = true;
+oneSignal_options['appId'] = '94687375-5805-4ea3-bf1b-060ac862ef92';
+oneSignal_options['welcomeNotification'] = { };
+oneSignal_options['welcomeNotification']['title'] = "Revista Forúm";
+oneSignal_options['welcomeNotification']['message'] = "Obrigado por se inscrever!";
+oneSignal_options['path'] = "https://revistaforum.com.br/wp-content/plugins/onesignal-free-web-push-notifications/sdk_files/";
+oneSignal_options['safari_web_id'] = "web.onesignal.auto.1881b8be-1ae3-4d80-a99d-32f491a07c07";
+oneSignal_options['promptOptions'] = { };
+oneSignal_options['promptOptions']['actionMessage'] = 'Assine as notificações na Revista Fórum';
+oneSignal_options['promptOptions']['acceptButtonText'] = 'Assinar';
+oneSignal_options['promptOptions']['cancelButtonText'] = 'Não Obrigado';
+oneSignal_options['promptOptions']['siteName'] = 'https://revistaforum.com.br';
+oneSignal_options['promptOptions']['autoAcceptTitle'] = 'Assine';
+oneSignal_options['notifyButton'] = { };
+oneSignal_options['notifyButton']['enable'] = true;
+oneSignal_options['notifyButton']['position'] = 'bottom-left';
+oneSignal_options['notifyButton']['theme'] = 'default';
+oneSignal_options['notifyButton']['size'] = 'medium';
+oneSignal_options['notifyButton']['showCredit'] = true;
+oneSignal_options['notifyButton']['text'] = {};
+oneSignal_options['notifyButton']['text']['tip.state.unsubscribed'] = 'Inscrever para notificações';
+oneSignal_options['notifyButton']['text']['tip.state.subscribed'] = 'Você está inscrito para receber as notificações';
+oneSignal_options['notifyButton']['text']['tip.state.blocked'] = 'Você bloqueou as notificações';
+oneSignal_options['notifyButton']['text']['message.action.subscribed'] = 'Obrigado por se inscrever!';
+oneSignal_options['notifyButton']['text']['message.action.resubscribed'] = 'Obrigado por se inscrever!';
+oneSignal_options['notifyButton']['text']['message.action.unsubscribed'] = 'Você não receberá mais as notificações';
+oneSignal_options['notifyButton']['text']['dialog.main.title'] = 'Gerenciar as notificações';
+oneSignal_options['notifyButton']['text']['dialog.main.button.subscribe'] = 'Inscrever';
+oneSignal_options['notifyButton']['text']['dialog.main.button.unsubscribe'] = 'Cancelar inscrição';
+oneSignal_options['notifyButton']['text']['dialog.blocked.title'] = 'Desbloquear Notificações';
+oneSignal_options['notifyButton']['text']['dialog.blocked.message'] = 'Siga estas instruções para permitir notificações:';
+oneSignal_options['notifyButton']['colors'] = {};
+oneSignal_options['notifyButton']['offset'] = {};
+                OneSignal.init(window._oneSignalInitOptions);
+                OneSignal.showSlidedownPrompt();      });
+
+      function documentInitOneSignal() {
+        var oneSignal_elements = document.getElementsByClassName("OneSignal-prompt");
+
+        var oneSignalLinkClickHandler = function(event) { OneSignal.push(['registerForPushNotifications']); event.preventDefault(); };        for(var i = 0; i < oneSignal_elements.length; i++)
+          oneSignal_elements[i].addEventListener('click', oneSignalLinkClickHandler, false);
+      }
+
+      if (document.readyState === 'complete') {
+           documentInitOneSignal();
+      }
+      else {
+           window.addEventListener("load", function(event){
+               documentInitOneSignal();
+          });
+      }
+    </script>
+<script type="text/javascript">var Arrive=function(c,e,d){"use strict";if(c.MutationObserver&&"undefined"!=typeof HTMLElement){var a,t,r=0,u=(a=HTMLElement.prototype.matches||HTMLElement.prototype.webkitMatchesSelector||HTMLElement.prototype.mozMatchesSelector||HTMLElement.prototype.msMatchesSelector,{matchesSelector:function(e,t){return e instanceof HTMLElement&&a.call(e,t)},addMethod:function(e,t,a){var r=e[t];e[t]=function(){return a.length==arguments.length?a.apply(this,arguments):"function"==typeof r?r.apply(this,arguments):void 0}},callCallbacks:function(e,t){t&&t.options.onceOnly&&1==t.firedElems.length&&(e=[e[0]]);for(var a,r=0;a=e[r];r++)a&&a.callback&&a.callback.call(a.elem,a.elem);t&&t.options.onceOnly&&1==t.firedElems.length&&t.me.unbindEventWithSelectorAndCallback.call(t.target,t.selector,t.callback)},checkChildNodesRecursively:function(e,t,a,r){for(var i,n=0;i=e[n];n++)a(i,t,r)&&r.push({callback:t.callback,elem:i}),0<i.childNodes.length&&u.checkChildNodesRecursively(i.childNodes,t,a,r)},mergeArrays:function(e,t){var a,r={};for(a in e)e.hasOwnProperty(a)&&(r[a]=e[a]);for(a in t)t.hasOwnProperty(a)&&(r[a]=t[a]);return r},toElementsArray:function(e){return void 0===e||"number"==typeof e.length&&e!==c||(e=[e]),e}}),w=((t=function(){this._eventsBucket=[],this._beforeAdding=null,this._beforeRemoving=null}).prototype.addEvent=function(e,t,a,r){var i={target:e,selector:t,options:a,callback:r,firedElems:[]};return this._beforeAdding&&this._beforeAdding(i),this._eventsBucket.push(i),i},t.prototype.removeEvent=function(e){for(var t,a=this._eventsBucket.length-1;t=this._eventsBucket[a];a--)if(e(t)){this._beforeRemoving&&this._beforeRemoving(t);var r=this._eventsBucket.splice(a,1);r&&r.length&&(r[0].callback=null)}},t.prototype.beforeAdding=function(e){this._beforeAdding=e},t.prototype.beforeRemoving=function(e){this._beforeRemoving=e},t),l=function(i,n){var l=new w,o=this,s={fireOnAttributesModification:!1};return l.beforeAdding(function(t){var e,a=t.target;a!==c.document&&a!==c||(a=document.getElementsByTagName("html")[0]),e=new MutationObserver(function(e){n.call(this,e,t)});var r=i(t.options);e.observe(a,r),t.observer=e,t.me=o}),l.beforeRemoving(function(e){e.observer.disconnect()}),this.bindEvent=function(e,t,a){t=u.mergeArrays(s,t);for(var r=u.toElementsArray(this),i=0;i<r.length;i++)l.addEvent(r[i],e,t,a)},this.unbindEvent=function(){var a=u.toElementsArray(this);l.removeEvent(function(e){for(var t=0;t<a.length;t++)if(this===d||e.target===a[t])return!0;return!1})},this.unbindEventWithSelectorOrCallback=function(a){var e,r=u.toElementsArray(this),i=a;e="function"==typeof a?function(e){for(var t=0;t<r.length;t++)if((this===d||e.target===r[t])&&e.callback===i)return!0;return!1}:function(e){for(var t=0;t<r.length;t++)if((this===d||e.target===r[t])&&e.selector===a)return!0;return!1},l.removeEvent(e)},this.unbindEventWithSelectorAndCallback=function(a,r){var i=u.toElementsArray(this);l.removeEvent(function(e){for(var t=0;t<i.length;t++)if((this===d||e.target===i[t])&&e.selector===a&&e.callback===r)return!0;return!1})},this},i=new function(){var s={fireOnAttributesModification:!1,onceOnly:!1,existing:!1};function n(e,t,a){return!(!u.matchesSelector(e,t.selector)||(e._id===d&&(e._id=r++),-1!=t.firedElems.indexOf(e._id))||(t.firedElems.push(e._id),0))}var c=(i=new l(function(e){var t={attributes:!1,childList:!0,subtree:!0};return e.fireOnAttributesModification&&(t.attributes=!0),t},function(e,i){e.forEach(function(e){var t=e.addedNodes,a=e.target,r=[];null!==t&&0<t.length?u.checkChildNodesRecursively(t,i,n,r):"attributes"===e.type&&n(a,i)&&r.push({callback:i.callback,elem:a}),u.callCallbacks(r,i)})})).bindEvent;return i.bindEvent=function(e,t,a){t=void 0===a?(a=t,s):u.mergeArrays(s,t);var r=u.toElementsArray(this);if(t.existing){for(var i=[],n=0;n<r.length;n++)for(var l=r[n].querySelectorAll(e),o=0;o<l.length;o++)i.push({callback:a,elem:l[o]});if(t.onceOnly&&i.length)return a.call(i[0].elem,i[0].elem);setTimeout(u.callCallbacks,1,i)}c.call(this,e,t,a)},i},o=new function(){var r={};function i(e,t){return u.matchesSelector(e,t.selector)}var n=(o=new l(function(){return{childList:!0,subtree:!0}},function(e,r){e.forEach(function(e){var t=e.removedNodes,a=[];null!==t&&0<t.length&&u.checkChildNodesRecursively(t,r,i,a),u.callCallbacks(a,r)})})).bindEvent;return o.bindEvent=function(e,t,a){t=void 0===a?(a=t,r):u.mergeArrays(r,t),n.call(this,e,t,a)},o};e&&g(e.fn),g(HTMLElement.prototype),g(NodeList.prototype),g(HTMLCollection.prototype),g(HTMLDocument.prototype),g(Window.prototype);var n={};return s(i,n,"unbindAllArrive"),s(o,n,"unbindAllLeave"),n}function s(e,t,a){u.addMethod(t,a,e.unbindEvent),u.addMethod(t,a,e.unbindEventWithSelectorOrCallback),u.addMethod(t,a,e.unbindEventWithSelectorAndCallback)}function g(e){e.arrive=i.bindEvent,s(i,e,"unbindArrive"),e.leave=o.bindEvent,s(o,e,"unbindLeave")}}(window,"undefined"==typeof jQuery?null:jQuery,void 0);function check_webp_feature(e,t){var a=new Image;a.onload=function(){var e=0<a.width&&0<a.height;t(e)},a.onerror=function(){t(!1)},a.src="data:image/webp;base64,"+{alpha:"UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7mtQAAAA==",animation:"UklGRlIAAABXRUJQVlA4WAoAAAASAAAAAAAAAAAAQU5JTQYAAAD/////AABBTk1GJgAAAAAAAAAAAAAAAAAAAGQAAABWUDhMDQAAAC8AAAAQBxAREYiI/gcA"}[e]}function ewwwLoadImages(e){var n="data-";function t(e,t){for(var a=["accesskey","align","alt","border","class","contenteditable","contextmenu","crossorigin","dir","draggable","dropzone","height","hidden","hspace","id","ismap","lang","longdesc","sizes","spellcheck","style","tabindex","title","translate","usemap","vspace","width","data-attachment-id","data-caption","data-comments-opened","data-event-trigger","data-height","data-highlight-color","data-highlight-border-color","data-highlight-border-opacity","data-highlight-border-width","data-highlight-opacity","data-image-meta","data-image-title","data-image-description","data-large_image_width","data-large_image_height","data-lazy","data-lazy-type","data-no-lazy","data-orig-size","data-permalink","data-width"],r=0,i=a.length;r<i;r++)ewwwAttr(t,a[r],e.getAttribute(n+a[r]));return t}if(e){for(var a=document.querySelectorAll(".batch-image img, .image-wrapper a, .ngg-pro-masonry-item a, .ngg-galleria-offscreen-seo-wrapper a"),r=0,i=a.length;r<i;r++)ewwwAttr(a[r],"data-src",a[r].getAttribute("data-webp")),ewwwAttr(a[r],"data-thumbnail",a[r].getAttribute("data-webp-thumbnail"));for(r=0,i=(o=document.querySelectorAll(".rev_slider ul li")).length;r<i;r++){ewwwAttr(o[r],"data-thumb",o[r].getAttribute("data-webp-thumb"));for(var l=1;l<11;)ewwwAttr(o[r],"data-param"+l,o[r].getAttribute("data-webp-param"+l)),l++}var o;for(r=0,i=(o=document.querySelectorAll(".rev_slider img")).length;r<i;r++)ewwwAttr(o[r],"data-lazyload",o[r].getAttribute("data-webp-lazyload"));var s=document.querySelectorAll("div.woocommerce-product-gallery__image");for(r=0,i=s.length;r<i;r++)ewwwAttr(s[r],"data-thumb",s[r].getAttribute("data-webp-thumb"))}var c=document.querySelectorAll("video");for(r=0,i=c.length;r<i;r++)ewwwAttr(c[r],"poster",e?c[r].getAttribute("data-poster-webp"):c[r].getAttribute("data-poster-image"));var d=document.querySelectorAll("img.ewww_webp_lazy_load");for(r=0,i=d.length;r<i;r++){if(e){ewwwAttr(d[r],"data-lazy-srcset",d[r].getAttribute("data-lazy-srcset-webp")),ewwwAttr(d[r],"data-srcset",d[r].getAttribute("data-srcset-webp")),ewwwAttr(d[r],"data-lazy-src",d[r].getAttribute("data-lazy-src-webp")),ewwwAttr(d[r],"data-src",d[r].getAttribute("data-src-webp")),ewwwAttr(d[r],"data-orig-file",d[r].getAttribute("data-webp-orig-file")),ewwwAttr(d[r],"data-medium-file",d[r].getAttribute("data-webp-medium-file")),ewwwAttr(d[r],"data-large-file",d[r].getAttribute("data-webp-large-file"));var u=d[r].getAttribute("srcset");null!=u&&!1!==u&&u.includes("R0lGOD")&&ewwwAttr(d[r],"src",d[r].getAttribute("data-lazy-src-webp"))}d[r].className=d[r].className.replace(/\bewww_webp_lazy_load\b/,"")}var w=document.querySelectorAll(".ewww_webp");for(r=0,i=w.length;r<i;r++){var g=document.createElement("img");e?(ewwwAttr(g,"src",w[r].getAttribute("data-webp")),ewwwAttr(g,"srcset",w[r].getAttribute("data-srcset-webp")),ewwwAttr(g,"data-orig-file",w[r].getAttribute("data-orig-file")),ewwwAttr(g,"data-orig-file",w[r].getAttribute("data-webp-orig-file")),ewwwAttr(g,"data-medium-file",w[r].getAttribute("data-medium-file")),ewwwAttr(g,"data-medium-file",w[r].getAttribute("data-webp-medium-file")),ewwwAttr(g,"data-large-file",w[r].getAttribute("data-large-file")),ewwwAttr(g,"data-large-file",w[r].getAttribute("data-webp-large-file")),ewwwAttr(g,"data-large_image",w[r].getAttribute("data-large_image")),ewwwAttr(g,"data-large_image",w[r].getAttribute("data-webp-large_image")),ewwwAttr(g,"data-src",w[r].getAttribute("data-src")),ewwwAttr(g,"data-src",w[r].getAttribute("data-webp-src"))):(ewwwAttr(g,"src",w[r].getAttribute("data-img")),ewwwAttr(g,"srcset",w[r].getAttribute("data-srcset-img")),ewwwAttr(g,"data-orig-file",w[r].getAttribute("data-orig-file")),ewwwAttr(g,"data-medium-file",w[r].getAttribute("data-medium-file")),ewwwAttr(g,"data-large-file",w[r].getAttribute("data-large-file")),ewwwAttr(g,"data-large_image",w[r].getAttribute("data-large_image")),ewwwAttr(g,"data-src",w[r].getAttribute("data-src"))),g=t(w[r],g),w[r].parentNode.insertBefore(g,w[r].nextSibling),w[r].className=w[r].className.replace(/\bewww_webp\b/,"")}window.jQuery&&jQuery.fn.isotope&&jQuery.fn.imagesLoaded&&(jQuery(".fusion-posts-container-infinite").imagesLoaded(function(){jQuery(".fusion-posts-container-infinite").hasClass("isotope")&&jQuery(".fusion-posts-container-infinite").isotope()}),jQuery(".fusion-portfolio:not(.fusion-recent-works) .fusion-portfolio-wrapper").imagesLoaded(function(){jQuery(".fusion-portfolio:not(.fusion-recent-works) .fusion-portfolio-wrapper").isotope()}))}function ewwwWebPInit(e){ewwwLoadImages(e),ewwwNggLoadGalleries(e),document.arrive(".ewww_webp",function(){ewwwLoadImages(e)}),document.arrive(".ewww_webp_lazy_load",function(){ewwwLoadImages(e)});var t=0,a=setInterval(function(){"undefined"!=typeof galleries&&(ewwwNggParseGalleries(e),clearInterval(a)),1e3<(t+=25)&&clearInterval(a)},25)}function ewwwAttr(e,t,a){null!=a&&!1!==a&&e.setAttribute(t,a)}function ewwwNggParseGalleries(e){if(e)for(var t in galleries){var a=galleries[t];galleries[t].images_list=ewwwNggParseImageList(a.images_list)}}function ewwwNggLoadGalleries(e){e&&document.addEventListener("ngg.galleria.themeadded",function(e,t){window.ngg_galleria._create_backup=window.ngg_galleria.create,window.ngg_galleria.create=function(e,t){var a=$(e).data("id");return galleries["gallery_"+a].images_list=ewwwNggParseImageList(galleries["gallery_"+a].images_list),window.ngg_galleria._create_backup(e,t)}})}function ewwwNggParseImageList(e){for(var t in e){var a=e[t];if(void 0!==a["image-webp"]&&(e[t].image=a["image-webp"],delete e[t]["image-webp"]),void 0!==a["thumb-webp"]&&(e[t].thumb=a["thumb-webp"],delete e[t]["thumb-webp"]),void 0!==a.full_image_webp&&(e[t].full_image=a.full_image_webp,delete e[t].full_image_webp),void 0!==a.srcsets)for(var r in a.srcsets)nggSrcset=a.srcsets[r],void 0!==a.srcsets[r+"-webp"]&&(e[t].srcsets[r]=a.srcsets[r+"-webp"],delete e[t].srcsets[r+"-webp"]);if(void 0!==a.full_srcsets)for(var i in a.full_srcsets)nggFSrcset=a.full_srcsets[i],void 0!==a.full_srcsets[i+"-webp"]&&(e[t].full_srcsets[i]=a.full_srcsets[i+"-webp"],delete e[t].full_srcsets[i+"-webp"])}return e}check_webp_feature("alpha",ewwwWebPInit);</script><style>
+.ai-viewports                 {--ai: 1;}
+.ai-viewport-3                { display: none !important;}
+.ai-viewport-2                { display: none !important;}
+.ai-viewport-1                { display: inherit !important;}
+.ai-viewport-0                { display: none !important;}
+@media (min-width: 768px) and (max-width: 979px) {
+.ai-viewport-1                { display: none !important;}
+.ai-viewport-2                { display: inherit !important;}
+}
+@media (max-width: 767px) {
+.ai-viewport-1                { display: none !important;}
+.ai-viewport-3                { display: inherit !important;}
+}
+</style>
+<!-- seedtag -->
+<script type="text/javascript">
+   window._seedtagq = window._seedtagq || [];
+   window._seedtagq.push(['_setId', '2641-9236-01']);
+   window._seedtagq.push(['iframe_mode']);
+   (function () {
+     var st = document.createElement('script');
+     st.type = 'text/javascript';
+     st.async = true;
+     st.src = ('https:' == document.location.protocol
+       ? 'https'
+       : 'http') + '://config.seedtag.com/loader.js?v=' + Math.random();
+     var s = document.getElementsByTagName('script')[0];
+     s.parentNode.insertBefore(st, s);
+   })();
+</script>
+
+<!-- EUREKA -->
+<script type="text/javascript"> var EUREKAD = EUREKAD || {_setAccount: "9123e064c371b1864e37412f9bc6ceb9_1594"}; </script>
+<script async src="https://tag.ageureka.com/eureka_ads.js?v=0.0.2"></script>  <link rel="stylesheet" type="text/css" href="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/serverdo.css.gzip?v=1"/>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="keywords" content="revista forum, portal forum, rovai, debate, democracia, news, notícia, matérias, reportagens, comunicação">  
+    <script type="text/javascript" src="https://br.ads.justpremium.com/adserve/js.php?zone=27304"></script>
+  <!-- Google DFP -->
+<script>
+    var script = document.createElement('script');
+    script.src = "//securepubads.g.doubleclick.net/tag/js/gpt.js";
+    document.getElementsByTagName('head')[0].appendChild(script);
+</script>
+<script async src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/prebid.js.gzip"></script>
+<script type='text/javascript'>
+var PREBID_TIMEOUT = 1000;
+var FAILSAFE_TIMEOUT = 3000;
+
+var adUnits = [{
+  code: 'teads_d',
+  sizes: [
+      [728, 90]  ],
+  bids: [{
+      bidder: 'teads',
+      params: {
+          placementId: 101086,
+          pageId: 93322
+      }
+  }]
+}];
+
+// ======== DO NOT EDIT BELOW THIS LINE =========== //
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+googletag.cmd.push(function() {
+    googletag.pubads().disableInitialLoad();
+});
+
+var pbjs = pbjs || {};
+pbjs.que = pbjs.que || [];
+
+pbjs.que.push(function() {
+    pbjs.setConfig({ debug: true });
+    pbjs.addAdUnits(adUnits);
+    pbjs.requestBids({
+        bidsBackHandler: initAdserver,
+        timeout: PREBID_TIMEOUT,
+    });
+});
+
+function initAdserver() {
+    if (pbjs.initAdserverSet) return;
+    pbjs.initAdserverSet = true;
+    googletag.cmd.push(function() {
+        pbjs.que.push(function() {
+          pbjs.setTargetingForGPTAsync();
+          googletag.pubads().refresh();
+        });
+    });
+}
+// in case PBJS doesn't load
+setTimeout(function() {
+    initAdserver();
+}, FAILSAFE_TIMEOUT);
+
+    googletag.cmd.push(function() {
+// RF Horzontal
+        var rf_horizontal = googletag.sizeMapping().
+          addSize([1024, 768], [[728,90],[970,250],[970,90]]). // desktop
+          addSize([980, 600], [[728,90],[970,250],[970,90]]). // desktop
+          addSize([750, 300], [[728,90]]). //tablet
+          addSize([0, 0], [[468,60],[336,280],[300,250],[300,100],[320,50],[320,100]]). //mobile
+          build();
+// RF Horzontal
+        var rf_horizontal_2 = googletag.sizeMapping().
+          addSize([1024, 768], [[728,90]]). // desktop
+          addSize([980, 600], [[728,90]]). // desktop
+          addSize([750, 300], [[728,90]]). //tablet
+          addSize([0, 0], [[468,60],[336,280],[300,250],[300,100],[320,50],[320,100]]). //mobile
+          build();
+// Banner Vertical
+        var rf_vertical = googletag.sizeMapping().
+          addSize([1024, 768], [[160,600],[300,600],[120,600],[300,250]]). // desktop
+          addSize([980, 600], [[160,600],[300,600],[120,600],[300,250]]). // desktop
+          addSize([750, 300], [[160,600],[300,600],[120,600],[300,250]]). //tablet
+          addSize([0, 0], [[468,60],[336,280],[300,250],[300,100],[320,50],[320,100]]). //mobile
+          build();
+// Banners Mobile
+        var rf_mobile_post = googletag.sizeMapping().
+          addSize([1024, 768], [[160,600],[300,600],[120,600],[300,250]]). // desktop
+          addSize([980, 600], [[160,600],[300,600],[120,600],[300,250]]). // desktop
+          addSize([750, 300], [[160,600],[300,600],[120,600],[300,250]]). //tablet
+          addSize([0, 0], [[468,60],[336,280],[300,250],[300,100],[320,50],[320,100]]). //mobile
+          build();
+// Banner Vertical_limitado
+        var rf_vertical_limitado = googletag.sizeMapping().
+          addSize([1024, 768], [300,250]). // desktop
+          addSize([980, 600], [300,250]). // desktop
+          addSize([750, 300], [300,250]). //tablet
+          addSize([0, 0], [300,250]). //mobile
+          build();
+        googletag.defineSlot('/96014957/rf_horizontal_1', [[468, 60], [970, 90], [300, 250], [970, 250], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_1').defineSizeMapping(rf_horizontal).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_horizontal_2', [[468, 60], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_2').defineSizeMapping(rf_horizontal_2).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_horizontal_3', [[468, 60], [970, 90], [300, 250], [970, 250], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_3').defineSizeMapping(rf_horizontal_2).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_horizontal_4', [[468, 60], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_4').defineSizeMapping(rf_horizontal_2).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_horizontal_5', [[468, 60], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_5').defineSizeMapping(rf_horizontal_2).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_horizontal_6', [[468, 60], [320, 50], [300, 50], [320, 100], [728, 90], [300, 100]], 'rf_horizontal_6').defineSizeMapping(rf_horizontal_2).addService(googletag.pubads());
+                googletag.defineSlot('/96014957/rf_vertical_1', [[300, 250], [160, 600], [300, 50], [300, 600], [300, 100], [250, 250], [120, 600]], 'rf_vertical_1').defineSizeMapping(rf_vertical).addService(googletag.pubads());
+                googletag.defineSlot('/96014957/rf_vertical_2', [[300, 250], [160, 600], [300, 50], [300, 600], [300, 100], [250, 250], [120, 600]], 'rf_vertical_2').defineSizeMapping(rf_vertical).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_vertical_3', [[300, 250], [160, 600], [300, 50], [300, 600], [300, 100], [250, 250], [120, 600]], 'rf_vertical_3').defineSizeMapping(rf_vertical).addService(googletag.pubads());
+        googletag.defineSlot('/96014957/rf_vertical_4', [[300, 250], [160, 600], [300, 50], [300, 600], [300, 100], [250, 250], [120, 600]], 'rf_vertical_4').defineSizeMapping(rf_vertical).addService(googletag.pubads());
+        googletag.defineOutOfPageSlot('/96014957/rf_dhtml', 'dhtml').addService(googletag.pubads());
+        googletag.defineSlot('/96014957/teads_d', [728, 90], 'teads_d').addService(googletag.pubads());
+        googletag.pubads().collapseEmptyDivs();
+        googletag.pubads().enableLazyLoad({
+          fetchMarginPercent: 500,
+          renderMarginPercent: 200,
+          mobileScaling: 2.0
+        });
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+});
+</script>
+
+  <style>
+    .google-auto-placed {
+      display: none;
+    }
+  </style>
+  <meta name="msvalidate.01" content="228F055D3108016BDED5F9BCA92DCE14" />
+  
+<script type="text/javascript">
+window._taboola = window._taboola || [];
+_taboola.push({article:'auto'});
+!function (e, f, u, i) {
+if (!document.getElementById(i)){
+e.async = 1;
+e.src = u;
+e.id = i;
+f.parentNode.insertBefore(e, f);
+}
+}(document.createElement('script'),
+document.getElementsByTagName('script')[0],
+'//cdn.taboola.com/libtrc/revistaforum-revistaforum/loader.js',
+'tb_loader_script');
+if(window.performance && typeof window.performance.mark == 'function')
+{window.performance.mark('tbl_ic');}
+</script>
+
+  <script id="navegg" type="text/javascript">(function(n,v,g){o='Navegg';if(!n[o]){a=v.createElement('script');a.src=g;b=document.getElementsByTagName('script')[0];b.parentNode.insertBefore(a,b);n[o]=n[o]||function(parms){n[o].q=n[o].q||[];n[o].q.push([this, parms])};}})(window, document, 'https://tag.navdmp.com/universal.min.js');window.naveggReady = window.naveggReady||[];nvg60160 = new Navegg({acc: 60160});</script></head>
+<body>
+  <div id="fb-root"></div>
+  <script>
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = 'https://connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.11&appId=253048474893043';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+  <header>
+    <div class="container">
+      <div class="topbar hidden-xs">
+        <div class="pull-left clearfix">
+          <div class="socials pull-left">
+            <a href="https://www.facebook.com/forumrevista/" target="_blank"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>
+<a href="https://twitter.com/revistaforum" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+<a href="https://www.instagram.com/revistaforum/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+<a href="https://www.youtube.com/user/forumrevista" target="_blank"><i class="fa fa-youtube" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <!-- left -->
+        <div class="pull-right">
+          <a href="/sobre-a-revista">Quem somos</a>
+          <!--
+			<span class="sep">|</span>
+          <span class="login-bar"><a href="/socio-forum/entrar/">Já sou apoiador</a></span>
+-->
+          <span class="sep">|</span> 01 de Maio de 2020        </div>
+        <!-- right -->
+      </div>
+      <div class="visible-xs menu-mobile pull-left">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+      </div> 
+      <!-- topbar -->
+      <div class="logo-topo">
+        <a class="visible-xs" href="https://revistaforum.com.br"><img src="/wp-content/uploads/2018/05/logo-revistaforum.png" class="img-responsive center-block text-center" height="25" width="80"></a>
+        <a class="hidden-xs" href="https://revistaforum.com.br"><noscript data-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" data-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png.webp" data-srcset-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png.webp 2x" data-srcset-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" data-class="img-responsive center-block text-center" class="ewww_webp"><noscript data-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" data-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png.webp" data-srcset-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png.webp 2x" data-srcset-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" data-class="img-responsive center-block text-center" class="ewww_webp"><img src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" srcset="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" class="img-responsive center-block text-center"></noscript></noscript></a>
+      </div>
+      <div class="visible-xs pull-right search-mobile">
+        <a role="button" data-toggle="collapse" href="#search-form-mobile" aria-expanded="false" aria-controls="search-form-mobile"><i class="fa fa-search fa-2x" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <!-- container -->
+  </header>
+  <div class="container hidden-xs">
+    <div class="search clearfix">
+          <form class="form-inline pull-left collapse" action="/" id="search-form">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" id="s" name="s" class="input-lg form-control" placeholder="Buscar">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit"><span class="fa fa-search fa-2x" aria-hidden="true"></span></button>
+            </span>
+          </div>
+        </div>
+      </form>
+          <div class="pull-right">
+        <a role="button" data-toggle="collapse" href="#search-form" aria-expanded="false" aria-controls="search-form"><i class="fa fa-search fa-2x" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+  <!-- search -->
+  <div class="container nopadding">
+    <nav class="navbar navbar-default navbar-revistaforum">
+      <div class="container-fluid nopaddingleft nopaddingright">
+        <div id="navbar" class="navbar-collapse collapse nopaddingleft">
+          <ul class="nav navbar-nav">
+            <li id="menu-item-177399" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-177399 dropdown"><a title="Assuntos" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true">Assuntos <span class="caret"></span></a>
+<ul role="menu" class=" dropdown-menu">
+	<li id="menu-item-174513" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-174513 dropdown"><a title="Política" href="https://revistaforum.com.br/politica/">Política</a>
+	<ul role="menu" class=" dropdown-menu">
+		<li id="menu-item-178351" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-178351"><a title="Governo Bolsonaro" href="https://revistaforum.com.br/politica/bolsonaro/">Governo Bolsonaro</a></li>
+		<li id="menu-item-178353" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-178353"><a title="Vaza Jato" href="https://revistaforum.com.br/politica/vaza-jato/">Vaza Jato</a></li>
+		<li id="menu-item-178354" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-178354"><a title="Lula Livre" href="https://revistaforum.com.br/politica/lula-livre/">Lula Livre</a></li>
+	</ul>
+</li>
+	<li id="menu-item-179833" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-179833"><a title="Brasil" href="https://revistaforum.com.br/brasil/">Brasil</a></li>
+	<li id="menu-item-179835" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179835"><a title="Movimentos" href="https://revistaforum.com.br/movimentos/">Movimentos</a></li>
+	<li id="menu-item-179836" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179836"><a title="Direitos" href="https://revistaforum.com.br/direitos/">Direitos</a></li>
+	<li id="menu-item-179834" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179834"><a title="Global" href="https://revistaforum.com.br/global/">Global</a></li>
+	<li id="menu-item-179832" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179832"><a title="LGBTI+" href="https://revistaforum.com.br/lgbt/">LGBTI+</a></li>
+	<li id="menu-item-179837" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179837"><a title="Mulher" href="https://revistaforum.com.br/mulher/">Mulher</a></li>
+	<li id="menu-item-179838" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179838"><a title="Cultura" href="https://revistaforum.com.br/cultura/">Cultura</a></li>
+</ul>
+</li>
+<li id="menu-item-216037" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-216037"><a title="Coronavírus" href="https://revistaforum.com.br/coronavirus/">Coronavírus</a></li>
+<li id="menu-item-216033" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-216033 dropdown"><a title="Cursos" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true">Cursos <span class="caret"></span></a>
+<ul role="menu" class=" dropdown-menu">
+	<li id="menu-item-216034" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-216034"><a title="Racismo Estrutural" href="https://revistaforum.com.br/forumeducacao/racismoestrutural/">Racismo Estrutural</a></li>
+</ul>
+</li>
+<li id="menu-item-206593" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-206593"><a title="Vídeos" href="https://www.youtube.com/forumrevista">Vídeos</a></li>
+<li id="menu-item-206591" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-206591"><a title="Podcast" href="https://revistaforum.com.br/podcast/forum-onze-e-meia/">Podcast</a></li>
+<li id="menu-item-79245" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-79245 dropdown"><a title="Blogs" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true">Blogs <span class="caret"></span></a>
+<ul role="menu" class=" dropdown-menu">
+	<li id="menu-item-79248" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79248"><a title="Blog do Rovai" href="https://revistaforum.com.br/blogdorovai/">Blog do Rovai</a></li>
+	<li id="menu-item-171961" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-171961"><a title="Sindicato Popular" href="https://revistaforum.com.br/blogs/sindicatopopular/">Sindicato Popular</a></li>
+	<li id="menu-item-209846" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-209846"><a title="Clara Averbuck" href="https://revistaforum.com.br/blogs/claraaverbuck/">Clara Averbuck</a></li>
+	<li id="menu-item-79249" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79249"><a title="Cinegnose" href="https://revistaforum.com.br/blogs/cinegnose/">Cinegnose</a></li>
+	<li id="menu-item-176100" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-176100"><a title="O Colunista" href="https://revistaforum.com.br/blogs/ocolunista/">O Colunista</a></li>
+	<li id="menu-item-79257" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79257"><a title="Quilombo" href="https://revistaforum.com.br/blogs/quilombo/">Quilombo</a></li>
+	<li id="menu-item-179831" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-179831"><a title="Dadoscope" href="https://revistaforum.com.br/blogs/dadoscope/">Dadoscope</a></li>
+	<li id="menu-item-79251" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79251"><a title="Maria Frô" href="https://revistaforum.com.br/mariafro/">Maria Frô</a></li>
+	<li id="menu-item-79247" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79247"><a title="Blog do Mouzar" href="https://revistaforum.com.br/blogs/blogdomouzar/">Blog do Mouzar</a></li>
+	<li id="menu-item-218963" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-218963"><a title="Fala que eu discuto" href="https://revistaforum.com.br/blogs/falaqueeudiscuto/">Fala que eu discuto</a></li>
+	<li id="menu-item-79258" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79258"><a title="Rodrigo Vianna" href="https://revistaforum.com.br/rodrigovianna/">Rodrigo Vianna</a></li>
+	<li id="menu-item-79259" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79259"><a title="Segunda Tela" href="https://revistaforum.com.br/blogs/segundatela/">Segunda Tela</a></li>
+	<li id="menu-item-87719" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-87719"><a title="Urbanidades" href="https://revistaforum.com.br/blogs/urbanidades/">Urbanidades</a></li>
+	<li id="menu-item-107253" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-107253"><a title="Injeção na Testa" href="https://revistaforum.com.br/blogs/injecaonatesta/">Injeção na Testa</a></li>
+	<li id="menu-item-125768" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-125768"><a title="Ativismo de Sofá" href="https://revistaforum.com.br/blogs/ativismodesofa">Ativismo de Sofá</a></li>
+	<li id="menu-item-79252" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-79252"><a title="Milos Morpha" href="https://revistaforum.com.br/blogs/milosmorpha/">Milos Morpha</a></li>
+	<li id="menu-item-130500" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-130500"><a title="Blog do Valdemar" href="https://revistaforum.com.br/blogs/blogdovaldemar/">Blog do Valdemar</a></li>
+</ul>
+</li>
+<li id="menu-item-104624" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-104624 dropdown"><a title="Colunistas" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true">Colunistas <span class="caret"></span></a>
+<ul role="menu" class=" dropdown-menu">
+	<li id="menu-item-125513" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125513"><a title="Adriana Dias" href="https://revistaforum.com.br/colunistas/adrianadias/">Adriana Dias</a></li>
+	<li id="menu-item-196685" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-196685"><a title="Adriana Mendes" href="https://revistaforum.com.br/blogs/potenciapolitica/">Adriana Mendes</a></li>
+	<li id="menu-item-125514" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125514"><a title="Alexandre Padilha" href="https://revistaforum.com.br/colunistas/alexandrepadilha/">Alexandre Padilha</a></li>
+	<li id="menu-item-177897" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-177897"><a title="Américo Sampaio" href="https://revistaforum.com.br/colunistas/americosampaio/">Américo Sampaio</a></li>
+	<li id="menu-item-134116" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-134116"><a title="Ana Prestes" href="https://revistaforum.com.br/colunistas/anaprestes/">Ana Prestes</a></li>
+	<li id="menu-item-125906" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125906"><a title="Andrea Caldas" href="https://revistaforum.com.br/colunistas/andreacaldas/">Andrea Caldas</a></li>
+	<li id="menu-item-169513" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-169513"><a title="Benedita da Silva" href="https://revistaforum.com.br/colunistas/beneditadasilva/">Benedita da Silva</a></li>
+	<li id="menu-item-174638" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174638"><a title="Carlos Minc" href="https://revistaforum.com.br/colunistas/carlosminc/">Carlos Minc</a></li>
+	<li id="menu-item-174637" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174637"><a title="Célio Turino" href="https://revistaforum.com.br/colunistas/celioturino/">Célio Turino</a></li>
+	<li id="menu-item-174635" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174635"><a title="Cid Benjamin" href="https://revistaforum.com.br/colunistas/cid-benjamin/">Cid Benjamin</a></li>
+	<li id="menu-item-174642" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174642"><a title="Daniela Lima" href="https://revistaforum.com.br/colunistas/danielalima/">Daniela Lima</a></li>
+	<li id="menu-item-126737" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-126737"><a title="Elika Takimoto" href="https://revistaforum.com.br/colunistas/elikatakimoto/">Elika Takimoto</a></li>
+	<li id="menu-item-167191" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-167191"><a title="Felipe Pena" href="https://revistaforum.com.br/colunistas/felipepena/">Felipe Pena</a></li>
+	<li id="menu-item-168284" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-168284"><a title="Glauber Piva" href="https://revistaforum.com.br/colunistas/glauberpiva/">Glauber Piva</a></li>
+	<li id="menu-item-125516" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125516"><a title="Igor Fuser" href="https://revistaforum.com.br/colunistas/igorfuser/">Igor Fuser</a></li>
+	<li id="menu-item-170219" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-170219"><a title="Ingrid Gerolimich" href="https://revistaforum.com.br/colunistas/ingridgerolimich/">Ingrid Gerolimich</a></li>
+	<li id="menu-item-125802" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125802"><a title="Ivan Cosenza de Souza" href="https://revistaforum.com.br/colunistas/ivancosenzadesouza/">Ivan Cosenza de Souza</a></li>
+	<li id="menu-item-126736" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-126736"><a title="João Vicente Goulart" href="https://revistaforum.com.br/colunistas/joaovicentegoulart/">João Vicente Goulart</a></li>
+	<li id="menu-item-125517" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125517"><a title="Joselicio Junior" href="https://revistaforum.com.br/colunistas/joseliciojunior/">Joselicio Junior</a></li>
+	<li id="menu-item-175524" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-175524"><a title="Juca Ferreira" href="https://revistaforum.com.br/colunistas/jucaferreira/">Juca Ferreira</a></li>
+	<li id="menu-item-125519" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125519"><a title="Julian Rodrigues" href="https://revistaforum.com.br/colunistas/julianrodrigues/">Julian Rodrigues</a></li>
+	<li id="menu-item-125521" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125521"><a title="Juliano Medeiros" href="https://revistaforum.com.br/colunistas/julianomedeiros/">Juliano Medeiros</a></li>
+	<li id="menu-item-196684" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-196684"><a title="Julinho Bittencourt" href="https://revistaforum.com.br/colunistas/julinho-bittencourt/">Julinho Bittencourt</a></li>
+	<li id="menu-item-174636" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174636"><a title="Leandro Seawright" href="https://revistaforum.com.br/colunistas/leandro-seawright/">Leandro Seawright</a></li>
+	<li id="menu-item-175292" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-175292"><a title="Luiz Roberto Alves" href="https://revistaforum.com.br/colunistas/luiz-roberto-alves/">Luiz Roberto Alves</a></li>
+	<li id="menu-item-175523" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-175523"><a title="Manoel Herzog" href="https://revistaforum.com.br/colunistas/manoel-herzog/">Manoel Herzog</a></li>
+	<li id="menu-item-132273" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-132273"><a title="Marcelo Hailer" href="https://revistaforum.com.br/colunistas/marcelohailer/">Marcelo Hailer</a></li>
+	<li id="menu-item-213305" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-213305"><a title="Marcelo Uchôa" href="https://revistaforum.com.br/autor/marcelouchoa/">Marcelo Uchôa</a></li>
+	<li id="menu-item-140039" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-140039"><a title="Monica Benicio" href="https://revistaforum.com.br/colunistas/monicabenicio/">Monica Benicio</a></li>
+	<li id="menu-item-196686" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-196686"><a title="Plínio Teodoro" href="https://revistaforum.com.br/colunistas/plinioteodoro/">Plínio Teodoro</a></li>
+	<li id="menu-item-172544" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-172544"><a title="Raimundo Bonfim" href="https://revistaforum.com.br/colunistas/raimundobonfim/">Raimundo Bonfim</a></li>
+	<li id="menu-item-137970" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-137970"><a title="Raphael Silva Fagundes" href="https://revistaforum.com.br/colunistas/raphaelsilvafagundes/">Raphael Silva Fagundes</a></li>
+	<li id="menu-item-178197" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-178197"><a title="Reginaldo Lopes" href="https://revistaforum.com.br/colunistas/reginaldolopes/">Reginaldo Lopes</a></li>
+	<li id="menu-item-130719" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-130719"><a title="Rodrigo Perez Oliveira" href="https://revistaforum.com.br/colunistas/rodrigo-perez-oliveira/">Rodrigo Perez Oliveira</a></li>
+	<li id="menu-item-181419" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-181419"><a title="Rudá Ricci" href="https://revistaforum.com.br/colunistas/ruda-ricci/">Rudá Ricci</a></li>
+	<li id="menu-item-174639" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-174639"><a title="Sergio Amadeu da Silveira" href="https://revistaforum.com.br/colunistas/sergioamadeudasilveira/">Sergio Amadeu da Silveira</a></li>
+	<li id="menu-item-170220" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-170220"><a title="Sergio Pardal Freudenthal" href="https://revistaforum.com.br/colunistas/colunadopardal/">Sergio Pardal Freudenthal</a></li>
+	<li id="menu-item-125524" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-125524"><a title="Tomaz Amorim" href="https://revistaforum.com.br/colunistas/tomazamorim/">Tomaz Amorim</a></li>
+	<li id="menu-item-130347" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-130347"><a title="Valerio Arcary" href="https://revistaforum.com.br/colunistas/valerioarcary/">Valerio Arcary</a></li>
+	<li id="menu-item-127669" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-127669"><a title="Yuri Martins-Fontes" href="https://revistaforum.com.br/colunistas/yurimartinsfontes/">Yuri Martins-Fontes</a></li>
+</ul>
+</li>
+<li id="menu-item-216122" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-216122"><a title="Pesquisa Fórum" href="https://revistaforum.com.br/pesquisa-forum/">Pesquisa Fórum</a></li>
+          </ul>
+          <ul class="nav navbar-nav visible-xs">
+            <li id="menu-item-12776" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12776"><a href="https://revistaforum.com.br/sobre-a-revista/">Sobre</a></li>
+<li id="menu-item-12777" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12777"><a href="https://revistaforum.com.br/equipe/">Equipe</a></li>
+<li id="menu-item-129468" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-129468"><a href="https://revistaforum.com.br/parceiros/">Parceiros</a></li>
+<li id="menu-item-129469" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-129469"><a href="https://revistaforum.com.br/anuncie/">Anuncie</a></li>
+<li id="menu-item-12778" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12778"><a href="https://revistaforum.com.br/contato/">Contato</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="button"><a href="https://revistaforum.com.br/apoie" rel="nofollow" target="_blank">Seja um apoiador</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="container">
+    <form class="form-inline pull-left collapse" action="/" id="search-form-mobile">
+      <div class="form-group">
+        <div class="input-group">
+          <input type="text" id="s" name="s" class="form-control" placeholder="Buscar">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit"><span class="fa fa-search" aria-hidden="true"></span></button>
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="ad text-center center-block">
+  <!-- /21622511100/revistaforum_ros/rf_horizontal_1 -->
+  <div id='rf_horizontal_1' class="rfads">
+  <script>
+  googletag.cmd.push(function() { googletag.display('rf_horizontal_1'); });
+  </script>
+  </div>
+</div>
+<!-- ad center -->
+<div class="container">
+  <div class="ticker">
+    <div class="notification"><i class="fa fa-bullhorn" aria-hidden="true"></i> Fórum Educação</div>
+    <ul>
+      <li><a href="https://revistaforum.com.br/forumeducacao/racismoestrutural/" target="_blank">Inscreva-se aqui no curso RACISMO ESTRUTURAL, com o professor Dennis de Oliveira</a></li>
+    </ul>
+  </div>
+  <!-- ticker -->
+</div>
+<section class="post">
+              <div class="container">
+      <p class="bread-crumb"><a href="https://revistaforum.com.br" class="home">Home</a> <a href="https://revistaforum.com.br/brasil/" class="next">Brasil</a> </p>
+      <span class="date">01 de Maio de 2020, 10h51</span>
+      <h1>Tuca Almeida, do The Voice Kids, morre baleado</h1>
+      <p class="description">A polícia informou que os autores dos disparos procuravam, supostamente, pelo cunhado da vítima</p>
+          </div>
+    <!-- container -->
+          <div class="load-image">
+        <img width="487" height="347" src="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png" class="img-responsive center-block wp-post-image" alt="" srcset="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13.png 487w, https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/captura-de-tela-2020-05-01-axxs-10.37.13-300x214.png 300w" sizes="(max-width: 487px) 100vw, 487px" />        <div class="wp-caption-text" style="text-align: center;">Reprodução</div>
+      </div>
+        <div class="marginbottom"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+          <div class="author">
+            <div class="pull-left">
+                              <a href="https://revistaforum.com.br/autor/redacao/">Por Redação</a>
+                          </div>
+            <div class="pull-right socials">
+              <a href="javascript:popup('http://www.facebook.com/share.php?u=https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/', 520, 350);" class="facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>
+              <a href="javascript:popup('https://twitter.com/intent/tweet?text=Tuca Almeida, do The Voice Kids, morre baleado&amp;url=https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/', 520, 350);" class="twitter"><i class="fa fa-twitter-square" aria-hidden="true"></i></a>
+              <a href="whatsapp://send?text=Tuca Almeida, do The Voice Kids, morre baleado - https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/" data-action="share/whatsapp/share" class="whatsapp"><i class="fa fa-whatsapp" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <div class="text">
+            
+<div class='code-block code-block-6 ai-viewport-3' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_mobile_post_1'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_mobile_post_1'); });</script>
+</div></div>
+<p>Tuca Almeida, de 15 anos, ex-participante do &#8220;The voice kids&#8221; morreu baleado na última quinta (30), na região metropolitana de Recife. O adolescente, estava no bairro de Candeias, em um estabelecimento comercial, quando seis homens encapuzados entraram atirando.</p>
+
+
+
+<p>&#8220;Procuravam, supostamente, pelo cunhado da vítima, que estava no local acompanhando o jovem e conseguiu fugir. Esse cunhado, pelas investigações iniciais, é um presidiário posto em liberdade como medida de prevenção à disseminação da Covid-19 no sistema penitenciário&#8221;, disse a Polícia Civil ao G1 de Pernambuco.</p><div class='code-block code-block-33' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<amp-ad width="300" height="250" type="doubleclick" data-slot="96014957/rf_mobile_post_1" data-multi-size="336x280,300x250,320x50"></div>
+<div class='code-block code-block-17 ai-viewport-2 ai-viewport-3' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_mobile_post_1'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_mobile_post_1'); });</script>
+</div></div>
+<div class='code-block code-block-1' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_horizontal_2'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_horizontal_2'); });</script>
+</div></div>
+
+
+
+
+<p>O menino participou do The Voice Kids com 13 anos, em 2018. Na fase das audições às cegas, o garoto cantou &#8220;Price tag&#8221;, de Jessie J, mas não foi escolhido.</p>
+
+
+
+<p> Felipe Neto, que conheceu o menino, escreveu, ao postar foto com o menino:</p><div class='code-block code-block-18 ai-viewport-2 ai-viewport-3' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_mobile_post_2'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_mobile_post_2'); });</script>
+</div></div>
+
+
+
+
+<p>&#8220;Pernambuco está terrível, houve crescimento 14,2% em homicídios, no meio de um isolamento. Muita força para a família. Lembro cada segundo desse dia. Era um menino especial&#8221;. </p><div class='code-block code-block-34' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<amp-ad width="300" height="250" type="doubleclick" data-slot="96014957/rf_mobile_post_2" data-multi-size="336x280,300x250,320x50"></div>
+
+
+
+
+<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper">
+<blockquote class="twitter-tweet" data-width="500" data-dnt="true"><p lang="pt" dir="ltr">Tuca Almeida, participou do The Voice Kids, foi assassinado por homens q entraram atirando numa loja.<br><br>Pernambuco está terrível, houve crescimento 14,2% em homicídios, no meio de um isolamento!<br><br>Mt força para a família.. 😔<br><br>Lembro cada segundo desse dia, era um menino especial. <a href="https://t.co/bFxWWVKVFu">pic.twitter.com/bFxWWVKVFu</a></p>&mdash; Felipe Neto (@felipeneto) <a href="https://twitter.com/felipeneto/status/1256078505437286403?ref_src=twsrc%5Etfw">May 1, 2020</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div></figure>
+
+
+
+<p></p><div class='code-block code-block-19 ai-viewport-2 ai-viewport-3' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_mobile_post_3'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_mobile_post_3'); });</script>
+</div></div>
+<div class='code-block code-block-2' style='margin: 8px auto; text-align: center; display: block; clear: both;'>
+<div id='rf_horizontal_3'>
+  <script>googletag.cmd.push(function() { googletag.display('rf_horizontal_3'); });</script>
+</div></div>
+
+<div class='code-block code-block-7' style='margin: 8px 0; clear: both;'>
+<div class="mrf-truvidWidget"><script data-cfasync="false" async type="text/javascript">var truvidScript = document.createElement('script'); truvidScript.async = true; truvidScript.setAttribute('data-cfasync','false'); truvidScript.type = 'text/javascript'; truvidScript.src = '//stg.truvidplayer.com/index.php?sub_user_id=694&widget_id=2939&playlist_id=2118&m=a&cb=' + (Math.random() * 10000000000000000); var currentScript = document.currentScript || document.scripts[document.scripts.length - 1]; currentScript.parentNode.insertBefore(truvidScript, currentScript.nextSibling);</script></div></div>
+                      </div>
+          <!-- text -->
+          <br>
+<div id="taboola-below-article-thumbnails"></div>
+<script type="text/javascript">
+window._taboola = window._taboola || [];
+_taboola.push({
+mode: 'thumbnails-a',
+container: 'taboola-below-article-thumbnails',
+placement: 'Below Article Thumbnails',
+target_type: 'mix'
+});
+</script>          <div style="border-top: 0.0625rem solid rgb(0, 0, 0); background-color: #f7f7f7; margin-top: 10px; padding: 0px 20px 20px 20px; width: 100%;margin-bottom: 20px;" class="support-forum">
+    <div>
+        <h2 style="font-size: 22px;">Quantas matérias por dia você lê da Fórum?</h2>
+        <p>Você já pensou nisso? Em quantas vezes por dia você lê conteúdos esclarecedores, sérios, comprometidos com os interesses do povo e a soberania do Brasil e que têm a assinatura da Fórum? Pois então, que tal fazer parte do grupo que apoia este projeto? Que tal contribuir pra que ele fique cada vez maior. Bora lá. Apoie já.</p>
+        <a class="btn btn-danger" href="https://revistaforum.com.br/apoie" target="_blank">Apoie a Fórum</a>
+    </div>
+</div>
+
+          <div class="ad text-center center-block">
+  <!-- /21622511100/revistaforum_ros/rf_horizontal_2 -->
+  <div id='rf_horizontal_2' class="rfads">
+  <script>
+  googletag.cmd.push(function() { googletag.display('rf_horizontal_2'); });
+  </script>
+  </div>
+</div>
+          <hr />
+          <div class="tags">
+            <div class="pull-left">
+              <span class="title">#tags</span>
+            </div>
+            <div class="pull-right">
+              <span class="tag">#<a href="https://revistaforum.com.br/tag/the-voice-kids/" rel="tag">The Voice Kids</a></span><span class="tag">#<a href="https://revistaforum.com.br/tag/tuca-almeida/" rel="tag">Tuca Almeida</a></span>            </div>
+            <div class="clearfix"></div>
+          </div>
+          <!-- tags -->
+          <div class="button-materia">
+    <a href="https://revistaforum.com.br/sugestao-de-pauta/" title="Sugira uma pauta" target="_blank" class="btn btn-danger btn-sugestao">
+        Sugestão de pauta
+    </a>
+    <a href="https://revistaforum.com.br/feedback/?post=https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/" title="Comunique erro encontrado" target="_blank" class="btn btn-danger">
+        Reportar erro
+    </a>
+</div>                      <div class="bio">
+              <div class="media">
+                <div class="media-left">
+                  <a href="https://revistaforum.com.br/autor/redacao/">
+                    <img src="https://revistaforum.com.br/wp-content/uploads/2018/02/Redacao-150x150.jpg" width="80" height="80" alt="Redação" class="avatar img-circle avatar-80 wp-user-avatar wp-user-avatar-80 alignnone photo" />                  </a>
+                </div>
+                <div class="media-body">
+                  <a href="https://revistaforum.com.br/autor/redacao/"><strong>Redação</strong><br /> Direto da Redação da Revista Fórum.</a>
+                  <p class="socials">
+                    <a href="https://www.facebook.com/forumrevista/" target="_blank"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>                    <a href="http://twitter.com/revistaforum" target="_blank"><i class="fa fa-twitter-square" aria-hidden="true"></i></a>                    <a href="https://www.instagram.com/revistaforum/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>                                        <a href="https://www.youtube.com/user/forumrevista" target="_blank"><i class="fa fa-youtube-square" aria-hidden="true"></i></a>                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- bio author -->
+                    <!-- Facebook Comments -->
+          <div class="fb-comments" data-href="https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/" data-width="100%" data-numposts="10"></div>
+        <div class='code-block code-block-9' style='margin: 8px 0; clear: both;'>
+<amp-embed width=100 height=100
+type=taboola
+layout=responsive
+data-publisher='revistaforum-revistaforum' 
+
+data-mode='thumbnails-b-amp'
+data-placement='Below Article Thumbnails AMP - Widget Padrao' 
+
+data-target_type='mix'
+data-article='auto'
+data-url=''> 
+
+</amp-embed> </div>
+        <div class="related">
+  <h4>leia também</h4>
+  <div class="row">
+              </div>
+
+  </div>
+        <div id="sm-widget-container" class="sm_sesion"></div>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs sidebar">
+                <div class="ad text-center center-block">
+  <!-- /21622511100/revistaforum_ros/rf_vertical_4 -->
+  <div id='rf_vertical_4' class="rfads">
+    <script>
+    googletag.cmd.push(function() { googletag.display('rf_vertical_4'); });
+    </script>
+  </div>
+</div>
+<!-- ad -->
+<div class="ad text-center center-block">
+    <div id='rf_vertical_1' class="rfads">
+    <script>
+    googletag.cmd.push(function() { googletag.display('rf_vertical_1'); });
+    </script>
+  </div>
+  </div>
+
+<div class="box">
+  <span class="title"><span class="red">última</span> hora</span>
+            <h3><a href="https://revistaforum.com.br/politica/bolsonaro-entrega-53-bilhoes-em-orcamento-para-barrar-impeachment/">Bolsonaro entrega 53 bilhões em orçamento para barrar impeachment</a></h3>
+        <hr />
+          <h3><a href="https://revistaforum.com.br/politica/bolsonaro-gostaria-que-todos-voltassem-a-trabalhar-mas-quem-decide-sao-governadores-e-prefeitos/">Bolsonaro: Gostaria que todos voltassem a trabalhar, mas quem decide são governadores e prefeitos</a></h3>
+        <hr />
+          <h3><a href="https://revistaforum.com.br/brasil/zagueiro-do-corinthians-ganha-acao-trabalhista-por-trabalhar-domingos-e-feriados/">Zagueiro do Corinthians ganha ação trabalhista por trabalhar domingos e feriados</a></h3>
+        <hr />
+          <h3><a href="https://revistaforum.com.br/brasil/tuca-almeida-do-the-voice-kids-morre-baleado/">Tuca Almeida, do The Voice Kids, morre baleado</a></h3>
+        <hr />
+  
+  <hr class="bold" />
+  <a href="https://revistaforum.com.br/noticias/" class="more up text-center center-block">mais notícias</a>
+</div>
+<!-- ultima hora -->
+
+<div class="ad text-center center-block">
+    <!-- /21622511100/revistaforum_ros/rf_vertical_2 -->
+  <div id='rf_vertical_2' class="rfads">
+    <script>
+    googletag.cmd.push(function() { googletag.display('rf_vertical_2'); });
+    </script>
+  </div>
+  </div>
+
+<div class="box marginbottom">
+  <span class="title">em alta</span>
+
+      <div class="featured">
+    <figure><a href="https://revistaforum.com.br/politica/bolsonaro-gostaria-que-todos-voltassem-a-trabalhar-mas-quem-decide-sao-governadores-e-prefeitos/"><img width="185" height="139" src="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/new-project-2-185x139.jpg" class="img-responsive fit-177 wp-post-image" alt="" srcset="https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/new-project-2-185x139.jpg 185w, https://cdn.revistaforum.com.br/wp-content/uploads/2020/05/new-project-2-234x177.jpg 234w" sizes="(max-width: 185px) 100vw, 185px" /></a></figure>
+    <div class="category blue"><a href="https://revistaforum.com.br/politica/">Política</a> </div>    <div class="clearfix"></div>
+    <h2><a href="https://revistaforum.com.br/politica/bolsonaro-gostaria-que-todos-voltassem-a-trabalhar-mas-quem-decide-sao-governadores-e-prefeitos/">Bolsonaro: Gostaria que todos voltassem a trabalhar, mas quem decide são governadores e prefeitos</a></h2>
+    <hr />
+  </div>
+  
+  <div class="featured">
+    <div class="media">
+
+                  <div class="media-body">
+        <div class="category blue"><a href="https://revistaforum.com.br/politica/bolsonaro/">Governo Bolsonaro</a> </div>        <div class="clearfix"></div>
+        <h4><a href="https://revistaforum.com.br/politica/bolsonaro/deputado-bispo-licenciado-da-universal-encontra-presidente-do-bc-por-emprestimos-a-igrejas/">Deputado, bispo licenciado da Universal encontra presidente do BC por empréstimos a igrejas</a></h4>
+      </div>
+      
+    </div>
+    <hr />
+  </div>
+
+  <div class="featured">
+    <div class="media">
+
+                  <div class="media-body">
+        <div class="category blue"><a href="https://revistaforum.com.br/politica/">Política</a> </div>        <div class="clearfix"></div>
+        <h4><a href="https://revistaforum.com.br/politica/em-video-do-1-de-maio-lula-diz-que-a-tragedia-do-coronavirus-deixou-o-capitalismo-nu/">Em vídeo do 1° de Maio, Lula diz que a tragédia do coronavírus deixou o capitalismo nu</a></h4>
+      </div>
+      
+    </div>
+    <hr />
+  </div>
+
+  <div class="featured">
+    <div class="media">
+
+                  <div class="media-body">
+        <div class="category blue"><a href="https://revistaforum.com.br/cultura/">Cultura</a> </div>        <div class="clearfix"></div>
+        <h4><a href="https://revistaforum.com.br/cultura/regina-duarte-tem-encontro-com-bolsonaro-na-proxima-semana-e-pode-ser-demitida/">Regina Duarte tem encontro com Bolsonaro na próxima semana e pode ser demitida</a></h4>
+      </div>
+      
+    </div>
+    <hr />
+  </div>
+
+</div>
+<!-- em alta -->
+
+<div class="box newsletter">
+  <span class="title">newsletter</span>
+  <p class="subtitle">Receba nossas novidades por e-mail</p>
+<script>(function() {
+	if ( ! window.mc4wp) {
+		window.mc4wp = {
+			listeners: [],
+			forms    : {
+				on: function (event, callback) {
+					window.mc4wp.listeners.push(
+						{
+							event   : event,
+							callback: callback
+						}
+					);
+				}
+			}
+		}
+	}
+})();
+</script><!-- Mailchimp for WordPress v4.7.4 - https://wordpress.org/plugins/mailchimp-for-wp/ --><form id="mc4wp-form-1" class="mc4wp-form mc4wp-form-172530" method="post" data-id="172530" data-name="Newsletter" ><div class="mc4wp-form-fields"><div class="form-group">
+    <input type="text" name="FNAME" class="form-control" placeholder="Nome" required="">
+</div>
+<div class="form-group">
+    <input type="email" name="EMAIL" class="form-control" placeholder="E-mail" required="">
+</div>
+
+<p>
+  <button style="float:none;" type="submit" name="subscribe" class="btn btn-default">Inscrever</button>  
+</p>
+
+<p style="line-height: 1.2em;"><small>
+  Este site é protegido por reCAPTCHA e aplicam-se a 
+    <a href="https://policies.google.com/privacy" target="_blank">Política de Provacidade</a> e os
+    <a href="https://policies.google.com/terms" target="_blank">Termos de Serviço</a> do Google.
+</small></p>
+</div><label style="display: none !important;">Leave this field empty if you're human: <input type="text" name="_mc4wp_honeypot" value="" tabindex="-1" autocomplete="off" /></label><input type="hidden" name="_mc4wp_timestamp" value="1588344477" /><input type="hidden" name="_mc4wp_form_id" value="172530" /><input type="hidden" name="_mc4wp_form_element_id" value="mc4wp-form-1" /><div class="mc4wp-response"></div></form><!-- / Mailchimp for WordPress Plugin --></div>
+<!-- newsletter -->
+
+<div class="ad text-center center-block">
+    <!-- /21622511100/revistaforum_ros/rf_vertical_3 -->
+  <div id='rf_vertical_3' class="rfads">
+    <script>
+    googletag.cmd.push(function() { googletag.display('rf_vertical_3'); });
+    </script>
+  </div>
+  </div>
+<!-- ad -->
+
+<div class="blogs">
+  <h2>a nossa <span class="red">rede</span></h2>
+  <div class="slide">
+
+                    <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/rede/a-historia-do-ato-de-lavar-as-maos/"><img src="https://revistaforum.com.br/wp-content/uploads/2018/02/raphael-fagundes.jpg" width="160" height="160" alt="Raphael Silva Fagundes" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/rede/a-historia-do-ato-de-lavar-as-maos/">Raphael Silva Fagundes</a></h3>
+        <p><a href="https://revistaforum.com.br/rede/a-historia-do-ato-de-lavar-as-maos/">A história do ato de lavar as mãos</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/rede/o-que-o-dia-de-hoje-tem-a-nos-dizer-sobre-o-pos-pandemia/"><img src="https://cdn.revistaforum.com.br/wp-content/uploads/2020/04/daniel-valenca.jpg" width="160" height="153" alt="Daniel Valença" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/rede/o-que-o-dia-de-hoje-tem-a-nos-dizer-sobre-o-pos-pandemia/">Daniel Valença</a></h3>
+        <p><a href="https://revistaforum.com.br/rede/o-que-o-dia-de-hoje-tem-a-nos-dizer-sobre-o-pos-pandemia/">O que o dia de hoje tem a nos dizer sobre o pós-pandemia?</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/blogs/falaqueeudiscuto/reflexoes-sobre-a-morte/"><img src="https://cdn.revistaforum.com.br/wp-content/uploads/2020/04/lele-teles-avatar.jpg" width="160" height="148" alt="Lelê Teles" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/blogs/falaqueeudiscuto/reflexoes-sobre-a-morte/">Lelê Teles</a></h3>
+        <p><a href="https://revistaforum.com.br/blogs/falaqueeudiscuto/reflexoes-sobre-a-morte/">Reflexões sobre a morte</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/blogs/blogdorovai/fala-rovai-semana-que-vem-sera-horripilante-preparem-se/"><img src="https://revistaforum.com.br/wp-content/uploads/2018/02/renato-rovai.jpg" width="160" height="160" alt="Renato Rovai" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/blogs/blogdorovai/fala-rovai-semana-que-vem-sera-horripilante-preparem-se/">Renato Rovai</a></h3>
+        <p><a href="https://revistaforum.com.br/blogs/blogdorovai/fala-rovai-semana-que-vem-sera-horripilante-preparem-se/">Fala, Rovai | Semana que vem será horripilante, preparem-se!</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/colunistas/julinho-bittencourt/gilberto-gil-e-bayanasistem-juntos-em-album-pra-lembrar-o-melhor-da-vida/"><img src="https://revistaforum.com.br/wp-content/uploads/2019/11/julinho.jpg" width="160" height="136" alt="Julinho Bittencourt" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/colunistas/julinho-bittencourt/gilberto-gil-e-bayanasistem-juntos-em-album-pra-lembrar-o-melhor-da-vida/">Julinho Bittencourt</a></h3>
+        <p><a href="https://revistaforum.com.br/colunistas/julinho-bittencourt/gilberto-gil-e-bayanasistem-juntos-em-album-pra-lembrar-o-melhor-da-vida/">Gilberto Gil e BayanaSistem juntos em álbum pra lembrar o melhor da vida</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/colunistas/anaprestes/onu-acusa-bolsonaro-de-politica-irresponsavel-durante-pandemia-do-novo-coronavirus/"><img src="https://revistaforum.com.br/wp-content/uploads/2018/05/ana-prestes.jpg" width="160" height="145" alt="Ana Prestes" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/colunistas/anaprestes/onu-acusa-bolsonaro-de-politica-irresponsavel-durante-pandemia-do-novo-coronavirus/">Ana Prestes</a></h3>
+        <p><a href="https://revistaforum.com.br/colunistas/anaprestes/onu-acusa-bolsonaro-de-politica-irresponsavel-durante-pandemia-do-novo-coronavirus/">ONU acusa Bolsonaro de política irresponsável durante pandemia do novo coronavírus</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/colunistas/julianrodrigues/bolsonaro-e-idiota-incompetente-irresponsavel-louco-ou-psicopata/"><img src="https://revistaforum.com.br/wp-content/uploads/2018/02/julian-rodrigues.jpg" width="160" height="160" alt="Julian Rodrigues" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/colunistas/julianrodrigues/bolsonaro-e-idiota-incompetente-irresponsavel-louco-ou-psicopata/">Julian Rodrigues</a></h3>
+        <p><a href="https://revistaforum.com.br/colunistas/julianrodrigues/bolsonaro-e-idiota-incompetente-irresponsavel-louco-ou-psicopata/">Bolsonaro é idiota, incompetente, irresponsável, louco ou psicopata?</a></p>
+      </div>
+    <!-- card each blog -->
+                <div class="card">
+        <div class="center-block text-center"><a href="https://revistaforum.com.br/blogs/ocolunista/filho-04-do-presidente-afirma-ter-sido-contaminado-com-coronavirus-pegou-de-quem/"><img src="https://revistaforum.com.br/wp-content/uploads/2019/05/cleber-lourenco.jpg" width="160" height="143" alt="Cleber Lourenço" class="avatar img-circle avatar-160 wp-user-avatar wp-user-avatar-160 alignnone photo" /></a></div>
+        <h3><a href="https://revistaforum.com.br/blogs/ocolunista/filho-04-do-presidente-afirma-ter-sido-contaminado-com-coronavirus-pegou-de-quem/">Cleber Lourenço</a></h3>
+        <p><a href="https://revistaforum.com.br/blogs/ocolunista/filho-04-do-presidente-afirma-ter-sido-contaminado-com-coronavirus-pegou-de-quem/">Filho 04 do presidente afirma ter sido contaminado com coronavírus. Pegou de quem?</a></p>
+      </div>
+    <!-- card each blog -->
+    
+  </div>
+</div>
+<!-- rede de blogs -->
+                <div class="box" style="margin:10px 0 10px 0;">
+          <iframe width="100%" height="250" src="https://www.youtube.com/embed/videoseries?list=UU3sMBA3BdnsKSVI0WB9yVWQ&amp;rel=0&autoplay=1&mute=1" frameborder="0" allow="encrypted-media" allowfullscreen=""></iframe>
+        </div>
+      </div>
+      <!-- lateral direita -->
+    </div>
+  </div>
+</section>
+    <div class="ad text-center center-block">
+  <!-- /21622511100/revistaforum_ros/rf_horizontal_3 -->
+  <div id='rf_horizontal_3' class="rfads">
+  <script>
+  googletag.cmd.push(function() { googletag.display('rf_horizontal_3'); });
+  </script>
+  </div>
+</div>
+
+    <footer>
+      <div class="bg-gray">
+        <a href="/"><noscript data-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" data-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png.webp" data-srcset-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png.webp 2x" data-srcset-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" data-class="img-responsive center-block text-center" class="ewww_webp"><noscript data-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" data-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png.webp" data-srcset-webp="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png.webp 2x" data-srcset-img="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" data-class="img-responsive center-block text-center" class="ewww_webp"><img src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum.png" srcset="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/img/logo-revistaforum@2x.png 2x" class="img-responsive center-block text-center"></noscript></noscript></a>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 col-md-10 col-sm-12 hidden-xs">
+            <ul>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12776"><a href="https://revistaforum.com.br/sobre-a-revista/">Sobre</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12777"><a href="https://revistaforum.com.br/equipe/">Equipe</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-129468"><a href="https://revistaforum.com.br/parceiros/">Parceiros</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-129469"><a href="https://revistaforum.com.br/anuncie/">Anuncie</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12778"><a href="https://revistaforum.com.br/contato/">Contato</a></li>
+                          </ul>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <div class="socials">
+              <a href="https://www.facebook.com/forumrevista/" target="_blank"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>
+<a href="https://twitter.com/revistaforum" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+<a href="https://www.instagram.com/revistaforum/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+<a href="https://www.youtube.com/user/forumrevista" target="_blank"><i class="fa fa-youtube" aria-hidden="true"></i></a>
+            </div>
+            <!-- socials -->
+          </div>
+        </div>
+      </div>
+	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+	    <script type="text/javascript" src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/bootstrap.min.js.gzip"></script>
+	    <script type="text/javascript" src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/slick/slick.min.js.gzip"></script>
+	    <script type="text/javascript" src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/jquery.fancybox.min.js.gzip"></script>
+	    <script type="text/javascript" src="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/javascripts/default.js.gzip?v5"></script>
+    </footer>
+
+
+    <div class='code-block code-block-13' style='margin: 8px 0; clear: both;'>
+<script type="text/javascript" class="teads" async="true" src="//a.teads.tv/page/52247/tag"></script></div>
+<script>(function() {function addEventListener(element,event,handler) {
+	if (element.addEventListener) {
+		element.addEventListener( event,handler, false );
+	} else if (element.attachEvent) {
+		element.attachEvent( 'on' + event,handler );
+	}
+}
+function maybePrefixUrlField() {
+	if (this.value.trim() !== '' && this.value.indexOf( 'http' ) !== 0) {
+		this.value = "http://" + this.value;
+	}
+}
+
+var urlFields = document.querySelectorAll( '.mc4wp-form input[type="url"]' );
+if ( urlFields && urlFields.length > 0 ) {
+	for ( var j = 0; j < urlFields.length; j++ ) {
+		addEventListener( urlFields[j],'blur',maybePrefixUrlField );
+	}
+}
+/* test if browser supports date fields */
+var testInput = document.createElement( 'input' );
+testInput.setAttribute( 'type', 'date' );
+if ( testInput.type !== 'date') {
+
+	/* add placeholder & pattern to all date fields */
+	var dateFields = document.querySelectorAll( '.mc4wp-form input[type="date"]' );
+	for (var i = 0; i < dateFields.length; i++) {
+		if ( ! dateFields[i].placeholder) {
+			dateFields[i].placeholder = 'YYYY-MM-DD';
+		}
+		if ( ! dateFields[i].pattern) {
+			dateFields[i].pattern = '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])';
+		}
+	}
+}
+})();</script><script type='text/javascript'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/revistaforum.com.br\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/contact-form-7/includes/js/scripts.js.gzip?ver=5.1.6'></script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/yith-infinite-scrolling/assets/js/yith.infinitescroll.min.js.gzip?ver=1.1.13'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var yith_infs = {"navSelector":".pagination","nextSelector":".pagination a.next","itemSelector":".col-lg-12.col-md-12.col-sm-12.col-xs-12.list","contentSelector":".row#noticias","loader":"https:\/\/revistaforum.com.br\/wp-content\/plugins\/yith-infinite-scrolling\/assets\/images\/loader.gif","shop":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/yith-infinite-scrolling/assets/js/yith-infs.min.js.gzip?ver=1.1.13'></script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-includes/js/wp-embed.min.js.gzip?ver=5.3.2'></script>
+<script type='text/javascript' src='https://cdn.onesignal.com/sdks/OneSignalSDK.js?ver=5.3.2' async='async'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var mc4wp_forms_config = [];
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/mailchimp-for-wp/assets/js/forms-api.min.js.gzip?ver=4.7.4'></script>
+<!--[if lte IE 9]>
+<script type='text/javascript' src='https://cdn.revistaforum.com.br/wp-content/plugins/mailchimp-for-wp/assets/js/third-party/placeholders.min.js.gzip?ver=4.7.4'></script>
+<![endif]-->
+<script>
+b64e=function(a){return btoa(encodeURIComponent(a).replace(/%([0-9A-F]{2})/g,function(a,b){return String.fromCharCode("0x"+b)}))};b64d=function(a){return decodeURIComponent(atob(a).split("").map(function(a){return"%"+("00"+a.charCodeAt(0).toString(16)).slice(-2)}).join(""))};
+function ai_run_scripts(){ai_insert=function(a,c,g){var d=-1!=c.indexOf(":eq")?jQuery(c):document.querySelectorAll(c);Array.prototype.forEach.call(d,function(b,d){selector_string=b.hasAttribute("id")?"#"+b.getAttribute("id"):b.hasAttribute("class")?"."+b.getAttribute("class").replace(RegExp(" ","g"),"."):"";var e=document.createElement("div");e.innerHTML=g;var f=e.getElementsByClassName("ai-selector-counter")[0];null!=f&&(f.innerText=d+1);f=e.getElementsByClassName("ai-debug-name ai-main")[0];if(null!=f){var h="";"before"==
+a?h=ai_front.insertion_before:"after"==a?h=ai_front.insertion_after:"prepend"==a?h=ai_front.insertion_prepend:"append"==a?h=ai_front.insertion_append:"replace-content"==a?h=ai_front.insertion_replace_content:"replace-element"==a&&(h=ai_front.insertion_replace_element);-1==selector_string.indexOf(".ai-viewports")&&(f.innerText=h+" "+c+" ("+b.tagName.toLowerCase()+selector_string+")")}f=document.createRange().createContextualFragment(e.innerHTML);"before"==a?b.parentNode.insertBefore(f,b):"after"==
+a?b.parentNode.insertBefore(f,b.nextSibling):"prepend"==a?b.insertBefore(f,b.firstChild):"append"==a?b.insertBefore(f,null):"replace-content"==a?b.innerHTML=e.innerHTML:"replace-element"==a&&(b.parentNode.insertBefore(f,b),b.parentNode.removeChild(b))})};
+ai_insert_code=function(a){function c(a,b){return null==a?!1:a.classList?a.classList.contains(b):-1<(" "+a.className+" ").indexOf(" "+b+" ")}function g(a,b){null!=a&&(a.classList?a.classList.add(b):a.className+=" "+b)}function d(a,b){null!=a&&(a.classList?a.classList.remove(b):a.className=a.className.replace(new RegExp("(^|\\b)"+b.split(" ").join("|")+"(\\b|$)","gi")," "))}if("undefined"!=typeof a){var b=!1,e=c(a,"no-visibility-check")?!0:!!(a.offsetWidth||a.offsetHeight||a.getClientRects().length);
+a.getAttribute("data-block");if(e){b=a.getAttribute("data-code");e=a.getAttribute("data-insertion");var k=a.getAttribute("data-selector");null!=b&&(null!=e&&null!=k?document.querySelectorAll(k).length&&(ai_insert(e,k,b64d(b)),d(a,"ai-viewports")):(b=document.createRange().createContextualFragment(b64d(b)),a.parentNode.insertBefore(b,a.nextSibling),d(a,"ai-viewports")));b=!0;a=a.getElementsByClassName("ai-check-block");"undefined"!=typeof a[0]&&a[0].parentNode.removeChild(a[0])}else e=a.previousElementSibling,
+c(e,"ai-debug-bar")&&c(e,"ai-debug-script")&&(d(e,"ai-debug-script"),g(e,"ai-debug-viewport-invisible")),d(a,"ai-viewports");return b}};ai_insert_list_code=function(a){var c=document.getElementsByClassName(a)[0];if("undefined"!=typeof c){var g=ai_insert_code(c),d=c.closest("div.code-block");d&&(g||d.removeAttribute("data-ai"),d.classList.remove("ai-list-block"),d.style.visibility="",d.classList.contains("ai-remove-position")&&(d.style.position=""));c.classList.remove(a);g&&ai_process_elements()}};
+ai_insert_viewport_code=function(a){var c=document.getElementsByClassName(a)[0];"undefined"!=typeof c&&(ai_insert_code(c),c.classList.remove(a),ai_process_elements())};ai_insert_code_by_class=function(a){var c=document.getElementsByClassName(a)[0];"undefined"!=typeof c&&(ai_insert_code(c),c.classList.remove(a))};ai_process_elements_active=!1;
+function ai_process_elements(){ai_process_elements_active||setTimeout(function(){ai_process_elements_active=!1;"function"==typeof ai_process_rotations&&ai_process_rotations();"function"==typeof ai_process_lists&&ai_process_lists(jQuery("div.ai-list-data"));"function"==typeof ai_process_ip_addresses&&ai_process_ip_addresses(jQuery("div.ai-ip-data"))},5);ai_process_elements_active=!0}
+function b64e(a){return btoa(encodeURIComponent(a).replace(/%([0-9A-F]{2})/g,function(a,g){return String.fromCharCode("0x"+g)}))}function b64d(a){return decodeURIComponent(atob(a).split("").map(function(a){return"%"+("00"+a.charCodeAt(0).toString(16)).slice(-2)}).join(""))};
+jQuery(function(a){function e(a){return decodeURIComponent(atob(a).split("").map(function(a){return"%"+("00"+a.charCodeAt(0).toString(16)).slice(-2)}).join(""))}function n(a){a=a.match(h);return null!=a&&1<a.length&&"string"===typeof a[1]&&0<a[1].length?a[1].toLowerCase():null}function k(a){try{var b=Date.parse(a);isNaN(b)&&(b=null)}catch(w){b=null}return b}var h=/:\/\/(.[^/:]+)/i;ai_process_lists=function(b){b=null==b?a("div.ai-list-data"):b.filter(".ai-list-data");if(b.length){b.removeClass("ai-list-data");
+var r=document.cookie.split(";");r.forEach(function(a,c){r[c]=a.trim()});var h=getAllUrlParams(window.location.search);if(null!=h.referrer)var m=h.referrer;else m=document.referrer,""!=m&&(m=n(m));if("undefined"!==typeof MobileDetect)var u=new MobileDetect(window.navigator.userAgent);b.each(function(){var b=a(this).closest("div.code-block"),c=!0,f=!1,d=a(this).attr("referer-list");if("undefined"!=typeof d){d=e(d).split(",");var g=a(this).attr("referer-list-type");a.each(d,function(a,
+b){if(""==b)return!0;if("*"==b.charAt(0))if("*"==b.charAt(b.length-1)){if(b=b.substr(1,b.length-2),-1!=m.indexOf(b))return f=!0,!1}else{if(b=b.substr(1),m.substr(-b.length)==b)return f=!0,!1}else if("*"==b.charAt(b.length-1)){if(b=b.substr(0,b.length-1),0==m.indexOf(b))return f=!0,!1}else if("#"==b){if(""==m)return f=!0,!1}else if(b==m)return f=!0,!1});switch(g){case "B":f&&(c=!1);break;case "W":f||(c=!1)}}d=a(this).attr("client-list");if("undefined"!=typeof d&&"undefined"!==typeof u)switch(d=e(d).split(","),
+g=a(this).attr("client-list-type"),a.each(d,function(a,b){if(""==b)return!0;if(u.is(b))return f=!0,!1}),g){case "B":f&&(c=!1);break;case "W":f||(c=!1)}if(c&&(d=a(this).attr("parameter-list"),"undefined"!=typeof d))switch(d=e(d).split(","),g=a(this).attr("parameter-list-type"),f=!1,a.each(d,function(a,b){if(-1!=b.indexOf("=")){if(-1!=r.indexOf(b))return f=!0,!1}else r.forEach(function(a){a=a.split("=");if(b==a[0])return f=!0,!1})}),g){case "B":f&&(c=!1);break;case "W":f||(c=!1)}var l=a(this).prevAll(".ai-debug-bar.ai-debug-lists");
+d=""==m?"#":m;l.find(".ai-debug-name.ai-list-info").text(d).attr("title",window.navigator.userAgent);l.find(".ai-debug-name.ai-list-status").text(c?ai_front.visible:ai_front.hidden);d=!1;if(c){var h=a(this).attr("scheduling-start");l=a(this).attr("scheduling-end");var p=a(this).attr("scheduling-days");if("undefined"!=typeof h&&"undefined"!=typeof l&&"undefined"!=typeof p){d=!0;var n=parseInt(a(this).attr("scheduling-fallback"));g=parseInt(a(this).attr("gmt"));var q=k(e(h))+g;l=k(e(l))+g;h=e(p).split(",");
+p=a(this).attr("scheduling-type");var t=(new Date).getTime()+g,v=new Date(t);g=v.getDay();0==g?g=6:g--;q=t>=q&&t<l&&h.includes(g.toString());switch(p){case "B":q=!q}q||(c=!1);p=v.toISOString().split(".")[0].replace("T"," ");l=a(this).prevAll(".ai-debug-bar.ai-debug-scheduling");l.find(".ai-debug-name.ai-scheduling-info").text(p+" "+g);l.find(".ai-debug-name.ai-scheduling-status").text(c?ai_front.visible:ai_front.hidden);c||0==n||(l.removeClass("ai-debug-scheduling").addClass("ai-debug-fallback"),
+l.find(".ai-debug-name.ai-scheduling-status").text(ai_front.fallback+"="+n))}}a(this).css({visibility:"",position:"",width:"",height:"","z-index":""});c?(b.css({visibility:""}),b.hasClass("ai-remove-position")&&b.css({position:""}),"undefined"!=typeof a(this).data("code")&&(c=e(a(this).data("code")),a(this).append(c),ai_process_element(this))):d&&!q&&0!=n?(b.css({visibility:""}),b.hasClass("ai-remove-position")&&b.css({position:""}),a(this).next(".ai-fallback").removeClass("ai-fallback"),"undefined"!=
+typeof a(this).data("fallback-code")?(c=e(a(this).data("fallback-code")),a(this).append(c),ai_process_element(this)):a(this).hide(),c=b.attr("data-ai"),"undefined"!==typeof c&&!1!==c&&(c=a(this).attr("fallback-tracking"),"undefined"!==typeof c&&!1!==c&&b.attr("data-ai",c))):(a(this).hide(),b.removeAttr("data-ai").removeClass("ai-track"),b.find(".ai-debug-block").length?(b.css({visibility:""}).removeClass("ai-close"),b.hasClass("ai-remove-position")&&b.css({position:""})):b.hide());a(this).attr("data-code",
+"");a(this).attr("data-fallback-code","");b.removeClass("ai-list-block")})}};a(document).ready(function(a){setTimeout(function(){ai_process_lists()},5)})});function ai_process_element(a){setTimeout(function(){"function"==typeof ai_process_rotations_in_element&&ai_process_rotations_in_element(a);"function"==typeof ai_process_lists&&ai_process_lists(jQuery("div.ai-list-data",a));"function"==typeof ai_process_ip_addresses&&ai_process_ip_addresses(jQuery("div.ai-ip-data",a))},5)}
+function getAllUrlParams(a){var e=a?a.split("?")[1]:window.location.search.slice(1);a={};if(e){e=e.split("#")[0];e=e.split("&");for(var n=0;n<e.length;n++){var k=e[n].split("="),h=void 0,b=k[0].replace(/\[\d*\]/,function(a){h=a.slice(1,-1);return""});k="undefined"===typeof k[1]?"":k[1];b=b.toLowerCase();k=k.toLowerCase();a[b]?("string"===typeof a[b]&&(a[b]=[a[b]]),"undefined"===typeof h?a[b].push(k):a[b][h]=k):a[b]=k}}return a};
+}function ai_load_translations(){/* <![CDATA[ */
+ai_front = {"wp_ai":"5.3.2+2.6.2","insertion_before":"BEFORE","insertion_after":"AFTER","insertion_prepend":"PREPEND CONTENT","insertion_append":"APPEND CONTENT","insertion_replace_content":"REPLACE CONTENT","insertion_replace_element":"REPLACE ELEMENT","cancel":"Cancel","use":"Use","add":"Add","parent":"Parent","cancel_element_selection":"Cancel element selection","select_parent_element":"Select parent element","css_selector":"CSS selector","use_current_selector":"Use current selector","element":"ELEMENT","path":"PATH","selector":"SELECTOR","visible":"VISIBLE","hidden":"HIDDEN","fallback":"FALLBACK","automatically_placed":"Automatically placed by AdSense Auto ads code"};
+/* ]]> */}
+function ai_wait_for_jquery(){function b(b,c){var a=document.createElement("script");a.src=b;var d=document.getElementsByTagName("head")[0],e=!1;a.onload=a.onreadystatechange=function(){e||this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(e=!0,c&&c(),a.onload=a.onreadystatechange=null,d.removeChild(a))};d.appendChild(a)}window.jQuery?ai_run_scripts():(ai_jquery_waiting_counter++,4==ai_jquery_waiting_counter&&(b("https://cdn.revistaforum.com.br/wp-includes/js/jquery/jquery.js.gzip?ver=5.3.2",function(){b("https://cdn.revistaforum.com.br/wp-includes/js/jquery/jquery-migrate.min.js.gzip?ver=5.3.2",null)}),ai_load_translations()),
+30>ai_jquery_waiting_counter&&setTimeout(function(){ai_wait_for_jquery()},50))}ai_jquery_waiting_counter=0;ai_wait_for_jquery();
+
+</script>
+    <!-- Start Alexa Certify Javascript -->
+    <script type="text/javascript">
+    _atrk_opts = { atrk_acct:"T/lqh1a0k700w8", domain:"revistaforum.com.br",dynamic: true};
+    (function() { var as = document.createElement('script'); as.type = 'text/javascript'; as.async = true; as.src = "https://d31qbv1cthcecs.cloudfront.net/atrk.js"; var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(as, s); })();
+    </script>
+    <noscript><img src="https://d5nxst8fruw4z.cloudfront.net/atrk.gif?account=T/lqh1a0k700w8" style="display:none" height="1" width="1" alt="" /></noscript>
+    <!-- End Alexa Certify Javascript -->
+
+    <!-- smonitor -->
+    <script async src="https://smonitor.com.br/static/forum-r.js" type="text/javascript"></script>
+    <!-- smonitor -->
+
+<!-- /21622511100/revistaforum_ros/rf_dhtml -->
+<div id='dhtml' class="rfads">
+<script>
+googletag.cmd.push(function() { googletag.display('dhtml'); });
+</script>
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.revistaforum.com.br/wp-content/themes/revistaforum/font-awesome.min.css.gzip" />
+<script type="text/javascript">
+window._taboola = window._taboola || [];
+_taboola.push({flush: true});
+</script>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"NRJS-4f0a419aedbbc686c7e","applicationID":"480280797","transactionName":"ZgdbMEZUVktYUBYPXF9NeAdAXFdWFkALCFRdBw==","queueTime":0,"applicationTime":474,"atts":"SkBYRg5ORUU=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>
+
+<!--
+Performance optimized by W3 Total Cache. Learn more: https://www.w3-edge.com/products/
+
+Content Delivery Network via Amazon Web Services: S3: cdn.revistaforum.com.br
+
+Served from: _ @ 2020-05-01 11:47:57 by W3 Total Cache
+-->
