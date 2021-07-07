@@ -247,40 +247,6 @@ for item in EVAL_PAGES:
     goose_result['true_negatives'] += tn
     goose_result['false_negatives'] += fn
 
-
-#print('number of documents:', i)
-#print('nothing (null hypothesis)')
-#print(nothing)
-## print(calculate_f_score(nothing))
-#print('htmldate extensive')
-#print(htmldate_extensive_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(htmldate_extensive_result)))
-#print("time diff.: %.2f" % (htmldate_extensive_result['time'] / htmldate_fast_result['time']))
-#print('htmldate fast')
-#print(htmldate_fast_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(htmldate_fast_result)))
-#print("time diff.: %.2f" % (htmldate_fast_result['time'] / htmldate_fast_result['time']))
-##print('newspaper')
-##print(newspaper_result)
-##print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(newspaper_result)))
-##print("time diff.: %.2f" % (newspaper_result['time'] / htmldate_fast_result['time']))
-#print('newsplease')
-#print(newsplease_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(newsplease_result)))
-#print("time diff.: %.2f" % (newsplease_result['time'] / htmldate_fast_result['time']))
-#print('articledateextractor')
-#print(articledateextractor_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(articledateextractor_result)))
-#print("time diff.: %.2f" % (articledateextractor_result['time'] / htmldate_fast_result['time']))
-#print('date_guesser')
-#print(dateguesser_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(dateguesser_result)))
-#print("time diff.: %.2f" % (dateguesser_result['time'] / htmldate_fast_result['time']))
-#print('goose')
-#print(goose_result)
-#print('precision: %.3f recall: %.3f accuracy: %.3f f-score: %.3f' % (calculate_scores(goose_result)))
-#print("time diff.: %.2f" % (goose_result['time'] / htmldate_fast_result['time']))
-
 print('Sample Size:', i)
 table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calculate_scores("htmldate fast", htmldate_fast_result),
 calculate_scores("newspaper", newspaper_result), 
