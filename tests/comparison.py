@@ -32,7 +32,7 @@ from tabulate import tabulate
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 
 #load the pages here
-with open("eval_mediacloud_200.json") as f:
+with open("eval_mediacloud_2020.json") as f:
     EVAL_PAGES = json.load(f)
 
 
