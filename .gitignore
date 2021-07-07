@@ -130,9 +130,11 @@ dmypy.json
 .pyre/
 
 # custom logs
-*.log
 *.txt
 
 # profiling
 *.tmp
 *.lprof
+
+# PyCharm
+.idea
