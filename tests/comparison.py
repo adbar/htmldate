@@ -70,17 +70,17 @@ def run_htmldate_fast(htmlstring):
     return result
 
 
-#def run_newspaper(htmlstring):
-#    '''try with the newspaper module'''
-#    ## does not work!
-#    myarticle = Article('https://www.example.org/test/')
-#    myarticle.html = htmlstring
-#    myarticle.download_state = ArticleDownloadState.SUCCESS
-#    myarticle.parse()
-#    if myarticle.publish_date is None:
-#        return None
-#    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-#    return date
+def run_newspaper(htmlstring):
+    '''try with the newspaper module'''
+    ## does not work!
+    myarticle = Article(htmlstring)
+    myarticle.html = htmlstring
+    myarticle.download_state = ArticleDownloadState.SUCCESS
+    myarticle.parse()
+    if myarticle.publish_date is None:
+        return None
+    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+    return date
 
 
 def run_newsplease(htmlstring):
@@ -203,13 +203,13 @@ for item in EVAL_PAGES:
     htmldate_fast_result['false_negatives'] += fn
     # newspaper
     start = time.time()
-   # result = run_newspaper(htmlstring)
-   # newspaper_result['time'] += time.time() - start
-   # tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
-   # newspaper_result['true_positives'] += tp
-   # newspaper_result['false_positives'] += fp
-   # newspaper_result['true_negatives'] += tn
-   # newspaper_result['false_negatives'] += fn
+    result = run_newspaper(htmlstring)
+    newspaper_result['time'] += time.time() - start
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    newspaper_result['true_positives'] += tp
+    newspaper_result['false_positives'] += fp
+    newspaper_result['true_negatives'] += tn
+    newspaper_result['false_negatives'] += fn
     # newsplease
     start = time.time()
     result = run_newsplease(htmlstring)
@@ -282,7 +282,8 @@ for item in EVAL_PAGES:
 #print("time diff.: %.2f" % (goose_result['time'] / htmldate_fast_result['time']))
 
 print('Sample Size:', i)
-table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calculate_scores("htmldate fast", htmldate_fast_result), 
+table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calculate_scores("htmldate fast", htmldate_fast_result),
+calculate_scores("newspaper", newspaper_result), 
 calculate_scores("newsplease", newsplease_result), calculate_scores("articledateextractor", articledateextractor_result),
 calculate_scores("date_guesser", dateguesser_result),  calculate_scores("goose", goose_result)]
 print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score"]))
