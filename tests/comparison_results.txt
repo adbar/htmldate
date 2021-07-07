@@ -1,9 +1,0 @@
-Name                    Precision    Recall    Accuracy    F-score
---------------------  -----------  --------  ----------  ---------
-htmldate extensive       0.755102  0.973684       0.74    0.850575
-htmldate fast            0.769663  0.861635       0.685   0.813056
-newspaper                0.671141  0.662252       0.5     0.666667
-newsplease               0.736527  0.788462       0.615   0.76161
-articledateextractor     0.72973   0.675          0.54    0.701299
-date_guesser             0.686567  0.582278       0.46    0.630137
-goose                    0.75      0.508772       0.435   0.606272
