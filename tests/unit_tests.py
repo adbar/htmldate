@@ -386,8 +386,8 @@ def test_try_ymd_date():
     assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('Fri - September 1 - 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('1.9.2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
-    assert try_ymd_date('201709011234', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01' # assuming MDY format
+    assert try_ymd_date('201709011234', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     # other output format
     assert try_ymd_date('1.9.2017', '%d %B %Y', True, MIN_DATE, LATEST_POSSIBLE) == '01 September 2017'
     # wrong
@@ -435,9 +435,9 @@ def test_regex_parse():
     assert regex_parse('3rd Tuesday in March') is None
     assert regex_parse('Mart 26, 2019') is not None
     assert regex_parse('Salı, Mart 26, 2019') is not None
-    assert regex_parse('3/14/2016') is not None
     assert regex_parse('36/14/2016') is None
     assert custom_parse('12122004', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('3/14/2016', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('20041212', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('20041212', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('1212-20-04', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None

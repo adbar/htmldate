@@ -91,7 +91,12 @@ DISCARD_EXPRESSIONS = [
 ]
 
 # Regex cache
-MDY_PATTERN = re.compile(r'''(
+YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')
+YMD_PATTERN = re.compile(r'(?:\D|^)(\d{4})[\-/.](\d{1,2})[\-/.](\d{1,2})(?:\D|$)')
+DMY_PATTERN = re.compile(r'(?:\D|^)(\d{1,2})[\-/.](\d{1,2})[\-/.](\d{2,4})(?:\D|$)')
+YM_PATTERN = re.compile(r'(?:\D|^)(\d{4})[\-/.](\d{1,2})(?:\D|$)')
+MY_PATTERN = re.compile(r'(?:\D|^)(\d{1,2})[\-/.](\d{4})(?:\D|$)')
+LONG_MDY_PATTERN = re.compile(r'''(
 January|February|March|April|May|June|July|August|September|October|November|December|
 Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
@@ -100,7 +105,7 @@ janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|dé
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 ) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n', ''))
-DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(
+LONG_DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(
 January|February|March|April|May|June|July|August|September|October|November|December|
 Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
@@ -109,11 +114,8 @@ janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|dé
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 ),? ([0-9]{4})'''.replace('\n', ''))
-ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
-YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
-DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|
 Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})'''.replace('\n', ''))
 GENERAL_TEXTSEARCH = re.compile(r'''
@@ -237,7 +239,6 @@ def extract_partial_url_date(testurl, outputformat):
 
 def regex_parse(string):
     """Full-text parse using a series of regular expressions"""
-    dateobject = None
     dateobject = regex_parse_de(string)
     if dateobject is None:
         dateobject = regex_parse_multilingual(string)
@@ -266,104 +267,121 @@ def regex_parse_de(string):
 def regex_parse_multilingual(string):
     """Try full-text parse for English date elements"""
     # https://github.com/vi3k6i5/flashtext ?
-    # numbers
-    match = ENGLISH_DATE.search(string)
+    
+    # general search
+    if not GENERAL_TEXTSEARCH.search(string):
+        return None
+
+    # American English
+    match = LONG_MDY_PATTERN.search(string)
     if match:
-        day, month, year = match.group(2), match.group(1), match.group(3)
+        day = match.group(2)
+        month = TEXT_MONTHS[match.group(1)]
+        year = match.group(4)
+
+    # multilingual day-month-year pattern
     else:
-        # general search
-        if not GENERAL_TEXTSEARCH.search(string):
-            return None
-        # American English
-        match = MDY_PATTERN.search(string)
+        match = LONG_DMY_PATTERN.search(string)
         if match:
-            day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], \
-                               match.group(4)
-        # multilingual day-month-year pattern
+            day = match.group(1)
+            month = TEXT_MONTHS[match.group(4)]
+            year = match.group(5)
         else:
-            match = DMY_PATTERN.search(string)
-            if match:
-                day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], \
-                                   match.group(5)
-            else:
-                return None
+            return None
+
     # process and return
-    if len(year) == 2:
-        year = '20' + year
     try:
-        dateobject = datetime.date(int(year), int(month), int(day))
+        intYear = int(year)
+        intMonth = int(month)
+        intDay = int(day)
+
+        if intYear < 100:
+            if intYear >= 90: intYear += 1900
+            else: intYear += 2000
+
+        dateobject = datetime.date(intYear, intMonth, intDay)
     except ValueError:
         return None
-    LOGGER.debug('English text parse: %s', dateobject)
+
+    LOGGER.debug('multilingual text found: %s', dateobject)
     return dateobject
 
-
+# TODO
 def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
-    # '201709011234' not covered by dateparser # regex was too slow
-    if string[0:8].isdigit():
+    
+	# Use regex first
+	# 1. Try YYYYMMDD first
+    match = YMD_NO_SEP_PATTERN.search(string)
+    if match:
         try:
-            candidate = datetime.date(int(string[:4]),
-                                      int(string[4:6]),
-                                      int(string[6:8]))
+            tmp = match.group(0)
+            year, month, day = int(tmp[:4]), int(tmp[4:6]), int(tmp[6:8])
+            candidate = datetime.date(year, month, day)
         except ValueError:
-            return None
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            LOGGER.debug('ymd match: %s', candidate)
-            return convert_date(candidate, '%Y-%m-%d', outputformat)
-    # much faster
-    if string[0:4].isdigit():
-        # try speedup with ciso8601 (if installed)
-        try:
-            if extensive_search is True:
-                result = parse_datetime(string)
-            # speed-up by ignoring time zone info if ciso8601 is installed
-            else:
-                result = parse_datetime_as_naive(string)
-            if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
-                LOGGER.debug('parsing result: %s', result)
-                return result.strftime(outputformat)
-        except (OverflowError, TypeError, ValueError):
-            LOGGER.debug('parsing error: %s', string)
-    # %Y-%m-%d search
+            LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                LOGGER.debug('YYYYMMDD match: %s', candidate)
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
+
+    # 2. Try Y-M-D pattern since it's the one used in ISO-8601
     match = YMD_PATTERN.search(string)
     if match:
         try:
-            candidate = datetime.date(int(match.group(1)),
-                                      int(match.group(2)),
-                                      int(match.group(3)))
+            year = int(match.group(1))
+            month = int(match.group(2))
+            day = int(match.group(3))
+            candidate = datetime.date(year, month, day)
         except ValueError:
-            LOGGER.debug('value error: %s', match.group(0))
+            LOGGER.debug('Y-M-D value error: %s', match.group(0))
         else:
             if date_validator(candidate, '%Y-%m-%d') is True:
-                LOGGER.debug('ymd match: %s', candidate)
+                LOGGER.debug('Y-M-D match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
-    # faster than fire dateparser at once
-    datestub = DATESTUB_PATTERN.search(string)
-    if datestub and len(datestub.group(3)) in (2, 4):
+
+	# 3. Try the D-M-Y pattern since it's the most common date format in the world
+    match = DMY_PATTERN.search(string)
+    if match:
         try:
-            if len(datestub.group(3)) == 2:
-                candidate = datetime.date(int('20' + datestub.group(3)),
-                                          int(datestub.group(2)),
-                                          int(datestub.group(1)))
-            elif len(datestub.group(3)) == 4:
-                candidate = datetime.date(int(datestub.group(3)),
-                                          int(datestub.group(2)),
-                                          int(datestub.group(1)))
+            day = int(match.group(1))
+            month = int(match.group(2))
+            year = int(match.group(3))
+
+            # Append year if necessary
+            if year < 100:
+                if year >= 90: year += 1900
+                else: year += 2000
+            
+            # If month is more than 12, swap it with the day
+            if month > 12 and day <= 12:
+                day, month = month, day
+
+            candidate = datetime.date(year, month, day)
         except ValueError:
-            LOGGER.debug('value error: %s', datestub.group(0))
+            LOGGER.debug('D-M-Y value error: %s', match.group(0))
         else:
-            # test candidate
             if date_validator(candidate, '%Y-%m-%d') is True:
-                LOGGER.debug('D.M.Y match: %s', candidate)
+                LOGGER.debug('D-M-Y match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
-    # text match
+
+	# 4. Try the Y-M pattern
+    match = YM_PATTERN.search(string)
+    if match:
+        try:
+            year = int(match.group(1))
+            month = int(match.group(2))
+            candidate = datetime.date(year, month, 1)
+        except ValueError:
+            LOGGER.debug('Y-M value error: %s', match.group(0))
+        else:
+            if date_validator(candidate, '%Y-%m-%d') is True:
+                LOGGER.debug('Y-M match: %s', candidate)
+                return convert_date(candidate, '%Y-%m-%d', outputformat)
+
+	# 5. Try the other regex pattern
     dateobject = regex_parse(string)
-    # copyright match?
-    #if dateobject is None:
-    # © Janssen-Cilag GmbH 2014-2019. https://www.krebsratgeber.de/artikel/was-macht-eine-zelle-zur-krebszelle
-    # examine
     if dateobject is not None:
         try:
             if date_validator(dateobject, outputformat) is True:
@@ -371,6 +389,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', string, err)
+
     return None
 
 
@@ -397,25 +416,33 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria
     # list(filter(str.isdigit, string))
+
+    # if string less than 6 runes, stop
     if not string or len(string) < 6:
         return None
+
+    # count how many digit number in this string
     digits_num = len([c for c in string if c.isdigit()])
     if not 4 <= digits_num <= 18:
         return None
-    # just time/single year or digits, not a date
+
+    # check if string only contains time/single year or digits and not a date
     if not TEXT_DATE_PATTERN.search(string) or NO_TEXT_DATE_PATTERN.match(string):
         return None
-    # faster
+
+    # try to parse using the faster method
     customresult = custom_parse(string, outputformat, extensive_search, min_date, max_date)
     if customresult is not None:
         return customresult
-    # slow but extensive search
+
+    # use slow but extensive search
     if extensive_search is True:
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
         if dateparser_result is not None:
             if date_validator(dateparser_result, outputformat, earliest=min_date, latest=max_date):
                 return dateparser_result
+
     return None
 
 
