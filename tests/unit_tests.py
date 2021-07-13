@@ -291,7 +291,7 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
     assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
-    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # should be '2019-06-29'
+    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-06-29'
     assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
     assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'

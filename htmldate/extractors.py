@@ -91,18 +91,24 @@ DISCARD_EXPRESSIONS = [
 ]
 
 # Regex cache
-MDY_PATTERN = re.compile(r'''(January|February|March|April|May|June|July|
-August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|
-Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|Mai|Juni|Juli|Oktober|Dezember|
+MDY_PATTERN = re.compile(r'''(
+January|February|March|April|May|June|July|August|September|October|November|December|
+Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
+Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
+Januar|Jänner|Februar|Feber|März|Mai|Dezember|
+janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
-Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|
-Ara) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n', ''))
-DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(January|
-February|March|April|May|June|July|August|September|October|November|December|
-Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Januar|Jänner|Februar|Feber|März|
-Mai|Juni|Juli|Oktober|Dezember|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|
-Ağustos|Eylül|Ekim|Kasım|Aralık|Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|
-Ara),? ([0-9]{4})'''.replace('\n', ''))
+Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
+) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n', ''))
+DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(
+January|February|March|April|May|June|July|August|September|October|November|December|
+Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
+Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
+Januar|Jänner|Februar|Feber|März|Mai|Dezember|
+janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
+Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
+Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
+),? ([0-9]{4})'''.replace('\n', ''))
 ENGLISH_DATE = re.compile(r'([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})')
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
@@ -110,9 +116,12 @@ YMD_PATTERN = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
 DATESTUB_PATTERN = re.compile(r'([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
 GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|
 Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})'''.replace('\n', ''))
-GENERAL_TEXTSEARCH = re.compile(r'''January|February|March|April|May|June|July|
-August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|
-Nov|Dec|Januar|Jänner|Februar|Feber|März|Mai|Juni|Juli|Oktober|Dezember|
+GENERAL_TEXTSEARCH = re.compile(r'''
+January|February|March|April|May|June|July|August|September|October|November|December|
+Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
+Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
+Januar|Jänner|Februar|Feber|März|Mai|Dezember|
+janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara'''.replace('\n', ''))
 JSON_PATTERN_MODIFIED = \
@@ -122,27 +131,35 @@ JSON_PATTERN_PUBLISHED = \
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English + German + Turkish dates cache
-TEXT_MONTHS = {'Januar': '01', 'Jänner': '01', 'January': '01', 'Jan': '01',
-               'Ocak': '01', 'Oca': '01',
-               'Februar': '02', 'Feber': '02', 'February': '02', 'Feb': '02',
-               'Şubat': '02', 'Şub': '02',
-               'März': '03', 'March': '03', 'Mar': '03', 'Mart': '03',
-               'April': '04', 'Apr': '04', 'Nisan': '04', 'Nis': '04',
-               'Mai': '05', 'May': '05', 'Mayıs': '05',
-               'Juni': '06', 'June': '06', 'Jun': '06',
-               'Haziran': '06', 'Haz': '06',
-               'Juli': '07', 'July': '07', 'Jul': '07',
-               'Temmuz': '07', 'Tem': '07',
-               'August': '08', 'Aug': '08',
-               'Ağustos': '08', 'Ağu': '08',
-               'September': '09', 'Sep': '09',
-               'Eylül': '09', 'Eyl': '09',
-               'Oktober': '10', 'October': '10', 'Oct': '10',
-               'Ekim': '10', 'Eki': '10',
-               'November': '11', 'Nov': '11',
-               'Kasım': '11', 'Kas': '11',
-               'Dezember': '12', 'December': '12', 'Dec': '12',
-               'Aralık': '12', 'Ara': '12'}
+TEXT_MONTHS = {
+    # January
+    'Januar': '01', 'Jänner': '01', 'January': '01', 'Januari': '01', 'Jan': '01',
+    'Ocak': '01', 'Oca': '01', 'janvier': '01',
+    # February
+    'Februar': '02', 'Feber': '02', 'February': '02', 'Februari': '02', 'Feb': '02',
+    'Şubat': '02', 'Şub': '02', 'février': '02',
+    # March
+    'März': '03', 'March': '03', 'Maret': '03', 'Mar': '03', 'Mart': '03', 'mars': '03',
+    # April
+    'April': '04', 'Apr': '04', 'Nisan': '04', 'Nis': '04', 'avril': '04',
+    # May
+    'Mai': '05', 'May': '05', 'Mei': '05', 'Mayıs': '05', 'mai': '05',
+    # June
+    'Juni': '06', 'June': '06', 'Jun': '06', 'Haziran': '06', 'Haz': '06', 'juin': '06',
+    # July
+    'Juli': '07', 'July': '07', 'Jul': '07', 'Temmuz': '07', 'Tem': '07', 'juillet': '07',
+    # August
+    'August': '08', 'Agustus': '08', 'Aug': '08', 'Ağustos': '08', 'Ağu': '08', 'aout': '08',
+    # September
+    'September': '09', 'Sep': '09', 'Eylül': '09', 'Eyl': '09', 'septembre': '09',
+    # October
+    'Oktober': '10', 'October': '10', 'Oct': '10', 'Ekim': '10', 'Eki': '10', 'octobre': '10',
+    # November
+    'November': '11', 'Nov': '11', 'Kasım': '11', 'Kas': '11', 'novembre': '11',
+    # December
+    'Dezember': '12', 'December': '12', 'Desember': '12', 'Dec': '12', 'Aralık': '12',
+    'Ara': '12', 'décembre': '12'
+}
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$')
