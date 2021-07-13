@@ -52,13 +52,15 @@ from .validators import convert_date, date_validator
 
 LOGGER = logging.getLogger(__name__)
 
-DATE_EXPRESSIONS = [
-    """.//*[contains(@id, 'date') or contains(@id, 'Date') or
+DATE_EXPRESSIONS = """
+	.//*[contains(@id, 'date') or contains(@id, 'Date') or
     contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
-    or contains(@class, 'post-meta-time')]""",
-    """.//*[contains(@class, 'date') or contains(@class, 'Date')
-    or contains(@class, 'datum') or contains(@class, 'Datum')]""",
-    """.//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
+    or contains(@class, 'post-meta-time')]
+	|
+    .//*[contains(@class, 'date') or contains(@class, 'Date')
+    or contains(@class, 'datum') or contains(@class, 'Datum')]
+	|
+    .//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
     or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
     contains(@class, 'article__date') or contains(@class, 'post_detail') or @class='meta'
@@ -68,27 +70,28 @@ DATE_EXPRESSIONS = [
     contains(@class, 'dateline') or contains(@class, 'subline')
     or contains(@class, 'published') or contains(@class, 'posted') or
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')
-    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]""",
-    """.//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
-    contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]""",
-    ".//footer|.//*[@class='post-footer' or @class='footer' or @id='footer']",
-    ".//small",
-    """.//*[contains(@class, 'author') or contains(@class, 'autor') or
+    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]
+	|
+    //*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
+    contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]
+	|
+    .//footer
+	|
+	.//*[@class='post-footer' or @class='footer' or @id='footer']
+	|
+    .//small
+	|
+    .//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
     contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
-    contains(@class, 'publication')]""",
-]
+    contains(@class, 'publication')]"""
 
 # supply more expressions for more languages
-ADDITIONAL_EXPRESSIONS = [
-    ".//*[contains(@class, 'fecha') or contains(@class, 'parution')]",
-]
+ADDITIONAL_EXPRESSIONS = ".//*[contains(@class, 'fecha') or contains(@class, 'parution')]"
 
 # discard parts of the webpage
-DISCARD_EXPRESSIONS = [
-    './/footer',
-    './/*[(self::div or self::section)][@id="footer" or @class="footer"]',
-]
+DISCARD_EXPRESSIONS = """.//footer
+	|.//*[(self::div or self::section)][@id="footer" or @class="footer"]"""
 
 # Regex cache
 YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')
@@ -188,10 +191,9 @@ SIMPLE_PATTERN = re.compile(r'\D(199[0-9]|20[0-9]{2})\D')
 def discard_unwanted(tree):
     '''Delete unwanted sections of an HTML document and return them as a list'''
     my_discarded = []
-    for expr in DISCARD_EXPRESSIONS:
-        for subtree in tree.xpath(expr):
-            my_discarded.append(subtree)
-            subtree.getparent().remove(subtree)
+    for subtree in tree.xpath(DISCARD_EXPRESSIONS):
+        my_discarded.append(subtree)
+        subtree.getparent().remove(subtree)
     return tree, my_discarded
 
 

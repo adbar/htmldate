@@ -629,29 +629,24 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # expressions + text_content
     # first try in pruned tree
     search_tree, discarded = discard_unwanted(deepcopy(tree))
-    for expr in DATE_EXPRESSIONS:
-        dateresult = examine_date_elements(
-            search_tree, expr, outputformat, extensive_search, min_date, max_date
-        )
-        if dateresult is not None:
-            return dateresult
+    dateresult = examine_date_elements(search_tree, DATE_EXPRESSIONS,
+        outputformat, extensive_search, min_date, max_date)
+    if dateresult is not None:
+        return dateresult
+
     # search in discarded parts (currently: footer)
     for subtree in discarded:
-        for expr in DATE_EXPRESSIONS:
-            dateresult = examine_date_elements(
-                subtree, expr, outputformat, extensive_search, min_date, max_date
-            )
-            if dateresult is not None:
-                return dateresult
+        dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS,
+            outputformat, extensive_search, min_date, max_date)
+        if dateresult is not None:
+            return dateresult
 
     # supply more expressions (other languages)
     if extensive_search is True:
-        for expr in ADDITIONAL_EXPRESSIONS:
-            dateresult = examine_date_elements(
-                tree, expr, outputformat, extensive_search, min_date, max_date
-            )
-            if dateresult is not None:
-                return dateresult
+        dateresult = examine_date_elements(tree, ADDITIONAL_EXPRESSIONS,
+            outputformat, extensive_search, min_date, max_date)
+        if dateresult is not None:
+            return dateresult
 
     # try time elements
     time_result = examine_time_elements(
