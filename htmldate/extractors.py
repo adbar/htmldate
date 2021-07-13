@@ -72,7 +72,7 @@ DATE_EXPRESSIONS = """
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')
     or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]
 	|
-    //*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
+    .//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]
 	|
     .//footer
