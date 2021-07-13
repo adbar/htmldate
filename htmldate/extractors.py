@@ -118,14 +118,6 @@ COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
 GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|
 Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})'''.replace('\n', ''))
-GENERAL_TEXTSEARCH = re.compile(r'''
-January|February|March|April|May|June|July|August|September|October|November|December|
-Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
-Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
-Januar|Jänner|Februar|Feber|März|Mai|Dezember|
-janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
-Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
-Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara'''.replace('\n', ''))
 JSON_PATTERN_MODIFIED = \
   re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 JSON_PATTERN_PUBLISHED = \
@@ -267,10 +259,6 @@ def regex_parse_de(string):
 def regex_parse_multilingual(string):
     """Try full-text parse for English date elements"""
     # https://github.com/vi3k6i5/flashtext ?
-    
-    # general search
-    if not GENERAL_TEXTSEARCH.search(string):
-        return None
 
     # American English
     match = LONG_MDY_PATTERN.search(string)
