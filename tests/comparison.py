@@ -150,11 +150,15 @@ def evaluate_result(result, EVAL_PAGES, item):
 def calculate_scores(name, mydict):
     '''output weighted result score'''
     tp, fn, fp, tn = mydict['true_positives'], mydict['false_negatives'], mydict['false_positives'], mydict['true_negatives']
+    time_num1 = mydict['time'] / htmldate_extensive_result['time']
+    time1 = "{:.2f}x".format(time_num1)
+    time_num2 = mydict['time'] / htmldate_fast_result['time']
+    time2 = "{:.2f}x".format(time_num2)
     precision = tp/(tp+fp)
     recall = tp/(tp+fn)
     accuracy = (tp+tn)/(tp+tn+fp+fn)
     fscore = (2*tp)/(2*tp + fp + fn)  # 2*((precision*recall)/(precision+recall))
-    return name, precision, recall, accuracy, fscore
+    return name, precision, recall, accuracy, fscore, time1, time2,
 
 
 template_dict = {'true_positives': 0, 'false_positives': 0, 'true_negatives': 0, 'false_negatives': 0, 'time': 0}
@@ -251,9 +255,9 @@ table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calc
 calculate_scores("newspaper", newspaper_result), 
 calculate_scores("newsplease", newsplease_result), calculate_scores("articledateextractor", articledateextractor_result),
 calculate_scores("date_guesser", dateguesser_result),  calculate_scores("goose", goose_result)]
-print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score"]))
+print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f"]))
 
 
 with open('comparison_results.txt', 'w') as f:
-    print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score"]), file=f)
+    print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f"]), file=f)
 print("Results also saved as comparison_results.txt")
