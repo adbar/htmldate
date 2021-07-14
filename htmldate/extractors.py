@@ -53,13 +53,13 @@ from .validators import convert_date, date_validator
 LOGGER = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = """
-	.//*[contains(@id, 'date') or contains(@id, 'Date') or
+    .//*[contains(@id, 'date') or contains(@id, 'Date') or
     contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
     or contains(@class, 'post-meta-time')]
-	|
+    |
     .//*[contains(@class, 'date') or contains(@class, 'Date')
     or contains(@class, 'datum') or contains(@class, 'Datum')]
-	|
+    |
     .//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
     or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
     or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
@@ -71,16 +71,16 @@ DATE_EXPRESSIONS = """
     or contains(@class, 'published') or contains(@class, 'posted') or
     contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')
     or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]
-	|
+    |
     .//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
     contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]
-	|
+    |
     .//footer
-	|
-	.//*[@class='post-footer' or @class='footer' or @id='footer']
-	|
+    |
+    .//*[@class='post-footer' or @class='footer' or @id='footer']
+    |
     .//small
-	|
+    |
     .//*[contains(@class, 'author') or contains(@class, 'autor') or
     contains(@class, 'field-content') or @class='meta' or
     contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
@@ -91,7 +91,7 @@ ADDITIONAL_EXPRESSIONS = ".//*[contains(@class, 'fecha') or contains(@class, 'pa
 
 # discard parts of the webpage
 DISCARD_EXPRESSIONS = """.//footer
-	|.//*[(self::div or self::section)][@id="footer" or @class="footer"]"""
+    |.//*[(self::div or self::section)][@id="footer" or @class="footer"]"""
 
 # Regex cache
 YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')
@@ -301,8 +301,8 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
     
-	# Use regex first
-	# 1. Try YYYYMMDD first
+    # Use regex first
+    # 1. Try YYYYMMDD first
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
@@ -331,7 +331,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('Y-M-D match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-	# 3. Try the D-M-Y pattern since it's the most common date format in the world
+    # 3. Try the D-M-Y pattern since it's the most common date format in the world
     match = DMY_PATTERN.search(string)
     if match:
         try:
@@ -356,7 +356,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('D-M-Y match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-	# 4. Try the Y-M pattern
+    # 4. Try the Y-M pattern
     match = YM_PATTERN.search(string)
     if match:
         try:
@@ -370,7 +370,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('Y-M match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-	# 5. Try the other regex pattern
+    # 5. Try the other regex pattern
     dateobject = regex_parse(string)
     if dateobject is not None:
         try:
