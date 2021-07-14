@@ -111,6 +111,10 @@ MOCK_PAGES = {
 'https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/': 'hertie-school.org.leyen.html',
 'https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/': 'adac.de.kindersitztest.html',
 }
+
+MEDIACLOUD_PAGES = {
+    'pagename' : 'thing.html'
+}
 # '': '', \
 
 
