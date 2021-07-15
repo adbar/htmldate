@@ -49,7 +49,7 @@ DATE_ATTRIBUTES = set([
                   'originalpublicationdate', 'parsely-pub-date',
                   'pubdate', 'publishdate', 'publish_date',
                   'published-date', 'publication_date', 'sailthru.date',
-                  'timestamp',
+                  'timestamp', 'citation_publication_date',
                   'article:published_time', 'bt:pubdate', 'datecreated',
                   'dateposted', 'datepublished', 'dc:created', 'dc:date',
                   'og:article:published_time', 'og:published_time',
