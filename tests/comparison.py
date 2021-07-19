@@ -30,15 +30,22 @@ from tabulate import tabulate
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-evalpath = os.path.join(TEST_DIR, 'eval_mediacloud_2020.json')
+#list the jsons containing the pages here
+eval_paths = ['eval_mediacloud_2020.json', 'eval_default.json']
 #load the pages here
-with open(evalpath) as f:
-    EVAL_PAGES = json.load(f)
-
+EVAL_PAGES = {}
+for each in eval_paths:
+    evalpath = os.path.join(TEST_DIR, each)
+    with open(evalpath) as f:
+        EVAL_PAGES.update(json.load(f))
 
 def load_document(filename):
     '''load mock page from samples'''
     mypath = os.path.join(TEST_DIR, 'test_set', filename)
+    if not os.path.isfile(mypath):
+        mypath = os.path.join(TEST_DIR, 'cache', filename)
+        if not os.path.isfile(mypath):
+            mypath = os.path.join(TEST_DIR, 'eval', filename)
     try:
         with open(mypath, 'r') as inputf:
             htmlstring = inputf.read()
@@ -69,17 +76,17 @@ def run_htmldate_fast(htmlstring):
     result = find_date(htmlstring, original_date=True, extensive_search=False)
     return result
 
-
-def run_newspaper(htmlstring):
-    '''try with the newspaper module'''
-    myarticle = Article(htmlstring)
-    myarticle.html = htmlstring
-    myarticle.download_state = ArticleDownloadState.SUCCESS
-    myarticle.parse()
-    if myarticle.publish_date is None:
-        return None
-    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-    return date
+#does not work on the eval_default dataset
+#def run_newspaper(htmlstring):
+#    '''try with the newspaper module'''
+#    myarticle = Article(htmlstring)
+#    myarticle.html = htmlstring
+#    myarticle.download_state = ArticleDownloadState.SUCCESS
+#    myarticle.parse()
+#    if myarticle.publish_date is None or myarticle.publish_date is '':
+#        return None
+#    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+#    return date
 
 
 def run_newsplease(htmlstring):
@@ -205,14 +212,14 @@ for item in EVAL_PAGES:
     htmldate_fast_result['true_negatives'] += tn
     htmldate_fast_result['false_negatives'] += fn
     # newspaper
-    start = time.time()
-    result = run_newspaper(htmlstring)
-    newspaper_result['time'] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
-    newspaper_result['true_positives'] += tp
-    newspaper_result['false_positives'] += fp
-    newspaper_result['true_negatives'] += tn
-    newspaper_result['false_negatives'] += fn
+    #start = time.time()
+    #result = run_newspaper(htmlstring)
+    #newspaper_result['time'] += time.time() - start
+    #tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    #newspaper_result['true_positives'] += tp
+    #newspaper_result['false_positives'] += fp
+    #newspaper_result['true_negatives'] += tn
+    #newspaper_result['false_negatives'] += fn
     # newsplease
     start = time.time()
     result = run_newsplease(htmlstring)
@@ -252,7 +259,7 @@ for item in EVAL_PAGES:
 
 print('Sample Size:', i)
 table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calculate_scores("htmldate fast", htmldate_fast_result),
-calculate_scores("newspaper", newspaper_result), 
+#calculate_scores("newspaper", newspaper_result), 
 calculate_scores("newsplease", newsplease_result), calculate_scores("articledateextractor", articledateextractor_result),
 calculate_scores("date_guesser", dateguesser_result),  calculate_scores("goose", goose_result)]
 print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f"]))
