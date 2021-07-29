@@ -13,10 +13,6 @@ htmldate: find the publication date of web pages
     :target: https://htmldate.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/travis/adbar/htmldate.svg
-    :target: https://travis-ci.org/adbar/htmldate
-    :alt: Travis build status
-
 .. image:: https://img.shields.io/codecov/c/github/adbar/htmldate.svg
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
