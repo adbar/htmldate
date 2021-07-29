@@ -53,7 +53,7 @@ DATE_ATTRIBUTES = set([
                   'article:published_time', 'bt:pubdate', 'datecreated',
                   'dateposted', 'datepublished', 'dc:created', 'dc:date',
                   'og:article:published_time', 'og:published_time',
-                  'sailthru.date', 'rnews:datepublished'
+                  'sailthru.date', 'rnews:datepublished', 'parsely-pub-date'
                   ])
 PROPERTY_MODIFIED = set([
                     'article:modified_time', 'datemodified', 'modified_time',
