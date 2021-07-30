@@ -41,25 +41,30 @@ def logstring(element):
     '''Format the element to be logged to a string.'''
     return html.tostring(element, pretty_print=False, encoding='unicode').strip()
 
-DATE_ATTRIBUTES = set([
+DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
-                  'article.published', 'created', 'cxenseparse:recs:publishtime',
-                  'date', 'date_published', 'dc.date', 'dc.date.created',
-                  'dc.date.issued', 'dcterms.date', 'gentime', 'og:published_time',
+                  'article.published', 'article:published_time', 
+                  'bt:pubdate', 'citation_publication_date', 'created',
+                  'cxenseparse:recs:publishtime', 'date', 'date_published',
+                  'datecreated', 'dateposted', 'datepublished',
+                  # Dublin Core: https://wiki.whatwg.org/wiki/MetaExtensions
+                  'dc.date', 'dc.created', 'dc.date.created',
+                  'dc.date.issued', 'dcterms.created', 'dcterms.date',
+                  'dcterms.issued', 'dc:created', 'dc:date',
+                  'gentime',
+                  # Open Graph: https://opengraphprotocol.org/
+                  'og:published_time', 'og:article:published_time',
                   'originalpublicationdate', 'parsely-pub-date',
                   'pubdate', 'publishdate', 'publish_date',
-                  'published-date', 'publication_date', 'sailthru.date',
-                  'timestamp', 'citation_publication_date',
-                  'article:published_time', 'bt:pubdate', 'datecreated',
-                  'dateposted', 'datepublished', 'dc:created', 'dc:date',
-                  'og:article:published_time', 'og:published_time',
-                  'sailthru.date', 'rnews:datepublished'
-                  ])
-PROPERTY_MODIFIED = set([
-                    'article:modified_time', 'datemodified', 'modified_time',
+                  'published-date', 'publication_date',  'rnews:datepublished',
+                  'sailthru.date', 'timestamp'
+                  }
+PROPERTY_MODIFIED = {
+                    'article:modified_time', 'datemodified',
+                    'dc.modified', 'dcterms.modified', 'modified_time',
                     'og:article:modified_time', 'og:updated_time',
                     'release_date', 'updated_time'
-                    ])
+                    }
 
 
 @lru_cache(maxsize=32)
