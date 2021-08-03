@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8" /><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"103fa8ca15",applicationID:"144794115"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(c(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(5),c=e(6),f=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],p="api-",l=p+"ixn-";a(d,function(e,n){s[n]=i(p+n,!0,"api")}),s.addPageAction=i(p+"addPageAction",!0),s.setCurrentRouteName=i(p+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(l+"tracer",[u.now(),e,t],r),function(){if(f.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw f.emit("fn-err",[arguments,this,e],t),e}finally{f.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(l+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?d("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&d("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&d("lcp",[t[t.length-1]])}function o(e){e.getEntries().forEach(function(e){e.hadRecentInput||d("cls",[e])})}function a(e){if(e instanceof m&&!g){var n=Math.round(e.timeStamp),t={type:e.type};n<=p.now()?t.fid=p.now()-n:n>p.offset&&n<=Date.now()?(n-=p.offset,t.fid=p.now()-n):n=p.now(),g=!0,d("timing",["fi",n,t])}}function c(e){d("pageHide",[p.now(),e])}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var f,u,s,d=e("handle"),p=e("loader"),l=e(4),m=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){f=new PerformanceObserver(r);try{f.observe({entryTypes:["paint"]})}catch(v){}u=new PerformanceObserver(i);try{u.observe({entryTypes:["largest-contentful-paint"]})}catch(v){}s=new PerformanceObserver(o);try{s.observe({type:"layout-shift",buffered:!0})}catch(v){}}if("addEventListener"in document){var g=!1,y=["click","keydown","mousedown","pointerdown","touchstart"];y.forEach(function(e){document.addEventListener(e,a,!1)})}l(c)}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,f=c.match(a);f&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(i="Safari",o=f[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e){function n(){e(a&&document[a]?document[a]:document[i]?"hidden":"visible")}"addEventListener"in document&&o&&document.addEventListener(o,n,!1)}n.exports=r;var i,o,a;"undefined"!=typeof document.hidden?(i="hidden",o="visibilitychange",a="visibilityState"):"undefined"!=typeof document.msHidden?(i="msHidden",o="msvisibilitychange"):"undefined"!=typeof document.webkitHidden&&(i="webkitHidden",o="webkitvisibilitychange",a="webkitVisibilityState")},{}],5:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],6:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],7:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?f(e,c,o):o()}function t(t,r,i,o){if(!p.aborted||o){e&&e(t,r,i);for(var a=n(i),c=v(t),f=c.length,u=0;u<f;u++)c[u].apply(a,r);var d=s[w[t]];return d&&d.push([b,t,r,a]),a}}function l(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return d[e]=d[e]||i(t)}function y(e,n){u(e,function(e,t){n=n||"feature",w[t]=n,n in s||(s[n]=[])})}var h={},w={},b={on:l,addEventListener:l,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:y,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(p.aborted=!0,s=p.backlog={})}var c="nr@context",f=e("gos"),u=e(5),s={},d={},p=n.exports=i();p.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=l.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(w,function(n,t){e[n]||(e[n]=t)});var t=a();f("mark",["onload",t+E.offset],null,"api"),f("timing",["load",t]);var r=l.createElement("script");r.src="https://"+e.agent,n.parentNode.insertBefore(r,n)}}function i(){"complete"===l.readyState&&o()}function o(){f("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(c=Math.max((new Date).getTime(),c))-E.offset}var c=(new Date).getTime(),f=e("handle"),u=e(5),s=e("ee"),d=e(3),p=window,l=p.document,m="addEventListener",v="attachEvent",g=p.XMLHttpRequest,y=g&&g.prototype;NREUM.o={ST:setTimeout,SI:p.setImmediate,CT:clearTimeout,XHR:g,REQ:p.Request,EV:p.Event,PR:p.Promise,MO:p.MutationObserver};var h=""+location,w={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1177.min.js"},b=g&&y&&y[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:c,now:a,origin:h,features:{},xhrWrappable:b,userAgent:d};e(1),e(2),l[m]?(l[m]("DOMContentLoaded",o,!1),p[m]("load",r,!1)):(l[v]("onreadystatechange",i),p[v]("onload",r)),f("mark",["firstbyte",c],null,"api");var x=0,O=e(7)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(6),a="nr@original",c=Object.prototype.hasOwnProperty,f=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,c,f;try{a=this,r=o(arguments),c="function"==typeof t?t(r,a):t||{}}catch(u){p([u,"",[r,a,i],c])}s(n+"start",[r,a,i],c);try{return f=e.apply(a,r)}catch(d){throw s(n+"err",[r,a,d],c),d}finally{s(n+"end",[r,a,f],c)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,d(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,c,f,u="-"===i.charAt(0);for(f=0;f<n.length;f++)c=n[f],a=e[c],r(a)||(e[c]=t(a,u?c+i:i,o,c))}function s(t,r,i){if(!f||n){var o=f;f=!0;try{e.emit(t,r,i,n)}catch(a){p([a,t,r,i])}f=o}}function d(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){p([r])}for(var i in e)c.call(e,i)&&(n[i]=e[i]);return n}function p(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+	<link rel="pingback" href="https://sanfrancisco.cbslocal.com/xmlrpc.php" />
+
+<!-- WP Header - Start -->
+<meta name="news_keywords" content="acm awards, keith urban, luke combs, carrie underwood, academy of country music awards, 2020, 55th" />
+<meta name="keywords" content="acm awards, keith urban, luke combs, carrie underwood, academy of country music awards, 2020, 55th" />
+<meta property="fb:pages" content="51642564435" />
+<meta name="google-site-verification" content="44caXBf4kjHeKKAT7ZZ89NaCX25utL_yRSa-qGpwIhY" />
+<title>55th ACM Awards Winners List &#8211; CBS San Francisco</title>
+<!-- Jetpack Site Verification Tags -->
+<meta name="google-site-verification" content="44caXBf4kjHeKKAT7ZZ89NaCX25utL_yRSa-qGpwIhY" />
+<link rel="dns-prefetch" href="//cdn.cookielaw.org" />
+<script type="text/javascript" charset="UTF-8" src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-domain-script="7547764e-53b9-4fff-aef7-ce9cb429c721"></script>
+<link rel="dns-prefetch" href="//production-cmp.isgprivacy.cbsi.com" />
+<script type="text/javascript" charset="UTF-8" src="https://production-cmp.isgprivacy.cbsi.com/dist/optanon-v1.1.0.js"></script>
+<script type="text/javascript">!function(n){var o=window,a="cbsoptanon",c="cmd",d="config";o[a]=o[a]?o[a]:{},o[a][c]=o[a][c]?o[a][c]:[],o[a][d]=o[a][d]?o[a][d]:[],["onScriptsReady","onAdsReady"].forEach(function(n){o[a][n]=o[a][n]||function(){var d=arguments;o[a][c].push(function(){o[a][n].apply(o[a],d)})}})}();</script>
+<link rel='dns-prefetch' href='//w3.cdn.anvato.net' />
+<link rel='dns-prefetch' href='//maxcdn.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//wayne.cbslocal.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel='dns-prefetch' href='//v0.wordpress.com' />
+<link rel='dns-prefetch' href='//jetpack.wordpress.com' />
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//s1.wp.com' />
+<link rel='dns-prefetch' href='//s2.wp.com' />
+<link rel='dns-prefetch' href='//public-api.wordpress.com' />
+<link rel='dns-prefetch' href='//0.gravatar.com' />
+<link rel='dns-prefetch' href='//1.gravatar.com' />
+<link rel='dns-prefetch' href='//2.gravatar.com' />
+<link rel="alternate" type="application/rss+xml" title="CBS San Francisco &raquo; Feed" href="https://sanfrancisco.cbslocal.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="CBS San Francisco &raquo; Comments Feed" href="https://sanfrancisco.cbslocal.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="CBS San Francisco &raquo; 55th ACM Awards Winners List Comments Feed" href="https://sanfrancisco.cbslocal.com/2020/09/16/55th-acm-awards-winners-list/feed/" />
+<link rel='stylesheet' id='all-css-0' href='https://sanfrancisco.cbslocal.com/_static/??-eJytUEkOwjAM/BAhIFSWA+ItTmJKVMeOsqjfb2i59ASVONkee0Yz1mNUVrggF11eGDBra7IisUDas6Xq3lDO+ilSMO1bu9M/kTAYdAs3JiQB950cqfaesw7iKrWNSQiD514xjovUCtkuCB9HrW4nzwcqAEOPaZZZIaqlHorEDT9aNGowDJ4UeR7+7wqpTVzmvI9wP3a3c3e9HE7dBI0LviA=' type='text/css' media='all' />
+<link crossorigin="anonymous" rel='stylesheet' id='cbs-font-awesome-css'  href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?ver=4.7.0' media='all' />
+<link crossorigin="anonymous" rel='stylesheet' id='cbs-lato-font-css'  href='https://fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900&#038;ver=1.0.0' media='all' />
+<link rel='stylesheet' id='all-css-4' href='https://sanfrancisco.cbslocal.com/_static/??-eJyNy0sKgDAMANELWaNI/SzEs9QYVEhjIRHx9toLiNvhDVzJ4SFGYmAbRVLAWR0fGBjUbqYSVQv4Yrsgn0tOqpDCSs4oJg72480L8RvFNOspjrUfWt93VeMfIg05JQ==' type='text/css' media='all' />
+<link rel='stylesheet' id='cbs-custom-css-css'  href='https://wayne.cbslocal.com/cbs-local-custom-css/global/cbslocal_custom_global.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='all-css-6' href='https://sanfrancisco.cbslocal.com/_static/??-eJydk9FugzAMRX9oblTWqerDtG8xiUszEhwlpoy/XyilVYe2UR6QLo7PzXUCqguguRFqRMmJPCWlywSONToVXFvZJinPpnV55dIAHhusKCqdcqUPtNtk9aL+MrKNdq0ZSpnprCEQ8sGhUHoSDhhlAfMzeTpxFM2Ty/31ie3Jl2RG/iLB2SSgUdBx9eQYeQqrHcF5fnhT9PwIVhE9HInMGLuEe7WAYuNtc+Mf/E2Opsq8cZ1TlhFjr5L0jh6IxaeXb6wiud3eoGcmvoUJ+yQJqOsZfkRNJfMQqc7i6xpphVNibdGBJ2MRbAbTei/hAIGT/Gax4q/wGOvBeuzX7Diu+Gb/8+UzxS5aWTT1gF/10P7h37dvh8N2ty/2r98YsoNu' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify{text-align:justify;}
+</style>
+<script type='text/javascript' src='https://sanfrancisco.cbslocal.com/_static/??-eJydT8sSwiAM/CFp1PHRHhy/BYFWMARsQKd/L3Y82JOtp51ssrtZeEahAiVDCdLVeMOgLiwwKIlgSWHWhXIMMeDQWsTKW6ocr2Cu0M1SRMydJQYfdMaykXoUFxCP7bfDxPqeTT98YHHEeCC8JNmZ/m03IUTJuKUQF3VtM6lkA/FfnX88ZLBMlLj4nv1ps2/qpj7u1gf3An2Sp9Y='></script>
+<script src='https://w3.cdn.anvato.net/player/prod/v3/scripts/anvload.js?ver=5.5.1' id='partner__video__anvato-js'></script>
+<script type='text/javascript' src='https://sanfrancisco.cbslocal.com/_static/??-eJyFjc0OwjAMg1+ILSBUfg6IZ+nSqEuVthNJt9enQly4sJtlf7ZhWwasxagY2EyZFHDSQSp6AS4oLXQrKfgwk/JKY+YyJj3Av2Lno9TJyy75c/EyRqHdziItclHINTTpycYhkn0mvrJPPPPj5O4Xd7sezy69AQsNVNs='></script>
+<link rel="https://api.w.org/" href="https://sanfrancisco.cbslocal.com/wp-json/" /><link rel="alternate" type="application/json" href="https://sanfrancisco.cbslocal.com/wp-json/wp/v2/posts/875368" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://sanfrancisco.cbslocal.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://sanfrancisco.cbslocal.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 5.5.1" />
+<link rel='shortlink' href='https://cbsloc.al/3hADCsN' />
+<link rel="alternate" type="application/json+oembed" href="https://sanfrancisco.cbslocal.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fsanfrancisco.cbslocal.com%2F2020%2F09%2F16%2F55th-acm-awards-winners-list%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://sanfrancisco.cbslocal.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fsanfrancisco.cbslocal.com%2F2020%2F09%2F16%2F55th-acm-awards-winners-list%2F&#038;format=xml" />
+
+<meta property="og:title" content="55th ACM Awards Winners List" /><meta property="og:image" content="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/117001_0030b.jpg?w=1500" /><meta property="og:image:secure_url" content="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/117001_0030b.jpg?w=1500" /><meta property="og:image:width" content="1500" /><meta property="og:image:height" content="962" /><meta property="og:description" content="The 2020 ACMs will mark the first time in the show&#039;s history that performances will be broadcast from multiple locations featuring Nashville&#039;s Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe." /><meta property="og:type" content="article" /><meta property="og:url" content="https://sanfrancisco.cbslocal.com/2020/09/16/55th-acm-awards-winners-list/" /><meta property="article:published_time" content="2020-09-16T16:59:34+00:00" /><meta property="article:suggested-social-copy" content="The 2020 ACMs will mark the first time in the show&#039;s history that performances will be broadcast from multiple locations featuring Nashville&#039;s Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe." /><meta property="article:opinion" content="false" /><meta property="article:content_tier" content="free" /><meta property="og:category" content="ACM Awards,Only CBS" /><meta property="article:publisher" content="http://www.facebook.com/CBSSanFrancisco" /><meta property="article:author" content="http://www.facebook.com/CBSSanFrancisco" />
+
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/117001_0030b.jpg?w=1500"><meta name="twitter:title" content="55th ACM Awards Winners List"/><meta name="twitter:description" content="The 2020 ACMs will mark the first time in the show&#039;s history that performances will be broadcast from multiple locations featuring Nashville&#039;s Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe."/><meta name="twitter:site" content="/KPIXTV"/>
+<link rel="canonical" href="https://sanfrancisco.cbslocal.com/2020/09/16/55th-acm-awards-winners-list/" />
+				<style>
+					.main-story-wrapper .basicsection { margin-bottom: 20px; }
+					.main-story-wrapper .basicsection span strong { display: block; font-size: 18px; margin: 0 auto 15px; }
+					.main-story-wrapper .basicsection img { float: none !important; margin: 0 auto 15px; }
+					.main-story-wrapper .basicsection br { margin-bottom: 5px; }
+				</style>
+			<link rel="amphtml" href="https://sanfrancisco.cbslocal.com/2020/09/16/55th-acm-awards-winners-list/amp/">
+<script type="application/ld+json">{"@context":"http:\/\/schema.org","@type":"NewsArticle","publisher":{"@context":"http:\/\/schema.org","@type":"NewsMediaOrganization","@id":"https:\/\/sanfrancisco.cbslocal.com","url":"https:\/\/sanfrancisco.cbslocal.com","name":"CBS San Francisco","foundingDate":"1941-07-01T14:30:00+00:00","logo":{"@type":"ImageObject","url":"https:\/\/sanfrancisco.cbslocal.com\/wp-content\/uploads\/sites\/15116056\/2018\/06\/3_sanfran_cbs5_kpix.png?w=236"}},"url":"https:\/\/sanfrancisco.cbslocal.com\/2020\/09\/16\/55th-acm-awards-winners-list\/","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/sanfrancisco.cbslocal.com\/2020\/09\/16\/55th-acm-awards-winners-list\/"},"headline":"55th ACM Awards Winners List","description":"The 2020 ACMs will mark the first time in the show's history that performances will be broadcast from multiple locations featuring Nashville's Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe.","image":"https:\/\/sanfrancisco.cbslocal.com\/wp-content\/uploads\/sites\/15116056\/2020\/09\/117001_0030b.jpg?w=150","keywords":["ACM Awards","Only CBS","55th ACM Awards Winners List"],"datePublished":"2020-09-16T16:59:34+00:00","dateModified":"2020-09-16T16:59:34+00:00","author":{"@type":"Organization","name":"CBS San Francisco"}}</script>
+<script>cbs_lib.load_script("//launch.newsinc.com/js/embed.js");</script><script type="text/javascript">cbs_ads.partners.add("amazon", "3063");if(!window["apstag"]){window["apstag"]={init:function(){window["apstag"]._Q.push(["i",arguments]);},fetchBids:function(){window["apstag"]._Q.push(["f",arguments]);},setDisplayBids:function(){},_Q:[]};}</script>
+
+<script type="text/javascript">cbs_ads.partners.add("sharethrough", true);</script>
+<script>cbs_ads.init("4128","CBS.SF","default",["55thacmawardswinnerslist","post","article","acmawards","onlycbs","featuredvideo"],{"page_type":"article"});cbs_ads.refresh.set_timer("1");</script>
+
+<link rel="dns-prefetch" href="//www.googletagmanager.com" />
+<script type="text/plain" class="optanon-category-4" src="https://www.googletagmanager.com/gtag/js?id=UA-2438645-63" async></script>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=UA-2438645-63" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script type="text/plain" class="optanon-category-4">window.dataLayer=window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("set",{"dimension1":"acm-awards;only-cbs;","dimension2":"article"});gtag("config","UA-2438645-63");</script>
+
+<link rel="icon" href="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/07/cropped-sanfran-favicon-512.png?w=32" sizes="32x32" />
+<link rel="icon" href="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/07/cropped-sanfran-favicon-512.png?w=192" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/07/cropped-sanfran-favicon-512.png?w=180" />
+<meta name="msapplication-TileImage" content="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/07/cropped-sanfran-favicon-512.png?w=270" />
+		<style type="text/css" id="wp-custom-css">
+			.single-post sup {
+	vertical-align: super;
+	font-size: 10px;
+}		</style>
+		<!-- WP Header - End -->
+
+	<meta name="description" content="The 2020 ACMs will mark the first time in the show&#039;s history that performances will be broadcast from multiple locations featuring Nashville&#039;s Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe." />
+<script>//<![CDATA[
+		window['_cmpWrapper'] = {
+			loaded: function(callback) { cbsoptanon.cmd.push(function(cmp) { cmp.ot.getState(callback); }); },
+			getConsentFlag: function(callback) {
+				window._cmpWrapper.loaded(function(tar, per, fun, soc) {
+					var consent = 0; var consentState = [ per, fun, tar, soc, false ];
+					for (var i = 0; i < consentState.length; i++) { if (consentState[i]) { var mask = 1 << i; consent |= mask; } }
+					callback(consent);
+				});
+			}
+		}
+		//]]></script>
+
+</head>
+
+<body class="post-template-default single single-post postid-875368 single-format-standard desktop-display-type  and-temp-wide w-breaking-news"><div id="wrapper" class="body-wrapper">
+
+<div id="breaking-news"><div class="wrapper"><a href="https://sanfrancisco.cbslocal.com/2020/09/12/how-to-find-the-best-air-quality-index-aqi-on-the-web/" title="Air Quality Index:" class="cbs-thumbnail-link" ><div class="title-wrapper"><strong class="title">Air Quality Index:</strong><em class="description">Which Is The Best Air Quality Index (AQI) On The Web</em></div></a></div></div><div id="reptile_skin_1" class="cbs-ad-unit ad_gpt cbs-ad-skin" data-ad_location="skin"><script>cbs_load_skin_by_tile(1);</script></div><header id="page-header" class=""><div class="wrapper">
+
+				<a href="https://sanfrancisco.cbslocal.com" id="header-logo"><img src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2018/06/3_sanfran_cbs5_kpix.png?w=236" alt="CBS San Francisco" /></a>
+	
+	<nav id="navigation-main" data-item-count="7"><ul class="top"><li class="menu-top-item item-0 section-item w-submenu"><div class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">Menu</strong></div></div><div class="submenu"><div class="wrapper">
+<section class="items-grid column-count-2 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Sports</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/sports/category/49ers/" title="49ers" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">49ers</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/as/" title="A&#039;s" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">A&#039;s</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/stanford/" title="Stanford" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Stanford</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sj-earthquakes/" title="Earthquakes" class="cbs-thumbnail-link item-3" ><div class="title-wrapper"><strong class="title">Earthquakes</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sf-giants/" title="Giants" class="cbs-thumbnail-link item-4" ><div class="title-wrapper"><strong class="title">Giants</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/category/raiders/" title="Raiders" class="cbs-thumbnail-link item-5" ><div class="title-wrapper"><strong class="title">Raiders</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sharks/" title="Sharks" class="cbs-thumbnail-link item-6" ><div class="title-wrapper"><strong class="title">Sharks</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/warriors/" title="Warriors" class="cbs-thumbnail-link item-7" ><div class="title-wrapper"><strong class="title">Warriors</strong></div></a><a href="https://www.sportsline.com/" target="_blank" title="Sports Odds" class="cbs-thumbnail-link item-8" ><div class="title-wrapper"><strong class="title">Sports Odds</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid column-count-1 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Best of</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/best-of/" title="Best Of" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Best Of</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/travel/" title="Travel" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Travel</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-1 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Video</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/live/" title="CBSN Bay Area" class="cbs-thumbnail-link item-1480546324" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/310-BayArea.png?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">CBSN Bay Area</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid column-count-1 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">More</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/travel/" title="Travel" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Travel</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/contest-promotions/" title="Contest &amp; Promotions" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Contest &amp; Promotions</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/only-cbs/" title="CBS Entertainment" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">CBS Entertainment</strong></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-1 w-link w-submenu"><a href="https://sanfrancisco.cbslocal.com/category/news/" title="News" class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">News</strong></div></a><div class="submenu"><div class="wrapper">
+<section class="items-grid column-count-2 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">All News</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/news/" title="Bay Area News" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Bay Area News</strong><em class="description">San Francisco News From KPIX Channel 5</em></div></a><a href="https://sanfrancisco.cbslocal.com/tag/san-francisco-news/" title="San Francisco News" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">San Francisco News</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/local/" title="Local News" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Local News</strong><em class="description">SF Bay Area Local News From CBS And KPIX 5</em></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/consumer/" title="Consumer" class="cbs-thumbnail-link item-3" ><div class="title-wrapper"><strong class="title">Consumer</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/tech/" title="Tech" class="cbs-thumbnail-link item-4" ><div class="title-wrapper"><strong class="title">Tech</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/business/" title="Business" class="cbs-thumbnail-link item-5" ><div class="title-wrapper"><strong class="title">Business</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/lgbt/" title="LGBT" class="cbs-thumbnail-link item-6" ><div class="title-wrapper"><strong class="title">LGBT</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/environment/" title="Environment" class="cbs-thumbnail-link item-7" ><div class="title-wrapper"><strong class="title">Environment</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/politics/" title="Politics" class="cbs-thumbnail-link item-8" ><div class="title-wrapper"><strong class="title">Politics</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/entertainment/" title="Entertainment" class="cbs-thumbnail-link item-9" ><div class="title-wrapper"><strong class="title">Entertainment</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/education/" title="Education" class="cbs-thumbnail-link item-10" ><div class="title-wrapper"><strong class="title">Education</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/health/" title="HealthWatch" class="cbs-thumbnail-link item-11" ><div class="title-wrapper"><strong class="title">HealthWatch</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/autos" title="Autos" class="cbs-thumbnail-link item-12" ><div class="title-wrapper"><strong class="title">Autos</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-2 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Latest Headlines</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/2020/09/16/dive-boat-disaster-documents-no-emergency-procedure-training/" title="Documents: Crew In 2019 Dive Boat Disaster Had No Training On Emergency Procedures" class="cbs-thumbnail-link item-1600303000 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/09/diveboat-fire1.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Documents: Crew In 2019 Dive Boat Disaster Had No Training On Emergency Procedures</strong><em class="description">Crew members on a dive boat say they were never instructed on emergency procedures before a predawn fire swept through the vessel as it was anchored off the Southern California coast, killing 34 people as they slept below deck, according to federal documents released Wednesday.</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/09/16/santa-cruz-county-covid-19-coronavirus-8th-death-new-cases-south-county-latinx/" title="Santa Cruz County Reports 8th COVID-19 Death, Most New Cases In South County" class="cbs-thumbnail-link item-1600302513 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/08/GettyImages-1214302766-1-e1596736118463.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Santa Cruz County Reports 8th COVID-19 Death, Most New Cases In South County</strong><em class="description">The Santa Cruz County Public Health Division announced Wednesday the eighth COVID-19-related death in the county.</em></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-1 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/photo-galleries/">Photos</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/photo-galleries/2020/09/10/photos-california-wildfires-smoke-darkened-sky-eerie-glow-san-francisco-bay-area-and-beyond/" title="Photos: Smoke-Darkened Sky Creates Eerie Glow Over Bay Area" class="cbs-thumbnail-link item-1599765242 content-type-photo" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/AP_20254036722367.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Photos: Smoke-Darkened Sky Creates Eerie Glow Over Bay Area</strong><em class="description">Skies darkened by wildfire smoke created an otherworldly glow on Wednesday that can be seen in photos taken across the Bay Area by KPIX staff and viewers.</em></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-1 block-type-grid layout-4_column aspect-ratio-1-1" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/show/live-video-kpix-5-cbs-sf-bay-area-san-francisco-watch-news/">KPIX5 Live</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/live/channel/special-reports/" title="Special Reports" class="cbs-thumbnail-link item-1480540020" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/kpix1x1.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Special Reports</strong></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-2 w-link w-submenu"><a href="https://sanfrancisco.cbslocal.com/category/weather/" title="Weather" class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">Weather</strong></div></a><div class="submenu"><div class="wrapper">
+<section class="items-grid column-count-1 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Weather Links</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/weather/#section-weather-map-3" title="Interactive Radar" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Interactive Radar</strong></div></a><a href="https://sanfrancisco.cbslocal.com/cbs5-central-bay/" title="Weather Maps" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Weather Maps</strong></div></a><a href="https://apps.cbslocal.com/weather/san-francisco/" title="Weather App" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Weather App</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-1 block-type-grid layout-4_column aspect-ratio-1-1" id="" >
+		<header class="column-header">
+				<h4 class="title">Weather Videos</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="http://sanfrancisco.cbslocal.com/video/category/news-weather/" title="Weather Videos" class="cbs-thumbnail-link item-1480545956" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/category_weather_500x500.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Weather Videos</strong></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-3 w-link w-submenu"><a href="https://sanfrancisco.cbslocal.com/category/sports/" title="Sports" class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">Sports</strong></div></a><div class="submenu"><div class="wrapper">
+<section class="items-grid column-count-2 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">All Sports</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/sports/category/49ers/" title="49ers" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">49ers</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/as/" title="A&#039;s" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">A&#039;s</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/stanford/" title="Stanford" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Stanford</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sj-earthquakes/" title="Earthquakes" class="cbs-thumbnail-link item-3" ><div class="title-wrapper"><strong class="title">Earthquakes</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sf-giants/" title="Giants" class="cbs-thumbnail-link item-4" ><div class="title-wrapper"><strong class="title">Giants</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/category/raiders/" title="Raiders" class="cbs-thumbnail-link item-5" ><div class="title-wrapper"><strong class="title">Raiders</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sharks/" title="Sharks" class="cbs-thumbnail-link item-6" ><div class="title-wrapper"><strong class="title">Sharks</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/warriors/" title="Warriors" class="cbs-thumbnail-link item-7" ><div class="title-wrapper"><strong class="title">Warriors</strong></div></a><a href="https://www.sportsline.com/" target="_blank" title="Sports Odds" class="cbs-thumbnail-link item-8" ><div class="title-wrapper"><strong class="title">Sports Odds</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-2 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/category/sports/warriors/">Golden State Warriors</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/2020/09/04/warriors-team-facilities-to-participate-in-november-general-election/" title="Warriors: Team Facilities To Participate In November General Election" class="cbs-thumbnail-link item-1599246381 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/Chase-Center-exterior-corner-of-Warriors-Way-and-Terry-Francois-Blvd_photo-credit-Jason-ORear.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Warriors: Team Facilities To Participate In November General Election</strong><em class="description">The Golden State Warriors announced Friday that team facilities in Oakland, San Francisco and Santa Cruz to support voter participation in the 2020 General Election.</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/08/29/cliff-robinson-golden-state-warriors-nba-6th-man-obituary/" title="Cliff Robinson, Former Golden State Warrior And Top NBA 6th Man, Dies At 53" class="cbs-thumbnail-link item-1598725927 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/08/clifford_robinson_warriors_GettyImages-53203038.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Cliff Robinson, Former Golden State Warrior And Top NBA 6th Man, Dies At 53</strong><em class="description">Former Golden State Warrior Cliff Robinson, an early star in UConn’s rise to power and longtime top sixth man in the NBA, died Saturday. He was 53.</em></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-2 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/category/sports/raiders/">Oakland Raiders</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/2020/09/13/jacobs-runs-raiders-hold-off-panthers/" title="Jacobs Runs for 3 TDs as Raiders Hold Off Panthers" class="cbs-thumbnail-link item-1600034906 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/raiders-panthers.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Jacobs Runs for 3 TDs as Raiders Hold Off Panthers</strong><em class="description">Josh Jacobs ran for 93 yards and three touchdowns, Derek Carr threw for 239 yards and a score and the Las Vegas Raiders hung on to beat the Carolina Panthers 34-30 on Sunday</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/09/10/las-vegas-raiders-8-games-to-air-on-kpix-5/" title="KPIX 5 To Air 8 Las Vegas Raiders Games In 2020 Season" class="cbs-thumbnail-link item-1599770942 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/12/AP_19363815406064.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">KPIX 5 To Air 8 Las Vegas Raiders Games In 2020 Season</strong><em class="description">Bay Area fans of the Silver and Black will to be able to catch eight regular season games on KPIX 5.</em></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-4 w-link w-submenu"><a href="https://sanfrancisco.cbslocal.com/category/best-of/" title="Best Of" class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">Best Of</strong></div></a><div class="submenu"><div class="wrapper">
+<section class="items-grid enable-type-icons column-count-6 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/category/best-of/">Latest Headlines</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/2020/09/11/liams-list-sept-11-your-guide-to-fitness-food-fun-staying-connected-while-social-distancing/" title="Liam&#039;s List Sept. 11: Your Guide To Fitness, Food, Fun, Staying Connected While Social Distancing" class="cbs-thumbnail-link item-1599859298 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/04/liam-list.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Liam&#039;s List Sept. 11: Your Guide To Fitness, Food, Fun, Staying Connected While Social Distancing</strong><em class="description">KCBS reporter Liam Mayclem will be providing KPIX 5 users with a weekly tip list on how best to survive the current coronavirus outbreak.</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/05/22/quarantine-cooking-nonstick-cookware-guide/" title="Quarantine Cooking: Your Essential Nonstick Cookware Guide" class="cbs-thumbnail-link item-1590161120" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/05/nonstickpans.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Quarantine Cooking: Your Essential Nonstick Cookware Guide</strong><em class="description">Step up your quarantine cooking with this guide to nonstick cookware.</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/05/22/how-to-6-easy-steps-to-make-homemade-soft-pretzels/" title="How To: 6 Easy Steps To Make Homemade Soft Pretzels" class="cbs-thumbnail-link item-1590161082" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/05/homemadepretzel.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">How To: 6 Easy Steps To Make Homemade Soft Pretzels</strong><em class="description">Learn how to make your own homemade soft pretzels with these six easy steps!</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/05/15/recipes-vodka-in-vodka-sauce-why/" title="5 Vodka Sauce Recipes To Try This Week" class="cbs-thumbnail-link item-1589569648" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/05/chowhound111.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">5 Vodka Sauce Recipes To Try This Week</strong><em class="description">And would you miss it if it wasn&#039;t there?</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/05/15/best-make-ahead-freezer-meals/" title="Try These Make-Ahead Freezer Meals Perfect For Weeknights" class="cbs-thumbnail-link item-1589569416" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/05/freezerfood.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Try These Make-Ahead Freezer Meals Perfect For Weeknights</strong><em class="description">Set yourself up for easy weeknight dinners no matter what!</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/05/13/the-most-searched-recipe-in-every-state-during-quarantine-coronavirus/" title="Coronavirus Cooking: The Most Searched Recipe In Every State During Quarantine" class="cbs-thumbnail-link item-1589398031" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/05/QuarantineRecipesFeat.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Coronavirus Cooking: The Most Searched Recipe In Every State During Quarantine</strong><em class="description">Find the most popular eats for your home state and across the country during the coronavirus quarantine.</em></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-5 w-link w-submenu"><a href="https://sanfrancisco.cbslocal.com/video/category/spoken-word-kpixtv/" title="Video" class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">Video</strong></div></a><div class="submenu"><div class="wrapper">
+<section class="items-grid enable-type-icons column-count-6 block-type-grid layout-4_column aspect-ratio-1-1" id="" >
+	
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/live/" title="CBSN Bay Area" class="cbs-thumbnail-link item-1480546324" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/310-BayArea.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">CBSN Bay Area</strong></div></a><a href="http://sanfrancisco.cbslocal.com/video/category/spoken-word-kpixtv/" title="News Videos" class="cbs-thumbnail-link item-1480546134" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/category_news_500x500.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">News Videos</strong></div></a><a href="http://sanfrancisco.cbslocal.com/video/category/news-politics/" title="Politics Videos" class="cbs-thumbnail-link item-1480546078" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/category_politics_500x500.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Politics Videos</strong></div></a><a href="http://sanfrancisco.cbslocal.com/video/category/sports/" title="Sports Videos" class="cbs-thumbnail-link item-1480546009" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/category_sports_2_500x500.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Sports Videos</strong></div></a><a href="http://sanfrancisco.cbslocal.com/video/category/news-weather/" title="Weather Videos" class="cbs-thumbnail-link item-1480545956" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/11/category_weather_500x500.png?w=310&#038;h=310&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Weather Videos</strong></div></a>		</div>
+	</section>
+</div></div></li><li class="menu-top-item item-6 w-submenu"><div class="cbs-thumbnail-link wo-hover" ><div class="title-wrapper"><strong class="title">More</strong></div></div><div class="submenu"><div class="wrapper">
+<section class="items-grid column-count-1 block-type-wpmenu layout-compact aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title"><a href="https://sanfrancisco.cbslocal.com/learn-about-us/">Station Info</a></h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/station/cbs-5/" title="KPIX 5" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">KPIX 5</strong></div></a><a href="https://sanfrancisco.cbslocal.com/about-us/advertising-basics/" title="Advertise" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Advertise</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-3 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">Travel</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/2020/08/07/alaska-air-48-hour-bogo-fare-sale-gives-passengers-a-row-to-themselves/" title="Alaska Airlines 48-Hour BOGO Fare Sale Gives Passengers A Row To Themselves" class="cbs-thumbnail-link item-1596865597 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2017/03/alaska-air.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">Alaska Airlines 48-Hour BOGO Fare Sale Gives Passengers A Row To Themselves</strong><em class="description">After blocking middle seats on its mainline flights due to COVID-19, Alaska Airlines just announced a 2-day &quot;Buy One, Get One&quot; sale through October 31, so passengers have the entire row while flying during the pandemic. </em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/06/22/california-idaho-travel-transgender-discrimination/" title="California Bans State-Paid Travel To Idaho Over Transgender Discrimination Laws" class="cbs-thumbnail-link item-1592868681 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/06/id-statehous.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">California Bans State-Paid Travel To Idaho Over Transgender Discrimination Laws</strong><em class="description">Citing two new laws he said allow discrimination against transgender people, California attorney general Xavier Becerra added Idaho to a list of 11 other states where state-funded travel isn’t allowed.</em></div></a><a href="https://sanfrancisco.cbslocal.com/2020/03/11/coronavirus-mineta-san-jose-airport-more-tsa-screeners-under-quarantine/" title="More TSA Screeners At Mineta San Jose Airport Under Coronavirus Quarantine" class="cbs-thumbnail-link item-1583990079 content-type-video" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/03/GettyImages-1077924328-e1583982636344.jpg?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">More TSA Screeners At Mineta San Jose Airport Under Coronavirus Quarantine</strong><em class="description">The TSA Screeners Union told KPIX that in addition to the three TSA screeners who tested positive for coronavirus, 43 of their coworkers had to be quarantined because they had contact with those three individuals.</em></div></a>		</div>
+	</section>
+
+<section class="items-grid enable-type-icons column-count-1 block-type-grid layout-3_column aspect-ratio-16-9" id="" >
+		<header class="column-header">
+				<h4 class="title">More</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="http://sanfrancisco.cbslocal.com/category/only-cbs/" title="CBS Entertainment" class="cbs-thumbnail-link item-1519661976" ><div class="thumbnail-wrapper"><span class="balance"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/images/global/blank_1x1.gif" data-src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2018/02/onlycbs_640x360.png?w=310&#038;h=174&#038;crop=1"></span></div><div class="title-wrapper"><strong class="title">CBS Entertainment</strong></div></a>		</div>
+	</section>
+</div></div></li></ul></nav>
+	<a id="live" class="v2" href="https://sanfrancisco.cbslocal.com/live/" data-source_url="https://feeds-cbsn.cbsnews.com/2.0/rundown/?partner=cbsnsite&#038;edition=CBSN-SF"><span class="button"><strong>CBSN Bay Area</strong><em>Watch Now</em></span></a>
+	<a href="http://sanfrancisco.cbslocal.com/category/weather/" id="info-weather"><div id="weather-widget-sticker" class="embed-item embed-weather weather-widget-wrap" ><div class="wrapper">
+<wx-widget type="current-conditions" latitude="37.774929" longitude="-122.419416" header="false"></wx-widget>
+</div></div></a>
+	<div id="info-search"><form action="https://sanfrancisco.cbslocal.com/search/" class="form"><input type="text" class="query" name="q" id="s" size="31" placeholder="Search..." /><input type="reset" class="reset" value="Reset" /><input type="submit" class="submit" value="&#xf002" /></form><span class="open-close" onclick="jQuery(document).ready(function(){jQuery('#info-search').toggleClass('open');});"></span></div>
+</div></header>		<section class="page-ad-container page-pencil-ad-container-top">
+			<div id="reptile_1_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper"><span id="ad_1"><div id="reptile_1" class="ad-block" data-ad_size="[[970,250],[970,66],[728,90]]" data-ad_location="top"><script>cbs_load_ad_by_tile("1");</script></div></span></div>		</section>
+		
+<div id="page-content" class="main-white page-block-container and-w-sidebar">
+<header id="page-rubric" class="">
+
+			<div class="banner-title-wrapper">
+							<h1 class="title">55th ACM Awards Winners List</h1>
+					</div>
+	
+	
+	
+	
+	
+</header>
+<section class="page-columns"><section class="page-column three-column" id="article-entry-date-and-tags"><div class="column-header"><time class="post-date">September 16, 2020 at 4:59 pm</time><div class="column-header-metadata"><strong>Filed Under:</strong><span><a href="https://sanfrancisco.cbslocal.com/tag/acm-awards/">ACM Awards</a></div></div></section><section id="column_block_1" class="page-column and-content-column two-column"><div class="column-item story" id="main-story"><section class="column-item media-type-anvato  ratio-display close-btn" id="featured-media"><div id="floating-player-container" class="video-wrapper anvato"><div id="p0"></div><script>cbsoptanon.onScriptsReady(function(cmp){cmp.ot.targetingAllowed(function(a){if(a) AnvatoPlayer("p0").init({"mcp":"cbs","width":"100%","height":"100%","video":"4710066","autoplay":true,"titleVisible":false,"accessKey":"5VD6Eyd6djewbCmNwBFnsJj17YAvGRwl","accessControl":{"preview":false},"pInstance":"p0","plugins":{"heartbeat":{"account":"cbslocal-global-unified","publisherId":"cbslocal","jobId":"sc_va","marketingCloudId":"823BA0335567497F7F000101@AdobeOrg","trackingServer":"cbsdigitalmedia.hb.omtrdc.net","customTrackingServer":"cbsdigitalmedia.d1.sc.omtrdc.net","chapterTracking":false,"version":"1.5"},"comscore":{"clientId":"3000023","c3":"SanFrancisco.cbslocal.com"},"dfp":{"clientSide":{"adTagUrl":"http:\/\/pubads.g.doubleclick.net\/gampad\/ads?sz=2x2&iu=\/4128\/CBS.SF&ciu_szs&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp]","keyValues":{"categories":"[[CATEGORIES]]","program":"[[PROGRAM_NAME]]","siteSection":"featured"}}},"moat":{"clientSide":{"partnerCode":"cbslocalanvatovideo181732609431"}}},"shareLink":"https:\/\/cbsloc.al\/3hADCsN","video-type":"featured","token":"default","expectPreroll":true,"expectPrerollTimeout":5});});});</script></div></section>
+<div id="article-livedvr-block" class="embed-item embed-ottplayer" ><div class="wrapper">
+<span class="adhesive-wrapper"><div class="logo-container"><a href="https://sanfrancisco.cbslocal.com/live/cbsn-bay-area/"><img src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/11/30h-BAY-white-horizontal.png?w=408"/></a></div></span><div class="dvr-container"><div class="dvr-wrapper embed-item embed-slider w-action-manual" data-up_url="https://feeds-cbsn.cbsnews.com/2.0/rundown/?partner=cbsnsite&#038;edition=CBSN-SF" data-channel_slug="cbsn-bay-area" data-w-live="true" data-dvr-live-title="CBSN Bay Area Live" data-dvr-live-thumb_url="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2019/11/BayArea-WatchLive.png?w=310&#038;h=174&#038;crop=1"></div></div><script>jQuery(function($){jQuery(window).load(function(){cbs_embed_ottplayer.update_dvr("#article-livedvr-block .dvr-container .dvr-wrapper");setInterval(function(){cbs_embed_ottplayer.update_dvr("#article-livedvr-block .dvr-container .dvr-wrapper");},30000);});});</script>
+</div></div><div class="main-story-wrapper"><p>The 55th Academy of Country Music Awards are here at last! After initially being postponed due to the COVID-19 pandemic, country&#8217;s biggest stars will finally get a chance to find out who takes home this year&#8217;s awards. The 2020 ACMs will mark the first time in the show&#8217;s history that performances will be broadcast from multiple locations featuring Nashville&#8217;s Grand Ole Opry House, the historic Ryman Auditorium and the Bluebird Cafe.</p>
+<p>See below for the full list of 55th annual ACM Award winners updated through the night and be sure to tune in starting at 8:00 PM ET/Delayed PT, only on CBS and streaming on <a href="https://www.cbs.com/" target="_blank" rel="noopener noreferrer">CBS All Access</a>.</p>
+<p><strong>ENTERTAINER OF THE YEAR</strong>
+</p>
+<ul>
+<li>Luke Bryan</li>
+<li>Eric Church</li>
+<li>Luke Combs</li>
+<li>Thomas Rhett</li>
+<li>Carrie Underwood</li>
+</ul>
+<p><strong>FEMALE ARTIST OF THE YEAR</strong></p>
+<ul>
+<li>Kelsea Ballerini</li>
+<li>Miranda Lambert</li>
+<li>Maren Morris</li>
+<li>Kacey Musgraves</li>
+<li>Carrie Underwood</li>
+</ul>
+<p><strong>MALE ARTIST OF THE YEAR</strong></p>
+<ul>
+<li>Dierks Bentley</li>
+<li>Luke Combs</li>
+<li>Thomas Rhett</li>
+<li>Chris Stapleton</li>
+<li>Keith Urban</li>
+</ul>
+<p><strong>DUO OF THE YEAR</strong></p>
+<ul>
+<li>Brooks &amp; Dunn</li>
+<li>Brothers Osborne</li>
+<li><strong>Dan + Shay (WINNER)</strong></li>
+<li>Florida Georgia Line</li>
+<li>Maddie &amp; Tae</li>
+</ul>
+<p><strong>GROUP OF THE YEAR</strong></p>
+<ul>
+<li>Lady Antebellum</li>
+<li>Little Big Town</li>
+<li>Midland</li>
+<li>Old Dominion</li>
+<li>The Highwomen</li>
+</ul>
+<p><strong>NEW FEMALE ARTIST OF THE YEAR </strong></p>
+<ul>
+<li>Ingrid Andress</li>
+<li>Gabby Barrett</li>
+<li>Lindsay Ell</li>
+<li>Caylee Hammack</li>
+<li><strong>Tenille Townes (WINNER)</strong></li>
+</ul>
+<p><strong>NEW MALE ARTIST OF THE YEAR </strong></p>
+<ul>
+<li>Jordan Davis</li>
+<li>Russell Dickerson</li>
+<li><strong>Riley Green (WINNER)</strong></li>
+<li>Cody Johnson</li>
+<li>Morgan Wallen</li>
+</ul>
+<p><strong>ALBUM OF THE YEAR [Awarded to Artist(s)/Producer(s)/Record Company&ndash;Label(s)]</strong></p>
+<ul>
+<li><em>Center Point Road</em> &ndash; Thomas Rhett
+<ul>
+<li>Producers: Julian Bunetta, Jesse Frasure, Dann Huff, Thomas Rhett, The Stereotypes, Cleve Wilson</li>
+<li>Record Label: The Valory Music Co.</li>
+</ul>
+</li>
+<li><em>GIRL</em> &ndash; Maren Morris
+<ul>
+<li>Producers: busbee, Greg Kurstin, Maren Morris</li>
+<li>Record Label: Columbia Nashville</li>
+</ul>
+</li>
+<li><em>Heartache Medication</em> &ndash; Jon Pardi
+<ul>
+<li>Producers: Bart Butler, Ryan Gore, Jon Pardi</li>
+<li>Record Label: Capitol Records Nashville</li>
+</ul>
+</li>
+<li><em>What You See Is What You Get</em> &ndash; Luke Combs
+<ul>
+<li>Producer: Scott Moffatt</li>
+<li>Record Label: River House Artists/Columbia Nashville</li>
+</ul>
+</li>
+<li><em>Wildcard</em> &ndash; Miranda Lambert
+<ul>
+<li>Producer: Jay Joyce</li>
+<li>Record Label: Vanner Records/RCA Records Nashville</li>
+</ul>
+</li>
+</ul>
+<p><strong>SINGLE OF THE YEAR [Awarded to Artist(s)/Producer(s)/Record Company&ndash;Label(s)]</strong></p>
+<ul>
+<li>&ldquo;God&rsquo;s Country&rdquo; &ndash; Blake Shelton
+<ul>
+<li>Producer: Scott Hendricks</li>
+<li>Record Label: Warner Bros. (Nashville)</li>
+</ul>
+</li>
+<li>&ldquo;One Man Band&rdquo; &ndash; Old Dominion
+<ul>
+<li>Producer: Shane McAnally</li>
+<li>Record Label: RCA Records Nashville</li>
+</ul>
+</li>
+<li>&ldquo;Rainbow&rdquo; &ndash; Kacey Musgraves
+<ul>
+<li>Producers: Ian Fitchuk, Kacey Musgraves, Daniel Tashian</li>
+<li>Record Label: MCA Nashville</li>
+</ul>
+</li>
+<li>&ldquo;Rumor&rdquo; &ndash; Lee Brice
+<ul>
+<li>Producers: Lee Brice, Dan Frizsell, Kyle Jacobs, Jon Stone</li>
+<li>Record Label: Curb Records</li>
+</ul>
+</li>
+<li>&ldquo;What If I Never Get Over You&rdquo; &ndash; Lady Antebellum
+<ul>
+<li>Producer: Dann Huff</li>
+<li>Record Label: BMLG Records</li>
+</ul>
+</li>
+</ul>
+<p><strong>SONG OF THE YEAR [Awarded to Songwriter(s)/Publisher(s)/Artist(s)] </strong></p>
+<ul>
+<li>&ldquo;10,000 Hours&rdquo; &ndash; Dan + Shay Featuring Justin Bieber
+<ul>
+<li>Songwriters: Justin Bieber, Jason &#8220;Poo Bear&#8221; Boyd, Jessie Jo Dillon, Shay Mooney, Jordan Reynolds, Dan Smyers</li>
+<li>Publishers: Beats and Banjos (ASCAP), WB Music Corp. (ASCAP) / Shay Mooney Music (BMI), Warner-Tamerlane Publishing Corp. (BMI) / Big Ass Pile Of Dimes Music (BMI), Big Machine Music (BMI) / Buckeye 26 (ASCAP), Jreynmusic (ASCAP), WB Music Corp. (ASCAP) / Bieber Time Publishing (ASCAP), Universal Music (ASCAP) / Poo B Z Inc. (ASCAP), BMG Gold Songs (ASCAP).</li>
+</ul>
+</li>
+<li>&ldquo;Girl Goin&rsquo; Nowhere&rdquo; &ndash; Ashley McBryde
+<ul>
+<li>Songwriters: Jeremy Bussey, Ashley McBryde</li>
+<li>Publishers: Songs of Song Factory (BMI) / Universal Tunes (SESAC).</li>
+</ul>
+</li>
+<li>&ldquo;God&rsquo;s Country&rdquo; &ndash; Blake Shelton
+<ul>
+<li>Songwriters: Devin Dawson, Michael Hardy, Jordan Schmidt</li>
+<li>Publishers: Relative Music Group (BMI), Administered by Songs of Kobalt Music Publishing (BMI) / WB Music Corp. / Georgia Song Vibez / We-volve Music (ASCAP) / Warner-Tamerlane Publishing Corp. / Neon Cross Music (BMI).</li>
+</ul>
+</li>
+<li>&ldquo;One Man Band&rdquo; &ndash; Old Dominion
+<ul>
+<li>Songwriters: Josh Osborne, Matthew Ramsey, Trevor Rosen, Brad Tursi</li>
+<li>Publishers: WB Music Corp/Smackville Music/Smack Songs LLC (ASCAP) adm by Kobalt Songs Music Publishing. Rezsongs/Reehits World/Smacktown Music, a division of Smack Blue, LLC/Unfair Entertainment&nbsp; (ASCAP) adm. by Me Gusta Music. We&#8217;re Really Doin&rsquo; It Publishing (ASCAP) adm by Words &amp; Music. Sony/ATV Cross Keys Publishing/Smackville Music/Smack Songs LLC (ASCAP) adm. by Kobalt Songs Music Publishing.</li>
+</ul>
+</li>
+<li>&ldquo;Some of It&rdquo; &ndash; Eric Church
+<ul>
+<li>Songwriters: Eric Church, Clint Daniels, Jeff Hyde, Bobby Pinson</li>
+<li>Publishers: Sony/ATV Tree Publishing/Longer and Louder Music, admin. by Sony/ATV Music Publishing LLC; Mammaw&rsquo;s Fried Okra Music/Little Louder Songs, admin. by Songs of Kobalt Music Publishing; New Writers Of Sea Gayle Music, admin. by ClearBox Rights; New Writers Of Sea Gayle Music/Not A Track Guy Music, admin. by ClearBox Rights (BMI).</li>
+</ul>
+</li>
+</ul>
+<p><strong>VIDEO OF THE YEAR [Awarded to Producer(s)/Director(s)/Artist(s)] </strong></p>
+<ul>
+<li>&ldquo;10,000 Hours&rdquo; &ndash; Dan + Shay Featuring Justin Bieber
+<ul>
+<li>Director: Patrick Tracy</li>
+<li>Producer: Christen Pinkston</li>
+</ul>
+</li>
+<li>&ldquo;God&rsquo;s Country&rdquo; &ndash; Blake Shelton
+<ul>
+<li>Director: Sophie Muller</li>
+<li>Producers: Jamie Amos, Patrick Kennedy</li>
+</ul>
+</li>
+<li>&ldquo;One Man Band&rdquo; &ndash; Old Dominion
+<ul>
+<li>Director: Mason Allen</li>
+<li>Producer: Mason Allen</li>
+</ul>
+</li>
+<li><strong>&ldquo;Remember You Young&rdquo; &ndash; Thomas Rhett (WINNER)</strong>
+<ul>
+<li><strong>Director: TK McKamy</strong></li>
+<li><strong>Producer: Dan Atchison</strong></li>
+</ul>
+</li>
+<li>&ldquo;Sugar Coat&rdquo; &ndash; Little Big Town
+<ul>
+<li>Directors: Alexa Kinigopoulos, Stephen Kinigopoulos</li>
+<li>Producers: Wes Edwards, Carlo Glorioso, Angie Lorenz</li>
+</ul>
+</li>
+</ul>
+<p><strong>SONGWRITER OF THE YEAR*(Off Camera Award)</strong></p>
+<ul>
+<li>Ashley Gorley</li>
+<li>Michael Hardy</li>
+<li><strong>Hillary Lindsey (WINNER)</strong></li>
+<li>Shane McAnally</li>
+<li>Josh Osborne</li>
+</ul>
+<p><strong>MUSIC EVENT OF THE YEAR [Awarded to Artist(s)/Producer(s)/Record Company&ndash;Label(s)]</strong></p>
+<ul>
+<li>&ldquo;10,000 Hours&rdquo; &ndash; Dan + Shay Featuring Justin Bieber
+<ul>
+<li>Producers: Dan Smyers</li>
+<li>Record Label: Warner Music Nashville</li>
+</ul>
+</li>
+<li>&ldquo;Dive Bar&rdquo; &ndash; Garth Brooks Featuring Blake Shelton
+<ul>
+<li>Producers: Garth Brooks</li>
+<li>Record Label: Pearl Records, Inc.</li>
+</ul>
+</li>
+<li><strong>&ldquo;Fooled Around and Fell in Love&rdquo; &ndash; Miranda Lambert Featuring Maren Morris, Ashley McBryde, Tenille Townes, Caylee Hammack &amp; Elle King (WINNER)</strong>
+<ul>
+<li><strong>Producer: Jay Joyce</strong></li>
+<li><strong>Record Label: Vanner Records/RCA Records Nashville</strong></li>
+</ul>
+</li>
+<li>&ldquo;Old Town Road&rdquo; &ndash; Lil Nas X Featuring Billy Ray Cyrus
+<ul>
+<li>Producers: Michael Trent Reznor, Atticus Matthew Ross, YoungKio</li>
+<li>Record Label: Columbia Records</li>
+</ul>
+</li>
+<li>&ldquo;What Happens in a Small Town&rdquo; &ndash; Brantley Gilbert Featuring Lindsay Ell
+<ul>
+<li>Producer: Dann Huff</li>
+<li>Record Label: The Valory Music Co.</li>
+</ul>
+</li>
+</ul>
+<p><strong><u>INDUSTRY AWARDS: </u></strong></p>
+<p><strong>CASINO OF THE YEAR &ndash; THEATER</strong></p>
+<ul>
+<li>The Colosseum at Caesars Palace &#8211; Las Vegas, Nev.</li>
+<li>The Joint: Tulsa &ndash; Tulsa, Okla.</li>
+<li>Soaring Eagle Casino &amp; Resort &ndash; Mt. Pleasant, Mich.</li>
+<li>The Venetian Resort Hotel Casino &ndash; Las Vegas, Nev.</li>
+<li>WinStar Global Event Center &ndash; Thackerville, Okla.</li>
+</ul>
+<p><strong>CASINO OF THE YEAR &ndash; ARENA </strong></p>
+<ul>
+<li>Mark G. Etess Arena &ndash; Atlantic City, N.J.</li>
+<li>MGM Grand Garden Arena &ndash; Las Vegas, Nev.</li>
+<li>Sandia Amphitheater &ndash; Albuquerque, N.M.</li>
+<li>Stir Concert Cove &ndash; Council Bluffs, Iowa</li>
+<li>T Mobile Arena &ndash; Las Vegas, Nev.</li>
+</ul>
+<p><strong>FESTIVAL OF THE YEAR </strong></p>
+<ul>
+<li>Boots and Hearts Music Festival &ndash; Oro-Medonte, Ore.</li>
+<li>Stagecoach &ndash; Indio, Calif.</li>
+<li>Tortuga Music Festival &ndash; Fort Lauderdale, Fla.</li>
+<li>Watershed Festival &ndash; George, Wash.</li>
+<li>Windy City Smokeout &ndash; Chicago, Ill.</li>
+</ul>
+<p><strong>FAIR/RODEO OF THE YEAR</strong></p>
+<ul>
+<li>California Mid-State Fair &ndash; Paso Robles, Calif.</li>
+<li>Cheyenne Frontier Days &ndash; Cheyenne, Wyo.</li>
+<li>Houston Livestock Show &amp; Rodeo &ndash; Houston, Texas</li>
+<li>Minnesota State Fair &ndash; St. Paul, Minn.</li>
+<li>San Antonio Stock Show &amp; Rodeo &ndash; San Antonio, Texas</li>
+</ul>
+<p><strong>CLUB OF THE YEAR </strong></p>
+<ul>
+<li>Billy Bob&rsquo;s Texas &ndash; Fort Worth, Texas</li>
+<li>Coyote Joe&rsquo;s &ndash; Charlotte, N.C.</li>
+<li>Grizzly Rose &ndash; Denver, Colo.</li>
+<li>Joe&rsquo;s Live &ndash; Rosemont, Ill.</li>
+<li>Losers Bar &amp; Grill &ndash; Nashville, Tenn.</li>
+</ul>
+<p><strong>THEATER OF THE YEAR</strong></p>
+<ul>
+<li>The Beacon Theatre &ndash; New York, N.Y.</li>
+<li>The Chicago Theatre &ndash; Chicago, Ill.</li>
+<li>DeJoria Center &ndash; Salt Lake City, Utah</li>
+<li>Rialto Square Theatre &ndash; Joliet, Ill.</li>
+<li>Ruth Eckerd Hall &ndash; Clearwater, Fla.</li>
+</ul>
+<p><strong>OUTDOOR VENUE OF THE YEAR</strong></p>
+<ul>
+<li>Bank of New Hampshire Pavilion &ndash; Gilford, N.H.</li>
+<li>Greek Theatre &ndash; Los Angeles, Calif.</li>
+<li>Innsbrook After Hours &ndash; Glen Allen, Va.</li>
+<li>Red Rocks Amphitheatre &ndash; Morrison, Colo.</li>
+<li>Rose Music Center &ndash; Huber Heights, Ohio</li>
+<li>The Wharf at Orange Beach &ndash; Orange Beach, Ala.</li>
+</ul>
+<p><strong>ARENA OF THE YEAR</strong></p>
+<ul>
+<li>Infinite Energy Center &ndash; Duluth, Ga.</li>
+<li>Madison Square Garden &ndash; New York, N.Y.</li>
+<li>Staples Center &ndash; Los Angeles, Calif.</li>
+<li>Van Andel Arena &ndash; Grand Rapids, Mich.</li>
+<li>VyStar Veterans Memorial Arena &ndash; Jacksonville, Fla.</li>
+</ul>
+<p><strong>DON ROMEO TALENT BUYER OF THE YEAR </strong></p>
+<ul>
+<li>Clay Campbell &ndash; Triangle Talent</li>
+<li>Gary Osier &ndash; Gary Osier Presents</li>
+<li>Gil Cunningham &ndash; Neste Live!</li>
+<li>Kell Houston &ndash; Houston Productions</li>
+<li>Nina Rojas &ndash; Neste Live!</li>
+<li>Todd Boltin &ndash; Variety Attractions</li>
+</ul>
+<p><strong>PROMOTER OF THE YEAR</strong></p>
+<ul>
+<li>Adam Weiser &ndash; AEG Presents</li>
+<li>Brian O&rsquo;Connell &ndash; Live Nation</li>
+<li>Jered Johnson &ndash; Pepper Productions</li>
+<li>Stacy Vee &ndash; Messina Touring Group</li>
+<li>Troy Vollhoffer &ndash; Premier Global Production</li>
+</ul>
+<p><strong><u>STUDIO RECORDING AWARDS:</u></strong></p>
+<p><strong>BASS PLAYER OF THE YEAR </strong></p>
+<ul>
+<li>Eli Beaird</li>
+<li>Mike Brignardello</li>
+<li>Tim Marks</li>
+<li>Michael Rhodes</li>
+<li>Jimmie Lee Sloas</li>
+</ul>
+<p><strong>DRUMMER OF THE YEAR</strong></p>
+<ul>
+<li>Fred Eltringham</li>
+<li>Miles McPherson</li>
+<li>Greg Morrow</li>
+<li>Jerry Roe</li>
+<li>Nir Zidkyahu</li>
+</ul>
+<p><strong>GUITAR PLAYER OF THE YEAR </strong></p>
+<ul>
+<li>Tom Bukovac</li>
+<li>Dann Huff</li>
+<li>Rob McNelley</li>
+<li>Adam Shoenfeld</li>
+<li>Ilya Toshinskiy</li>
+</ul>
+<p><strong>PIANO/KEYBOARDS PLAYER OF THE YEAR </strong></p>
+<ul>
+<li>David Dorn</li>
+<li>Tony Harrell</li>
+<li>Charlie Judge</li>
+<li>Tim Lauer</li>
+<li>Gordon Mote</li>
+<li>Mike Rojas</li>
+</ul>
+<p><strong>SPECIALTY INSTRUMENT(S) PLAYER OF THE YEAR</strong></p>
+<ul>
+<li>Stuart Duncan</li>
+<li>Jenee Fleenor</li>
+<li>Jim Hoke</li>
+<li>Danny Rader</li>
+<li>Joe Spivey</li>
+<li>Charlie Worsham</li>
+</ul>
+<p><strong>STEEL GUITAR PLAYER OF THE YEAR</strong></p>
+<ul>
+<li>Dan Dugamore</li>
+<li>Paul Franklin</li>
+<li>Josh Grange</li>
+<li>Russ Pahl</li>
+<li>Justin Schipper</li>
+</ul>
+<p><strong>AUDIO ENGINEER OF THE YEAR </strong></p>
+<ul>
+<li>Chuck Ainlay</li>
+<li>Jeff Balding</li>
+<li>Tony Castle</li>
+<li>Julian King</li>
+<li>Steve Marcantonio</li>
+<li>Justin Niebank</li>
+</ul>
+<p><strong>PRODUCER OF THE YEAR</strong></p>
+<ul>
+<li>busbee</li>
+<li>Buddy Cannon</li>
+<li>Dann Huff</li>
+<li>Michael Knox</li>
+<li>Joey Moi</li>
+</ul>
+<div class="social-buttons">
+	<div class="social-media-container vertical">
+					<div class="social-share-items addthis_toolbox addthis_default_style addthis_32x32_style">
+				<span><a class="addthis_button_facebook"  addthis:url="https://cbsloc.al/3hADCsN"></a><a class="addthis_button_twitter"  addthis:url="https://cbsloc.al/3hADCsN"></a><a href="#" class="addthis_button_linkedin"></a><a href="#" class="addthis_button_reddit"></a><a class="addthis_button_compact"  addthis:url="https://cbsloc.al/3hADCsN"></a></span>
+			</div>
+		
+			</div>
+</div></div></div><div id="reptile_30_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper partner-container partner-sharethrough"><span id="ad_30"><div id="reptile_30" class="ad-block" data-ad_size="[[1,5]]" data-ad_location="partner-injected" data-ad_targets={"strnativekey":"d3da4d50"}><script>cbs_load_ad_by_tile("30");</script></div></span></div><div class="partner-container partner-taboola"><div id="taboola-block-2"></div></div></section><aside class="sidebar right-bar" rel="modular+"><div id="reptile_2_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper"><span id="ad_2"><div id="reptile_2" class="ad-block" data-ad_size="[[300,250],[300,600],[300,1050]]" data-ad_location="top"><script>cbs_load_ad_by_tile("2");</script></div></span></div><div id="" class="block sidebar-widget widget_cbs_follow_us_widget"><h3 class="title">Follow Us</h3>
+		<div class="widget-content-wrapper">
+			<a href="http://www.facebook.com/CBSSanFrancisco" target="_blank" title="facebook_url" class="cbs-thumbnail-link facebook_url" ><div class="title-wrapper"><strong class="title">facebook_url</strong></div></a><a href="https://twitter.com/KPIXTV" target="_blank" title="twitter_url" class="cbs-thumbnail-link twitter_url" ><div class="title-wrapper"><strong class="title">twitter_url</strong></div></a><a href="https://www.youtube.com/user/CBSSanFrancisco" target="_blank" title="youtube_url" class="cbs-thumbnail-link youtube_url" ><div class="title-wrapper"><strong class="title">youtube_url</strong></div></a><a href="https://www.instagram.com/kpixtv/" target="_blank" title="instagram_url" class="cbs-thumbnail-link instagram_url" ><div class="title-wrapper"><strong class="title">instagram_url</strong></div></a><a href="https://www.reddit.com/user/cbsbayarea" target="_blank" title="reddit_url" class="cbs-thumbnail-link reddit_url" ><div class="title-wrapper"><strong class="title">reddit_url</strong></div></a><a href="https://www.linkedin.com/company/kpix-cbs5/" target="_blank" title="linkedin_url" class="cbs-thumbnail-link linkedin_url" ><div class="title-wrapper"><strong class="title">linkedin_url</strong></div></a>		</div>
+
+		</div><div id="" class="block sidebar-widget widget_cbs_newsletter_widget"><h3 class="title">Our | Newsletter</h3><div class="widget-content-wrapper"><iframe id="newsletter-widget-iframe" width="300" src="https://bh-ems-static-content.s3.amazonaws.com/cbsi/2706/cbs_local_form_f.html?market=sanfrancisco"></iframe></div></div><div id="" class="block sidebar-widget widget_top-posts"><h3 class="title"><span>Most </span> Viewed</h3><ul class='widgets-list-layout no-grav'>
+					<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/16/mass-shooting-san-jose-state-5-people-shot-2-dead/" title="Mass Shooting Update: 2 Dead, 4 Wounded In Shooting At Vigil Near San Jose State University" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i2.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/san-jose-shooting.jpg?resize=55%2C55&#038;ssl=1" alt="Mass Shooting Update: 2 Dead, 4 Wounded In Shooting At Vigil Near San Jose State University" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/16/mass-shooting-san-jose-state-5-people-shot-2-dead/" title="Mass Shooting Update: 2 Dead, 4 Wounded In Shooting At Vigil Near San Jose State University" class="bump-view" data-bump-view="tp">Mass Shooting Update: 2 Dead, 4 Wounded In Shooting At Vigil Near San Jose State University</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/man-armed-with-blowtorch-wd-40-axe-knife-sets-customers-hair-on-fire-at-berkeley-boba-tea-shop/" title="Man Armed With Blowtorch, Hatchet, Knife Sets Customer&#039;s Hair On Fire At Berkeley Boba Tea Shop" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i2.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/blowtorch-attack-berkeley-boba-tea-shop.jpg?resize=55%2C55&#038;ssl=1" alt="Man Armed With Blowtorch, Hatchet, Knife Sets Customer&#039;s Hair On Fire At Berkeley Boba Tea Shop" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/man-armed-with-blowtorch-wd-40-axe-knife-sets-customers-hair-on-fire-at-berkeley-boba-tea-shop/" title="Man Armed With Blowtorch, Hatchet, Knife Sets Customer&#039;s Hair On Fire At Berkeley Boba Tea Shop" class="bump-view" data-bump-view="tp">Man Armed With Blowtorch, Hatchet, Knife Sets Customer&#039;s Hair On Fire At Berkeley Boba Tea Shop</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/san-leandro-police-officer-jason-fletcher-steven-taylor-fatal-shooting-in-custody/" title="San Leandro Police Officer Charged In Fatal Shooting Of Steven Taylor Taken Into Custody" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i2.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/Capture-1.jpg?resize=55%2C55&#038;ssl=1" alt="San Leandro Police Officer Charged In Fatal Shooting Of Steven Taylor Taken Into Custody" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/san-leandro-police-officer-jason-fletcher-steven-taylor-fatal-shooting-in-custody/" title="San Leandro Police Officer Charged In Fatal Shooting Of Steven Taylor Taken Into Custody" class="bump-view" data-bump-view="tp">San Leandro Police Officer Charged In Fatal Shooting Of Steven Taylor Taken Into Custody</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/07/14/john-conway-charged-with-murder-danville-doctor-ari-gershman-robbing-sierra-gold-mine/" title="Suspect Charged With Ambush Murder Of Danville Dr. Ari Gershman, Robbing Sierra Gold Mine" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i1.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/07/ari-gershman-and-family.jpg?resize=55%2C55&#038;ssl=1" alt="Suspect Charged With Ambush Murder Of Danville Dr. Ari Gershman, Robbing Sierra Gold Mine" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/07/14/john-conway-charged-with-murder-danville-doctor-ari-gershman-robbing-sierra-gold-mine/" title="Suspect Charged With Ambush Murder Of Danville Dr. Ari Gershman, Robbing Sierra Gold Mine" class="bump-view" data-bump-view="tp">Suspect Charged With Ambush Murder Of Danville Dr. Ari Gershman, Robbing Sierra Gold Mine</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/14/contra-costa-county-aligns-with-covid-19-state-guidelines-eases-restrictions/" title="Contra Costa County Aligns With COVID-19 State Guidelines, Eases Restrictions" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i0.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/coco-county-reopening.jpg?resize=55%2C55&#038;ssl=1" alt="Contra Costa County Aligns With COVID-19 State Guidelines, Eases Restrictions" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/14/contra-costa-county-aligns-with-covid-19-state-guidelines-eases-restrictions/" title="Contra Costa County Aligns With COVID-19 State Guidelines, Eases Restrictions" class="bump-view" data-bump-view="tp">Contra Costa County Aligns With COVID-19 State Guidelines, Eases Restrictions</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/alleged-surenos-gang-members-busted-for-selling-drugs-illegal-guns-at-one-step-operation-in-concord-parking-lot/" title="Alleged Sureño Gang Members Charged With Selling Drugs, Guns At &#039;One-Stop&#039; Operation In Concord Parking Lot" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i0.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/CoCo-guns-and-drug-bust-1.jpg?resize=55%2C55&#038;ssl=1" alt="Alleged Sureño Gang Members Charged With Selling Drugs, Guns At &#039;One-Stop&#039; Operation In Concord Parking Lot" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/alleged-surenos-gang-members-busted-for-selling-drugs-illegal-guns-at-one-step-operation-in-concord-parking-lot/" title="Alleged Sureño Gang Members Charged With Selling Drugs, Guns At &#039;One-Stop&#039; Operation In Concord Parking Lot" class="bump-view" data-bump-view="tp">Alleged Sureño Gang Members Charged With Selling Drugs, Guns At &#039;One-Stop&#039; Operation In Concord Parking Lot</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/san-mateo-county-updates-covid-plan-to-allow-for-in-classroom-learning/" title="San Mateo County Updates COVID Plan to Allow For In-Classroom Learning" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i0.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/03/GettyImages-1212788785-1.jpg?resize=55%2C55&#038;ssl=1" alt="San Mateo County Updates COVID Plan to Allow For In-Classroom Learning" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/san-mateo-county-updates-covid-plan-to-allow-for-in-classroom-learning/" title="San Mateo County Updates COVID Plan to Allow For In-Classroom Learning" class="bump-view" data-bump-view="tp">San Mateo County Updates COVID Plan to Allow For In-Classroom Learning</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/one-dead-one-wounded-in-late-night-santa-rosa-shooting/" title="1 Dead, 1 Wounded In Late Night Santa Rosa Shooting" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i0.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/09/police-line_tape_day1.jpg?resize=55%2C55&#038;ssl=1" alt="1 Dead, 1 Wounded In Late Night Santa Rosa Shooting" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/one-dead-one-wounded-in-late-night-santa-rosa-shooting/" title="1 Dead, 1 Wounded In Late Night Santa Rosa Shooting" class="bump-view" data-bump-view="tp">1 Dead, 1 Wounded In Late Night Santa Rosa Shooting</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/massive-august-complex-fire-threatening-northern-california-emerald-triangle-marijuana-growing-area/" title="Massive August Complex: Fire Threatening Northern California ‘Emerald Triangle’ Marijuana Growing Area" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i1.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2016/08/santa-rosa-pot-ordinance.jpg?resize=55%2C55&#038;ssl=1" alt="Massive August Complex: Fire Threatening Northern California ‘Emerald Triangle’ Marijuana Growing Area" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/massive-august-complex-fire-threatening-northern-california-emerald-triangle-marijuana-growing-area/" title="Massive August Complex: Fire Threatening Northern California ‘Emerald Triangle’ Marijuana Growing Area" class="bump-view" data-bump-view="tp">Massive August Complex: Fire Threatening Northern California ‘Emerald Triangle’ Marijuana Growing Area</a>
+							</div>
+													</li>
+										<li>
+						<a href="https://sanfrancisco.cbslocal.com/2020/09/15/two-charged-with-murder-in-fatal-i-80-freeway-shooting/" title="Two Charged With Murder In Fatal I-80 Freeway Shooting" class="bump-view" data-bump-view="tp">
+								<img width="55" height="55" src="https://i1.wp.com/sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2020/09/San-Pablo-shooting-suspects-Jorge-Vazquez-Camile-McAlister-bg.jpg?resize=55%2C55&#038;ssl=1" alt="Two Charged With Murder In Fatal I-80 Freeway Shooting" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://sanfrancisco.cbslocal.com/2020/09/15/two-charged-with-murder-in-fatal-i-80-freeway-shooting/" title="Two Charged With Murder In Fatal I-80 Freeway Shooting" class="bump-view" data-bump-view="tp">Two Charged With Murder In Fatal I-80 Freeway Shooting</a>
+							</div>
+													</li>
+					</ul>
+</div><div id="reptile_31_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper big-right-ad sidebar-adhesive-ad"><span id="ad_31"><div id="reptile_31" class="ad-block" data-ad_size="[[300,250]]" data-ad_location="adhesion"><script>cbs_load_ad_by_tile("31");</script></div></span></div></aside></section>		<section class="page-ad-container page-pencil-ad-container-bottom">
+			<div id="reptile_4_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper"><span id="ad_4"><div id="reptile_4" class="ad-block" data-ad_size="[[728,90]]" data-ad_location="bottom"><script>cbs_load_ad_by_tile("4");</script></div></span></div>		</section>
+		
+
+</div>
+
+
+<footer id="page-footer" class="page-footer-type-menus-vertical">
+			<section class="top"><div class="wrapper">
+			<a href="https://sanfrancisco.cbslocal.com" class="logo"><img src="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2017/10/sanfran.png" alt="CBS San Francisco" /></a>							<div id="component-social" class="footer-component social-follow-items type-blue size-24x24">
+					<div class="social-align-wrapper">
+						<span class="disclosure">Follow Us</span>
+						<a href="http://www.facebook.com/CBSSanFrancisco" class="facebook" target="_blank">Facebook</a><a href="https://twitter.com/KPIXTV" class="twitter" target="_blank">Twitter</a><a href="https://www.youtube.com/user/CBSSanFrancisco" class="youtube" target="_blank">YouTube</a><a href="https://www.instagram.com/kpixtv/" class="instagram" target="_blank">Instagram</a><a href="https://www.reddit.com/user/cbsbayarea" class="reddit" target="_blank">Reddit</a><a href="https://www.linkedin.com/company/kpix-cbs5/" class="linkedin" target="_blank">LinkedIn</a>					</div>
+				</div>
+					</div></section>
+	
+			<section class="middle"><div class="wrapper">
+			
+<section class="items-grid block-menu layout-compact aspect-ratio-16-9" id="block-0" >
+		<header class="column-header">
+				<h4 class="title">News</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/news/" title="Bay Area News" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Bay Area News</strong><em class="description">San Francisco News From KPIX Channel 5</em></div></a><a href="https://sanfrancisco.cbslocal.com/tags/san-francisco-news/" title="San Francisco News" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">San Francisco News</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/weather/" title="San Fran Weather" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">San Fran Weather</strong><em class="description">San Francisco Bay Area Weather From CBS And KPIX</em></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/business/" title="Business" class="cbs-thumbnail-link item-3" ><div class="title-wrapper"><strong class="title">Business</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/politics/" title="Politics" class="cbs-thumbnail-link item-4" ><div class="title-wrapper"><strong class="title">Politics</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/health/" title="HealthWatch" class="cbs-thumbnail-link item-5" ><div class="title-wrapper"><strong class="title">HealthWatch</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/tech/" title="Tech" class="cbs-thumbnail-link item-6" ><div class="title-wrapper"><strong class="title">Tech</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/news/entertainment/" title="Entertainment" class="cbs-thumbnail-link item-7" ><div class="title-wrapper"><strong class="title">Entertainment</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid block-menu layout-compact aspect-ratio-16-9" id="block-1" >
+		<header class="column-header">
+				<h4 class="title">Sports</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/sports/raiders/" title="Raiders" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Raiders</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sf-giants/" title="SF Giants" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">SF Giants</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/sharks/" title="Sharks" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Sharks</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/sports/warriors/" title="Warriors" class="cbs-thumbnail-link item-3" ><div class="title-wrapper"><strong class="title">Warriors</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid block-menu layout-compact aspect-ratio-16-9" id="block-2" >
+		<header class="column-header">
+				<h4 class="title">Other</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/category/best-of/" title="Best Of" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">Best Of</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/only-cbs/" title="Only CBS" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Only CBS</strong></div></a><a href="https://sanfrancisco.cbslocal.com/category/travel/" title="Travel" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Travel</strong></div></a>		</div>
+	</section>
+
+<section class="items-grid block-menu layout-compact aspect-ratio-16-9" id="block-3" >
+		<header class="column-header">
+				<h4 class="title">Corporate</h4>
+	</header>
+	
+		
+			<div class="article-buckets-list">
+			<a href="https://sanfrancisco.cbslocal.com/learn-about-us/" title="About Us" class="cbs-thumbnail-link item-0" ><div class="title-wrapper"><strong class="title">About Us</strong></div></a><a href="https://sanfrancisco.cbslocal.com/about-us/advertising-basics/" title="Advertise" class="cbs-thumbnail-link item-1" ><div class="title-wrapper"><strong class="title">Advertise</strong></div></a><a href="https://sanfrancisco.cbslocal.com/social/" title="Connect" class="cbs-thumbnail-link item-2" ><div class="title-wrapper"><strong class="title">Connect</strong></div></a>		</div>
+	</section>
+		</div></section>
+	
+			<section class="bottom"><div class="wrapper">
+			<a href="https://sanfrancisco.cbslocal.com" class="logo"><img src="https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local/plugins/modules/theme-manager/images/cbs-local-logo-white.png" alt="CBS San Francisco" /></a>
+			<div class="copyright-wrapper">
+				<span class="copyright">&copy;2020 CBS Broadcasting Inc. All Rights Reserved.</span>
+									<span class="powered-by-wordpress">Powered by <a href="https://wpvip.com/?utm_source=vip_powered_wpcom&#038;utm_medium=web&#038;utm_campaign=VIP%20Footer%20Credit&#038;utm_term=sanfrancisco.cbslocal.com" rel="generator nofollow" class="powered-by-wpcom">WordPress.com VIP</a></span>
+							</div>
+
+			<div class="right-wrapper">
+									<div class="terms-of-use">By viewing our video content, you are accepting the terms of our <a href="https://privacy.cbs/videoservices" target="_blank" title="Video Services Policy">Video Services Policy</a></div>
+								<ul id="menu-final-footer-menu" class="nav-final-footer"><li id="menu-item-186485" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-186485"><a href="https://privacy.cbs/">Privacy Policy</a></li>
+<li id="menu-item-186486" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-186486"><a href="http://policies.cbslocal.com/terms-of-use/">Terms of Use</a></li>
+<li id="menu-item-825356" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-825356"><a href="https://ca.privacy.cbs">California Privacy/Info We Collect</a></li>
+<li id="menu-item-825357" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-825357"><a href="https://ca.privacy.cbs/donotsell">California Do Not Sell My Info</a></li>
+<li id="menu-item-502811" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-502811"><a href="http://policies.cbslocal.com/mobile-app-agreement/">Mobile User Agreement</a></li>
+<li id="menu-item-259690" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-259690"><a href="https://privacy.cbs/personalizedads">Ad Choices</a></li>
+<li id="menu-item-786263" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-786263"><a href="https://sanfrancisco.cbslocal.com/wp-content/uploads/sites/15116056/2018/08/2017-2018-kpix_kbcw_eeo-report.pdf">EEO Reports</a></li>
+<li id="menu-item-784176" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-784176"><a href="http://publicfiles.fcc.gov/tv-profile/kpix-tv">Public File for KPIX-TV / CBS 5</a></li>
+<li id="menu-item-785147" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-785147"><a href="http://publicfiles.fcc.gov/tv-profile/kbcw">Public File for KBCW-TV / KBCW 44 Cable 12</a></li>
+<li id="menu-item-785148" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-785148"><a href="https://policies.cbslocal.com/fcc/contactusfcc.html">Public Inspection File Help</a></li>
+</ul>			</div>
+
+						</div></section>
+</footer>
+
+<!--PARTNER SCRIPTS START-->
+<div id="reptile_32_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper pixel-ad"><span id="ad_32"><div id="reptile_32" class="ad-block" data-ad_size="[[1,8]]" data-ad_location=""><script>cbs_load_ad_by_tile("32");</script></div></span></div><div id="reptile_33_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper pixel-ad"><span id="ad_33"><div id="reptile_33" class="ad-block" data-ad_size="[[1,6]]" data-ad_location=""><script>cbs_load_ad_by_tile("33");</script></div></span></div><div id="reptile_34_wrapper" class="ad-block-wrapper cbs-ad-unit-wrapper pixel-ad"><span id="ad_34"><div id="reptile_34" class="ad-block" data-ad_size="[[1,7]]" data-ad_location=""><script>cbs_load_ad_by_tile("34");</script></div></span></div>
+<!--PARTNER SCRIPTS END-->
+
+
+</div>
+
+<!-- Instagram Feed JS -->
+<script type="text/javascript">
+var sbiajaxurl = "https://sanfrancisco.cbslocal.com/wp-admin/admin-ajax.php";
+</script>
+<link rel='stylesheet' id='screen-css-0' href='https://sanfrancisco.cbslocal.com/_static/??-eJyljFsKgCAQRTeUTRH2+IjW4mMoYdTICWn3CbWC+rvccziQd2FiYAwMvKHHBEYnQdEoAhcMnbZc6DXaQtI7RUZV7ENkZ1fkuoAKvpUSOYvHn0Jk3kldT2TxcyunXo5D08kb9l5RWA==' type='text/css' media='screen' />
+<link rel='stylesheet' id='all-css-0' href='https://sanfrancisco.cbslocal.com/_static/??-eJx9jEsOwjAMRC9EaxAKnwXiLMWxWiPHCbEjxO1JV2XFbmbe6MG7DJjVSR18oUQG+LBBMk4CrCgt9un5alQ/IDwvbsKR6m8eE+uIZjv4JyvSZlaDlGOTTspUXan2i21l1dzT7RCup3A574/hCz+lO6E=' type='text/css' media='all' />
+<script id='jetpack-facebook-embed-js-extra'>
+var jpfbembed = {"appid":"249643311490","locale":"en_US"};
+</script>
+<script type='text/javascript' src='https://sanfrancisco.cbslocal.com/_static/??-eJyNjUsOwjAMBS9EapD4tAvEUVCTPJDT2ImIo16fsuuS5Uhv3tBaXShqUCPprub+Zm2UYHUOCz1ZA/nOOdJrDvClLA7iEQdhHVI70N++rWyGjzMWZFbsH7ZV7hGb1364LzzkfrpM4zTezsdr+gKEKD+n'></script>
+<script src='https://widgets.media.weather.com/wxwidget.loader.js?cid=934888385&#038;ver=1.1' id='cbs-weather-widget-js'></script>
+<script src='https://w3.cdn.anvato.net/player/prod/v3/scripts/anvload.js?ver=5.5.1' id='cbs-cbs-anvato-js'></script>
+<script type='text/javascript' src='https://sanfrancisco.cbslocal.com/_static/??-eJytzE0OQDAQQOELqSFSPwtxFtoJbaYtOiJuz0LE0sLu5S0+2Gehgmf0DDyhwwhqiIKC6gmMV7Tpa9llw/UAMuPEkYzG9d2pMz61MYFPFroB9UXeJf4wAvNM/fEwnWtz2ZSyrrJC2hOf+1RO'></script>
+<script type='text/javascript' src='https://stats.wp.com/e-202038.js' async='async' defer='defer'></script>
+<script type='text/javascript'>
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:8.9',blog:'162246042',post:'875368',tz:'-7',srv:'sanfrancisco.cbslocal.com'} ]);
+	_stq.push([ 'clickTrackerInit', '162246042', '875368' ]);
+</script>
+
+
+
+<script type="text/javascript">
+	var cbs_market_root = 'https://sanfrancisco.cbslocal.com';
+	var cbs_template_root = 'https://sanfrancisco.cbslocal.com/wp-content/themes/cbs-local';
+	var cbs_market_gmt_offset = -25200;
+
+				anvp.listener = function (e) {
+				var vid_block = document.getElementById('featured-media').getElementsByClassName('anvato');
+				if ( vid_block.length > 0 ) {
+					vid_block = vid_block[0].getElementsByTagName("IFRAME");
+					if ( vid_block.length > 0 ) {
+						vid_block = vid_block[0];
+						var anvato_player_id = vid_block.getAttribute('id');
+						if (e.name == 'VIDEO_COMPLETED' && anvato_player_id == e.sender) {
+							setTimeout(function(){
+								window._cmpWrapper.getConsentFlag(function(flag) {
+									var priv_value = '&optanonConsent='+flag;
+									var new_part = document.createElement("iframe");
+									new_part.setAttribute( 'width', "100%" );
+									new_part.setAttribute( 'height', "100%" );
+									new_part.setAttribute( 'scrolling', "no" );
+									new_part.setAttribute( 'allow', "autoplay" );
+									new_part.setAttribute( 'class', "videoplayer-cbsn-iframe" );
+									new_part.setAttribute( 'src', "https:\/\/www.cbsnews.com\/live\/cbsn-local-bay-area\/?premium=1" + priv_value );
+
+									var old_part = document.getElementById('featured-media').getElementsByClassName('anvato');
+									if ( old_part.length > 0 ) {
+										old_part = old_part[0].getElementsByTagName("IFRAME");
+										if ( old_part.length > 0 ) {
+											old_part = old_part[0];
+											old_part.replaceWith( new_part );
+										}
+									}
+								});
+							}, 3000);
+						}
+					}
+				}
+			};
+			
+// partner scripts 2 - start
+function cbs__cmp_onetime__performance(){(function(){function x(){for(var a=[8],b=1;1>=b;b++)a.push(8+b),a.push(8-b);a=a[Math.floor(Math.random()*a.length)];return{b:a,a:0==Math.floor(Math.random()*a)}}function h(a){var b=a=a.replace(":","");try{for(var c=0;100>c&&(a=decodeURIComponent(a),b!=a)&&!a.match(/^http(s)?\:/);c++)b=a}catch(d){}return a.replace(/(^\s+|\s+$)/g,"")}try{if(!location||!location.hostname||!location.pathname)return!1;var c=document.location.hostname.replace(/^www\./,""),q=function(){for(var a,b=document.getElementsByTagName("meta"),c,d=0,e=b.length;d<e;d++)if(c=b[d],"og:title"===c.getAttribute("property")){a=c.getAttribute("content");break}a||(a=document.title||"Untitled");return a}(),b={},b=function(a,b,c){a.l1=b;a.l2=c;a.l3="__page__";a.l4="-";return a}(b,c,q),k=(new Date).getTime(),l=Math.floor(Math.random()*Math.pow(10,12)),m,d;d=x();m=d.a?d.b:0;b.zmoatab_cm=m;b.t=k;b.de=l;b.zMoatAB_SNPT=!0;var n;n=m?m:1;var r;r=d?d.a?!0:!1:!0;var c=[],y=(new Date).getTime().toString(35),t=[h(b.l1),h(b.l2),h(b.l3),h(b.l4)].join(":"),q=/zct[a-z0-9]+/i,e="",f;for(f in b)b.hasOwnProperty(f)&&f.match(q)&&(e+="&"+f+"="+b[f]);var u=document.referrer.match(/^([^:]{2,}:\/\/[^\/]*)/),p=u?u[1]:document.referrer,z="https://2wk08xvxmny5-a.akamaihd.net/"+y+".gif?e=17&d="+encodeURIComponent(t)+"&de="+l+"&t="+k+"&i=CBSLOCALCONTENT1&cm="+n+"&j="+encodeURIComponent(p)+e+"&mp=1&ac=1&pl=1&bq=10&vc=2&cs=0",A="https://px.moatads.com/pixel.gif?e=17&d="+encodeURIComponent(t)+"&de="+l+"&t="+k+"&i=CBSLOCALCONTENT1&cm="+n+"&j="+encodeURIComponent(p)+e+"&mp=0&ac=1&pl=1&bq=10&ad_type=img&vc=2&cs=0",B="https://px.moatads.com/pixel.gif?e=17&d="+encodeURIComponent(t)+"&de="+l+"&t="+k+"&i=CBSLOCALCONTENT1&cm="+n+"&j="+encodeURIComponent(p)+e+"&ku=1&ac=1&pl=1&bq=10&ad_type=img&vc=2&cs=0";r&&((new Image).src=z,(new Image).src=A);for(var v in b)c.push(v+"="+encodeURIComponent(b[v]));var c=c.join("&"),c=c+"&vc=2",g=document.createElement("script");g.type="text/javascript";g.async=!0;r&&(g.onerror=function(){(new Image).src=B});var w=document.getElementsByTagName("script")[0];w.parentNode.insertBefore(g,w);g.src="https://z.moatads.com/cbslocalcontent5715253139/moatcontent.js#"+c}catch(a){try{var C="//pixel.moatads.com/pixel.gif?e=24&d=data%3Adata%3Adata%3Adata&i=MOATCONTENTABSNIPPET1"+e+"&vc=2&ac=1&k="+encodeURIComponent(a)+"&j="+encodeURIComponent(p)+"&cs="+(new Date).getTime();(new Image).src=C}catch(D){}}})();var moat1=new Image(1,1);moat1.src="//dbg52463.moatads.com?a=033f43a2ddba4ba592b52109d2ccf5ed";document.body.appendChild(moat1);var moat2=new Image(1,1);moat2.src="//d5i9o0tpq9sa1.cloudfront.net?a=033f43a2ddba4ba592b52109d2ccf5ed";document.body.appendChild(moat2);		!function(t,o,e){e=t.createElement(o),t=t.getElementsByTagName(o)[0],e.async=1,e.src="https://untidyrice.com/v2/0/ubxLEFIc5iNMpXECbKK_O4CEFXNEVmwfviNe_yMzTFlDUcr90YGQXk7jiFaO6tBvgUDtQ",t.parentNode.insertBefore(e,t)}(document,"script"),function(t,o){t[o]=t[o]||function(){(t[o].q=t[o].q||[]).push(arguments)}}(document,window,"script","admiral");!function(t,e,n,a){function o(t){try{return t=localStorage.getItem("v4ac1eiZr0"),t&&t.split(",")[4]>0}catch(e){}return!1}function r(){var a=o();if(a){var r=t[e].pubads();typeof r.setTargeting===n&&r.setTargeting("admiral-engaged","true")}}a=t[e]=t[e]||{},a.cmd=a.cmd||[],typeof a.pubads===n?r():typeof a.cmd.unshift===n?a.cmd.unshift(r):a.cmd.push(r)}(window,"googletag","function");;;;;
+	var _comscore = _comscore || [];_comscore.push({options:{url_append:"comscorekw=acm-awards"},c1:"2",c2:"3000023"});cbs_j.dom.load_script("trak-ga", "https://ssl.google-analytics.com/ga.js", function(){pageTracker = _gat._getTracker("UA-2438645-53");pageTracker._trackPageview("/category/acm-awards" + window.location.pathname + "?cat=acm-awards;cat=only-cbs;");});cbs_j.dom.load_script("trak-exelate", "https:\/\/loadus.exelator.com\/load\/?j=d&p=279&g=019&global=cbslocal&interface=site&station=https%3A%2F%2Fsanfrancisco.cbslocal.com&ctg1=acm-awards&category=acm-awards%2Conly-cbs&ctg2=only-cbs&location=sanfrancisco&type=local&group=swtv&tit=55th-acm-awards-winners-list");cbs_j.dom.load_script("taboola-pixel", "//cdn.taboola.com/libtrc/cbslocal-sc/tfa.js", function() {window._tfa = window._tfa || []; _tfa.push({ notify: "action",name: "page_view" });});cbs_lib.load_script("//tru.am/scripts/custom/cbslocal.js");
+}
+function cbs__cmp_onetime__functional(){}
+function cbs__cmp_onetime__targeting(){cbs_j.dom.load_script("cbs-apstag", "//c.amazon-adsystem.com/aax2/apstag.js");cbs_j.dom.load_script("sonobi", "https://mtrx.go.sonobi.com/morpheus.cbslocal.3566.js");cbs_lib.load_script("//native.sharethrough.com/assets/sfp.js");
+window._taboola = window._taboola || [];_taboola.push({mode:"thumbnails-a",container: "taboola-block-2",placement: "Below Article Thumbnails",target_type: "mix",user_opt_put: cbs_ads.is_npa()});_taboola.push({article:"auto"});_taboola.push({flush: true});cbs_j.dom.load_script("taboola-loader", "//cdn.taboola.com/libtrc/cbslocal-network/loader.js");cbs_j.dom.load_script("sharethrough", "//native.sharethrough.com/assets/tag.js");}
+function cbs__cmp_onetime__social(){cbs_j.dom.load_script("addthis", "//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4ddd05dc24272928");}
+function cbs__cmp_onetime__ads(){cbs_j.dom.load_script("dfp", "//www.googletagservices.com/tag/js/gpt.js");}
+var cbs__cmp__onetime = [0,0,0,0,0];
+cbsoptanon.onScriptsReady(function(cmp) {cmp.ot.targetingAllowed(function(allowed){cbs_j.log("[CMP] : targetingAllowed=" + allowed);if ( allowed ) cbs_ads.set_npa(false); else cbs_ads.set_npa(true);if(allowed && 0 === cbs__cmp__onetime[0]){cbs__cmp_onetime__targeting();cbs__cmp__onetime[0]=1;}if(allowed && 0 === cbs__cmp__onetime[4]){cbs__cmp_onetime__ads();cbs__cmp__onetime[4]=1;}});
+cmp.ot.performanceAllowed(function(allowed){cbs_j.log("[CMP] : performanceAllowed=" + allowed);if(allowed && 0 === cbs__cmp__onetime[1]){cbs__cmp_onetime__performance();cbs__cmp__onetime[1]=1;}});
+cmp.ot.functionalAllowed(function(allowed){cbs_j.log("[CMP] : functionalAllowed=" + allowed);if(allowed && 0 === cbs__cmp__onetime[2]){cbs__cmp_onetime__functional();cbs__cmp__onetime[2]=1;}});
+cmp.ot.socialAllowed(function(allowed){cbs_j.log("[CMP] : socialAllowed=" + allowed);if(allowed && 0 === cbs__cmp__onetime[3]){cbs__cmp_onetime__social();cbs__cmp__onetime[3]=1;}});
+cmp.tags.load("DIV", "style");cmp.tags.load("IFRAME");
+});
+// partner scripts 2 - end
+
+	jQuery(function($) {
+		cbs_adhesive.add('#featured-media .video-wrapper', 'page-bottom-right', '.page-columns', 355 );
+cbs_adhesive.add( '.sidebar-adhesive-ad', 'sidebar', '.page-columns', 'activator-top' );
+		var $personality_with_links = $('#personality-credits[data-social-links]');
+		if ( $personality_with_links.length > 0 ) {
+			cbs_lib.add_social_link_to_thumbnail_link( $( $personality_with_links ) );
+		}
+		cbs_adhesive.add( '.social-media-container.vertical', 'page', '.main-story-wrapper', 'activator-top' );
+	});
+
+	jQuery(function($) { jQuery(window).load(function () { setTimeout(function () {
+			}, 500); }); });
+
+	jQuery(function($) { jQuery(window).load(function () { setTimeout(function () {
+			}, 5000); }); });
+
+</script>
+
+	
+	
+	
+	
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"103fa8ca15","applicationID":"144794115","transactionName":"ZwdaZBdUX0VTVEBRC15NeVMRXF5YHV5aXAFI","queueTime":0,"applicationTime":365,"atts":"S0BNEl9OTBoQVhYCH00f","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

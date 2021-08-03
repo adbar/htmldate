@@ -1,0 +1,1670 @@
+<!doctype html>
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+<!--[if IE 8]><html class="no-js ie"><![endif]-->
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js?v=v10.8.2'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-TFFG6KK');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"2bdaca1562",applicationID:"171416932"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(f(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(4),f=e(5),c=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",d=l+"ixn-";a(p,function(e,n){s[n]=i(l+n,!0,"api")}),s.addPageAction=i(l+"addPageAction",!0),s.setCurrentRouteName=i(l+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(d+"tracer",[u.now(),e,t],r),function(){if(c.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw c.emit("fn-err",[arguments,this,e],t),e}finally{c.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(d+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?c("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&c("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&c("lcp",[t[t.length-1]])}function o(e){if(e instanceof s&&!l){var n,t=Math.round(e.timeStamp);n=t>1e12?Date.now()-t:u.now()-t,l=!0,c("timing",["fi",t,{type:e.type,fid:n}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var a,f,c=e("handle"),u=e("loader"),s=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),f=new PerformanceObserver(i);try{a.observe({entryTypes:["paint"]}),f.observe({entryTypes:["largest-contentful-paint"]})}catch(p){}}if("addEventListener"in document){var l=!1,d=["click","keydown","mousedown","pointerdown","touchstart"];d.forEach(function(e){document.addEventListener(e,o,!1)})}}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf("Chrome")===-1&&f.indexOf("Chromium")===-1&&(i="Safari",o=c[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],5:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],6:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?c(e,f,o):o()}function t(t,r,i,o){if(!l.aborted||o){e&&e(t,r,i);for(var a=n(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function d(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return p[e]=p[e]||i(t)}function w(e,n){u(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var h={},y={},b={on:d,addEventListener:d,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(l.aborted=!0,s=l.backlog={})}var f="nr@context",c=e("gos"),u=e(4),s={},p={},l=n.exports=i();l.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(y,function(n,t){e[n]||(e[n]=t)}),c("mark",["onload",a()+E.offset],null,"api");var t=d.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function i(){"complete"===d.readyState&&o()}function o(){c("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=e("handle"),u=e(4),s=e("ee"),p=e(3),l=window,d=l.document,m="addEventListener",v="attachEvent",g=l.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:g,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1169.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),e(2),d[m]?(d[m]("DOMContentLoaded",o,!1),l[m]("load",r,!1)):(d[v]("onreadystatechange",i),l[v]("onload",r)),c("mark",["firstbyte",f],null,"api");var x=0,O=e(6)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(5),a="nr@original",f=Object.prototype.hasOwnProperty,c=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f="function"==typeof t?t(r,a):t||{}}catch(u){l([u,"",[r,a,i],f])}s(n+"start",[r,a,i],f);try{return c=e.apply(a,r)}catch(p){throw s(n+"err",[r,a,p],f),p}finally{s(n+"end",[r,a,c],f)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,p(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,f,c,u="-"===i.charAt(0);for(c=0;c<n.length;c++)f=n[c],a=e[f],r(a)||(e[f]=t(a,u?f+i:i,o,f))}function s(t,r,i){if(!c||n){var o=c;c=!0;try{e.emit(t,r,i,n)}catch(a){l([a,t,r,i])}c=o}}function p(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){l([r])}for(var i in e)f.call(e,i)&&(n[i]=e[i]);return n}function l(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+    <meta name="viewport" content="width=1250">
+    <meta name="google-site-verification" content="fg-yp2lTAg4HB8wex36ZI5SqFjnrSuiFbjAb3ixwjzo" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/common/v4.1/images/html/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/common/v4.1/images/html/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/common/v4.1/images/html/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/common/v4.1/images/html/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/common/v4.1/images/html/favicon/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/common/v4.1/images/html/favicon/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/common/v4.1/images/html/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/common/v4.1/images/html/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/common/v4.1/images/html/favicon/apple-touch-icon-76x76.png">
+    <link rel="icon" type="image/png" href="/common/v4.1/images/html/favicon/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/common/v4.1/images/html/favicon/favicon-196x196.png" sizes="196x196">
+    <link rel="icon" type="image/png" href="/common/v4.1/images/html/favicon/favicon-24x24.png" sizes="24x24">
+    <link rel="shortcut icon" type="image/png" href="/common/v4.1/images/html/favicon/favicon.ico">
+    <meta name="msapplication-square150x150logo" content="/common/v4.1/images/html/favicon/mstile-150x150.png" />
+    <meta name="msapplication-square310x310logo" content="/common/v4.1/images/html/favicon/mstile-310x310.png" />
+    <meta name="msapplication-square70x70logo" content="/common/v4.1/images/html/favicon/mstile-70x70.png" />
+    <meta name="msapplication-TileColor" content="#27476E">
+    <meta name="msapplication-TileImage" content="/common/v4.1/images/html/favicon/mstile-144x144.png">
+                            <title>賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！｜ハウスコム株式会社のプレスリリース</title>
+                        <meta name="description" content="ハウスコム株式会社のプレスリリース（2020年7月1日 10時00分）賃貸仲介のハウスコム、7月1日に駅近エリア出店となる[岐阜駅前店]をオープン！" />
+        <meta name="keywords" content="賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！ プレスリリース,ニュースリリース,配信,サイト,サービス,方法,代行,PR TIMES" />
+                
+                <meta name="twitter:title" content="賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！" />
+        <meta property="og:title" content="賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！" />
+        <meta name="release:date" content="2020年7月1日 10時00分" />
+        <meta name="release:company" content="ハウスコム株式会社" />
+        
+                                <meta name="twitter:description" content="ハウスコム株式会社のプレスリリース（2020年7月1日 10時00分）賃貸仲介のハウスコム、7月1日に駅近エリア出店となる[岐阜駅前店]をオープン！" />
+            <meta property="og:description" content="ハウスコム株式会社のプレスリリース（2020年7月1日 10時00分）賃貸仲介のハウスコム、7月1日に駅近エリア出店となる[岐阜駅前店]をオープン！" />
+                            <meta name="verify-v1" content="u6bMajXn5uORlci87yg9xgHOM8V4FFzSNKe7anN0XKQ=" />
+    <meta name="robots" content="index,follow,noodp,noydir" />
+    
+                    <meta name="twitter:card" content="summary_large_image" />
+            
+    <meta name="twitter:site" content="@PRTIMES_JP" />
+    <meta name="twitter:creator" content="@PRTIMES_JP" />
+            <meta name="twitter:url" content="https://prtimes.jp/main/html/rd/p/000000088.000029713.html" />
+    <meta property="og:url" content="https://prtimes.jp/main/html/rd/p/000000088.000029713.html" />
+            <meta property="fb:app_id" content="1495958567142613" />
+        <meta property="og:type" content="article" />
+                    <meta property="og:site_name" content="プレスリリース・ニュースリリース配信シェアNo.1｜PR TIMES" />
+
+    
+        <link rel="canonical" href="https://prtimes.jp/main/html/rd/p/000000088.000029713.html" />
+    
+        <link rel="preload" as="style" href="/common/v4/html/css/jquery-ui.min.css?v=v10.8.2" onload="this.rel='stylesheet'">
+    <link rel="stylesheet" href="/src/css/html.css?v=v10.8.2" />
+    <link rel="stylesheet" href="/common/v4.1/css/html/style.css?v=v10.8.2" />
+        <!--[if lt IE 9]><link rel="stylesheet" href="/common/pc_v4/css/ie.css?v=v10.8.2" /><![endif]-->
+    <script type="text/javascript" src="/common/js/twitteraudience.js?v=v10.8.2" async></script>
+    <!--[if lt IE 9]><script src="/common/pc_v4/js/vendor/IE9.js?v=v10.8.2"></script><![endif]-->
+    <script type="text/javascript" src="/common/js/googleana.js" async></script>
+
+<!-- Start of Async HubSpot Analytics Code -->
+<script type="text/javascript">
+(function(d,s,i,r) {
+if (d.getElementById(i)){return;}
+var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+n.id=i;n.src='//js.hubspot.com/analytics/'+(Math.ceil(new Date()/r)*r)+'/195339.js';
+e.parentNode.insertBefore(n, e);
+})(document,"script","hs-analytics",300000);
+</script>
+<!-- End of Async HubSpot Analytics Code -->
+
+
+
+<link rel="alternate" type="application/rss+xml" title="PR TIMES Feed" href="https://prtimes.jp/index.rdf" />
+
+
+    <script type="text/javascript">
+        var userAgent = window.navigator.userAgent.toLowerCase();
+        var isIE = (userAgent.indexOf('msie') >= 0 || userAgent.indexOf('trident') >= 0);
+        if(!isIE) {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    //navigator.serviceWorker.register('/sw.js?v=v10.8.2');
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        registrations.forEach(function(registration) {
+                            registration.unregister();
+                        });
+                    });
+                    caches.keys().then(function(keys) {
+                        var promises = [];
+                        keys.forEach(function(cacheName) {
+                            if (cacheName) {
+                                promises.push(caches.delete(cacheName));
+                            }
+                        });
+                    });
+                });
+            }
+        }
+    </script>
+
+    <link rel="manifest" href="/manifest.json"><link rel="amphtml" href="https://prtimes.jp/main/html/rd/amp/p/000000088.000029713.html" />
+<meta property="og:image" content="https://prtimes.jp/i/29713/88/origin/d29713-88-754818-1.jpg" />
+<meta name="twitter:image" content="https://prtimes.jp/i/29713/88/origin/d29713-88-754818-1.jpg" />
+<meta name="release:image" content="https://prtimes.jp/i/29713/88/resize/d29713-88-754818-1.jpg" />
+<meta name="thumbnail" content="https://prtimes.jp/i/29713/88/origin/d29713-88-754818-1.jpg" />
+<meta name="twitter:image:width" content="300" />
+<meta name="twitter:image:height" content="300" />
+<script type="application/ld+json">
+    [
+    {
+        "@context":"https://schema.org",
+        "@type":"NewsArticle",
+        "mainEntityOfPage":{
+            "@type":"WebPage",
+            "@id":"/main/html/rd/p/000000088.000029713.html"
+        },
+                "headline":"賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！",
+        "description":"賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！　ハウスコム株式会社のプレスリリース",
+                "datePublished":"2020-07-01T10:02:02+0900",
+        "dateModified":"2020-07-01T12:25:58+0900",
+        "articleSection":"経営情報",
+        "author":{
+            "@type":"Organization",
+            "name":"ハウスコム株式会社"
+        },
+        "publisher":{
+            "@type":"Organization",
+            "name":"PR TIMES",
+            "logo":{
+                "@type":"ImageObject",
+                "url":"https://prtimes.jp/common/pc_v4/og.png",
+                "width":"1200",
+                "height":"630"
+            }
+        },
+                "image":{
+            "@type":"ImageObject",
+            "url":"https://prtimes.jp/i/29713/88/origin/d29713-88-754818-1.jpg",
+            "width":"auto",
+            "height":"auto"
+        }
+            },
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/",
+                    "name": "プレスリリース"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchrlp/company_id/29713",
+                    "name": "ハウスコム株式会社のプレスリリース"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item":
+                {
+                    "@id": "/main/html/rd/p/000000088.000029713.html",
+                                        "name": "賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！"
+                                    }
+            }
+        ]
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/",
+                    "name": "プレスリリース"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchrlp/release_type_id/04",
+                    "name": "経営情報"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item":
+                {
+                    "@id": "/main/html/rd/p/000000088.000029713.html",
+                    "name": "賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！"
+                }
+            }
+        ]
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/",
+                    "name": "プレスリリース"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchbiscate/busi_cate_id/020",
+                    "name": "住宅・建築・建設"
+                }
+            },
+                        {
+                "@type": "ListItem",
+                "position": 3,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchbiscate/busi_cate_id/020/lv2/69",
+                    "name": "住宅・マンション"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item":
+                {
+                    "@id": "/main/html/rd/p/000000088.000029713.html",
+                    "name": "賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！"
+                }
+            }
+                    ]
+    }
+    ,
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/",
+                    "name": "プレスリリース"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchbiscate/busi_cate_id/028",
+                    "name": "交通・運輸・輸送"
+                }
+            },
+                        {
+                "@type": "ListItem",
+                "position": 3,
+                "item":
+                {
+                    "@id": "https://prtimes.jp/main/html/searchbiscate/busi_cate_id/028/lv2/76",
+                    "name": "交通・運送・引越し"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item":
+                {
+                    "@id": "/main/html/rd/p/000000088.000029713.html",
+                    "name": "賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！"
+                }
+            }
+                    ]
+    }
+        ]
+</script>
+</head>
+<body class="entry">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFFG6KK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header id="headerPage" class="header-page ">
+  <div class="container container-page-header">
+    <a href="/" title="プレスリリース・ニュースリリース配信シェアNo.1｜PR TIMES" id="headingPage" class="heading heading-page">
+      <img src="/common/v4.1/images/html/svg/logo_prtimes.svg" alt="PR TIMES" width="122" height="24">
+    </a>
+
+
+
+    <nav id="navAction" class="nav nav-action">
+      <ul>
+        <li class="jushin"><a href="/media_service/" class="button button-jushin">プレスリリースを受信</a></li>
+        <li class="irai"><a href="https://prtimes.jp/main/registcorp/form" class="button button-irai">配信を依頼</a></li>
+        <li class="headerLogin">
+                      <a href="#" class="button button-login" data-toggle="modal" data-target="#login">ログイン</a>
+                  </li>
+          <li class="header_search js-header_search">
+                <a href="javascript:void(0);">
+                  <img class="icon_search" src="/common/v4.1/images/html/svg/icon-search.svg" alt="キーワードから検索" width="25" height="25">
+                </a>
+                <div class="js-header_search_block header_search_block" style="display:none;">
+                  <div class="container-form-search">
+  <div class="form-search">
+    <input type="text" class="input-keyword" placeholder="キーワードで検索" name="header-search_word" autocomplete="off">
+    <input class="header-search_pattern" name="header-search_pattern" type="hidden" value="1" />
+    <button class="hidden button button-search js-submit">検索</button>
+  </div>
+
+    <div class="js-btn-header-close btn-header-close">
+        <svg width="12px" height="12px" viewBox="1177 26 12 12" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+            <desc>Created with Sketch.</desc>
+            <defs></defs>
+            <polyline id="close" stroke="none" fill-opacity="0.899999976" fill="#FFFFFF" fill-rule="evenodd" points="1187.586 26 1183 30.586 1178.414 26 1177 27.414 1181.586 32 1177 36.586 1178.414 38 1183 33.414 1187.586 38 1189 36.586 1184.414 32 1189 27.414 1187.586 26"></polyline>
+        </svg>
+    </div>
+</div>                </div>
+          </li>
+      </ul>
+    </nav>
+        <nav id="navGlobal" class="nav nav-global">
+      <ul>
+        <li class="item-nav-global top"><a href="/" title="Top" class="link-category link-category-top">Top</a></li>
+        <li class="item-nav-global technology"><a href="/technology/" title="テクノロジー" class="link-category link-category-technology">テクノロジー</a></li>
+        <li class="item-nav-global mobile"><a href="/mobile/" title="モバイル" class="link-category link-category-mobile">モバイル</a></li>
+        <li class="item-nav-global app"><a href="/app/" title="アプリ" class="link-category link-acategory-app">アプリ</a></li>
+        <li class="item-nav-global entertainment"><a href="/entertainment/" title="エンタメ" class="link-category link-category-entertainment">エンタメ</a></li>
+        <li class="item-nav-global beauty"><a href="/beauty/" title="ビューティー" class="link-category link-category-beauty">ビューティー</a></li>
+        <li class="item-nav-global fashion"><a href="/fashion/" title="ファッション" class="link-category link-category-fashion">ファッション</a></li>
+        <li class="item-nav-global lifestyle"><a href="/lifestyle/" title="ライフスタイル" class="link-category link-category-lifestyle">ライフスタイル</a></li>
+        <li class="item-nav-global business"><a href="/business/" title="ビジネス" class="link-category link-category-business">ビジネス</a></li>
+        <li class="item-nav-global gourmet"><a href="/gourmet/" title="グルメ" class="link-category link-category-gourmet">グルメ</a></li>
+        <li class="item-nav-global sports"><a href="/sports/" title="スポーツ" class="link-category link-category-sports">スポーツ</a></li>
+      </ul>
+    </nav>
+            <h2 id="textHead" class="text-head">
+      <a href="/">プレスリリース・ニュースリリース配信サービスのPR TIMES</a>
+    </h2>
+    
+
+    
+    <!--<nav id="navPrimary" class="nav nav-primary">
+      <ul>
+        {**}
+        <li class="ryokin_plan"><a href="/price/" class="icon icon-price">料金プラン</a></li>
+        <li class="pr_times_toha"><a href="/service/" class="icon icon-info">PR TIMESとは</a></li>
+      </ul>
+    </nav>-->
+
+  </div>
+</header><div class="container container-content">
+    <main id="main" role="main" class="main" data-season="false">
+        <div class="content">
+            <!--プレスリリース一覧-->
+            <article class="box">
+                <div class="inner">
+                    <header class="header-release-detail">
+                                                                        <h1 class="release--title">
+                                                            賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！
+                                                    </h1>
+                                                <div class="information-release">
+                            <div class="company-name">
+                                                                <a href="/main/html/searchrlp/company_id/29713" title="ハウスコム株式会社のプレスリリース">ハウスコム株式会社</a>
+                                                            </div>
+                            <time class="time icon-time-release-svn" datetime="2020-07-01T10:02:02+0900">2020年7月1日 10時00分</time>
+                        </div>
+                                                                        <ul class="container-share">
+                            <li class="facebook">
+                                <div id="fb-root"></div>
+                                                                <div class="fb-like" data-href="https://prtimes.jp/main/html/rd/p/000000088.000029713.html" data-width="80" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div>
+                                                            </li>
+                            <li class="twitter">
+                                                                    <a class="button-share" href="https://twitter.com/intent/tweet?text=%E8%B3%83%E8%B2%B8%E4%BB%B2%E4%BB%8B%E3%81%AE%E3%83%8F%E3%82%A6%E3%82%B9%E3%82%B3%E3%83%A0%E3%80%817%E6%9C%881%E6%97%A5%E3%81%AB%E9%A7%85%E8%BF%91%E3%82%A8%E3%83%AA%E3%82%A2%E5%87%BA%E5%BA%97%E3%81%A8%E3%81%AA%E3%82%8B%E3%80%8C%E5%B2%90%E9%98%9C%E9%A7%85%E5%89%8D%E5%BA%97%E3%80%8D%E3%82%92%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%EF%BC%81&amp;url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html&amp;via=PRTIMES_JP">
+                                                                    <span class="share-icon"></span>
+                                                                        <div class="share-title">ツイート</div>
+                                </a>
+                            </li>
+                            <li class="hatena">
+                                <a class="button-share" href="//b.hatena.ne.jp/add?mode=confirm&amp;url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html&amp;title=%E8%B3%83%E8%B2%B8%E4%BB%B2%E4%BB%8B%E3%81%AE%E3%83%8F%E3%82%A6%E3%82%B9%E3%82%B3%E3%83%A0%E3%80%817%E6%9C%881%E6%97%A5%E3%81%AB%E9%A7%85%E8%BF%91%E3%82%A8%E3%83%AA%E3%82%A2%E5%87%BA%E5%BA%97%E3%81%A8%E3%81%AA%E3%82%8B%E3%80%8C%E5%B2%90%E9%98%9C%E9%A7%85%E5%89%8D%E5%BA%97%E3%80%8D%E3%82%92%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%EF%BC%81"
+                                   onClick="window.open(encodeURI(decodeURI(this.href)),
+                        'sharewindow',
+                        'width=550, height=450, personalbar=0, toolbar=0, scrollbars=1, resizable=!'
+                        ); return false;">
+                                    <span class="share-icon"></span>
+                                                                        <div class="share-title">はてな</div>
+                                </a>
+                            </li>
+                                                        <li class="imgDownload">
+                                <a class="button-share" href="/im/action.php?run=html&amp;page=releaseimage&amp;company_id=29713&amp;release_id=88">
+                                    <span class="share-icon"></span>
+                                    <div class="share-title">素材DL</div>
+                                </a>
+                            </li>
+                            
+                            <li class="others-button">
+                                <a href="javascript:void(0);">
+                                    <span class="others-point">・・・</span>
+                                    <div class="share-title">その他</div>
+                                </a>
+                            </li>
+                            <li class="others">
+                                <ul class="container-share-others">
+                                    <li class="sharemail">
+                                        <a class="button-share" href="mailto:?subject=賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！&amp;body=賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！%0d%0ahttps://prtimes.jp/main/html/rd/p/000000088.000029713.html">
+                                            <span class="share-icon"></span>
+                                            <div class="share-title">メール</div>
+                                        </a>
+                                    </li>
+                                    <li class="slack">
+                                        <a href="javascript:void(0);" class="button-share">
+                                            <span class="share-icon"></span>
+                                            <div class="share-title">Slack</div>
+                                        </a>
+                                    </li>
+
+                                    <li class="talknote">
+                                        <a class="button-share" href="https://company.talknote.com/share?url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html"
+                                           onClick='window.open("https://company.talknote.com/share?url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html", "", "width=400,height=350,resizable=yes"); return false;'>
+                                            <span class="share-icon"></span>
+                                            <div class="share-title">Talknote</div>
+                                        </a>
+                                    </li>
+
+                                    <li class="close-others">
+                                        <a href="javascript:void(0);">
+                                            <img src="/common/v4.1/images/html/share_close.png" width="20" height="58" alt="close" />
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                                                                    </header>
+
+                    
+                    
+                    
+                    
+
+                    
+                                        <!-- rich-text -->
+                    <div class="rbody">
+                        <div class="r-head">
+                            不動産賃貸仲介大手のハウスコム株式会社（所在地：東京都港区　代表取締役社長執行役員：田村 穂　東証一部 コード番号：3275）は、2020年7月1日に岐阜県で岐阜店に続いて2店舗目となる岐阜駅前店（岐阜県岐阜市）を新規オープンしました。この結果、当社直営店は全国 186店舗の体制となりました。
+                        </div>
+                        <div class="r-text clearfix">
+                            <div class="rich-text">
+                                <strong>＜新店舗概要＞</strong><br />
+岐阜駅前店(ぎふえきまえてん)<br />
+<strong>住所：</strong>〒500-8844<br />
+岐阜県岐阜市吉野町5-16　Mビル1階<br />
+<strong>交通：</strong>JR東海道本線 岐阜駅 徒歩1分<br />
+<strong>営業時間：</strong>10:00～18:30 (新型コロナウイルス感染拡大を受け、平日は10:00～18:00の短縮営業を予定)<br />
+<strong>定休日：</strong>水曜日
+
+<p id="p-iframe-image-23885-1"><span class="text-image-caption clearfix editor-image center" style=""><img src="/i/29713/88/resize/d29713-88-754818-1.jpg" style=" width: 650px; height: 365px;" alt="" /></span></p>
+<br />
+<strong>■ JR東海道本線「岐阜駅」の目の前、名鉄名古屋本線「名鉄岐阜駅」徒歩5分とアクセス抜群！ 岐阜市中心部からスタートするお部屋さがしに便利！</strong><br />
+<br />
+今回オープンする岐阜店はJR東海道本線「岐阜駅」北口ロータリー内の角地の1階。岐阜駅は岐阜県の県庁所在地である岐阜市の中核駅であり、県内随一の繁華街にも至近となっています。<br />
+<br />
+また、名鉄名古屋本線「名鉄岐阜駅」からも徒歩5分圏内のわかりやすい位置にあり、転勤・入学などをきっかけに、他エリアからのお引っ越しを考えるお客様にも訪れやすい立地となっています。<br />
+<br />
+岐阜駅周辺は長良川や金華山も近く身近に自然を感じることができる地域です。また、岐阜市内の主要施設・地域へのアクセスはもちろん、名古屋駅にも約20分で行くことができる、利便性も非常に高い場所となっています。<br />
+<br />
+<strong>■ 店舗網を順調に拡大中！全店でオンラインサービス提供！</strong><br />
+<br />
+当社は20年以上前より岐阜県庁に近いエリアに岐阜店を出店しており、岐阜駅からの送迎も行っていますが、今回岐阜駅前への出店となり、さらにさまざまなお客様に対応できるようになりました。<br />
+<br />
+また、WEBカメラでの接客、オンライン内見、IT重説などのオンライン接客の仕組みも全店舗で整っております。新型コロナウイルス感染拡大やその他のご都合でご来店が困難なお客様にもご満足いただけるよう、引き続きさらなる取り組みを進めてまいります。
+<p id="p-iframe-image-23885-2"><span class="text-image-caption clearfix editor-image center" style=""><img src="/i/29713/88/resize/d29713-88-287476-2.gif" style=" width: 300px; height: 300px;" alt="" /></span></p>
+<br />
+【ハウスコム株式会社　会社概要】<br />
+会社名：ハウスコム株式会社（東証一部　コード番号：3275）&nbsp;<br />
+代表者：代表取締役社長執行役員 田村 穂<br />
+所在地：〒108-0075　東京都港区港南2-16-1品川イーストワンタワー9階<br />
+資本金：4億2,463万円<br />
+店舗数：187店舗（直営店186店舗、FC1店舗）2020年6月1日現在&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+仲介件数：76,856件（2020年3月期）<br />
+<br />
+【リリース発信元】<br />
+ハウスコム株式会社　サービス・イノベーション室　森川／相原<br />
+TEL：03-6717-6939　FAX：03-6717-6901　URL：<a href="https://www.housecom.co.jp/" target="_blank" rel="nofollow ugc">https://www.housecom.co.jp/</a>
+                            </div>
+                                                                                                                                                                    </div>
+
+                    </div>
+                    
+                    
+
+                                                            
+                    <div class="releasefooter">
+                                                                        
+                        <div class="pos-rela">
+                            <div class="media-registbox">
+                                <h6 class="media-regist registtitle">このプレスリリースには、メディア関係者向けの情報があります。</h6>
+                                <ul>
+                                    <li class="container-media-registbutton">
+                                        <a href="/main/registmedia/form" target="_blank" class="media-registbutton button-blue">
+                                            メディアユーザー新規登録
+                                            <span>無料</span>
+                                        </a>
+                                    </li>
+                                    <li class="container-media-loginbutton">
+                                        <a href="/main/action.php?run=html&amp;page=medialogin&amp;company_id=29713&amp;release_id=88&amp;message=releasemediaonly&amp;uri=%2Fmain%2Fhtml%2Frd%2Fp%2F000000088.000029713.html" target="_self" class="media-loginbutton button-orange">
+                                            メディアユーザーログイン
+                                            <span>既に登録済みの方はこちら</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <p>
+                                    メディアユーザー登録を行うと、企業担当者の連絡先や、イベント・記者会見の情報など様々な特記情報を閲覧できます。<br>※内容はプレスリリースにより異なります。
+                                </p>
+                            </div>
+                        </div>
+
+                                                                    </div>
+
+                                    </div>
+                <ol class="directory-nav js-season_effect_end">
+                    <li><a href="/">プレスリリース</a> &gt;</li>
+                    <li><a href="/main/html/searchrlp/company_id/29713">ハウスコム株式会社</a> &gt;</li>
+                    <li>賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！</li>
+                </ol>
+
+                                <ul class="file">
+                                                            <li><a href="/a/?c=29713&amp;r=88&amp;f=d29713-88-pdf-0.pdf" class="btn-pdf" target="_blank">プレスリリースファイル</a></li>
+                                                                                
+                </ul>
+                
+                
+                <dl class="entry-info-renew">
+                    <dt>種類</dt>
+                    <dd><a href="/main/html/searchrlp/release_type_id/04">経営情報</a></dd>
+                                        <dt>ビジネスカテゴリ</dt>
+                    <dd><a href="/main/html/searchbiscate/busi_cate_id/020/lv2/69/">住宅・マンション</a><a href="/main/html/searchbiscate/busi_cate_id/028/lv2/76/">交通・運送・引越し</a></dd>
+                                                            <dt>位置情報</dt>
+                    <dd><a href="/main/html/searchcity/pref_id/13/city_id/13103/" class="location_link_city">東京都港区</a><a href="/main/html/searchloccate/location_cate_id/1/" class="location_link_cate">(本社・支社)</a><a href="/main/html/searchcity/pref_id/21/city_id/21201/" class="location_link_city">岐阜県岐阜市</a><a href="/main/html/searchloccate/location_cate_id/7/" class="location_link_cate">(販売・提供エリア)</a></dd>
+                                                            <dt>キーワード</dt>
+                    <dd>
+                        <ul>
+                                                        <li><a href="/topics/keywords/%E4%BB%B2%E4%BB%8B">仲介</a></li>
+                                                        <li><a href="/topics/keywords/%E5%B2%90%E9%98%9C">岐阜</a></li>
+                                                        <li><a href="/topics/keywords/%E8%B3%83%E8%B2%B8">賃貸</a></li>
+                                                        <li><a href="/topics/keywords/%E4%B8%8D%E5%8B%95%E7%94%A3">不動産</a></li>
+                                                        <li><a href="/topics/keywords/%E6%96%B0%E8%A6%8F%E5%87%BA%E5%BA%97">新規出店</a></li>
+                                                        <li><a href="/topics/keywords/%E3%82%AA%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%B3%E6%8E%A5%E5%AE%A2">オンライン接客</a></li>
+                                                        <li><a href="/topics/keywords/%E3%83%8F%E3%82%A6%E3%82%B9%E3%82%B3%E3%83%A0">ハウスコム</a></li>
+                                                        <li><a href="/topics/keywords/%E6%9D%B1%E6%B5%B7%E9%81%93%E6%9C%AC%E7%B7%9A">東海道本線</a></li>
+                                                        <li><a href="/topics/keywords/%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E6%8E%A5%E5%AE%A2">リモート接客</a></li>
+                                                        <li><a href="/topics/keywords/%E5%90%8D%E9%89%84%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%9C%AC%E7%B7%9A">名鉄名古屋本線</a></li>
+                                                    </ul>
+                    </dd>
+                                                            <dt>関連URL</dt>
+                    <dd><a href="https://www.housecom.co.jp/" target="_blank" rel="nofollow ugc noopener">https://www.housecom.co.jp/</a></dd>
+                                    </dl>
+                <aside>
+                                                            <div class="resources-download">
+                    <a href="/im/action.php?run=html&amp;page=releaseimage&amp;company_id=29713&amp;release_id=88" data-company="29713" data-release="88" class="resources-download-btn js-resources-download-btn">プレスリリース素材ダウンロード</a>
+                                        <p class="resources-download-text">このプレスリリース内で使われている画像ファイルがダウンロードできます。</p>
+                                        </div>                                                            <section>
+                      <h3 class="heading heading-image">プレスリリース画像一覧</h3>
+                        <div class="slider">
+                            <ul class="slide">
+                                                                <li><a href="/i/29713/88/resize/d29713-88-754818-1.jpg" class="gallery-img"><img src="/i/29713/88/thumb/168x110/d29713-88-754818-1.jpg" alt="image 0" width="168" height="110"></a></li>
+                                                                <li><a href="/i/29713/88/resize/d29713-88-755252-0.png" class="gallery-img"><img src="/i/29713/88/thumb/168x110/d29713-88-755252-0.png" alt="image 1" width="168" height="110"></a></li>
+                                                                <li><a href="/i/29713/88/resize/d29713-88-287476-2.gif" class="gallery-img"><img src="/i/29713/88/thumb/168x110/d29713-88-287476-2.gif" alt="image 2" width="168" height="110"></a></li>
+                                                            </ul>
+                            <ul>
+                                <li><a href="#" data-target="prev">前へ</a></li>
+                                <li><a href="#" data-target="next">次へ</a></li>
+
+                            </ul>
+                        </div>
+                    </section>
+                                                            <section class="inner container-related-release">
+                        <h3 class="heading heading-info">ハウスコム株式会社のプレスリリース</h3>
+                        <p class="dlmore">
+                            <a href="/main/html/searchrlp/company_id/29713" class="arrow">もっと見る</a>
+                        </p>
+                        <div class="clearfix"></div>
+                        <div class="container-related-release-item">
+                                                        <section class="item item-entry">
+                                <p class="img">
+                                    <a href="/main/html/rd/p/000000087.000029713.html"><img src="/i/29713/87/thumb/223x148/d29713-87-203267-2.jpg" alt="" width="223" height="148"></a>
+                                </p>
+                                <h4 class="title">
+                                    <a href="/main/html/rd/p/000000087.000029713.html">賃貸仲介のハウスコム、2020年度からは「″アフターデジタル″時代の不動産業者」へ～本年度の経営計画発表説明会をオンラインで実施～</a>
+                                </h4>
+                                <time class="time icon-time-release-svg" datetime="2020-06-22T15:00:59+0900">2020年6月22日 15時00分</time>
+                            </section>
+                                                        <section class="item item-entry">
+                                <p class="img">
+                                    <a href="/main/html/rd/p/000000086.000029713.html"><img src="/i/29713/86/thumb/223x148/d29713-86-554045-1.jpg" alt="" width="223" height="148"></a>
+                                </p>
+                                <h4 class="title">
+                                    <a href="/main/html/rd/p/000000086.000029713.html">賃貸仲介のハウスコム、6月1日（月）に名古屋市北区2店舗目になる「黒川店」をオープン！</a>
+                                </h4>
+                                <time class="time icon-time-release-svg" datetime="2020-06-01T13:13:16+0900">2020年6月1日 13時13分</time>
+                            </section>
+                                                        <section class="item item-entry">
+                                <p class="img">
+                                    <a href="/main/html/rd/p/000000085.000029713.html"><img src="/i/29713/85/thumb/223x148/d29713-85-671151-2.jpg" alt="" width="223" height="148"></a>
+                                </p>
+                                <h4 class="title">
+                                    <a href="/main/html/rd/p/000000085.000029713.html">賃貸仲介のハウスコム、営業スタッフに位置情報提供システム「ココセコム」を配布</a>
+                                </h4>
+                                <time class="time icon-time-release-svg" datetime="2020-05-19T11:01:10+0900">2020年5月19日 11時00分</time>
+                            </section>
+                                                    </div>
+                    </section>
+                                    </aside>
+                            </article>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <aside id="share" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <p>その他のシェア</p>
+                    <ul>
+                        <li><a href="#" data-api="mail"><span></span>メールで送る</a></li>
+                        <li><a href="#" target="_blank" data-api="line"><span></span>LINEで送る</a></li>
+                        <li><a href="//b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple" title="このエントリーをはてなブックマークに追加"><span></span>はてブに送る</a></li>
+                    </ul>
+                    <p><a href="#" data-dismiss="modal" aria-hidden="true">&times;</a></p>
+                </div>
+            </div>
+        </aside>
+
+
+        
+        <aside id="login" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <p class="login-modal-title">ログイン</p>
+            <p class="login-modal-sort-text">会員種別をお選びください</p>
+            <ul>
+                <li>
+                    <a href="/auth/login" class="login-modal-company-button">
+                        <span class="login-modal-company-button-main">企業・事業主ユーザー</span>
+                        <span class="login-modal-company-button-desc">（配信する）</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/main/html/medialogin" class="login-modal-media-button">
+                        <span class="login-modal-media-button-main">メディア・個人ユーザー</span>
+                        <span class="login-modal-media-button-desc">（受信する）</span>
+                    </a>
+                </li>
+                <li>
+                    <p class="follower">フォロワーの方はこちら</p>
+                    <a href="/api/supporter_login.php?ref=admin" target="_self" class="fblogin button-facebook-blue">Facebookでログインまたは登録</a>
+                </li>
+            </ul>
+            <p>
+                <a href="#" data-dismiss="modal" aria-hidden="true">&times;</a>
+            </p>
+        </div>
+    </div>
+</aside>
+
+<aside class="modal--follow-company hide--invisible" id="js-share-company-modal">
+    <a class="__close-button"><img src="/common/v4/html_m/images/close-window-icon.png" width="20" height="20" alt="close"></a>
+    <script id="js-company_li_template" type="text/x-mustache-template">
+        <li class="__company">
+            <div class="__company_container">
+                <a class="__company-name" href="/main/html/searchrlp/company_id/{{company_id}}">{{company_name}}</a>
+                <a class="button--follow" href="#">フォロー</a>
+            </div>
+        </li>
+    </script>
+    <div class="__modal-dialog-container">
+        <div class="__modal-dialog">
+            <section class="__modal-content">
+                <h5 class="__heading">フォローありがとうございました！</h5>
+                <p class="__message">これらの企業をフォローしてみませんか？</p>
+                <ul class="__company-list">
+                </ul>
+            </section>
+        </div>
+    </div>
+</aside>
+
+<script id="js-modal--share-company-template" type="text/x-mustache-template">
+    <aside class="modal--share-company hide--invisible" id="js-share-company-modal">
+        <a class="__close-button js-cancel-share"><img src="/common/v4/html_m/images/close-window-icon.png" width="20" height="20" alt="close"></a>
+        <div class="__modal-dialog-container">
+            <div class="__modal-dialog">
+                <section class="__modal-content">
+                    <h5 class="__heading">フォローありがとうございました！</h5>
+                    <p class="__message">フォローしたことをFacebookにシェアして、企業を応援しませんか？</p>
+                    <section class="__form">
+                        <p>{{company_name}}</p>
+                        <div class="__buttons">
+                            <a class="base-button js-cancel-share">キャンセル</a>
+                            <a class="base-button js-cancel-share"
+                               href="javascript:window.open('http://www.facebook.com/sharer.php?u='+'https://prtimes.jp/main/html/searchrlp/company_id/29713',
+                               'sharewindow',
+                               'width=550, height=450, personalbar=0, toolbar=0, scrollbars=1, resizable=!' + ',left=' + ( screen.width-550 ) / 2 + ',top=' + ( screen.height-450 ) / 2);
+                               void(0);">
+                                <span>シェア</span>
+                            </a>
+                        </div>
+                    </section>
+                </section>
+            </div>
+        </div>
+    </aside>
+</script>        <div class="prev-top" data-target="prev-top"><a href="#">ページトップへ戻る<span></span></a></div>    </main>
+
+
+    <div id="sidebar" class="sidebar">
+        <aside class="sidebar-release">
+            <h2>ハウスコム株式会社</h2>
+            <p class="sidebar-releaseArrow"></p>
+                <section>
+        <ul id="containerFollow" class="container-follow">
+            <li id="follow" class="btn-follow">
+                <input type="hidden" name="follow" value="29713" id="follow_company_id">
+                                                        <a href="#" class="supporter button-white" data-login="false" data-supportercheck="false" data-toggle="modal" data-target="#facebook-login">フォロー</a>
+                            </li>
+            <li id="supporter" class="btn-supporter-help">
+                <a href="#" id="questionFollowing" class="questionbox button-gray">
+                    フォローするとどうなる?
+                </a>
+
+                <div id="answerFollowing" class=" wrap-answer-following balloon tip-balloon-top">
+                    <p class=" content-answer-following content-balloon">
+                        フォローするとどうなる？<br>
+                        <span>フォローした企業がプレスリリースを配信すると、あなたにお知らせメールが届きます。また、あなたのアカウント画面には、フォローした企業のプレスリリースがタイムライン表示されます。フォローするには、Facebookアカウントを使用してログインする必要があります。</span>
+                    </p>
+                </div>
+            </li>
+        </ul>
+        <h4 class="sup-title">
+            フォロワー(<span class="__follower_count">5</span>)<a href="#" class="supportershow">もっと見る</a>
+        </h4>
+        <div class="supporterwrapper">
+          <ul class="supporterlist">
+                                <li class="supporterImg" data-uid="807170353138294">
+              <img src="https://graph.facebook.com/807170353138294/picture?width=43&amp;height=43" alt="" />
+            </li>
+                      <li class="supporterImg" data-uid="697289484138091">
+              <img src="https://graph.facebook.com/697289484138091/picture?width=43&amp;height=43" alt="" />
+            </li>
+                      <li class="supporterImg" data-uid="444450082762579">
+              <img src="https://graph.facebook.com/444450082762579/picture?width=43&amp;height=43" alt="" />
+            </li>
+                      <li class="supporterImg" data-uid="1028829097200349">
+              <img src="https://graph.facebook.com/1028829097200349/picture?width=43&amp;height=43" alt="" />
+            </li>
+                      <li class="supporterImg" data-uid="955426507834592">
+              <img src="https://graph.facebook.com/955426507834592/picture?width=43&amp;height=43" alt="" />
+            </li>
+                              </ul>
+          <input type="hidden" value="" id="js-current-uid"/>
+        </div>
+        <input type="hidden" value="" id="js-current-uid"/>
+    </section>
+    <aside id="facebook-login" class="modal fade in">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="logo-in-modal">
+                <img src="/common/v4/html/images/logo.png" alt="プレスリリース・ニュースリリース配信サービスのPR TIMES">
+            </div>
+            <h6 class="header-in-modal">
+                フォローするには、Facebookログインを行う必要があります。
+            </h6>
+            <a class="facebook-login-chk button-facebook-blue" href="/api/supporter_login.php">Facebookでログインまたは登録</a>
+
+            <div class="note-in-modal">
+                フォローするとどうなる？<br/>
+                フォローした企業がプレスリリースを配信すると、あなたにお知らせメールが届きます。<br/>
+                また、あなたのアカウント画面には、フォローした企業のプレスリリースタイムラインが表示されます。
+            </div>
+        </div>
+    </div>
+</aside>            <ul id="containerInformationCompany" class="container-information-company">
+  <li>
+    <span class="head-information">
+      URL
+    </span>
+    <span class="body-information">
+      <a href="http://www.housecom.co.jp/" target="_blank" rel="nofollow noopener">http://www.housecom.co.jp/</a>    </span>
+  </li>
+  <li>
+    <span class="head-information">
+      業種
+    </span>
+    <span class="body-information">
+            不動産業
+          </span>
+  </li>
+  <li>
+    <span class="head-information">
+      本社所在地
+    </span>
+    <span class="body-information">
+      東京都港区港南2-16-1<br>品川イーストワンタワー9階
+    </span>
+  </li>
+  <li>
+    <span class="head-information">
+      電話番号
+    </span>
+    <span class="body-information">
+      03-6717-6900    </span>
+  </li>
+  <li>
+    <span class="head-information">
+      代表者名
+    </span>
+    <span class="body-information">
+      田村 穂
+    </span>
+  </li>
+  <li>
+    <span class="head-information">
+      上場
+    </span>
+    <span class="body-information">
+      東証1部
+    </span>
+  </li>
+  <li>
+    <span class="head-information">
+      資本金
+    </span>
+    <span class="body-information">
+      4億2463万円    </span>
+  </li>
+</ul>
+<div class="rss-link">
+  <a href="/companyrdf.php?company_id=29713" target="_blank"><svg height="16" viewBox="0 0 16 16" width="16" xmlns="https://www.w3.org/2000/svg"><defs><style type="text/css">.header_rss {fill-rule: evenodd;}</style></defs><path class="header_rss edit_navigation_icon" d="M2547.09,128a3.086,3.086,0,1,0-3.09-3.086A3.094,3.094,0,0,0,2547.09,128Zm-3.09-8a0.633,0.633,0,0,0,.63.627h2.46a4.293,4.293,0,0,1,4.29,4.291v2.459a0.627,0.627,0,0,0,.63.627h2.46a0.625,0.625,0,0,0,.62-0.627v-2.459a8.01,8.01,0,0,0-8-8h-2.46a0.633,0.633,0,0,0-.63.627V120Zm12.92,8h2.46a0.627,0.627,0,0,0,.63-0.627v-2.459A12.936,12.936,0,0,0,2547.09,112h-2.46a0.633,0.633,0,0,0-.63.627v2.458a0.633,0.633,0,0,0,.63.626h2.46a9.219,9.219,0,0,1,9.21,9.208v2.459A0.625,0.625,0,0,0,2556.92,128Z" data-name="header_search" id="header_search" transform="translate(-2544 -112)"></path></svg>RSS</a>
+</div>        </aside>
+        <div class="clearfix"></div>
+        <h4 class="heading heading-icon heading-sidebar heading-sidebar-search">検索</h4>
+<div class="container-form-search">
+        <div class="form-search form-search-right">
+        <input type="hidden" value="html" name="run">
+        <input type="hidden" value="searchkey" name="page">
+        <input type="text" class="input-keyword" placeholder="キーワードで検索" name="search_word">
+        <input name="search_pattern" type="hidden" value="1" />
+        <button class="button button-search icon icon-button-search button-darkgray" type="submit">検索</button>
+    </div>
+    </div>        <div class="bdr-top-bottom mb15"></div>
+        <aside id="sidebar_related_topics" class="sidebar-item sidebar-item-relatedtopics">
+  <h4 class="heading heading-icon heading-sidebar heading-sidebar-relatedtopics">関連プレスリリース</h4>
+  <ul id="listRelatedTopics" class="list-popular-item list-relatedtopics">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000186.000007875.html" style="background-image:url(/i/7875/186/thumb/68x45/d7875-186-694225-0.png);" title="[住まいサーフィン]資産性マンションがわかる！首都圏エリア別「沖式儲かる確率マンションランキングTOP..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000186.000007875.html">[住まいサーフィン]資産性マンションがわかる！首都圏エリア別「沖式儲かる確率マンションランキングTOP...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/7875">スタイルアクト株式会社</a>
+        </div>
+        <div class="information-item">
+            <time datetime="2020-07-01T12:20:02+0900" class="time-release time-release-ordinary icon-time-release-svg">59分前</time>
+        </div>
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000039.000030510.html" style="background-image:url(/i/30510/39/thumb/68x45/d30510-39-418073-0.png);" title="建設業の働き方改革を推進する施工・図面管理アプリSPIDERPLUS®︎(スパイダープラス)が「IT導入補助金202..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000039.000030510.html">建設業の働き方改革を推進する施工・図面管理アプリSPIDERPLUS®︎(スパイダープラス)が「IT導入補助金202...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30510">株式会社レゴリス</a>
+        </div>
+        <div class="information-item">
+            <time datetime="2020-07-01T12:10:13+0900" class="time-release time-release-ordinary icon-time-release-svg">1時間前</time>
+        </div>
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000168.000024137.html" style="background-image:url(/i/24137/168/thumb/68x45/d24137-168-940194-0.jpg);" title="TKP、名古屋市の新築ビル「名駅ダイヤメイテツビル」に出店　「TKPガーデンシティPREMIUM名古屋駅前」　..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000168.000024137.html">TKP、名古屋市の新築ビル「名駅ダイヤメイテツビル」に出店　「TKPガーデンシティPREMIUM名古屋駅前」　...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/24137">株式会社ティーケーピー</a>
+        </div>
+        <div class="information-item">
+            <time datetime="2020-07-01T12:10:09+0900" class="time-release time-release-ordinary icon-time-release-svg">1時間前</time>
+        </div>
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000015.000044375.html" style="background-image:url(/i/44375/15/thumb/68x45/d44375-15-159365-0.jpg);" title="IPPOがVC・エンジェルと提携し、スタートアップ・ベンチャー向けオフィスブランド「カタリバ」の提供を..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000015.000044375.html">IPPOがVC・エンジェルと提携し、スタートアップ・ベンチャー向けオフィスブランド「カタリバ」の提供を...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/44375">株式会社IPPO</a>
+        </div>
+        <div class="information-item">
+            <time datetime="2020-07-01T12:02:23+0900" class="time-release time-release-ordinary icon-time-release-svg">1時間前</time>
+        </div>
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000025.000052843.html" style="background-image:url(/i/52843/25/thumb/68x45/d52843-25-204510-4.jpg);" title="「東京駅前八重洲一丁目東B地区市街地再開発事業」権利変換計画認可について"></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000025.000052843.html">「東京駅前八重洲一丁目東B地区市街地再開発事業」権利変換計画認可について</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/52843">東京建物株式会社</a>
+        </div>
+        <div class="information-item">
+            <time datetime="2020-07-01T11:37:06+0900" class="time-release time-release-ordinary icon-time-release-svg">1時間前</time>
+        </div>
+    </li>
+                          </ul>
+</aside>
+        <aside class="sidebar-item sidebar-item-topical" id="sidebarTopical">
+  <h4 class="heading-sidebar-inner heading heading-icon heading-sidebar heading-sidebar-topical">プレスリリース ランキング</h4>
+  <nav class="nav-select-term" id="navSelectTerm">
+    <ul class="tab-select-term tab-select-term-topical" id="tabSelectTerm">
+      <li class="container-tab"><a class="tab tab-today active" href="#time" id="tabTime">いま話題</a></li>
+      <li class="container-tab"><a class="tab tab-today" href="#today" id="tabToday">今日</a></li>
+      <li class="container-tab"><a class="tab tab-thisweek" href="#this-week" id="tabThisWeek">今週</a></li>
+      <li class="container-tab"><a class="tab tab-this-month" href="#this-month" id="tabThisMonth">今月</a></li>
+    </ul>
+  </nav>
+
+<ul class="list-popular-item list-topical list-topical-time" id="listTopicalTime">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000154.000030865.html" style="background-image:url(/i/30865/154/thumb/68x45/d30865-154-312382-10.png);" title="「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000154.000030865.html">「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item"><div class="rank">1</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000056.000029334.html" style="background-image:url(/i/29334/56/thumb/68x45/d29334-56-758992-4.png);" title="動画の会社を超えて、物語の会社へ。"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000056.000029334.html">動画の会社を超えて、物語の会社へ。</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/29334">ワンメディア株式会社</a>
+            <div class="information-item"><div class="rank">2</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000093.000021111.html" style="background-image:url(/i/21111/93/thumb/68x45/d21111-93-721396-0.png);" title="キングコング 西野亮廣氏が、株式会社Voicyに株主として参画"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000093.000021111.html">キングコング 西野亮廣氏が、株式会社Voicyに株主として参画</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/21111">株式会社Voicy</a>
+            <div class="information-item"><div class="rank">3</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000080.000037407.html" style="background-image:url(/i/37407/80/thumb/68x45/d37407-80-183691-0.jpg);" title="【株式会社茨城ロボッツ・スポーツエンターテインメント】株主変更並びに増減資による資本増強並びに役..."></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000080.000037407.html">【株式会社茨城ロボッツ・スポーツエンターテインメント】株主変更並びに増減資による資本増強並びに役...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/37407">株式会社茨城ロボッツ・スポーツエンターテインメント</a>
+            <div class="information-item"><div class="rank">4</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000005.000036784.html" style="background-image:url(/i/36784/5/thumb/68x45/d36784-5-230921-0.jpg);" title="メイベリン ニューヨーク、ジャパン ブランドサポーターに錦戸 亮が就任！"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000005.000036784.html">メイベリン ニューヨーク、ジャパン ブランドサポーターに錦戸 亮が就任！</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/36784">日本ロレアル株式会社</a>
+            <div class="information-item"><div class="rank">5</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000003.000057738.html" style="background-image:url(/i/57738/3/thumb/68x45/d57738-3-881184-0.png);" title="元サイバーエージェント、元マイクロアドの佐々木誠氏が執行役員COOに就任"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000003.000057738.html">元サイバーエージェント、元マイクロアドの佐々木誠氏が執行役員COOに就任</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/57738">株式会社プリンシプル</a>
+            <div class="information-item"><div class="rank">6</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000002.000059429.html" style="background-image:url(/i/59429/2/thumb/68x45/d59429-2-248328-0.png);" title="株式会社LARME、シードラウンドにて資金調達を実施。また、株式会社富士山マガジンサービスとの業務提携..."></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000002.000059429.html">株式会社LARME、シードラウンドにて資金調達を実施。また、株式会社富士山マガジンサービスとの業務提携...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/59429">株式会社LARME</a>
+            <div class="information-item"><div class="rank">7</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000231.000027480.html" style="background-image:url(/i/27480/231/thumb/68x45/d27480-231-845120-0.jpg);" title="サントリー緑茶「伊右衛門 特茶（特定保健用食品）」新TV－CM「JUMP」篇　7月1日（水）から全国でオンエ..."></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000231.000027480.html">サントリー緑茶「伊右衛門 特茶（特定保健用食品）」新TV－CM「JUMP」篇　7月1日（水）から全国でオンエ...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/27480">サントリー食品インターナショナル株式会社</a>
+            <div class="information-item"><div class="rank">8</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000001.000060946.html" style="background-image:url(/i/60946/1/thumb/68x45/d60946-1-193559-0.png);" title="世界初※の144Hz高速大画面を搭載した5G対応のゲーミングスマホ『RedMagic 5』が日本"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000001.000060946.html">世界初※の144Hz高速大画面を搭載した5G対応のゲーミングスマホ『RedMagic 5』が日本</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/60946">Nubia Technology Co., Ltd.</a>
+            <div class="information-item"><div class="rank">9</div></div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000032.000020246.html" style="background-image:url(/i/20246/32/thumb/68x45/d20246-32-219500-1.jpg);" title="早稲田大学、世界標準入試システム「The Admissions Office」を採用"></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000032.000020246.html">早稲田大学、世界標準入試システム「The Admissions Office」を採用</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/20246">株式会社サマデイ</a>
+            <div class="information-item"><div class="rank">10</div></div>
+        </div>
+
+    </li>
+                                                                                    </ul>
+
+
+<ul class="list-popular-item list-topical list-topical-today hide" id="listTopicalToday">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000023.000058844.html" style="background-image:url(/i/58844/23/thumb/68x45/d58844-23-823516-0.jpg);" title="【日本製】１日５円の洗える抗菌布マスク！ヤマダ電機に続きビックカメラで販売決定！内側抗菌ガーゼ仕..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000023.000058844.html">【日本製】１日５円の洗える抗菌布マスク！ヤマダ電機に続きビックカメラで販売決定！内側抗菌ガーゼ仕...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/58844">宏福商事合同会社</a>
+            <div class="information-item">
+                <div class="rank">1</div>
+                <div class="pv">88,226 PV / 81,695 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000154.000030865.html" style="background-image:url(/i/30865/154/thumb/68x45/d30865-154-312382-10.png);" title="「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000154.000030865.html">「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item">
+                <div class="rank">2</div>
+                <div class="pv">63,771 PV / 60,234 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000151.000030865.html" style="background-image:url(/i/30865/151/thumb/68x45/d30865-151-712762-4.jpg);" title="VTuber / バーチャルライバーグループ「にじさんじ」より2名が新たにデビュー！本日より始動！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000151.000030865.html">VTuber / バーチャルライバーグループ「にじさんじ」より2名が新たにデビュー！本日より始動！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item">
+                <div class="rank">3</div>
+                <div class="pv">62,571 PV / 57,993 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000016.000042147.html" style="background-image:url(/i/42147/16/thumb/68x45/d42147-16-298710-4.png);" title="水道水だけで次亜塩素酸水を生成するナジュプラスのHPをリニューアルしました。"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000016.000042147.html">水道水だけで次亜塩素酸水を生成するナジュプラスのHPをリニューアルしました。</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/42147">株式会社PigNoN</a>
+            <div class="information-item">
+                <div class="rank">4</div>
+                <div class="pv">44,602 PV / 44,599 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000020.000042147.html" style="background-image:url(/i/42147/20/thumb/68x45/d42147-20-957565-3.png);" title="NEWブランド【NAJU no.7】が遂に始動。新しいスタイル、ダイヤモンドをあしらったマネークリップ。先行..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000020.000042147.html">NEWブランド【NAJU no.7】が遂に始動。新しいスタイル、ダイヤモンドをあしらったマネークリップ。先行...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/42147">株式会社PigNoN</a>
+            <div class="information-item">
+                <div class="rank">5</div>
+                <div class="pv">29,832 PV / 29,825 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000001529.000018131.html" style="background-image:url(/i/18131/1529/thumb/68x45/d18131-1529-742615-0.jpg);" title="【持ち運びに便利】アウトドア派のためのモバイルバッテリーをヴィレッジヴァンガードオンライン店で取..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000001529.000018131.html">【持ち運びに便利】アウトドア派のためのモバイルバッテリーをヴィレッジヴァンガードオンライン店で取...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/18131">株式会社ヴィレッジヴァンガードコーポレーション</a>
+            <div class="information-item">
+                <div class="rank">6</div>
+                <div class="pv">25,023 PV / 25,023 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000015.000052832.html" style="background-image:url(/i/52832/15/thumb/68x45/d52832-15-840358-0.jpg);" title="日本製、接触冷感マスクを開発！　不織布マスクとの温度差マイナス4℃！『COOL MOVEシャツ生地使用洗える..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000015.000052832.html">日本製、接触冷感マスクを開発！　不織布マスクとの温度差マイナス4℃！『COOL MOVEシャツ生地使用洗える...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/52832">株式会社コナカ</a>
+            <div class="information-item">
+                <div class="rank">7</div>
+                <div class="pv">19,001 PV / 18,436 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000005.000053976.html" style="background-image:url(/i/53976/5/thumb/68x45/d53976-5-265690-6.png);" title="まさかの岩手県がインストール率No.1！新型コロナウイルス接触確認アプリの実態調査"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000005.000053976.html">まさかの岩手県がインストール率No.1！新型コロナウイルス接触確認アプリの実態調査</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/53976">株式会社HANABISHI</a>
+            <div class="information-item">
+                <div class="rank">8</div>
+                <div class="pv">18,519 PV / 17,766 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000013.000052363.html" style="background-image:url(/i/52363/13/thumb/68x45/d52363-13-513765-4.jpg);" title="【追加入荷のお知らせ】1枚170円の冷感夏用マスク35万枚の追加入荷を決定いたしました。"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000013.000052363.html">【追加入荷のお知らせ】1枚170円の冷感夏用マスク35万枚の追加入荷を決定いたしました。</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/52363">カラフル株式会社</a>
+            <div class="information-item">
+                <div class="rank">9</div>
+                <div class="pv">17,379 PV / 16,439 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000039.000056550.html" style="background-image:url(/i/56550/39/thumb/68x45/d56550-39-662982-2.jpg);" title="【進化した夏の必需品】「NEW COLD MASK」いよいよ発売日決定！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000039.000056550.html">【進化した夏の必需品】「NEW COLD MASK」いよいよ発売日決定！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/56550">株式会社ギャレリアインターナショナル</a>
+            <div class="information-item">
+                <div class="rank">10</div>
+                <div class="pv">16,981 PV / 16,537 UU</div>
+            </div>
+        </div>
+
+    </li>
+                                                                                    </ul>
+
+  <ul class="list-popular-item list-topical list-topical-week hide" id="listTopicalThisWeek">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000007.000059085.html" style="background-image:url(/i/59085/7/thumb/68x45/d59085-7-698755-0.png);" title="夏向けマスク！50枚入/680円から！やわらか快適白マスク！特徴は紐丈夫、そして息苦しくないこと！全国..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000007.000059085.html">夏向けマスク！50枚入/680円から！やわらか快適白マスク！特徴は紐丈夫、そして息苦しくないこと！全国...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/59085">RedHat株式会社</a>
+            <div class="information-item">
+                <div class="rank">1</div>
+                <div class="pv">290,166 PV / 269,724 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000016.000042147.html" style="background-image:url(/i/42147/16/thumb/68x45/d42147-16-298710-4.png);" title="水道水だけで次亜塩素酸水を生成するナジュプラスのHPをリニューアルしました。"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000016.000042147.html">水道水だけで次亜塩素酸水を生成するナジュプラスのHPをリニューアルしました。</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/42147">株式会社PigNoN</a>
+            <div class="information-item">
+                <div class="rank">2</div>
+                <div class="pv">191,567 PV / 191,495 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000169.000018984.html" style="background-image:url(/i/18984/169/thumb/68x45/d18984-169-124016-2.jpg);" title="半額以下で販売させてください"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000169.000018984.html">半額以下で販売させてください</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/18984">株式会社PAPABUBBLE JAPAN</a>
+            <div class="information-item">
+                <div class="rank">3</div>
+                <div class="pv">102,841 PV / 98,870 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000023.000058844.html" style="background-image:url(/i/58844/23/thumb/68x45/d58844-23-823516-0.jpg);" title="【日本製】１日５円の洗える抗菌布マスク！ヤマダ電機に続きビックカメラで販売決定！内側抗菌ガーゼ仕..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000023.000058844.html">【日本製】１日５円の洗える抗菌布マスク！ヤマダ電機に続きビックカメラで販売決定！内側抗菌ガーゼ仕...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/58844">宏福商事合同会社</a>
+            <div class="information-item">
+                <div class="rank">4</div>
+                <div class="pv">88,226 PV / 81,695 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000086.000047538.html" style="background-image:url(/i/47538/86/thumb/68x45/d47538-86-728868-0.jpg);" title="【松屋】「鰻バーガー」発売！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000086.000047538.html">【松屋】「鰻バーガー」発売！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/47538">株式会社松屋フーズホールディングス</a>
+            <div class="information-item">
+                <div class="rank">5</div>
+                <div class="pv">77,944 PV / 73,725 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000015.000052832.html" style="background-image:url(/i/52832/15/thumb/68x45/d52832-15-840358-0.jpg);" title="日本製、接触冷感マスクを開発！　不織布マスクとの温度差マイナス4℃！『COOL MOVEシャツ生地使用洗える..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000015.000052832.html">日本製、接触冷感マスクを開発！　不織布マスクとの温度差マイナス4℃！『COOL MOVEシャツ生地使用洗える...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/52832">株式会社コナカ</a>
+            <div class="information-item">
+                <div class="rank">6</div>
+                <div class="pv">64,312 PV / 61,349 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000154.000030865.html" style="background-image:url(/i/30865/154/thumb/68x45/d30865-154-312382-10.png);" title="「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000154.000030865.html">「にじさんじ七夕グッズ2020」7月1日(水)12時より発売決定！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item">
+                <div class="rank">7</div>
+                <div class="pv">63,771 PV / 60,234 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000151.000030865.html" style="background-image:url(/i/30865/151/thumb/68x45/d30865-151-712762-4.jpg);" title="VTuber / バーチャルライバーグループ「にじさんじ」より2名が新たにデビュー！本日より始動！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000151.000030865.html">VTuber / バーチャルライバーグループ「にじさんじ」より2名が新たにデビュー！本日より始動！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item">
+                <div class="rank">8</div>
+                <div class="pv">62,571 PV / 57,993 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000021.000058844.html" style="background-image:url(/i/58844/21/thumb/68x45/d58844-21-286335-0.jpg);" title="【日本製】1日5円洗える立体マスク　夏限定！冷感ボトルスプレープレゼント！365回洗っても抗菌維持する..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000021.000058844.html">【日本製】1日5円洗える立体マスク　夏限定！冷感ボトルスプレープレゼント！365回洗っても抗菌維持する...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/58844">宏福商事合同会社</a>
+            <div class="information-item">
+                <div class="rank">9</div>
+                <div class="pv">61,071 PV / 57,354 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000001.000060233.html" style="background-image:url(/i/60233/1/thumb/68x45/d60233-1-216647-0.jpg);" title="不織布マスクでも布マスクでもない第三のマスク「シリコンマスク」の製造プロジェクトが始動"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000001.000060233.html">不織布マスクでも布マスクでもない第三のマスク「シリコンマスク」の製造プロジェクトが始動</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/60233">株式会社トポロジー</a>
+            <div class="information-item">
+                <div class="rank">10</div>
+                <div class="pv">50,758 PV / 48,526 UU</div>
+            </div>
+        </div>
+
+    </li>
+                                                                                      </ul>
+
+  <ul class="list-popular-item list-topical list-topical-month hide" id="listTopicalThisMonth">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000146.000030865.html" style="background-image:url(/i/30865/146/thumb/68x45/d30865-146-730012-2.jpg);" title="VTuberグループ「にじさんじ」を運営するいちからが、任天堂株式会社の著作物の利用に関する包括的許諾..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000146.000030865.html">VTuberグループ「にじさんじ」を運営するいちからが、任天堂株式会社の著作物の利用に関する包括的許諾...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/30865">いちから株式会社</a>
+            <div class="information-item">
+                <div class="rank">1</div>
+                <div class="pv">921,146 PV / 862,497 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000005.000059085.html" style="background-image:url(/i/59085/5/thumb/68x45/d59085-5-329512-2.jpg);" title="700円50枚入りマスク！　10箱からのご購入！BFE99％！　在庫処分！　残りわずか！3層不織布『全国送料無..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000005.000059085.html">700円50枚入りマスク！　10箱からのご購入！BFE99％！　在庫処分！　残りわずか！3層不織布『全国送料無...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/59085">RedHat株式会社</a>
+            <div class="information-item">
+                <div class="rank">2</div>
+                <div class="pv">498,643 PV / 465,887 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000003.000056737.html" style="background-image:url(/common/v3/blank/68x45.png);" title="北大研究グループが第二弾発表 「次亜塩素酸水」のウイルス不活化"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000003.000056737.html">北大研究グループが第二弾発表 「次亜塩素酸水」のウイルス不活化</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/56737">株式会社あかりみらい</a>
+            <div class="information-item">
+                <div class="rank">3</div>
+                <div class="pv">462,686 PV / 445,184 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000002152.000007505.html" style="background-image:url(/i/7505/2152/thumb/68x45/d7505-2152-308654-0.jpg);" title="夏にうれしい ♪　つけた瞬間 “ひんやり” する【マスク】をオンラインショップで1枚398円、３枚セット1,0..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000002152.000007505.html">夏にうれしい ♪　つけた瞬間 “ひんやり” する【マスク】をオンラインショップで1枚398円、３枚セット1,0...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/7505">イオン株式会社</a>
+            <div class="information-item">
+                <div class="rank">4</div>
+                <div class="pv">450,344 PV / 419,949 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000031.000018230.html" style="background-image:url(/i/18230/31/thumb/68x45/d18230-31-549574-1.png);" title="「マスク通販最安値.com」が子供・女性向けマスクなどの商品を価格比較対象に追加"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000031.000018230.html">「マスク通販最安値.com」が子供・女性向けマスクなどの商品を価格比較対象に追加</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/18230">InSync株式会社</a>
+            <div class="information-item">
+                <div class="rank">5</div>
+                <div class="pv">413,979 PV / 287,876 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000030.000018230.html" style="background-image:url(/i/18230/30/thumb/68x45/d18230-30-305788-2.png);" title="「通販マスク1枚9円台」に、通販最安値を更新。「マスク通販最安値.com」の定点観測"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000030.000018230.html">「通販マスク1枚9円台」に、通販最安値を更新。「マスク通販最安値.com」の定点観測</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/18230">InSync株式会社</a>
+            <div class="information-item">
+                <div class="rank">6</div>
+                <div class="pv">401,836 PV / 275,189 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000188.000032350.html" style="background-image:url(/i/32350/188/thumb/68x45/d32350-188-943925-0.jpg);" title="「かつや」の定食で「養老牛丼」⁉定食のご飯を「牛丼」にしよう！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000188.000032350.html">「かつや」の定食で「養老牛丼」⁉定食のご飯を「牛丼」にしよう！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/32350">アークランドサービスホールディングス株式会社</a>
+            <div class="information-item">
+                <div class="rank">7</div>
+                <div class="pv">398,105 PV / 369,004 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000021.000045862.html" style="background-image:url(/i/45862/21/thumb/68x45/d45862-21-926264-0.png);" title="Big Hit Entertainmentがいよいよ日本にて本格始動！"></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000021.000045862.html">Big Hit Entertainmentがいよいよ日本にて本格始動！</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/45862">株式会社Big Hit Entertainment Japan</a>
+            <div class="information-item">
+                <div class="rank">8</div>
+                <div class="pv">372,203 PV / 358,913 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000143.000010201.html" style="background-image:url(/i/10201/143/thumb/68x45/d10201-143-127489-0.jpg);" title="大好評『西川の100回洗えるマスク』から新たにクールタイプとL（大判）サイズが登場！さらに、『西川だ..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000000143.000010201.html">大好評『西川の100回洗えるマスク』から新たにクールタイプとL（大判）サイズが登場！さらに、『西川だ...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/10201">西川株式会社</a>
+            <div class="information-item">
+                <div class="rank">9</div>
+                <div class="pv">352,700 PV / 342,882 UU</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000002145.000007505.html" style="background-image:url(/i/7505/2145/thumb/68x45/d7505-2145-531932-7.png);" title="【アパレル専門店のコックス】スーッと爽快！さらさら快適”ひやっ”と冷たい「ひやマスク」がikkaより登..."></a></figure>
+            <a class="link-item" href="/main/html/rd/p/000002145.000007505.html">【アパレル専門店のコックス】スーッと爽快！さらさら快適”ひやっ”と冷たい「ひやマスク」がikkaより登...</a>
+            <a class="name-company" href="/main/html/searchrlp/company_id/7505">イオン株式会社</a>
+            <div class="information-item">
+                <div class="rank">10</div>
+                <div class="pv">351,381 PV / 330,960 UU</div>
+            </div>
+        </div>
+
+    </li>
+                                                                                      </ul>
+</aside>        <aside id="sidebarFacebook" class="sidebar-item sidebar-item-twitter">
+  <h4 class="heading-sidebar-inner heading heading-icon heading-sidebar heading-sidebar-facebook">Facebookで人気のプレスリリース</h4>
+  <ul id="listFacebook" class="list-popular-item list-facebook">
+        <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000003.000055451.html" style="background-image:url(/i/55451/3/thumb/68x45/d55451-3-829892-0.jpg);" title="まるで映画のような迫力！260万年の時を遡り“奇跡の地” 別府温泉誕生を描いた全世界向け動画「別府 THE ..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000003.000055451.html">まるで映画のような迫力！260万年の時を遡り“奇跡の地” 別府温泉誕生を描いた全世界向け動画「別府 THE ...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/55451">別府市</a>
+            <div class="information-item">
+                <div class="nice">7495</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000003.000049229.html" style="background-image:url(/i/49229/3/thumb/68x45/d49229-3-171755-0.png);" title="私立高等専門学校 「神山まるごと高専」、教員の募集を開始"></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000003.000049229.html">私立高等専門学校 「神山まるごと高専」、教員の募集を開始</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/49229">特定非営利活動法人グリーンバレー</a>
+            <div class="information-item">
+                <div class="nice">1720</div>
+            </div>
+        </div>
+
+    </li>
+            <li class="rank-top">
+        <div class="rank-inner cf">
+            <figure class="container-thumbnail-item"><a href="/main/html/rd/p/000000023.000049767.html" style="background-image:url(/i/49767/23/thumb/68x45/d49767-23-142208-8.jpg);" title="オーダーメイド商品の製作・販売プラットフォーム「名入れ製作所」を運営するレスタスが、シリーズAで総..."></a></figure>
+            <h5><a class="link-item" href="/main/html/rd/p/000000023.000049767.html">オーダーメイド商品の製作・販売プラットフォーム「名入れ製作所」を運営するレスタスが、シリーズAで総...</a></h5>
+            <a class="name-company" href="/main/html/searchrlp/company_id/49767">株式会社レスタス</a>
+            <div class="information-item">
+                <div class="nice">1679</div>
+            </div>
+        </div>
+
+    </li>
+                                                                                                                  </ul>
+</aside>
+        
+    </div>
+</div>
+
+<div class="clearfix"></div>
+    <aside class="side-share">
+        <ul class="container-share">
+            <li class="facebook">
+                            <div class="fb-like" data-width="80" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div>
+                        </li>
+            <li class="twitter">
+                                <a href="https://twitter.com/intent/tweet?text=%E8%B3%83%E8%B2%B8%E4%BB%B2%E4%BB%8B%E3%81%AE%E3%83%8F%E3%82%A6%E3%82%B9%E3%82%B3%E3%83%A0%E3%80%817%E6%9C%881%E6%97%A5%E3%81%AB%E9%A7%85%E8%BF%91%E3%82%A8%E3%83%AA%E3%82%A2%E5%87%BA%E5%BA%97%E3%81%A8%E3%81%AA%E3%82%8B%E3%80%8C%E5%B2%90%E9%98%9C%E9%A7%85%E5%89%8D%E5%BA%97%E3%80%8D%E3%82%92%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%EF%BC%81&amp;url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html&amp;via=PRTIMES_JP">
+                                    <span class="share-icon"></span>
+                                        <div class="share-title">ツイート</div>
+                </a>
+            </li>
+            <li class="hatena">
+                <a href="//b.hatena.ne.jp/add?mode=confirm&amp;url=https://prtimes.jp/main/html/rd/p/000000088.000029713.html&amp;title=%E8%B3%83%E8%B2%B8%E4%BB%B2%E4%BB%8B%E3%81%AE%E3%83%8F%E3%82%A6%E3%82%B9%E3%82%B3%E3%83%A0%E3%80%817%E6%9C%881%E6%97%A5%E3%81%AB%E9%A7%85%E8%BF%91%E3%82%A8%E3%83%AA%E3%82%A2%E5%87%BA%E5%BA%97%E3%81%A8%E3%81%AA%E3%82%8B%E3%80%8C%E5%B2%90%E9%98%9C%E9%A7%85%E5%89%8D%E5%BA%97%E3%80%8D%E3%82%92%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%EF%BC%81"
+                   onClick="window.open(encodeURI(decodeURI(this.href)),
+                    'sharewindow',
+                    'width=550, height=450, personalbar=0, toolbar=0, scrollbars=1, resizable=!'
+                    ); return false;">
+                    <span class="share-icon"></span>
+                                    </a>
+            </li>
+
+            <li class="sharemail">
+                <a href="mailto:?subject=賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！&amp;body=賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！%0d%0ahttps://prtimes.jp/main/html/rd/p/000000088.000029713.html">
+                    <span class="share-icon"></span>
+                    <div class="share-title">メール</div>
+                </a>
+            </li>
+                        <li class="imgDownload">
+                <a href="/im/action.php?run=html&amp;page=releaseimage&amp;company_id=29713&amp;release_id=88">
+                    <span class="share-icon"></span>
+                    <div class="share-title">素材DL</div>
+                </a>
+            </li>
+                    </ul>
+    </aside>
+    
+<footer id="footerPage" class="footer-page">
+  <div id="containerNavFooter" class="container container-nav-footer">
+    <div id="menuFooter" class="menu-footer">
+
+
+        <ul class="row-menu-footer row">
+        <li class="menu-footer-title">ニュースリリース配信サービス</li>
+        <li><a href="/service">PR TIMESとは</a></li>
+        <li><a href="/price">料金・プラン</a></li>
+        <li><a href="/media_service">プレスリリースを受信したい方へ</a></li>
+        <li><a href="/main/registcorp/form">プレスリリースを配信したい方へ</a></li>
+        <li><a href="/monoshiri/">ものしりプロジェクト</a></li>
+        <li>
+                      <a href="#" data-toggle="modal" data-target="#login">ログイン</a>
+                  </li>
+      </ul>
+
+
+      <ul class="recommend-menu row">
+          <li class="menu-footer-title">レコメンドサービス</li>
+          <li><a href="/story" target="_blank" rel="noopener">PR TIMES STORY</a></li>
+          <li><a href="https://tayori.com/feature/faq" target="_blank">無料FAQならTayori</a></li>
+          <li><a href="https://tayori.com/feature/form" target="_blank">無料メールフォームならTayori</a></li>
+          <li><a href="https://www.jooto.com/" target="_blank">タスク・プロジェクト管理ツールのJooto</a></li>
+          <li><a href="https://prtimes.jp/tv/info_tv/" target="_blank">PR TIMES TV</a></li>
+          <li><a href="https://prtimes.jp/tv/info_live/" target="_blank">PR TIMES LIVE</a></li>
+          <li><a href="https://prtimes.jp/magazine/" target="_blank">PR TIMES MAGAZINE</a></li>
+      </ul>
+
+
+        <ul class="row">
+            <li class="menu-footer-title"></li>
+            <li><a href="https://webclipping.jp/" target="_blank" onClick="ga('send', 'event', 'clipping_banner', 'click', 'footer',{'nonInteraction':1});">クリッピング</a></li>
+            <li><a href="http://adgang.jp/" target="_blank">広告ならAdGang</a></li>
+            <li><a href="https://isuta.jp/horoscope" target="_blank">無料占い・今週の運勢ならisuta</a></li>
+            <li><a href="https://isuta.jp/lovefortune" target="_blank">無料恋愛占いならisuta</a></li>
+        </ul>
+
+
+        <ul class="row">
+            <li class="menu-footer-title">PR TIMES公式SNS</li>
+            <li><a href="https://www.facebook.com/prtimes.jp" target="_blank">公式Facebookページ</a></li>
+
+            <li class="item-category-base">
+                <a href="javascript:void(0);" class="trigger-dropdown">Facebookカテゴリ</a>
+                <ul class="list-category category-facebook-list hide">
+                    <li class="item-category tv"><a href="https://www.facebook.com/prtimes.tv" target="_blank" rel="noopener">PR TIMES TV</a></li>
+                    <li class="item-category technology"><a href="https://www.facebook.com/prtimes.tech" target="_blank" rel="noopener">テクノロジー</a></li>
+                    <li class="item-category application"><a href="https://www.facebook.com/PR-TIMES-%E3%82%A2%E3%83%97%E3%83%AA-432374826901950" target="_blank" rel="noopener">アプリケーション</a></li>
+                    <li class="item-category startup"><a href="https://www.facebook.com/prtimes.startup" target="_blank" rel="noopener">スタートアップ</a></li>
+                    <li class="item-category entertainment"><a href="https://www.facebook.com/prtimes.entertainment" target="_blank" rel="noopener">エンタメ</a></li>
+                    <li class="item-category beauty"><a href="https://www.facebook.com/prtimes.beauty" target="_blank" rel="noopener">ビューティ</a></li>
+                    <li class="item-category fashion"><a href="https://www.facebook.com/prtimes.fashion" target="_blank" rel="noopener">ファッション</a></li>
+                    <li class="item-category lifestyle"><a href="https://www.facebook.com/prtimes.lifestyle" target="_blank" rel="noopener">ライフスタイル</a></li>
+                    <li class="item-category travel"><a href="https://www.facebook.com/prtimes.travel" target="_blank" rel="noopener">トラベル</a></li>
+                    <li class="item-category gourmet"><a href="https://www.facebook.com/prtimes.gourmet" target="_blank" rel="noopener">グルメ</a></li>
+                    <li class="item-category game"><a href="https://www.facebook.com/PR-TIMES-%E3%82%B2%E3%83%BC%E3%83%A0-724044057618274" target="_blank" rel="noopener">ゲーム</a></li>
+                    <li class="item-category sport"><a href="https://www.facebook.com/PR-TIMES-%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84-513253112109063" target="_blank" rel="noopener">スポーツ</a></li>
+                    <li class="item-category video"><a href="https://www.facebook.com/prtimes.video" target="_blank" rel="noopener">ビデオ</a></li>
+                    <li class="item-category business"><a href="https://www.facebook.com/prtimes.business" target="_blank" rel="noopener">ビジネス</a></li>
+                    <li class="item-category marketing"><a href="https://www.facebook.com/prtimes.marketing" target="_blank" rel="noopener">マーケティング</a></li>
+                </ul>
+            </li>
+
+
+            <li><a href="https://twitter.com/PRTIMES_JP" target="_blank" rel="noopener">公式Twitterページ</a></li>
+            <li class="item-category-base">
+                <a href="javascript:void(0);" class="trigger-dropdown" data-height="138">Twitterカテゴリ</a>
+                <ul class="list-category category-twitter-list hide">
+                    <li class="item-category tv"><a href="https://twitter.com/PRTIMES_TV" target="_blank" rel="noopener">PR TIMES TV</a></li>
+                    <li class="item-category news"><a href="https://twitter.com/PRTIMES_NEWS" target="_blank" rel="noopener">ニュース</a></li>
+                    <li class="item-category technology"><a href="https://twitter.com/PRTIMES_TECH" target="_blank" rel="noopener">テクノロジー</a></li>
+                    <li class="item-category application"><a href="https://twitter.com/PRTIMES_APP" target="_blank" rel="noopener">アプリケーション</a></li>
+                    <li class="item-category startup"><a href="https://twitter.com/PRTIMES_STUP" target="_blank" rel="noopener">スタートアップ</a></li>
+                    <li class="item-category entertainment"><a href="https://twitter.com/PRTIMES_ETM" target="_blank" rel="noopener">エンタメ</a></li>
+                    <li class="item-category beauty"><a href="https://twitter.com/PRTIMES_BEAUTY" target="_blank" rel="noopener">ビューティ</a></li>
+                    <li class="item-category fashion"><a href="https://twitter.com/PRTIMES_FASHION" target="_blank" rel="noopener">ファッション</a></li>
+                    <li class="item-category lifestyle"><a href="https://twitter.com/PRTIMES_LIFE" target="_blank" rel="noopener">ライフスタイル</a></li>
+                    <li class="item-category travel"><a href="https://twitter.com/PRTIMES_TRAVEL" target="_blank" rel="noopener">トラベル</a></li>
+                    <li class="item-category gourmet"><a href="https://twitter.com/PRTIMES_GOURMET" target="_blank" rel="noopener">グルメ</a></li>
+                    <li class="item-category game"><a href="https://twitter.com/PRTIMES_GAMES" target="_blank" rel="noopener">ゲーム</a></li>
+                    <li class="item-category sport"><a href="https://twitter.com/PRTIMES_SPORTS" target="_blank" rel="noopener">スポーツ</a></li>
+                    <li class="item-category video"><a href="https://twitter.com/PRTIMES_VIDEO" target="_blank" rel="noopener">ビデオ</a></li>
+                    <li class="item-category business"><a href="https://twitter.com/PRTIMES_BIZ" target="_blank" rel="noopener">ビジネス</a></li>
+                    <li class="item-category marketing"><a href="https://twitter.com/PRTIMES_MKTG" target="_blank" rel="noopener">マーケティング</a></li>
+                </ul>
+            </li>
+
+        </ul>
+
+    </div>
+
+
+      <div class="container-recommend">
+          <ul class="row-menu-footer row2">
+              <li><a href="/main/html/company">会社概要</a></li>
+              <li><a href="https://prtimes.co.jp/policy/">プライバシーポリシー</a></li>
+              <li><a href="http://www.vectorinc.co.jp/iso.html">情報セキュリティ基本方針</a></li>
+              <li><a href="https://tayori.com/faq/89b604344ebb744dbba41f73d4134560c997a743" target="_blank">プレスリリース掲載基準</a></li>
+              <li><a href="/main/html/kiyaku">利用規約</a></li>
+                                          <li><a href="https://tayori.com/form/c5788940efb74672cc13bd2cb1d8587b3f20fcb8" target="_blank">報道関係者様からのお問い合わせ</a></li>
+                                                    </ul>
+                          </div>
+      <div class="container-address">
+          <address>Copyright © PR TIMES Inc. All Rights Reserved.</address>
+      </div>
+
+  </div>
+
+
+<!-- Google Code for &#12522;&#12510;&#12540;&#12465;&#12486;&#12451;&#12531;&#12464; &#12479;&#12464; -->
+<!-- Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. For instructions on adding this tag and more information on the above requirements, read the setup guide: google.com/ads/remarketingsetup -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1059065160;
+var google_conversion_label = "ECL3CLitzQMQyJqA-QM";
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js?v=v10.8.2">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1059065160/?value=0&amp;label=ECL3CLitzQMQyJqA-QM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js?v=v10.8.2"></script>
+<script>window.jQuery||document.write("<script src='/common/pc_v4/js/jquery-1.8.3.min.js?v=v10.8.2'><\/script>")</script>
+<script type="text/javascript" src="/common/v4/lib/jquery-ui-1.10.4.min.js?v=v10.8.2"></script>
+<script type="text/javascript" src="/common/v4/lib/jquery.transit.min.js?v=v10.8.2"></script>
+<script src="//b.st-hatena.com/js/bookmark_button.js?v=v10.8.2" async></script>
+<script src="//platform.twitter.com/widgets.js?v=v10.8.2" id="twitter-wjs" async></script>
+<script src="//apis.google.com/js/platform.js?v=v10.8.2" async defer></script>
+<script src="/common/v4/lib/jquery.cookie.min.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/jquery.easing.1.3.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/jquery.fancybox-1.3.4.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/owl.carousel.min.js?v=v10.8.2"></script>
+<script type="text/javascript" src="/common/v4/lib/exvalidation.min.js?v=v10.8.2"></script>
+<script type="text/javascript" src="/common/v4/lib/exchecker-ja.min.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/ajaxzip3-https.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/jquery.animate-shadow-min.js?v=v10.8.2"></script>
+<script src="/common/v4/lib/bootstrap.min.js?v=v10.8.2"></script>
+<script src="/common/v4/html/js/jquery.flexslider-min.js?v=v10.8.2"></script>
+<script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+<script src="/common/v4/html/js/common.js?v=v10.8.2"></script>
+
+
+</footer>
+<script>
+    var s_release_id = 88;
+    var s_company_id = 29713;
+    var release_title = "賃貸仲介のハウスコム、7月1日に駅近エリア出店となる「岐阜駅前店」をオープン！";
+    </script>
+<script src="/common/v4/html/js/season.js?v=v10.8.2"></script>
+<script src="/common/v4/html/js/heatmap-senddata.js?v=v10.8.2"></script>
+
+<script type="text/javascript" src="/common/v4/html/js/single-post/main.js?v=v10.8.2"></script>
+
+
+<script type="text/javascript" src="/common/v4/html/js/accordion.js?v=v10.8.2"></script>
+<script type="text/javascript" src="/common/v4/html/js/share.js?v=v10.8.2"></script>
+<script type="text/javascript">
+    window._pt_lt = new Date().getTime();
+	  window._pt_sp_2 = [];
+	  _pt_sp_2.push('setAccount,3fd1bd10');
+	  var _protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+	  (function() {
+		var atag = document.createElement('script'); atag.type = 'text/javascript'; atag.async = true;
+		atag.src = _protocol + 'js.ptengine.jp/pta.js?v=v10.8.2';
+		var stag = document.createElement('script'); stag.type = 'text/javascript'; stag.async = true;
+		stag.src = _protocol + 'js.ptengine.jp/pts.js?v=v10.8.2';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(atag, s);s.parentNode.insertBefore(stag, s);
+	  })();
+</script>
+<script src="/common/v4/html/js/release.js?v=v10.8.2"></script>
+<script src="/common/v4/html/js/common_parts.js?t=v10.8.2"></script>
+<script type="text/javascript" src="/src/js/lib.bundle.js?v=v10.8.2"></script>
+<script type="text/javascript" src="/src/js/html.bundle.js?v=v10.8.2"></script>
+
+
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"2bdaca1562","applicationID":"171416932","transactionName":"NAMBZ0dSCEsCUUVRCQ1JNkFcHABKDFxFFw8NAgZLG0MOSA==","queueTime":0,"applicationTime":92,"atts":"GEQCEQ9IG0U=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

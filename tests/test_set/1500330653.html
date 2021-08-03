@@ -1,0 +1,945 @@
+    <!DOCTYPE html>
+<html lang="en-US" class="no-js">
+    <head>
+        <script type='text/javascript'>var _sf_startpt=(new Date()).getTime()</script>
+        <meta charset="utf-8">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"VQUAUVBVCRADV1lSBgQGXw==",licenseKey:"19d1c9e27c",applicationID:"33801519"};window.NREUM||(NREUM={}),__nr_require=function(t,n,e){function r(e){if(!n[e]){var o=n[e]={exports:{}};t[e][0].call(o.exports,function(n){var o=t[e][1][n];return r(o||n)},o,o.exports)}return n[e].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<e.length;o++)r(e[o]);return r}({1:[function(t,n,e){function r(t){try{s.console&&console.log(t)}catch(n){}}var o,i=t("ee"),a=t(20),s={};try{o=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(s.console=!0,o.indexOf("dev")!==-1&&(s.dev=!0),o.indexOf("nr_dev")!==-1&&(s.nrDev=!0))}catch(c){}s.nrDev&&i.on("internal-error",function(t){r(t.stack)}),s.dev&&i.on("fn-err",function(t,n,e){r(e.stack)}),s.dev&&(r("NR AGENT IN DEVELOPMENT MODE"),r("flags: "+a(s,function(t,n){return t}).join(", ")))},{}],2:[function(t,n,e){function r(t,n,e,r,s){try{p?p-=1:o(s||new UncaughtException(t,n,e),!0)}catch(f){try{i("ierr",[f,c.now(),!0])}catch(d){}}return"function"==typeof u&&u.apply(this,a(arguments))}function UncaughtException(t,n,e){this.message=t||"Uncaught error with no additional information",this.sourceURL=n,this.line=e}function o(t,n){var e=n?null:c.now();i("err",[t,e])}var i=t("handle"),a=t(21),s=t("ee"),c=t("loader"),f=t("gos"),u=window.onerror,d=!1,l="nr@seenError",p=0;c.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(h){"stack"in h&&(t(9),t(8),"addEventListener"in window&&t(5),c.xhrWrappable&&t(10),d=!0)}s.on("fn-start",function(t,n,e){d&&(p+=1)}),s.on("fn-err",function(t,n,e){d&&!e[l]&&(f(e,l,function(){return!0}),this.thrown=!0,o(e))}),s.on("fn-end",function(){d&&!this.thrown&&p>0&&(p-=1)}),s.on("internal-error",function(t){i("ierr",[t,c.now(),!0])})},{}],3:[function(t,n,e){t("loader").features.ins=!0},{}],4:[function(t,n,e){function r(t){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var o=t("ee"),i=t("handle"),a=t(9),s=t(8),c="learResourceTimings",f="addEventListener",u="resourcetimingbufferfull",d="bstResource",l="resource",p="-start",h="-end",m="fn"+p,w="fn"+h,v="bstTimer",g="pushState",y=t("loader");y.features.stn=!0,t(7),"addEventListener"in window&&t(5);var x=NREUM.o.EV;o.on(m,function(t,n){var e=t[0];e instanceof x&&(this.bstStart=y.now())}),o.on(w,function(t,n){var e=t[0];e instanceof x&&i("bst",[e,n,this.bstStart,y.now()])}),a.on(m,function(t,n,e){this.bstStart=y.now(),this.bstType=e}),a.on(w,function(t,n){i(v,[n,this.bstStart,y.now(),this.bstType])}),s.on(m,function(){this.bstStart=y.now()}),s.on(w,function(t,n){i(v,[n,this.bstStart,y.now(),"requestAnimationFrame"])}),o.on(g+p,function(t){this.time=y.now(),this.startPath=location.pathname+location.hash}),o.on(g+h,function(t){i("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),f in window.performance&&(window.performance["c"+c]?window.performance[f](u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["c"+c]()},!1):window.performance[f]("webkit"+u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["webkitC"+c]()},!1)),document[f]("scroll",r,{passive:!0}),document[f]("keypress",r,!1),document[f]("click",r,!1)}},{}],5:[function(t,n,e){function r(t){for(var n=t;n&&!n.hasOwnProperty(u);)n=Object.getPrototypeOf(n);n&&o(n)}function o(t){s.inPlace(t,[u,d],"-",i)}function i(t,n){return t[1]}var a=t("ee").get("events"),s=t("wrap-function")(a,!0),c=t("gos"),f=XMLHttpRequest,u="addEventListener",d="removeEventListener";n.exports=a,"getPrototypeOf"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&&(o(window),o(f.prototype)),a.on(u+"-start",function(t,n){var e=t[1],r=c(e,"nr@wrapped",function(){function t(){if("function"==typeof e.handleEvent)return e.handleEvent.apply(e,arguments)}var n={object:t,"function":e}[typeof e];return n?s(n,"fn-",null,n.name||"anonymous"):e});this.wrapped=t[1]=r}),a.on(d+"-start",function(t){t[1]=this.wrapped||t[1]})},{}],6:[function(t,n,e){function r(t,n,e){var r=t[n];"function"==typeof r&&(t[n]=function(){var t=i(arguments),n={};o.emit(e+"before-start",[t],n);var a;n[m]&&n[m].dt&&(a=n[m].dt);var s=r.apply(this,t);return o.emit(e+"start",[t,a],s),s.then(function(t){return o.emit(e+"end",[null,t],s),t},function(t){throw o.emit(e+"end",[t],s),t})})}var o=t("ee").get("fetch"),i=t(21),a=t(20);n.exports=o;var s=window,c="fetch-",f=c+"body-",u=["arrayBuffer","blob","json","text","formData"],d=s.Request,l=s.Response,p=s.fetch,h="prototype",m="nr@context";d&&l&&p&&(a(u,function(t,n){r(d[h],n,f),r(l[h],n,f)}),r(s,"fetch",c),o.on(c+"end",function(t,n){var e=this;if(n){var r=n.headers.get("content-length");null!==r&&(e.rxSize=r),o.emit(c+"done",[null,n],e)}else o.emit(c+"done",[t],e)}))},{}],7:[function(t,n,e){var r=t("ee").get("history"),o=t("wrap-function")(r);n.exports=r;var i=window.history&&window.history.constructor&&window.history.constructor.prototype,a=window.history;i&&i.pushState&&i.replaceState&&(a=i),o.inPlace(a,["pushState","replaceState"],"-")},{}],8:[function(t,n,e){var r=t("ee").get("raf"),o=t("wrap-function")(r),i="equestAnimationFrame";n.exports=r,o.inPlace(window,["r"+i,"mozR"+i,"webkitR"+i,"msR"+i],"raf-"),r.on("raf-start",function(t){t[0]=o(t[0],"fn-")})},{}],9:[function(t,n,e){function r(t,n,e){t[0]=a(t[0],"fn-",null,e)}function o(t,n,e){this.method=e,this.timerDuration=isNaN(t[1])?0:+t[1],t[0]=a(t[0],"fn-",this,e)}var i=t("ee").get("timer"),a=t("wrap-function")(i),s="setTimeout",c="setInterval",f="clearTimeout",u="-start",d="-";n.exports=i,a.inPlace(window,[s,"setImmediate"],s+d),a.inPlace(window,[c],c+d),a.inPlace(window,[f,"clearImmediate"],f+d),i.on(c+u,r),i.on(s+u,o)},{}],10:[function(t,n,e){function r(t,n){d.inPlace(n,["onreadystatechange"],"fn-",s)}function o(){var t=this,n=u.context(t);t.readyState>3&&!n.resolved&&(n.resolved=!0,u.emit("xhr-resolved",[],t)),d.inPlace(t,g,"fn-",s)}function i(t){y.push(t),h&&(b?b.then(a):w?w(a):(E=-E,O.data=E))}function a(){for(var t=0;t<y.length;t++)r([],y[t]);y.length&&(y=[])}function s(t,n){return n}function c(t,n){for(var e in t)n[e]=t[e];return n}t(5);var f=t("ee"),u=f.get("xhr"),d=t("wrap-function")(u),l=NREUM.o,p=l.XHR,h=l.MO,m=l.PR,w=l.SI,v="readystatechange",g=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"],y=[];n.exports=u;var x=window.XMLHttpRequest=function(t){var n=new p(t);try{u.emit("new-xhr",[n],n),n.addEventListener(v,o,!1)}catch(e){try{u.emit("internal-error",[e])}catch(r){}}return n};if(c(p,x),x.prototype=p.prototype,d.inPlace(x.prototype,["open","send"],"-xhr-",s),u.on("send-xhr-start",function(t,n){r(t,n),i(n)}),u.on("open-xhr-start",r),h){var b=m&&m.resolve();if(!w&&!m){var E=1,O=document.createTextNode(E);new h(a).observe(O,{characterData:!0})}}else f.on("fn-end",function(t){t[0]&&t[0].type===v||a()})},{}],11:[function(t,n,e){function r(t){if(!i(t))return null;var n=window.NREUM;if(!n.loader_config)return null;var e=(n.loader_config.accountID||"").toString()||null,r=(n.loader_config.agentID||"").toString()||null,s=(n.loader_config.trustKey||"").toString()||null;if(!e||!r)return null;var c=a.generateCatId(),f=a.generateCatId(),u=Date.now(),d=o(c,f,u,e,r,s);return{header:d,guid:c,traceId:f,timestamp:u}}function o(t,n,e,r,o,i){var a="btoa"in window&&"function"==typeof window.btoa;if(!a)return null;var s={v:[0,1],d:{ty:"Browser",ac:r,ap:o,id:t,tr:n,ti:e}};return i&&r!==i&&(s.d.tk=i),btoa(JSON.stringify(s))}function i(t){var n=!1,e=!1,r={};if("init"in NREUM&&"distributed_tracing"in NREUM.init&&(r=NREUM.init.distributed_tracing,e=!!r.enabled),e)if(t.sameOrigin)n=!0;else if(r.allowed_origins instanceof Array)for(var o=0;o<r.allowed_origins.length;o++){var i=s(r.allowed_origins[o]);if(t.hostname===i.hostname&&t.protocol===i.protocol&&t.port===i.port){n=!0;break}}return e&&n}var a=t(18),s=t(13);n.exports={generateTracePayload:r,shouldGenerateTrace:i}},{}],12:[function(t,n,e){function r(t){var n=this.params,e=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r<p;r++)t.removeEventListener(l[r],this.listener,!1);n.aborted||(e.duration=s.now()-this.startTime,this.loadCaptureCalled||4!==t.readyState?null==n.status&&(n.status=0):a(this,t),e.cbTime=this.cbTime,d.emit("xhr-done",[t],t),c("xhr",[n,e,this.startTime]))}}function o(t,n){var e=t.responseType;if("json"===e&&null!==n)return n;var r="arraybuffer"===e||"blob"===e||"json"===e?t.response:t.responseText;return w(r)}function i(t,n){var e=f(n),r=t.params;r.host=e.hostname+":"+e.port,r.pathname=e.pathname,t.parsedOrigin=f(n),t.sameOrigin=t.parsedOrigin.sameOrigin}function a(t,n){t.params.status=n.status;var e=o(n,t.lastSize);if(e&&(t.metrics.rxSize=e),t.sameOrigin){var r=n.getResponseHeader("X-NewRelic-App-Data");r&&(t.params.cat=r.split(", ").pop())}t.loadCaptureCalled=!0}var s=t("loader");if(s.xhrWrappable){var c=t("handle"),f=t(13),u=t(11).generateTracePayload,d=t("ee"),l=["load","error","abort","timeout"],p=l.length,h=t("id"),m=t(16),w=t(15),v=window.XMLHttpRequest;s.features.xhr=!0,t(10),t(6),d.on("new-xhr",function(t){var n=this;n.totalCbs=0,n.called=0,n.cbTime=0,n.end=r,n.ended=!1,n.xhrGuids={},n.lastSize=null,n.loadCaptureCalled=!1,t.addEventListener("load",function(e){a(n,t)},!1),m&&(m>34||m<10)||window.opera||t.addEventListener("progress",function(t){n.lastSize=t.loaded},!1)}),d.on("open-xhr-start",function(t){this.params={method:t[0]},i(this,t[1]),this.metrics={}}),d.on("open-xhr-end",function(t,n){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&n.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid);var e=u(this.parsedOrigin);e&&e.header&&(n.setRequestHeader("newrelic",e.header),this.dt=e)}),d.on("send-xhr-start",function(t,n){var e=this.metrics,r=t[0],o=this;if(e&&r){var i=w(r);i&&(e.txSize=i)}this.startTime=s.now(),this.listener=function(t){try{"abort"!==t.type||o.loadCaptureCalled||(o.params.aborted=!0),("load"!==t.type||o.called===o.totalCbs&&(o.onloadCalled||"function"!=typeof n.onload))&&o.end(n)}catch(e){try{d.emit("internal-error",[e])}catch(r){}}};for(var a=0;a<p;a++)n.addEventListener(l[a],this.listener,!1)}),d.on("xhr-cb-time",function(t,n,e){this.cbTime+=t,n?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof e.onload||this.end(e)}),d.on("xhr-load-added",function(t,n){var e=""+h(t)+!!n;this.xhrGuids&&!this.xhrGuids[e]&&(this.xhrGuids[e]=!0,this.totalCbs+=1)}),d.on("xhr-load-removed",function(t,n){var e=""+h(t)+!!n;this.xhrGuids&&this.xhrGuids[e]&&(delete this.xhrGuids[e],this.totalCbs-=1)}),d.on("addEventListener-end",function(t,n){n instanceof v&&"load"===t[0]&&d.emit("xhr-load-added",[t[1],t[2]],n)}),d.on("removeEventListener-end",function(t,n){n instanceof v&&"load"===t[0]&&d.emit("xhr-load-removed",[t[1],t[2]],n)}),d.on("fn-start",function(t,n,e){n instanceof v&&("onload"===e&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=s.now()))}),d.on("fn-end",function(t,n){this.xhrCbStart&&d.emit("xhr-cb-time",[s.now()-this.xhrCbStart,this.onload,n],n)}),d.on("fetch-before-start",function(t){var n,e=t[1]||{};"string"==typeof t[0]?n=t[0]:t[0]&&t[0].url&&(n=t[0].url),n&&(this.parsedOrigin=f(n),this.sameOrigin=this.parsedOrigin.sameOrigin);var r=u(this.parsedOrigin);if(r&&r.header){var o=r.header;if("string"==typeof t[0]){var i={};for(var a in e)i[a]=e[a];i.headers=new Headers(e.headers||{}),i.headers.set("newrelic",o),this.dt=r,t.length>1?t[1]=i:t.push(i)}else t[0]&&t[0].headers&&(t[0].headers.append("newrelic",o),this.dt=r)}})}},{}],13:[function(t,n,e){var r={};n.exports=function(t){if(t in r)return r[t];var n=document.createElement("a"),e=window.location,o={};n.href=t,o.port=n.port;var i=n.href.split("://");!o.port&&i[1]&&(o.port=i[1].split("/")[0].split("@").pop().split(":")[1]),o.port&&"0"!==o.port||(o.port="https"===i[0]?"443":"80"),o.hostname=n.hostname||e.hostname,o.pathname=n.pathname,o.protocol=i[0],"/"!==o.pathname.charAt(0)&&(o.pathname="/"+o.pathname);var a=!n.protocol||":"===n.protocol||n.protocol===e.protocol,s=n.hostname===document.domain&&n.port===e.port;return o.sameOrigin=a&&(!n.hostname||s),"/"===o.pathname&&(r[t]=o),o}},{}],14:[function(t,n,e){function r(){}function o(t,n,e){return function(){return i(t,[f.now()].concat(s(arguments)),n?null:this,e),n?void 0:this}}var i=t("handle"),a=t(20),s=t(21),c=t("ee").get("tracer"),f=t("loader"),u=NREUM;"undefined"==typeof window.newrelic&&(newrelic=u);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",p=l+"ixn-";a(d,function(t,n){u[n]=o(l+n,!0,"api")}),u.addPageAction=o(l+"addPageAction",!0),u.setCurrentRouteName=o(l+"routeName",!0),n.exports=newrelic,u.interaction=function(){return(new r).get()};var h=r.prototype={createTracer:function(t,n){var e={},r=this,o="function"==typeof n;return i(p+"tracer",[f.now(),t,e],r),function(){if(c.emit((o?"":"no-")+"fn-start",[f.now(),r,o],e),o)try{return n.apply(this,arguments)}catch(t){throw c.emit("fn-err",[arguments,this,t],e),t}finally{c.emit("fn-end",[f.now()],e)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(t,n){h[n]=o(p+n)}),newrelic.noticeError=function(t,n){"string"==typeof t&&(t=new Error(t)),i("err",[t,f.now(),!1,n])}},{}],15:[function(t,n,e){n.exports=function(t){if("string"==typeof t&&t.length)return t.length;if("object"==typeof t){if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if(!("undefined"!=typeof FormData&&t instanceof FormData))try{return JSON.stringify(t).length}catch(n){return}}}},{}],16:[function(t,n,e){var r=0,o=navigator.userAgent.match(/Firefox[\/\s](\d+\.\d+)/);o&&(r=+o[1]),n.exports=r},{}],17:[function(t,n,e){function r(t,n){var e=t.getEntries();e.forEach(function(t){"first-paint"===t.name?a("timing",["fp",Math.floor(t.startTime)]):"first-contentful-paint"===t.name&&a("timing",["fcp",Math.floor(t.startTime)])})}function o(t){if(t instanceof c&&!u){var n,e=Math.round(t.timeStamp);n=e>1e12?Date.now()-e:s.now()-e,u=!0,a("timing",["fi",e,{type:t.type,fid:n}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var i,a=t("handle"),s=t("loader"),c=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){i=new PerformanceObserver(r);try{i.observe({entryTypes:["paint"]})}catch(f){}}if("addEventListener"in document){var u=!1,d=["click","keydown","mousedown","pointerdown","touchstart"];d.forEach(function(t){document.addEventListener(t,o,!1)})}}},{}],18:[function(t,n,e){function r(){function t(){return n?15&n[e++]:16*Math.random()|0}var n=null,e=0,r=window.crypto||window.msCrypto;r&&r.getRandomValues&&(n=r.getRandomValues(new Uint8Array(31)));for(var o,i="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx",a="",s=0;s<i.length;s++)o=i[s],"x"===o?a+=t().toString(16):"y"===o?(o=3&t()|8,a+=o.toString(16)):a+=o;return a}function o(){function t(){return n?15&n[e++]:16*Math.random()|0}var n=null,e=0,r=window.crypto||window.msCrypto;r&&r.getRandomValues&&Uint8Array&&(n=r.getRandomValues(new Uint8Array(31)));for(var o=[],i=0;i<16;i++)o.push(t().toString(16));return o.join("")}n.exports={generateUuid:r,generateCatId:o}},{}],19:[function(t,n,e){function r(t,n){if(!o)return!1;if(t!==o)return!1;if(!n)return!0;if(!i)return!1;for(var e=i.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==e[a])return!1;return!0}var o=null,i=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var s=navigator.userAgent,c=s.match(a);c&&s.indexOf("Chrome")===-1&&s.indexOf("Chromium")===-1&&(o="Safari",i=c[1])}n.exports={agent:o,version:i,match:r}},{}],20:[function(t,n,e){function r(t,n){var e=[],r="",i=0;for(r in t)o.call(t,r)&&(e[i]=n(r,t[r]),i+=1);return e}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],21:[function(t,n,e){function r(t,n,e){n||(n=0),"undefined"==typeof e&&(e=t?t.length:0);for(var r=-1,o=e-n||0,i=Array(o<0?0:o);++r<o;)i[r]=t[n+r];return i}n.exports=r},{}],22:[function(t,n,e){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(t,n,e){function r(){}function o(t){function n(t){return t&&t instanceof r?t:t?c(t,s,i):i()}function e(e,r,o,i){if(!l.aborted||i){t&&t(e,r,o);for(var a=n(o),s=m(e),c=s.length,f=0;f<c;f++)s[f].apply(a,r);var d=u[y[e]];return d&&d.push([x,e,r,a]),a}}function p(t,n){g[t]=m(t).concat(n)}function h(t,n){var e=g[t];if(e)for(var r=0;r<e.length;r++)e[r]===n&&e.splice(r,1)}function m(t){return g[t]||[]}function w(t){return d[t]=d[t]||o(e)}function v(t,n){f(t,function(t,e){n=n||"feature",y[e]=n,n in u||(u[n]=[])})}var g={},y={},x={on:p,addEventListener:p,removeEventListener:h,emit:e,get:w,listeners:m,context:n,buffer:v,abort:a,aborted:!1};return x}function i(){return new r}function a(){(u.api||u.feature)&&(l.aborted=!0,u=l.backlog={})}var s="nr@context",c=t("gos"),f=t(20),u={},d={},l=n.exports=o();l.backlog=u},{}],gos:[function(t,n,e){function r(t,n,e){if(o.call(t,n))return t[n];var r=e();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,n,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return t[n]=r,r}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(t,n,e){function r(t,n,e,r){o.buffer([t],r),o.emit(t,n,e)}var o=t("ee").get("handle");n.exports=r,r.ee=o},{}],id:[function(t,n,e){function r(t){var n=typeof t;return!t||"object"!==n&&"function"!==n?-1:t===window?0:a(t,i,function(){return o++})}var o=1,i="nr@id",a=t("gos");n.exports=r},{}],loader:[function(t,n,e){function r(){if(!E++){var t=b.info=NREUM.info,n=p.getElementsByTagName("script")[0];if(setTimeout(u.abort,3e4),!(t&&t.licenseKey&&t.applicationID&&n))return u.abort();f(y,function(n,e){t[n]||(t[n]=e)}),c("mark",["onload",a()+b.offset],null,"api");var e=p.createElement("script");e.src="https://"+t.agent,n.parentNode.insertBefore(e,n)}}function o(){"complete"===p.readyState&&i()}function i(){c("mark",["domContent",a()+b.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(s=Math.max((new Date).getTime(),s))-b.offset}var s=(new Date).getTime(),c=t("handle"),f=t(20),u=t("ee"),d=t(19),l=window,p=l.document,h="addEventListener",m="attachEvent",w=l.XMLHttpRequest,v=w&&w.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:w,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var g=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1158.min.js"},x=w&&v&&v[h]&&!/CriOS/.test(navigator.userAgent),b=n.exports={offset:s,now:a,origin:g,features:{},xhrWrappable:x,userAgent:d};t(14),t(17),p[h]?(p[h]("DOMContentLoaded",i,!1),l[h]("load",r,!1)):(p[m]("onreadystatechange",o),l[m]("onload",r)),c("mark",["firstbyte",s],null,"api");var E=0,O=t(22)},{}],"wrap-function":[function(t,n,e){function r(t){return!(t&&t instanceof Function&&t.apply&&!t[a])}var o=t("ee"),i=t(21),a="nr@original",s=Object.prototype.hasOwnProperty,c=!1;n.exports=function(t,n){function e(t,n,e,o){function nrWrapper(){var r,a,s,c;try{a=this,r=i(arguments),s="function"==typeof e?e(r,a):e||{}}catch(f){l([f,"",[r,a,o],s])}u(n+"start",[r,a,o],s);try{return c=t.apply(a,r)}catch(d){throw u(n+"err",[r,a,d],s),d}finally{u(n+"end",[r,a,c],s)}}return r(t)?t:(n||(n=""),nrWrapper[a]=t,d(t,nrWrapper),nrWrapper)}function f(t,n,o,i){o||(o="");var a,s,c,f="-"===o.charAt(0);for(c=0;c<n.length;c++)s=n[c],a=t[s],r(a)||(t[s]=e(a,f?s+o:o,i,s))}function u(e,r,o){if(!c||n){var i=c;c=!0;try{t.emit(e,r,o,n)}catch(a){l([a,e,r,o])}c=i}}function d(t,n){if(Object.defineProperty&&Object.keys)try{var e=Object.keys(t);return e.forEach(function(e){Object.defineProperty(n,e,{get:function(){return t[e]},set:function(n){return t[e]=n,n}})}),n}catch(r){l([r])}for(var o in t)s.call(t,o)&&(n[o]=t[o]);return n}function l(n){try{t.emit("internal-error",n)}catch(e){}}return t||(t=o),e.inPlace=f,e.flag=a,e}},{}]},{},["loader",2,12,4,3]);</script>
+                <title>Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate - realestate.com.au</title>
+
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="apple-touch-icon" href="https://www.realestate.com.au/news/wp-content/themes/REA/library/images/favicon_96x96.png">
+        <link rel="icon" href="https://www.realestate.com.au/news/wp-content/themes/REA/library/images/favicon_96x96.png">
+        <meta name="msapplication-TileColor" content="#f01d4f">
+        <meta name="msapplication-TileImage" content="https://www.realestate.com.au/news/wp-content/themes/REA/library/images/favicon_96x96.png">
+        <link rel="shortcut icon" href="//s1.rea.reastatic.net/rs/img/favicon.ico" type="image/x-icon">
+
+        <link rel="pingback" href="https://www.realestate.com.au/news/xmlrpc.php">
+
+        
+<!-- This site is optimized with the Yoast SEO plugin v12.8 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="No need for a guard dog at this $4m-plus Kenthurst property – not with two Velociraptors lurking in the backyard – causing potential buyers to do a double take at open inspections."/>
+<meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
+<link rel="canonical" href="https://www.realestate.com.au/news/live-in-your-own-jurassic-park-at-this-multimilliondollar-kenthurst-estate/" />
+<!-- / Yoast SEO plugin. -->
+
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel='stylesheet' id='wp-block-library-css'  href='https://www.realestate.com.au/news/wp-includes/css/dist/block-library/style.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='bundle-css-css'  href='https://www.realestate.com.au/news/wp-content/themes/REA/library/dist/bundle.ffd1b83a11f9a5690783.css' type='text/css' media='all' />
+
+    <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:domain" content="The realestate.com.au Blog">
+<meta name="twitter:site" content="@realestate_au">
+<meta name="twitter:url" content="https://www.realestate.com.au/news/live-in-your-own-jurassic-park-at-this-multimilliondollar-kenthurst-estate/">
+<meta name="twitter:creator" content="@realestate_au">
+<meta name="twitter:image" content="https://www.realestate.com.au/blog/wp-content/uploads/2020/01/21121005/capi_0ff32ae4ef9a49808c620ce0f339ab13_d8a6e94845db2a5453ebc3a7a5ed9fd0.jpeg" />
+<meta name="twitter:title" content="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate">
+    <meta name="twitter:description" content="" />
+
+        <meta property="og:image" content="https://www.realestate.com.au/blog/wp-content/uploads/2020/01/21121005/capi_0ff32ae4ef9a49808c620ce0f339ab13_d8a6e94845db2a5453ebc3a7a5ed9fd0.jpeg" />
+
+
+        <link
+            href="https://fonts.googleapis.com/css?family=Inconsolata|Playfair+Display:900i|Sorts+Mill+Goudy|Merriweather:900"
+            rel="stylesheet"
+        >
+        
+            <script>
+              (function(){var g=function(e,h,f,g){
+              this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
+              this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
+              this.check=function(){var a=this.get(f);if(a)a=a.split(":");else if(100!=e)"v"==h&&(e=Math.random()>=e/100?0:100),a=[h,e,0],this.set(f,a.join(":"));else return!0;var c=a[1];if(100==c)return!0;switch(a[0]){case "v":return!1;case "r":return c=a[2]%Math.floor(100/c),a[2]++,this.set(f,a.join(":")),!c}return!0};
+              this.go=function(){if(this.check()){var a=document.createElement("script");a.type="text/javascript";a.src=g+ "&t=" + (new Date()).getTime();document.body&&document.body.appendChild(a)}};
+              this.start=function(){var a=this;window.addEventListener?window.addEventListener("load",function(){a.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){a.go()})}};
+              try{(new g(100,"r","QSI_S_ZN_5zNFUutMq7IMrpr","//zn5znfuutmq7imrpr-reagroup.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_5zNFUutMq7IMrpr&Q_LOC="+encodeURIComponent(window.location.href))).start()}catch(i){}})();
+            </script>
+              </head>
+    
+    <body class="post-template-default single single-post postid-551945 single-format-standard rui-responsive news">
+
+        
+<div style="display:none"
+    id="page-data"
+    data-publisher-slug="hills-shire-times"
+    data-brand-name=""
+    data-brand-name-slug=""
+    data-author-slug="katrina-creer"
+    data-events="event12,event11"
+    data-tag-name=""
+    data-categories="[&quot;news&quot;,&quot;nsw&quot;,&quot;sydney&quot;,&quot;the-hills&quot;]"
+    data-page-no="1"
+    data-article-slug="live-in-your-own-jurassic-park-at-this-multimilliondollar-kenthurst-estate"
+    data-page-type="post"
+    data-categories-tags="nsw,news,sydney,the-hills"
+    data-source-name="nca"
+    data-channel="news"
+    data-content-source="Hills Shire Times"
+    data-section="postpage"
+    data-search-keywords="">
+</div>
+
+        <ul class="rui-visuallyhidden rui-accessibility">
+            <li><a href="#rui-main-nav" title="Go directly to the website navigation" accesskey="1" tabindex="1">skip to Main Navigation</a></li>
+            <li><a href="#rui-main-content" title="Go directly to main content" accesskey="2" tabindex="2">skip to Content</a></li>
+        </ul>
+
+        <ul class="rui-visuallyhidden rui-accessibility">
+    <li>
+        <a href="#rui-main-nav" title="Go directly to the website navigation" accesskey="1" tabindex="1">skip to Main
+            Navigation</a>
+    </li>
+    <li>
+        <a href="#rui-main-content" title="Go directly to main content" accesskey="2" tabindex="2">skip to Content</a>
+    </li>
+</ul>
+
+<header class="rui-header rui-clearfix rui-header-shrink rui-header-not-fixed">
+    <div class="leaderboard-slot">
+        <div class="rui-ad-wrapper">
+    <div
+        class="leaderboard-big"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="728x90"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="header"        data-author="katrina-creer"    >
+    </div>
+</div>
+<div class="rui-ad-wrapper">
+    <div
+        class="leaderboard-small"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="320x50"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="header"        data-author="katrina-creer"    >
+    </div>
+</div>
+    </div>
+    <div class="rui-grid rui-header-container">
+        <a title="realestate.com.au homepage" href="/" class="rui-main-logo">
+            <img src="//s1.rui.au.reastatic.net/rui-static/img/rea-logo-v4.png"
+                 alt="realestate.com.au"/>
+        </a>
+        <div class="rui-clearboth"></div>
+        <button class="rui-burger-toggle rui-icon rui-icon-navdeck rui-button-no-style">
+            <span class="rui-visuallyhidden">Menu</span>
+            <span class="hit-box"></span>
+        </button>
+    </div>
+    <hr class="rui-clearboth"/>
+    <div class="rui-grid rui-nav-container rui-burger-container">
+        <nav class="rui-main-nav" id="rui-main-nav">
+            <ul>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/buy" title="Real estate and property for sale">
+                        <span>Buy</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/rent" title="Rental properties">
+                        <span>Rent</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/sold" title="Sold properties">
+                        <span>Sold</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/share" title="Share accommodation">
+                        <span>Share</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a
+                        href="https://www.realestate.com.au/new-homes"
+                        title="New homes, land estates & off the plan apartments"
+                    >
+                        <span>New homes</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/find-agent" title="Find a real estate agent">
+                        <span>Find agents</span>
+                    </a>
+                </li>
+
+                <li class="rui-nav-tab">
+                    <a href="https://www.realestate.com.au/lifestyle/" title="Lifestyle">
+                        <span>Lifestyle</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab rui-nav-active">
+                    <a href="https://www.realestate.com.au/news/" title="Property news">
+                        <span>News</span>
+                    </a>
+                </li>
+                <li class="rui-nav-tab">
+                    <a href="https://www.realcommercial.com.au" target="_blank"
+                       title="Commercial real estate for sale and lease">
+                        <span>Commercial</span>
+                    </a>
+                </li>
+            </ul>
+       </nav>
+        <nav class="rui-mobile-nav">
+            <ul>
+                <li class="rui-nav-item rui-clear rui-nav-main">
+                    <a href="https://m.realestate.com.au/buy" title="Real estate and property for sale">
+                        <span>Buy</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item rui-nav-main">
+                    <a href="https://m.realestate.com.au/rent" title="Rental properties">
+                        <span>Rent</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item rui-nav-main">
+                    <a href="https://m.realestate.com.au/sold" title="Sold properties">
+                        <span>Sold</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item">
+                    <a href="https://www.realestate.com.au/find-agent" title="Find a real estate agent">
+                        <span>Find Agents</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item">
+                    <a href="https://www.realestate.com.au/neighbourhoods" title="Suburb profiles">
+                        <span>Suburb profiles</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item">
+                    <a href="https://www.realestate.com.au/share" title="Share accommodation">
+                        <span>Share</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item rui-nav-active">
+                    <a href="https://www.realestate.com.au/news/" title="Property news">
+                        <span>News</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item">
+                    <a href="https://www.realestate.com.au/lifestyle/" title="Lifestyle">
+                        <span>Lifestyle</span>
+                    </a>
+                </li>
+                <li class="rui-nav-item rui-nav-item-external">
+                    <a
+                        href="https://www.realcommercial.com.au"
+                        target="_blank"
+                        title="Commercial real estate for sale and lease"
+                    >
+                        <span>Commercial</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+        <section class="category-panel rui-clearfix">
+            <div class="rui-grid">
+
+                <div id="category-menu" class="menu-lifestyle-news-navigation-container"><ul id="menu-lifestyle-news-navigation" class="menu"><li id="menu-item-126805" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-has-children menu-parent-item menu-item-126805"><a href="https://www.realestate.com.au/news/">news</a></li>
+<li id="menu-item-131730" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-parent-item menu-item-131730"><a href="https://www.realestate.com.au/lifestyle/">Lifestyle</a></li>
+<li id="menu-item-131725" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-parent-item menu-item-131725"><a href="https://www.realestate.com.au/advice/">Guides</a></li>
+<li id="menu-item-403516" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-403516"><a href="https://video.realestate.com.au/">Video</a></li>
+<li id="menu-item-333665" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-333665"><a href="https://www.realestate.com.au/australian-property-market/">Property Reports</a></li>
+</ul></div>
+                                    <div class="social-and-search">
+                        <div class="searchform fr">
+<form method="get" id="searchform" class="site-search" action="https://www.realestate.com.au/news">
+<input
+    type="text"
+    class="field rui-input"
+    name="s"
+    id="s"
+    aria-label="Search"
+    placeholder="Search news..."
+    required
+/>
+    <button class="rui-search-button" type="submit">
+        <span class="rui-visuallyhidden">Submit Search</span>
+        <span class="rui-icon rui-icon-search"></span>
+    </button>
+</form>
+</div>                    </div>
+                            </div>
+
+        <div class="menu sub-menu rui-clearfix"><ul class="rui-grid"><li class="current-menu-sub"><a href="https://www.realestate.com.au/news/nsw/">NSW</a></li><li><a href="https://www.realestate.com.au/news/vic/">VIC</a></li><li><a href="https://www.realestate.com.au/news/qld/">QLD</a></li><li><a href="https://www.realestate.com.au/news/sa/">SA</a></li><li><a href="https://www.realestate.com.au/news/tas/">TAS</a></li><li><a href="https://www.realestate.com.au/news/nt/">NT</a></li><li><a href="https://www.realestate.com.au/news/act/">ACT</a></li><li><a href="https://www.realestate.com.au/news/wa/">WA</a></li></ul></div>    </section>
+    <ol class="breadcrumbs rui-grid" itemscope itemtype="http://schema.org/BreadcrumbList">
+        <!-- Breadcrumb NavXT 6.4.0 -->
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+          <a class='category-link' itemprop="item" href="https://www.realestate.com.au/news/"><span itemprop="name">news</span></a>
+          <meta itemprop="position" content="1" />
+        </li> &gt; <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+          <a class='category-link' itemprop="item" href="https://www.realestate.com.au/news/nsw/"><span itemprop="name">New South Wales</span></a>
+          <meta itemprop="position" content="2" />
+        </li> &gt; <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+          <a class='category-link' itemprop="item" href="https://www.realestate.com.au/news/nsw/sydney/"><span itemprop="name">Sydney</span></a>
+          <meta itemprop="position" content="3" />
+        </li> &gt; <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+          <a class='category-link' itemprop="item" href="https://www.realestate.com.au/news/nsw/sydney/the-hills/"><span itemprop="name">The Hills</span></a>
+          <meta itemprop="position" content="4" />
+        </li>    </ol>
+
+      <section class="discover-breadcrumbs">
+    <div class="rui-grid rui-clearfix">
+          </div>
+  </section>
+        <div class="rui-discover-section">
+
+                        
+            <div class="rui-visuallyhidden">
+            <div itemprop="publisher">realestate.com.au</div>
+            <p itemprop="headline">No need for a guard dog at this $4m-plus Kenthurst property – not with two Velociraptors lurking in the backyard – causing potential buyers to do a double take at ...</p>
+            </div>
+
+            <div
+            class="rui-grid rui-grid-advanced-mobile-bleed rui-clearfix column-container"
+            itemscope
+            itemtype="http://schema.org/Article"
+            >
+
+            <header class="header-wrapper">
+                <h1 itemprop="name">Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate</h1>
+                <div class="post-meta rui-clearfix">
+                                    <aside class="news-masthead">
+                        <a 
+                            href="http://dailytelegraph.com.au/newslocal/hills-shire-times"
+                            title="Return to Hills Shire Times"
+                            target="_blank"
+                        >
+                        <img src="https://www.realestate.com.au/news/wp-content/themes/REA/library/images/news/hills-shire-times.svg" alt="" />                        </a>
+                    </aside>
+                        
+                                <div class="author">
+                    <img src="https://www.realestate.com.au/blog/wp-content/uploads/2016/11/08132731/Katrina-Creer-120x120.jpg" width="120" height="120" class="author-avatar" alt="Katrina Creer" title="Katrina Creer"/><div class="post-author"><a href="https://www.realestate.com.au/news/author/katrina-creer/" class="author-name" title="View author profile">Katrina Creer</a></div><div class="post-date rui-clearfix">21 Jan 2020</div>                </div>
+
+                </div>
+            </header>
+
+            <div id="rui-main-content" class="primary">
+                <div class="main-container" data-postid="551945">
+
+                    
+                    <div id="read-more"></div>
+                    <section class="post-content rui-clearfix">
+                        <article itemprop="articleBody" class="article-content">
+
+                            <div id="attachment_551943" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551943" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="3a67afbf800431849527f52d15eb115d" width="1024" height="768" class="size-full wp-image-551943" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103248/capi_0ff32ae4ef9a49808c620ce0f339ab13_3a67afbf800431849527f52d15eb115d.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551943" class="wp-caption-text">Can you spot the dinosaurs hiding the garden?</p></div>
+<p>No need for a guard dog at this Kenthurst property &ndash; not with two Velociraptors lurking in the backyard.</p>
+<p>Potential buyers inspecting the 2.02ha estate, which has just been listed for sale, have been doing a double take when touring the acreage&rsquo;s amazing outdoor entertainment area.</p>
+
+<p>
+               <b>MORE: <a href="https://www.realestate.com.au/news/rebel-wilson-sells-gladesville-investment-unit/?rsf=syn:news:nca:dt:spa">Rebel Wilson offloads Sydney investment</a></b>
+            </p>
+<p>
+               <b><a href="https://www.realestate.com.au/news/rare-heritage-listed-home-offers-unique-opportunity-in-baulkham-hills/?rsf=syn:news:nca:dt:spa">Pressed metal walls makes home a rare find </a></b>
+            </p>
+
+<p>The private oasis which features a lagoon-style pool, spa, thatched huts and a rock waterfall &ndash; is also home to what looks like a scene from the hit movie Jurassic Park.</p>
+<p>Peering through the tropical landscaping is a total of seven dinosaurs &ndash; all different types including a Stegosaurus and Pterodactyl &ndash; while an enormous almost two metre &lsquo;yeti&rsquo; stands by the kids&rsquo; water slide.</p>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551938" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551938" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="5bf60494e920961e103f637ab3e72d8b" width="1024" height="768" class="size-full wp-image-551938" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103220/capi_0ff32ae4ef9a49808c620ce0f339ab13_5bf60494e920961e103f637ab3e72d8b.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551938" class="wp-caption-text">Watch out &ndash; dinosaurs are hiding in the tropical garden</p></div>
+<p channel="Web,Tablet">
+               </p><div id="attachment_551987" style="width: 778px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551987" src="https://www.realestate.com.au/blog/images/768x1024-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="635300f36d3afbcba46474df7636e928" width="768" height="1024" class="size-full wp-image-551987" srcset="https://www.realestate.com.au/blog/images/200x267-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 200w, https://www.realestate.com.au/blog/images/400x533-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 400w, https://www.realestate.com.au/blog/images/600x800-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 600w, https://www.realestate.com.au/blog/images/800x1067-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 800w, https://www.realestate.com.au/blog/images/1000x1333-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x1600-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1867-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x2133-fit,progressive/2020/01/21120950/capi_0ff32ae4ef9a49808c620ce0f339ab13_635300f36d3afbcba46474df7636e928.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551987" class="wp-caption-text">A few of the dinosaurs in the garden.</p></div>
+<p>Vendor Glenn Jones was inspired to create his unusual backyard after visiting Clive Palmer&rsquo;s Dinosaur Park at Coolum in Queensland. </p>
+<p>By chance, not long afterwards, some lifelike prehistoric models were being auctioned in nearby Windsor.</p>
+<p>&ldquo;When I saw them, I thought I have to buy them,&rdquo; Mr Jones said.</p>
+<p>&ldquo;I&rsquo;ve just always liked dinosaurs &ndash; I had toy ones growing up so I guess these are adult-size toys.</p>
+<p>&ldquo;We used to get people ringing the doorbell asking if they could bring their kids in to show them the dinosaurs &ndash; but the garden is grown now so you can&rsquo;t see them from the street.&rdquo;</p>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551939" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551939" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="07865238b3fdd6d5ea96ce48bb945033" width="1024" height="768" class="size-full wp-image-551939" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103226/capi_0ff32ae4ef9a49808c620ce0f339ab13_07865238b3fdd6d5ea96ce48bb945033.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551939" class="wp-caption-text">An alfresco area overlooks the pool.</p></div>
+
+<p>Mr Jones and wife Annette&rsquo;s four children and two grandchildren have loved their fantasy backyard which has hosted many parties over the years. However, now as empty-nesters, the couple have decided to downsize. </p>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551940" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551940" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="9448d1698a1de021d1b9b8ce2341c009" width="1024" height="768" class="size-full wp-image-551940" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103230/capi_0ff32ae4ef9a49808c620ce0f339ab13_9448d1698a1de021d1b9b8ce2341c009.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551940" class="wp-caption-text">One of two dwellings on the 2.02ha estate.</p></div>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551988" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551988" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="b7e03ba64af39b35f8f91e8eea470273" width="1024" height="768" class="size-full wp-image-551988" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21120955/capi_0ff32ae4ef9a49808c620ce0f339ab13_b7e03ba64af39b35f8f91e8eea470273.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551988" class="wp-caption-text">Inside one of the homes.</p></div>
+<p>The sale includes all of the dinosaurs plus a very realistic crocodile that usually floats at the bottom of their pool. It has been relocated to the garden while the home is on the market.</p>
+<p>&ldquo;We only took him out because we thought kids might get scared when they come to look at the house,&rdquo; Mr Jones said.</p>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551941" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551941" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="9fdd3f28909da756eaf93c3fcd08bcea" width="1024" height="768" class="size-full wp-image-551941" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103235/capi_0ff32ae4ef9a49808c620ce0f339ab13_9fdd3f28909da756eaf93c3fcd08bcea.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551941" class="wp-caption-text">The property is expected to sell in the low-to-mid-$4m price range.</p></div>
+<p>Agent Scott Rance from Rance Property said there has been no such problem with the dinosaurs as the backyard has proven a hit with youngsters at open inspections. </p>
+<p>The acreage is expected to sell in the low-to-mid $4 million price range. </p>
+
+<p channel="Web,Tablet">
+               </p><div id="attachment_551942" style="width: 1034px" class="wp-caption alignnone"><img aria-describedby="caption-attachment-551942" src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg" alt="23 - 25 Porters Road, Kenthurst" data-capiid="5ecbb9d4abe4c630c82d8da621475f7c" width="1024" height="768" class="size-full wp-image-551942" srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/21103241/capi_0ff32ae4ef9a49808c620ce0f339ab13_5ecbb9d4abe4c630c82d8da621475f7c.jpeg 1600w" sizes="(max-width: 767px) 100vw, (max-width: 939px) 60vw, (max-width: 1112px) 70vw, 800px"><p id="caption-attachment-551942" class="wp-caption-text">The resort-style rear garden.</p></div>
+
+<p>While the dinosaurs are a huge attraction, the estate comprises of two dwellings &ndash; a five-bedroom double storey residence with six-car garage and a smaller three-bedroom home &ndash; which adds to its appeal.</p>
+<p>There is also a 200-bird aviary and some sheep on the property, which the couple describe as a &lsquo;manageable farm in suburbia&rsquo;. </p>
+
+<p channel="Web,Tablet">
+               </p><div class="video-container default">
+<div class="video-padding">
+    <video data-video-id="6113260815001" data-account="4342645250001" data-player="default" data-embed="default" data-application-id="" id="6113260815001-57" class="video-js" controls="controls">
+    </video>
+    <script src="https://players.brightcove.net/4342645250001/default_default/index.min.js"></script>
+<script src="https://ovp.iris.tv/plugins/brightcove/v2/iris-bc.adaptive.min.js"></script>
+<link rel="stylesheet" href="https://ovp.iris.tv/plugins/brightcove/v2/styles/iris-bc.adaptive.min.css" type="text/css">
+<script type="text/javascript">
+(function(videojs) {
+var videoId = "6113260815001-57";
+var video = videojs(videoId);
+var globalId = "iris_6113260815001_57";
+video.pluginDev(videojs.mergeOptions({}, {
+    start_up_next: false,
+    end_up_next: false,
+    global: globalId,
+    ssl: true,
+    thumbs_down: false,
+    thumbs_up: false
+}));
+})(window.videojs);
+</script>
+    <script src="https://players.brightcove.net/videojs-overlay/1/videojs-overlay.min.js"></script>
+<script type="text/javascript">
+(function(videojs) {
+var videoId = "6113260815001-57";
+var durationElement = document.createElement('div');
+durationElement.className = 'vjs-overlay-duration';
+var durationFragment = document.createDocumentFragment();
+durationFragment.appendChild(durationElement);
+
+var video = videojs(videoId);
+video.overlay({
+    overlays: [{
+    align: 'bottom',
+    content: durationFragment,
+    showBackground: false,
+    start: 'loadstart',
+    end: 'play'
+    }]
+});
+video.on('loadstart', updateVideoDurationOverlay);
+video.ready(function() {
+    var isOverlayActive = true;
+    video.on('play', function() {
+    if (isOverlayActive) {
+        isOverlayActive = false;
+        video.overlay({
+        overlays: []
+        });
+    }
+    });
+    updateVideoDurationOverlay();
+});
+
+function updateVideoDurationOverlay() {
+    var myPlayer = this;
+    if (myPlayer.mediainfo && myPlayer.mediainfo.duration) {
+    var duration = secondsToMMSS(myPlayer.mediainfo.duration);
+    durationElement.textContent = duration;
+    }
+}
+function secondsToMMSS(totalSeconds) {
+    var minutes = Math.floor((totalSeconds) / 60);
+    var seconds = totalSeconds - (minutes * 60);
+    // remove any decimals
+    seconds = Math.round(seconds);
+
+    var result = minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    return result;
+}
+})(window.videojs);
+</script>
+</div>
+<div class="related-videos-container" data-video-id="6113260815001" data-video-container-id="6113260815001-57" data-iris-global-id="iris_6113260815001_57"></div>
+</div>
+            
+<p>The unique outdoor entertainment area, part of the newer home, includes an outdoor kitchen, fridge, barbecue, pizza oven and sound system. </p>
+<p>&ldquo;People just can&rsquo;t believe the backyard when they see it,&rdquo; Mr Rance said. </p>
+<p>&ldquo;We had family come through the other day and their kids wanted to take the dinosaurs home &ndash; it really is like your own Jurassic Park.&rdquo;</p>
+
+
+                        </article>
+
+                        
+                        <div class="topics">
+    <ul>
+            <li>
+            <a itemprop="articleSection" href="https://www.realestate.com.au/news/nsw/" title="View all posts in New South Wales">
+                New South Wales            </a>
+        </li>
+                <li>
+            <a itemprop="articleSection" href="https://www.realestate.com.au/news/" title="View all posts in news">
+                news            </a>
+        </li>
+                <li>
+            <a itemprop="articleSection" href="https://www.realestate.com.au/news/nsw/sydney/" title="View all posts in Sydney">
+                Sydney            </a>
+        </li>
+                <li>
+            <a itemprop="articleSection" href="https://www.realestate.com.au/news/nsw/sydney/the-hills/" title="View all posts in The Hills">
+                The Hills            </a>
+        </li>
+            </ul>
+</div>
+
+
+                        
+                    </section>
+
+                </div><!-- END .main-container -->
+
+            </div><!-- END .rui-grid-primary -->
+
+            <div id="rui-main-sidebar" class="secondary  no-featured-image">
+                <div class="rui-ad-wrapper">
+    <div
+        class="ad-halfpage"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="300x600"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="medrec1"        data-author="katrina-creer"    >
+    </div>
+</div>
+<div class="rui-ad-wrapper">
+    <div
+        class="ad-medrec-mobile"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="300x250"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="medrec1"        data-author="katrina-creer"    >
+    </div>
+</div>
+
+<div class="recommended-video-articles">
+    
+<section class="recommended-articles rui-clearfix">
+  <div class="recommended-articles__primary-panel">
+    <h2 class="recommended-articles__title">What to watch next</h2>
+
+    
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/crumbling-homes-sold-for-millions-barely-recognisable-after-major-renovations/?pid=video-article|source:news:article-page-side"
+        title="Go to Million dollar dumps: how they look now" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/818x614-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 800w, https://www.realestate.com.au/blog/images/1000x751-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x901-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1051-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1201-fit,progressive/2020/01/10131023/capi_eb60c10ec9aba15ca801877f974227ad_cc4bc9265fce230b3ff92a26dbb905b0.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">10 Jan 2020</small>
+            <h3 class="recommended-article__title">Million dollar dumps: how they look now</h3>
+        </div>
+        </a>
+    </article>
+
+
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/real-estate-prices-set-to-skyrocket-across-sydney-in-2020-due-to-sales-shortage-experts/?pid=video-article|source:news:article-page-side"
+        title="Go to Window closing for buyers to get better deal" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/09114736/capi_1ca61d55270bcdc848ee6b943d445c76_505bdde7e1d33e1e556c2a56446d1f7e.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">09 Jan 2020</small>
+            <h3 class="recommended-article__title">Window closing for buyers to get better deal</h3>
+        </div>
+        </a>
+    </article>
+
+
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/biggest-mistakes-new-real-estate-investors-make/?pid=video-article|source:news:article-page-side"
+        title="Go to Biggest mistakes new investors make" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2019/12/27003022/capi_16524ec4f5f03f9228f6dee67b947190_b179a55e364335f756760dc17f97f978.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">27 Dec 2019</small>
+            <h3 class="recommended-article__title">Biggest mistakes new investors make</h3>
+        </div>
+        </a>
+    </article>
+
+
+  </div>
+</section>
+<div class="rui-ad-wrapper">
+    <div
+        class="ad-medrec--all-devices"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="300x250"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="medrec2"        data-author="katrina-creer"    >
+    </div>
+</div>
+</div>
+                <div class="sidebar-bg"></div>
+            </div>
+
+            </div><!-- end .rui-grid -->
+        </div>
+
+            
+<section class="recommended-articles rui-clearfix">
+  <div class="recommended-articles__primary-panel">
+    <h2 class="recommended-articles__title">You might like</h2>
+
+    
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/rare-heritage-listed-home-offers-unique-opportunity-in-baulkham-hills/?pid=article-page|source:news:article-page-bottom"
+        title="Go to Pressed metal walls makes home a rare find" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/748x561-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/17190459/capi_bc5c78c21c3924bd2e49d178cd64db51_feedb3ebf432bc0ce6e4ad5e2424ae31.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">17 Jan 2020</small>
+            <h3 class="recommended-article__title">Pressed metal walls makes home a rare find</h3>
+        </div>
+        </a>
+    </article>
+
+
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/federation-three-bedroom-glenhaven-home-sells-for-a-record-2020m/?pid=article-page|source:news:article-page-bottom"
+        title="Go to A 20/20 start to the New Year in Glenhaven" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/17153437/capi_31d4c54613af2a56a97061b071c8acbd_2f617e5bd29a85a51e7fd94f558c406c.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">17 Jan 2020</small>
+            <h3 class="recommended-article__title">A 20/20 start to the New Year in Glenhaven</h3>
+        </div>
+        </a>
+    </article>
+
+
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/luxurious-middle-dural-estate-listed-with-a-price-guide-of-95m-to-99m/?pid=article-page|source:news:article-page-bottom"
+        title="Go to Stunning estate set to sell for record price" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/15170127/capi_5b27a4b69576a40630de0187c3759ed8_1cde1355945218906916c7a1a9586a58.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">14 Jan 2020</small>
+            <h3 class="recommended-article__title">Stunning estate set to sell for record price</h3>
+        </div>
+        </a>
+    </article>
+
+
+    <article class="recommended-article">
+        <a href="https://www.realestate.com.au/news/newly-completed-home-listed-in-north-kellyville/?pid=article-page|source:news:article-page-bottom"
+        title="Go to Ready made luxury at North Kellyville" >
+
+                    <div class="maintain-ratio--sixteen-nine">
+            <div class="content">
+                <img src="https://www.realestate.com.au/blog/images/1024x768-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg" sizes="(max-width: 800px) 100vw, 800px"  srcset="https://www.realestate.com.au/blog/images/200x150-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 200w, https://www.realestate.com.au/blog/images/400x300-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 400w, https://www.realestate.com.au/blog/images/600x450-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 600w, https://www.realestate.com.au/blog/images/800x600-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 800w, https://www.realestate.com.au/blog/images/1000x750-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 1000w, https://www.realestate.com.au/blog/images/1200x900-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 1200w, https://www.realestate.com.au/blog/images/1400x1050-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 1400w, https://www.realestate.com.au/blog/images/1600x1200-fit,progressive/2020/01/06060040/capi_f9f48f6bdca97d59753422e3db6a15e3_e0c31b5afd3ae994620b0c70c3ef76af.jpeg 1600w"                     alt="Live in your own Jurassic Park at this multimillion-dollar Kenthurst estate"
+                    class="recommended-article__image" />
+            </div>
+            </div>
+
+        
+        <div class="recommended-article__details">
+            <small class="recommended-article__category">06 Jan 2020</small>
+            <h3 class="recommended-article__title">Ready made luxury at North Kellyville</h3>
+        </div>
+        </a>
+    </article>
+
+
+  </div>
+</section>
+
+        <section class="social-media-section rui-clearfix">
+            
+<div class="social-media">
+
+  <h2 class="social-media__title"> 
+    Follow us
+  </h2> 
+
+  <div class="social-media__tile social-btn social-btn--fb">
+    <a href="https://www.facebook.com/realestateAus/" target="_blank" title="Like realestate.com.au on Facebook">
+      <svg viewbox="0 0 30 30" width=40 height=40 fill="#fff" class="social-btn__logo">
+        <path d="M7.492 0.094v2.062h-1.227q-0.672 0-0.906 0.281t-0.234 0.844v1.477h2.289l-0.305 2.313h-1.984v5.93h-2.391v-5.93h-1.992v-2.313h1.992v-1.703q0-1.453 0.813-2.254t2.164-0.801q1.148 0 1.781 0.094z"></path>
+      </svg>
+      <span class="social-btn__txt">Facebook</span>
+    </a>
+  </div>
+
+        <div class="social-media__tile social-btn social-btn--twitter">
+      <a href="https://twitter.com/realestate_au" target="_blank" title="Follow realestate.com.au on Twitter">
+        <svg viewbox="0 0 30 30" width=40 height=40 fill="#fff" class="social-btn__logo"> 
+          <path d="M12.656 3.188q-0.523 0.766-1.266 1.305 0.008 0.109 0.008 0.328 0 1.016-0.297 2.027t-0.902 1.941-1.441 1.645-2.016 1.141-2.523 0.426q-2.117 0-3.875-1.133 0.273 0.031 0.609 0.031 1.758 0 3.133-1.078-0.82-0.016-1.469-0.504t-0.891-1.246q0.258 0.039 0.477 0.039 0.336 0 0.664-0.086-0.875-0.18-1.449-0.871t-0.574-1.605v-0.031q0.531 0.297 1.141 0.32-0.516-0.344-0.82-0.898t-0.305-1.203q0-0.688 0.344-1.273 0.945 1.164 2.301 1.863t2.902 0.777q-0.062-0.297-0.062-0.578 0-1.047 0.738-1.785t1.785-0.738q1.094 0 1.844 0.797 0.852-0.164 1.602-0.609-0.289 0.898-1.109 1.391 0.727-0.078 1.453-0.391z"></path>
+        </svg>
+        <span class="social-btn__txt">Twitter</span>
+      </a>
+    </div>
+
+    </div>
+        </section>
+
+        <section class="recommended-articles outbrain-container">
+            <div class="rui-grid">
+            <div class="related-box">
+                <div class="OUTBRAIN" data-src="https://www.realestate.com.au/news/live-in-your-own-jurassic-park-at-this-multimilliondollar-kenthurst-estate/"
+                data-widget-id="AR_1" data-ob-template="REA" async="async"></div>
+                <div class="OUTBRAIN" data-src="https://www.realestate.com.au/news/live-in-your-own-jurassic-park-at-this-multimilliondollar-kenthurst-estate/"
+                data-widget-id="AR_2" data-ob-template="REA" async="async"></div>
+                            <script type="text/javascript" async="async" src="//widgets.outbrain.com/outbrain.js"></script>
+                        </div>
+            </div>
+        </section>
+
+
+            <div class="rui-ad-wrapper">
+    <div
+        class="ad-leaderboard"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="728x90"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="footer"        data-author="katrina-creer"    >
+    </div>
+</div>
+<div class="rui-ad-wrapper">
+    <div
+        class="ad-media-viewer"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="728x90"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="galleryad"        data-author="katrina-creer"    >
+    </div>
+</div>
+<div class="rui-ad-wrapper">
+    <div
+        class="ad-image-gallery"        data-type="native"        data-fallback-type="safeframe"        data-site="rea"        data-sz="320x50"        data-auto-hide="1"        data-channel="news"        data-sect="postpage"        data-postname="welcome-to-sydneys-jurassic-park"        data-brand="null"        data-pos="photosky"        data-author="katrina-creer"    >
+    </div>
+</div>
+
+                
+    <footer class="blog-footer">
+    <div class="tab-switcher">
+        <div class="tab-buttons">
+            <h3 class="tab-button" data-tab="category">news</h3>                        <h3 class="tab-button" data-tab="other-sites">Other Sites</h3>                    </div>
+        <div class="tab-panels">
+            <div class="tab-panel" data-tab="category"><ul><li><a href="https://www.realestate.com.au/news/act/">ACT Property News</a></li><li><a href="https://www.realestate.com.au/news/celebrity-homes/">Celebrity Homes</a></li><li><a href="https://www.realestate.com.au/news/nsw/">NSW Property News</a></li><li><a href="https://www.realestate.com.au/news/nt/">NT Property News</a></li><li><a href="https://www.realestate.com.au/news/property-market-trends/">Property Market Trends</a></li><li><a href="https://www.realestate.com.au/news/qld/">Queensland Property News</a></li><li><a href="https://www.realestate.com.au/news/sa/">SA Property News</a></li><li><a href="https://www.realestate.com.au/news/tas/">Tasmania Property News</a></li><li><a href="https://www.realestate.com.au/news/vic/">Victoria Property News</a></li><li><a href="https://www.realestate.com.au/news/wa/">Western Australia Property News</a></li></ul></div>                        <div class="tab-panel" data-tab="other-sites"><ul><li><a href="http://sellingguide.realestate.com.au/">Selling Guide</a></li><li><a href="https://www.realestate.com.au/neighbourhoods/">Neighbourhoods</a></li><li><a href="https://www.realestate.com.au/auction-results/">Auction Results</a></li><li><a href="http://www.realcommercial.com.au/news/">Commercial News</a></li><li><a href="https://www.realestate.com.au/lifestyle/the-block/">The Block 2019</a></li><li><a href="https://www.realestate.com.au/news/tags/the-block/">The Block News</a></li></ul></div>                    </div>
+        </div>
+    </div>
+
+        <div class="rui-grid rui-clearfix">
+            <p>
+            Disclaimer: The information published in this section is of a
+            general nature only and does not consider your personal objectives, financial
+            situation or particular needs. Where indicated, third parties have written and
+            supplied the content and we are not responsible for it. We make no warranty as
+            to the accuracy, completeness or reliability of the information, nor do we
+            accept any liability or responsibility arising in any way from omissions or
+            errors contained in the content. We do not recommend sponsored lenders or loan
+            products and we cannot introduce you to sponsored lenders. We strongly
+            recommend that you obtain independent advice before you act on the content.
+            </p>
+        </div>
+        </div>
+    </footer>
+
+    <footer class="rui-footer">
+    <div class="rui-footer-row">
+        <div class="rui-footer-column">
+            <div class="rui-footer-social">
+                <ul>
+                    <li class="rui-social">
+                        <a class="rui-icon rui-icon-facebook" href="https://www.facebook.com/realestateAus" title="realestate.com.au Facebook">
+                            <span class="rui-visuallyhidden">Facebook</span>
+                        </a>
+                    </li>
+                    <li class="rui-social">
+                        <a class="rui-icon rui-icon-twitter" href="https://twitter.com/realestate_au" title="realestate.com.au Twitter">
+                            <span class="rui-visuallyhidden">Twitter</span>
+                        </a>
+                    </li>
+                    <li class="rui-social">
+                        <a class="rui-icon rui-icon-pinterest" href="https://www.pinterest.com/realestateau/" title="realestate.com.au Pinterest">
+                            <span class="rui-visuallyhidden">Pinterest</span>
+                        </a>
+                    </li>
+                    <li class="rui-social">
+                        <a class="rui-icon rui-icon-linkedin" href="https://www.linkedin.com/company/rea-group" title="realestate.com.au LinkedIn">
+                            <span class="rui-visuallyhidden">LinkedIn</span>
+                        </a>
+                    </li>
+                    <li class="rui-social">
+                        <a class="rui-icon rui-icon-youtube" href="https://www.youtube.com/user/thereagroup" title="realestate.com.au YouTube">
+                            <span class="rui-visuallyhidden">YouTube</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="rui-footer-navigation">
+                <ul>
+                    <li><a href="https://about.realestate.com.au/advertise/" title="Advertise with realestate.com.au">Advertise with us</a></li>
+                    <li><a href="https://about.realestate.com.au/contact-us/" title="Contact realestate.com.au">Help centre</a></li>
+                    <li><a href="https://agentadmin.realestate.com.au/home" title="Agent administration">Agent admin</a></li>
+                    <li><a href="https://media.realestate.com.au" title="realestate.com.au media sales">Media sales</a></li>
+                </ul>
+                <ul>
+                    <li><a href="https://about.realestate.com.au/terms-use/" title="Legal">Legal</a></li>
+                    <li><a href="https://www.realestate.com.au/opt-out/" title="Opt out">Opt out</a></li>
+                    <li><a href="https://about.realestate.com.au/privacy/" title="Privacy policy">Privacy</a></li>
+                    <li><a href="https://about.realestate.com.au/sitemap/" title="realestate.com.au site map">Site map</a></li>
+                    <li><a href="https://careers.realestate.com.au/" title="Jobs at realestate.com.au">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="rui-footer-row rui-footer-faded-background rui-footer-rea-group">
+        <div class="rui-footer-column">
+            <div class="rui-footer-site-links">
+                <h3 class="rui-footer-site-links-large-screen-header">Personalised advertising:</h3>
+                <p class="rui-footer-stock-info">We show you more relevant ads based on your activity. Prefer us not to? <a href="https://www.realestate.com.au/opt-out/" aria-label="Opt out" target="_blank">Opt Out</a> of personalisation.</p>
+            </div>
+            <div class="rui-footer-rea-sites">
+                <ul>
+                    <li>
+                        <a href="https://www.rea-group.com" class="reagroup rui-footer-rea-site-img" title="REA Group corporate website">
+                            <span class="rui-visuallyhidden">REA Group corporate website</span>
+                            <span class="rui-icon rui-icon-arrow-right"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.realestate.com.au" class="rui-footer-rea-site-img reawebsite" title="Real estate to buy and rent">
+                            <span class="rui-visuallyhidden">Real estate to buy and rent</span>
+                            <span class="rui-icon rui-icon-arrow-right"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.realcommercial.com.au" class="rui-footer-rea-site-img reacommercial" title="Search for commercial real estate">
+                            <span class="rui-visuallyhidden">Search for commercial real estate</span>
+                            <span class="rui-icon rui-icon-arrow-right"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.spacely.com.au/" class="rui-footer-rea-site-img spacely" title="Search short-term and shared work spaces">
+                            <span class="rui-visuallyhidden">Search short-term and shared work spaces</span>
+                            <span class="rui-icon rui-icon-arrow-right"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://flatmates.com.au/" class="rui-footer-rea-site-img flatmates" title="Australia's biggest share accommodation site">
+                            <span class="rui-visuallyhidden">Australia's biggest share accommodation site</span>
+                            <span class="rui-icon rui-icon-arrow-right"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="rui-footer-site-links">
+                <!-- Toggle buttons shown on non-widescreen devices to display links -->
+                <div id="rui-footer-bottom-toggles">
+                    <span class="rui-toggle-link" data-container="rui-footer-international-sites-content">
+                        International sites
+                        <span class="rui-icon rui-icon-arrow-solid-down"></span>
+                        <span class="rui-icon rui-icon-arrow-solid-up"></span>
+                    </span>
+                    <span class="rui-toggle-link" data-container="rui-footer-partner-sites-content">
+                        Partner sites
+                        <span class="rui-icon rui-icon-arrow-solid-down"></span>
+                        <span class="rui-icon rui-icon-arrow-solid-up"></span>
+                    </span>
+                </div>
+                <!-- The two link lists are displayed depending on media context, either as two horizontal lists that
+                are always displayed or as two lists shown only when the relevant toggle button is pressed-->
+                <div
+                    id="rui-footer-international-sites-content"
+                    class="rui-footer-international-sites rui-toggle-container"
+                >
+                    <span class="list list-column">
+                        <span class="rui-footer-site-links-large-screen-header">International sites:</span>
+                        <a title="Property for sale and rent in China"       href="https://www.myfun.com/">China</a>
+                        <a title="Property for sale and rent in Malaysia"    href="https://www.iproperty.com.my/">Malaysia</a>
+                        <a title="Property for sale and rent in Singapore"   href="https://www.iproperty.com.sg/">Singapore</a>
+                        <a title="Property for sale and rent in Hong Kong"   href="https://www.squarefoot.com.hk/">Hong Kong</a>
+                        <a title="Property for sale and rent in Indonesia"   href="https://www.rumah123.com/">Indonesia</a>
+                        <a title="Property for sale and rent in Thailand"    href="https://thinkofliving.com/">Thailand</a>
+                        <a title="Property for sale and rent in Philippines" href="https://www.iproperty.com.ph/">Philippines</a>
+                        <a title="Property for sale and rent in India"       href="https://housing.com/">India</a>
+                        <a title="International properties"                  href="https://www.realestate.com.au/international/">International properties</a>
+                    </span>
+                </div>
+
+                <div id="rui-footer-partner-sites-content" class="rui-footer-partner-sites rui-toggle-container">
+                    <span class="rui-footer-site-links-large-screen-header">Partner sites:</span>
+                    <span class="list list-column">
+                        <a href="https://www.news.com.au/" target="_blank" title="Latest news">news.com.au</a>
+                        <a href="https://www.foxsports.com.au/" target="_blank" title="Sports news">foxsports.com.au</a>
+                        <a href="http://www.homeguru.com.au/" target="_blank" title="Home valuations">homeguru.com.au</a>
+                        <a href="https://www.realestate.co.nz/?arcn&rsf=globalnav" target="_blank" title="Property for sale and rent in New Zealand">realestate.co.nz</a>
+                        <a href="https://www.mansionglobal.com" target="_blank" title="Mansion Global">mansionglobal.com</a>
+                        <a href="https://askizzy.org.au" target="_blank" title="Ask Izzy: The A to Z directory of homeless help">askizzy.org.au</a>
+                        <a href="https://www.homeimprovementpages.com.au/" target="_blank" title="hipages.com.au">hipages.com.au</a>
+                        <a href="https://www.makaan.com/" target="_blank" title="makaan.com">makaan.com</a>
+                        <a href="https://www.proptiger.com/" target="_blank" title="proptiger">propertiger.com</a>
+                    </span>
+                </div>
+            </div>
+            <div class="rui-footer-stock-info">
+                <p>realestate.com.au is owned and operated by ASX-listed REA Group Ltd (REA:ASX) <span>© REA Group Ltd.</span></p>
+            </div>
+        </div>
+    </div>
+    </footer>
+
+    <div id="rea-krux-container"></div>
+
+    <script type='text/javascript' src='https://www.realestate.com.au/news/wp-content/themes/REA/library/dist/bundle.main.ffd1b83a11f9a5690783.js'></script>
+
+        <!-- Use by Nielsen -->
+    <script type="text/javascript" src='https://www.realestate.com.au/assets/js/lib/analytics/v60.js'></script>
+    <script type="text/javascript">
+        var pvar={cid:"realestate",content:"0",server:"secure-au"};var trac=nol_t(pvar);trac.record().post();
+    </script>
+    <!-- End of Nielsen tag -->
+    
+    <noscript>
+    <div>
+        <img src="//secure-au.imrworldwide.com/cgi-bin/m?ci=realestate&amp;cg=0&amp;cc=1&amp;ts=noscript" width="1" height="1" alt="" />
+    </div>
+    </noscript>
+    <script type='text/javascript'>
+        var _sf_async_config={};
+        /** CONFIGURATION START **/
+        _sf_async_config.uid = 36976;
+        _sf_async_config.domain = 'realestate.com.au';
+        _sf_async_config.useCanonical = true;
+        _sf_async_config.sections = 'real estate';
+        _sf_async_config.authors = 'Katrina Creer';
+        /** CONFIGURATION END **/
+        (function(){
+          function loadChartbeat() {
+            window._sf_endpt=(new Date()).getTime();
+            var e = document.createElement('script');
+            e.setAttribute('language', 'javascript');
+            e.setAttribute('type', 'text/javascript');
+            e.setAttribute('src', '//static.chartbeat.com/js/chartbeat.js');
+            document.body.appendChild(e);
+          }
+          var oldonload = window.onload;
+          window.onload = (typeof window.onload != 'function') ?
+              loadChartbeat : function() { oldonload(); loadChartbeat(); };
+        })();
+      </script>
+    <script language='JavaScript'>
+    var OB_ADV_ID=13868;
+    var scheme = (("https:" == document.location.protocol) ? "https://" : "http://");
+    var str = '<script src="'+scheme+'widgets.outbrain.com/obtp.js" type="text/javascript"><\/script>';
+    document.write(str);
+</script>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"19d1c9e27c","applicationID":"33801519","transactionName":"MldbNhEEXRVSVhBYCQsdeAEXDFwIHEYNXwEJVw==","queueTime":0,"applicationTime":1030,"atts":"HhBYQFkeThs=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>
