@@ -127,7 +127,7 @@ JSON_PATTERN_PUBLISHED = \
   re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
 TIMESTAMP_PATTERN = regex.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
-# English + German + Turkish dates cache
+# English, French, German, Indonesian and Turkish dates cache
 TEXT_MONTHS = {
     # January
     'Januar': '01', 'Jänner': '01', 'January': '01', 'Januari': '01', 'Jan': '01',
@@ -231,6 +231,16 @@ def extract_partial_url_date(testurl, outputformat):
     return None
 
 
+def correct_year(year):
+    """Adapt year from YY to YYYY format"""
+    if year < 100:
+        if year >= 90:
+            year += 1900
+        else:
+            year += 2000
+    return year
+
+
 def regex_parse(string):
     """Full-text parse using a series of regular expressions"""
     dateobject = regex_parse_de(string)
@@ -265,42 +275,32 @@ def regex_parse_multilingual(string):
     # American English
     match = LONG_MDY_PATTERN.search(string)
     if match:
-        day = match.group(2)
-        month = TEXT_MONTHS[match.group(1)]
-        year = match.group(4)
-
+        day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], match.group(4)
     # multilingual day-month-year pattern
     else:
         match = LONG_DMY_PATTERN.search(string)
         if match:
-            day = match.group(1)
-            month = TEXT_MONTHS[match.group(4)]
-            year = match.group(5)
+            day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], match.group(5)
         else:
             return None
 
     # process and return
     try:
-        intYear = int(year)
-        intMonth = int(month)
-        intDay = int(day)
-
-        if intYear < 100:
-            if intYear >= 90: intYear += 1900
-            else: intYear += 2000
-
-        dateobject = datetime.date(intYear, intMonth, intDay)
+        int_day, int_month, int_year = int(day), int(month), int(year)
+        int_year = correct_year(int_year)
+        dateobject = datetime.date(int_year, int_month, int_day)
     except ValueError:
         return None
 
     LOGGER.debug('multilingual text found: %s', dateobject)
     return dateobject
 
-# TODO
+
+# TODO: check what's necessary here and what's not
 def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
-    
+
     # Use regex first
     # 1. Try YYYYMMDD first
     match = YMD_NO_SEP_PATTERN.search(string)
@@ -320,9 +320,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     match = YMD_PATTERN.search(string)
     if match:
         try:
-            year = int(match.group(1))
-            month = int(match.group(2))
-            day = int(match.group(3))
+            day, month, year = int(match.group(3)), int(match.group(2)), int(match.group(1))
             candidate = datetime.date(year, month, day)
         except ValueError:
             LOGGER.debug('Y-M-D value error: %s', match.group(0))
@@ -335,19 +333,11 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     match = DMY_PATTERN.search(string)
     if match:
         try:
-            day = int(match.group(1))
-            month = int(match.group(2))
-            year = int(match.group(3))
-
-            # Append year if necessary
-            if year < 100:
-                if year >= 90: year += 1900
-                else: year += 2000
-            
+            day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            year = correct_year(year)
             # If month is more than 12, swap it with the day
             if month > 12 and day <= 12:
                 day, month = month, day
-
             candidate = datetime.date(year, month, day)
         except ValueError:
             LOGGER.debug('D-M-Y value error: %s', match.group(0))
@@ -360,8 +350,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     match = YM_PATTERN.search(string)
     if match:
         try:
-            year = int(match.group(1))
-            month = int(match.group(2))
+            year, month = int(match.group(1)), int(match.group(2))
             candidate = datetime.date(year, month, 1)
         except ValueError:
             LOGGER.debug('Y-M value error: %s', match.group(0))
@@ -488,10 +477,9 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
                                       int(match.group(groups[2])),
                                       int(match.group(groups[3])))
         elif len(match.group(groups[3])) in (2, 4):
-            # switch to MM/DD/YY
+            # swap variables to switch to MM/DD/YY
             if int(match.group(groups[2])) > 12:
-                tmp1, tmp2 = groups[1], groups[2]
-                groups[1], groups[2] = tmp2, tmp1
+                groups[1], groups[2] = groups[2], groups[1]
             # DD/MM/YY
             try:
                 if len(match.group(groups[3])) == 2:
