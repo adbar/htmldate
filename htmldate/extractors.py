@@ -301,13 +301,38 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
 
-    # Use regex first
-    # 1. Try YYYYMMDD first
+    # 1. '201709011234' not covered by dateparser, and regex too slow
+    if string[0:8].isdigit():
+        try:
+            candidate = datetime.date(int(string[:4]),
+                                      int(string[4:6]),
+                                      int(string[6:8]))
+        except ValueError:
+            return None
+        if date_validator(candidate, '%Y-%m-%d') is True:
+            LOGGER.debug('ymd match: %s', candidate)
+            return convert_date(candidate, '%Y-%m-%d', outputformat)
+
+    # 2. shortcut, much faster
+    if string[0:4].isdigit():
+        # try speedup with ciso8601 (if installed)
+        try:
+            if extensive_search is True:
+                result = parse_datetime(string)
+            # speed-up by ignoring time zone info if ciso8601 is installed
+            else:
+                result = parse_datetime_as_naive(string)
+            if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
+                LOGGER.debug('parsing result: %s', result)
+                return result.strftime(outputformat)
+        except (OverflowError, TypeError, ValueError):
+            LOGGER.debug('parsing error: %s', string)
+
+    # 3. Try YYYYMMDD, use regex
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
-            tmp = match.group(0)
-            year, month, day = int(tmp[:4]), int(tmp[4:6]), int(tmp[6:8])
+            year, month, day = int(match.group(0)[:4]), int(match.group(0)[4:6]), int(match.group(0)[6:8])
             candidate = datetime.date(year, month, day)
         except ValueError:
             LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
@@ -316,7 +341,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('YYYYMMDD match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    # 2. Try Y-M-D pattern since it's the one used in ISO-8601
+    # 4. Try Y-M-D pattern since it's the one used in ISO-8601
     match = YMD_PATTERN.search(string)
     if match:
         try:
@@ -329,7 +354,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('Y-M-D match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    # 3. Try the D-M-Y pattern since it's the most common date format in the world
+    # 5. Try the D-M-Y pattern since it's the most common date format in the world
     match = DMY_PATTERN.search(string)
     if match:
         try:
@@ -346,7 +371,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('D-M-Y match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    # 4. Try the Y-M pattern
+    # 6. Try the Y-M pattern
     match = YM_PATTERN.search(string)
     if match:
         try:
@@ -359,7 +384,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('Y-M match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    # 5. Try the other regex pattern
+    # 7. Try the other regex pattern
     dateobject = regex_parse(string)
     if dateobject is not None:
         try:
