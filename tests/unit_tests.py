@@ -293,7 +293,7 @@ def test_exact_date():
     assert find_date(load_mock_page('https://www.oberstdorf-resort.de/interaktiv/blog/unser-kraeutergarten-wannenkopfhuette.html')) == '2018-06-20'
     assert find_date(load_mock_page('https://www.wienbadminton.at/news/119843/Come-Together')) == '2018-05-06'
     assert find_date(load_mock_page('https://www.ldt.de/ldtblog/fall-in-love-with-black/')) == '2017-08-08'
-    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-07-03' # should be '2019-06-29'
+    assert find_date(load_mock_page('https://paris-luttes.info/quand-on-comprend-que-les-grenades-12355'), original_date=True) == '2019-06-29'
     assert find_date(load_mock_page('https://verfassungsblog.de/the-first-decade/')) == '2019-07-13'
     assert find_date(load_mock_page('https://cric-grenoble.info/infos-locales/article/putsh-en-cours-a-radio-kaleidoscope-1145')) == '2019-06-09'
     assert find_date(load_mock_page('https://www.sebastian-kurz.at/magazin/wasserstoff-als-schluesseltechnologie')) == '2019-07-30'
@@ -387,7 +387,7 @@ def test_try_ymd_date():
     assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('Fri - September 1 - 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     assert try_ymd_date('1.9.2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-01-09' # assuming MDY format
+    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01' # assuming MDY format
     assert try_ymd_date('201709011234', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     # other output format
     assert try_ymd_date('1.9.2017', '%d %B %Y', True, MIN_DATE, LATEST_POSSIBLE) == '01 September 2017'
@@ -436,9 +436,9 @@ def test_regex_parse():
     assert regex_parse('3rd Tuesday in March') is None
     assert regex_parse('Mart 26, 2019') is not None
     assert regex_parse('Salı, Mart 26, 2019') is not None
-    assert regex_parse('3/14/2016') is not None
     assert regex_parse('36/14/2016') is None
     assert custom_parse('12122004', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('3/14/2016', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('20041212', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('20041212', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('1212-20-04', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
