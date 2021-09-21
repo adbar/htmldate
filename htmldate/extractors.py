@@ -91,7 +91,8 @@ ADDITIONAL_EXPRESSIONS = ".//*[contains(@class, 'fecha') or contains(@class, 'pa
 
 # discard parts of the webpage
 DISCARD_EXPRESSIONS = """.//footer
-    |.//*[(self::div or self::section)][@id="footer" or @class="footer"]"""
+    |.//*[(self::div or self::section)][@id="footer" or @class="footer"]
+    |.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""  # archive.org banner inserts
 
 # Regex cache
 YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')

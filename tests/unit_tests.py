@@ -110,6 +110,7 @@ MOCK_PAGES = {
 'https://www.acredis.com/schoenheitsoperationen/augenlidstraffung/': 'acredis.com.augenlidstraffung.html',
 'https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/': 'hertie-school.org.leyen.html',
 'https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/': 'adac.de.kindersitztest.html',
+'http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/': 'archive.org.kath.ch.html',
 }
 
 MEDIACLOUD_PAGES = {
@@ -323,6 +324,11 @@ def test_exact_date():
     assert find_date('<html><body><div class="spip spip-block-right" style="text-align:right;">Le 26 juin 2019</div></body></html>', extensive_search=True) == '2019-06-26'
     # in link title
     assert find_date('<html><body><a class="ribbon date " title="12th December 2018" href="https://example.org/" itemprop="url">Text</a></body></html>') == '2018-12-12'
+
+
+    # archive.org documents
+    assert find_date(load_mock_page('http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/'), extensive_search=False) is None
+    assert find_date(load_mock_page('http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/'), extensive_search=True) == '2021-07-13'
 
 
 def test_approximate_date():
