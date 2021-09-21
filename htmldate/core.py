@@ -685,7 +685,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         return text_result
 
     # title
-    for title_elem in cleaned_html.iterfind('.//title|.//h1'):
+    for title_elem in tree.iter('title', 'h1'):
         attempt = try_ymd_date(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
         if attempt is not None:
             return attempt
