@@ -638,6 +638,12 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         outputformat, extensive_search, min_date, max_date)
     if dateresult is not None:
         return dateresult
+    # supply more expressions (other languages)
+    if extensive_search is True:
+        dateresult = examine_date_elements(search_tree, ADDITIONAL_EXPRESSIONS,
+            outputformat, extensive_search, min_date, max_date)
+        if dateresult is not None:
+            return dateresult
 
     # search in discarded parts (currently: footer)
     for subtree in discarded:
@@ -646,23 +652,16 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         if dateresult is not None:
             return dateresult
 
-    # supply more expressions (other languages)
-    if extensive_search is True:
-        dateresult = examine_date_elements(tree, ADDITIONAL_EXPRESSIONS,
-            outputformat, extensive_search, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
-
     # try time elements
     time_result = examine_time_elements(
-        tree, outputformat, extensive_search, original_date, min_date, max_date
+        search_tree, outputformat, extensive_search, original_date, min_date, max_date
     )
     if time_result is not None:
         return time_result
 
     # clean before string search
     try:
-        cleaned_html = HTML_CLEANER.clean_html(tree)
+        cleaned_html = HTML_CLEANER.clean_html(deepcopy(tree))
     # rare LXML error: no NULL bytes or control characters
     except ValueError:
         cleaned_html = tree
