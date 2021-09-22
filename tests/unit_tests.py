@@ -388,9 +388,6 @@ def test_output_format_validator():
     assert output_format_validator('%M-%Y') is True
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
-    assert output_format_validator('ABC%') is False
-    # problem with some Python versions: AssertionError: assert True is False
-    # assert output_format_validator('X%') is False
 
 
 def test_try_ymd_date():

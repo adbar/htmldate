@@ -63,7 +63,8 @@ def output_format_validator(outputformat):
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
     try:
         dateobject.strftime(outputformat)
-    except (NameError, TypeError, ValueError) as err:
+    # Python < 3.7 only
+    except (NameError, TypeError, UnicodeError, ValueError) as err:
         logging.error('wrong output format or format type: %s %s', outputformat, err)
         return False
     return True
