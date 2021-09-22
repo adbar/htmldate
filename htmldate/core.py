@@ -208,7 +208,10 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
             attribute = elem.get('http-equiv').lower()
             if attribute == 'date':
                 LOGGER.debug('examining meta http-equiv: %s', logstring(elem))
-                headerdate = tryfunc(elem.get('content'))
+                if original_date is True:
+                    headerdate = tryfunc(elem.get('content'))
+                else:
+                    reserve = tryfunc(elem.get('content'))
             elif attribute == 'last-modified':
                 LOGGER.debug('examining meta http-equiv: %s', logstring(elem))
                 if original_date is False:

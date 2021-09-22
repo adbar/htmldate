@@ -177,7 +177,6 @@ def test_exact_date():
     ## HTML tree
     assert find_date('<html><head><meta property="dc:created" content="2017-09-01"/></head><body></body></html>') == '2017-09-01'
     assert find_date('<html><head><meta property="og:published_time" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
-    assert find_date('<html><head><meta http-equiv="date" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
     assert find_date('<html><head><meta name="last-modified" content="2017-09-01"/></head><body></body></html>', original_date=False) == '2017-09-01'
     assert find_date('<html><head><meta property="OG:Updated_Time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
     assert find_date('<html><head><Meta Property="og:updated_time" content="2017-09-01"/></head><body></body></html>', extensive_search=False) == '2017-09-01'
@@ -198,6 +197,11 @@ def test_exact_date():
     assert find_date('<html><head><meta itemprop="datecreated" datetime="2018-02-02"/></head><body></body></html>') == '2018-02-02'
     assert find_date('<html><head><meta itemprop="datemodified" content="2018-02-04"/></head><body></body></html>') == '2018-02-04'
     assert find_date('<html><head><meta http-equiv="last-modified" content="2018-02-05"/></head><body></body></html>') == '2018-02-05'
+    assert find_date('<html><head><meta http-equiv="date" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
+    assert find_date('<html><head><meta http-equiv="last-modified" content="2018-10-01"/><meta http-equiv="date" content="2017-09-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
+    assert find_date('<html><head><meta http-equiv="last-modified" content="2018-10-01"/><meta http-equiv="date" content="2017-09-01"/></head><body></body></html>', original_date=False) == '2018-10-01'
+    assert find_date('<html><head><meta http-equiv="date" content="2017-09-01"/><meta http-equiv="last-modified" content="2018-10-01"/></head><body></body></html>', original_date=True) == '2017-09-01'
+    assert find_date('<html><head><meta http-equiv="date" content="2017-09-01"/><meta http-equiv="last-modified" content="2018-10-01"/></head><body></body></html>', original_date=False) == '2018-10-01'
     assert find_date('<html><head><meta name="Publish_Date" content="02.02.2004"/></head><body></body></html>') == '2004-02-02'
     assert find_date('<html><head><meta name="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
     assert find_date('<html><head><meta pubdate="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
@@ -210,9 +214,13 @@ def test_exact_date():
     assert find_date('<html><body><time datetime="08:00"></body></html>') is None
     assert find_date('<html><body><time datetime="2014-07-10 08:30:45.687"></body></html>') == '2014-07-10'
     assert find_date('<html><head></head><body><time class="entry-time" itemprop="datePublished" datetime="2018-04-18T09:57:38+00:00"></body></html>') == '2018-04-18'
-    print(find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03')
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00">3. Januar 2019 um 14:56 Uhr.</time></p></footer></body></html>') == '2019-01-03'
     assert find_date('<html><body><footer class="article-footer"><p class="byline">Veröffentlicht am <time class="updated" datetime="2019-01-03T14:56:51+00:00"></time></p></footer></body></html>') == '2019-01-03'
+    assert find_date('<html><body><time datetime="2011-09-27" class="entry-date"></time><time datetime="2011-09-28" class="updated"></time></body></html>', original_date=True) == '2011-09-27'
+    # problem here:
+    #assert find_date('<html><body><time datetime="2011-09-27" class="entry-date"></time><time datetime="2011-09-28" class="updated"></time></body></html>', original_date=False) == '2011-09-28'
+    #assert find_date('<html><body><time datetime="2011-09-28" class="updated"></time><time datetime="2011-09-27" class="entry-date"></time></body></html>', original_date=True) == '2011-09-27'
+    assert find_date('<html><body><time datetime="2011-09-28" class="updated"></time><time datetime="2011-09-27" class="entry-date"></time></body></html>', original_date=False) == '2011-09-28'
     # removed from HTML5 https://www.w3schools.com/TAgs/att_time_datetime_pubdate.asp
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=False) == '2011-09-28'
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=True) == '2011-09-28'
@@ -378,6 +386,7 @@ def test_output_format_validator():
     assert output_format_validator('%M-%Y') is True
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
+    assert output_format_validator('ABC%') is False
     # problem with some Python versions: AssertionError: assert True is False
     # assert output_format_validator('X%') is False
 
@@ -443,6 +452,10 @@ def test_regex_parse():
     assert regex_parse('Mart 26, 2019') is not None
     assert regex_parse('Salı, Mart 26, 2019') is not None
     assert regex_parse('36/14/2016') is None
+    assert regex_parse('January 36 1998') is None
+    assert custom_parse('January 12 1098', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('1998-01', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('10.10.98', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('12122004', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
     assert custom_parse('3/14/2016', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('20041212', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
