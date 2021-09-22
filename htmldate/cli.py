@@ -60,11 +60,8 @@ def parse_args(args):
     return argsparser.parse_args()
 
 
-def main():
-    """ Run as a command-line utility. """
-    # arguments
-    args = parse_args(sys.argv[1:])
-    # process input on STDIN
+def process_args(args):
+    """Process the arguments passed on the command-line."""
     if not args.inputfile:
         # URL as input
         if args.URL:
@@ -96,6 +93,14 @@ def main():
                 if result is None:
                     result = 'None'
                 sys.stdout.write(line.strip() + '\t' + result + '\n')
+
+
+def main():
+    """ Run as a command-line utility. """
+    # arguments
+    args = parse_args(sys.argv[1:])
+    # process input on STDIN
+    process_args(args)
 
 
 if __name__ == '__main__':

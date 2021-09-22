@@ -5,6 +5,7 @@ Unit tests for the htmldate library.
 
 
 import datetime
+import io
 import logging
 import os
 import re
@@ -13,6 +14,7 @@ import sys
 import pytest
 
 from collections import Counter
+from contextlib import redirect_stdout
 from unittest.mock import patch
 
 try:
@@ -29,7 +31,7 @@ try:
 except ImportError:
     import chardet
 
-from htmldate.cli import examine, parse_args
+from htmldate.cli import examine, parse_args, process_args
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, MIN_DATE, LATEST_POSSIBLE
@@ -703,6 +705,30 @@ def test_cli():
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2015-01-01') is None
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-12-31') == '2016-07-12'
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-41-41') == '2016-07-12'
+    # first test
+    testargs = ['', '-u', 'https://httpbin.org/html']
+    with patch.object(sys, 'argv', testargs):
+        args = parse_args(testargs)
+    f = io.StringIO()
+    with redirect_stdout(f):
+        process_args(args)
+    assert len(f.getvalue()) == 0
+    # second test
+    args.URL = None
+    args.inputfile = os.path.join(TEST_DIR, 'testlist.txt')
+    f = io.StringIO()
+    with redirect_stdout(f):
+        process_args(args)
+    assert f.getvalue() == 'https://httpbin.org/html\tNone\n'
+    # third test
+    args.inputfile = None
+    sys.stdin = open(os.path.join(TEST_DIR, 'cache', 'befifty.montauk.html'), 'r')
+    f = io.StringIO()
+    with redirect_stdout(f):
+        process_args(args)
+    print(f.getvalue())
+    assert f.getvalue() == '2017-07-12\n'
+    sys.stdin = sys.__stdin__
 
 
 def test_download():
