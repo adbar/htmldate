@@ -10,6 +10,10 @@ import datetime
 
 from lxml.html.clean import Cleaner
 
+
+# Function cache
+CACHE_SIZE = 8192
+
 # Download
 MAX_FILE_SIZE = 20000000
 MIN_FILE_SIZE = 10

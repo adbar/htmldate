@@ -48,6 +48,7 @@ except ImportError:
     parse_datetime = parse_datetime_as_naive = FULL_PARSE  # shortcut
 
 # own
+from .settings import CACHE_SIZE
 from .validators import convert_date, date_validator
 
 LOGGER = logging.getLogger(__name__)
@@ -416,7 +417,7 @@ def external_date_parser(string, outputformat):
     return None
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
     # discard on formal criteria

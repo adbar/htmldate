@@ -28,7 +28,7 @@ from .extractors import (discard_unwanted, extract_url_date,
                          SLASHES_PATTERN, SLASHES_YEAR,
                          YYYYMM_PATTERN, YYYYMM_CATCH, MMYYYY_PATTERN,
                          MMYYYY_YEAR, SIMPLE_PATTERN)
-from .settings import HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
+from .settings import CACHE_SIZE, HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
                          convert_date, date_validator, filter_ymd_candidate,
@@ -67,7 +67,7 @@ PROPERTY_MODIFIED = {
                     }
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -290,7 +290,7 @@ def try_expression(expression, outputformat, extensive_search, min_date, max_dat
     return try_ymd_date(textcontent[:48], outputformat, extensive_search, min_date, max_date)
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def compare_reference(reference, expression, outputformat, extensive_search, original_date, min_date, max_date):
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_expression(expression, outputformat, extensive_search, min_date, max_date)

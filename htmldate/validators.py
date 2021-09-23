@@ -14,14 +14,14 @@ import time
 from collections import Counter
 from functools import lru_cache
 
-from .settings import MIN_DATE, MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR
+from .settings import CACHE_SIZE, LATEST_POSSIBLE, MAX_YEAR, MIN_DATE, MIN_YEAR
 
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_POSSIBLE):
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # try if date can be parsed using chosen outputformat
@@ -70,7 +70,7 @@ def output_format_validator(outputformat):
     return True
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
     # slow!
@@ -116,7 +116,7 @@ def compare_values(reference, attempt, outputformat, original_date):
     return reference
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=CACHE_SIZE)
 def filter_ymd_candidate(bestmatch, pattern, original_date, copyear, outputformat, min_date, max_date):
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
