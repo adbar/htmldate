@@ -35,7 +35,7 @@ from htmldate.cli import examine, parse_args, process_args
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, MIN_DATE, LATEST_POSSIBLE
-from htmldate.utils import fetch_url, load_html
+from htmldate.utils import decode_response, fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
 
 
@@ -153,7 +153,11 @@ def test_input():
     assert load_html('<'*100) is None
     assert load_html(b'<html><body>XYZ</body></html>') is not None
     assert load_html(b'<'*100) is None
+    assert load_html(b'<html><body>\x2f\x2e\x9f</body></html>') is not None
+    assert load_html('<html><body>\x2f\x2e\x9f</body></html>'.encode('latin-1')) is not None
     assert load_html('https://httpbin.org/html') is not None
+    assert decode_response(b'\x1f\x8babcdef') is not None
+    # find_date logic
     assert find_date(None) is None
     # min and max date output
     assert get_min_date('2020-02-20') == datetime.date(2020, 2, 20)
@@ -717,15 +721,15 @@ def test_cli():
     with redirect_stdout(f):
         process_args(args)
     assert f.getvalue() == 'https://httpbin.org/html\tNone\n'
-    # third test
-    args.inputfile = None
-    sys.stdin = open(os.path.join(TEST_DIR, 'cache', 'befifty.montauk.html'), 'r')
-    f = io.StringIO()
-    with redirect_stdout(f):
-        process_args(args)
-    print(f.getvalue())
-    assert f.getvalue() == '2017-07-12\n'
-    sys.stdin = sys.__stdin__
+    # third test: Linux and MacOS only
+    if os.name != 'nt':
+        args.inputfile = None
+        sys.stdin = open(os.path.join(TEST_DIR, 'cache', 'befifty.montauk.html'), 'r')
+        f = io.StringIO()
+        with redirect_stdout(f):
+            process_args(args)
+        assert f.getvalue() == '2017-07-12\n'
+        sys.stdin = sys.__stdin__
 
 
 def test_download():
