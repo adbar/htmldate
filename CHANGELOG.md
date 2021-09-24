@@ -1,6 +1,13 @@
 ## Changelog
 
 
+### 0.9.1
+- improved generic date parsing (thanks @RadhiFadlillah)
+- specific support for French and Indonesian (thanks @RadhiFadlillah)
+- additional evaluation for English news sites (kudos to @coreydockser & @rahulbot)
+- bugs fixed
+
+
 ### 0.9.0
 - improved exhaustive search
 - simplified code

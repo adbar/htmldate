@@ -12,7 +12,7 @@ from setuptools import setup
 extras = {
     'speed': [
         'cchardet >= 2.1.7', # ; python_version > "3.4"
-        'ciso8601 >= 2.1.3',
+        'ciso8601 >= 2.2.0',
         ],
 }
 
@@ -82,8 +82,8 @@ setup(
         'chardet >= 4.0.0; python_version >= "3.6"',
         'dateparser >= 1.0.0',
         'lxml >= 4.6.3',
-        'python-dateutil >= 2.8.1',
-        'regex >= 2021.4.4',
+        'python-dateutil >= 2.8.2',
+        'regex >= 2021.8.28',
         'urllib3 >= 1.25, <2',
     ],
     extras_require=extras,
