@@ -15,6 +15,8 @@ extras = {
         'ciso8601 >= 2.2.0',
         ],
 }
+extras['all'] = extras['speed']
+
 
 def get_long_description():
     "Return the README"
