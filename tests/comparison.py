@@ -39,6 +39,7 @@ for each in eval_paths:
     with open(evalpath) as f:
         EVAL_PAGES.update(json.load(f))
 
+
 def load_document(filename):
     '''load mock page from samples'''
     mypath = os.path.join(TEST_DIR, 'test_set', filename)
@@ -63,6 +64,9 @@ def load_document(filename):
         else:
             print('Encoding error')
     return htmlstring
+# bypass
+#    with open(mypath, 'rb') as inputf:
+#        return inputf.read()
 
 
 def run_htmldate_extensive(htmlstring):
@@ -76,17 +80,21 @@ def run_htmldate_fast(htmlstring):
     result = find_date(htmlstring, original_date=True, extensive_search=False)
     return result
 
-#does not work on the eval_default dataset
-#def run_newspaper(htmlstring):
-#    '''try with the newspaper module'''
-#    myarticle = Article(htmlstring)
-#    myarticle.html = htmlstring
-#    myarticle.download_state = ArticleDownloadState.SUCCESS
-#    myarticle.parse()
-#    if myarticle.publish_date is None or myarticle.publish_date is '':
-#        return None
-#    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-#    return date
+
+def run_newspaper(htmlstring):
+    '''try with the newspaper module'''
+    # throws error on the eval_default dataset
+    try:
+        myarticle = Article(htmlstring)
+    except (TypeError, UnicodeDecodeError):
+        return None
+    myarticle.html = htmlstring
+    myarticle.download_state = ArticleDownloadState.SUCCESS
+    myarticle.parse()
+    if myarticle.publish_date is None or myarticle.publish_date is '':
+        return None
+    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+    return date
 
 
 def run_newsplease(htmlstring):
@@ -132,7 +140,7 @@ def run_goose(htmlstring):
         return result
     # illogical result
     except AttributeError:
-        print(article.publish_date)
+    #    print(article.publish_date)
         return None
 
 
@@ -165,7 +173,7 @@ def calculate_scores(name, mydict):
     recall = tp/(tp+fn)
     accuracy = (tp+tn)/(tp+tn+fp+fn)
     fscore = (2*tp)/(2*tp + fp + fn)  # 2*((precision*recall)/(precision+recall))
-    return name, precision, recall, accuracy, fscore, time1, time2,
+    return name, precision, recall, accuracy, fscore, mydict['time'], time1, time2,
 
 
 template_dict = {'true_positives': 0, 'false_positives': 0, 'true_negatives': 0, 'false_negatives': 0, 'time': 0}
@@ -185,7 +193,7 @@ i = 0
 
 for item in EVAL_PAGES:
     i += 1
-    print(item)
+    #print(item)
     htmlstring = load_document(EVAL_PAGES[item]['file'])
     # null hypotheses
     tp, fp, tn, fn = evaluate_result(None, EVAL_PAGES, item)
@@ -212,14 +220,14 @@ for item in EVAL_PAGES:
     htmldate_fast_result['true_negatives'] += tn
     htmldate_fast_result['false_negatives'] += fn
     # newspaper
-    #start = time.time()
-    #result = run_newspaper(htmlstring)
-    #newspaper_result['time'] += time.time() - start
-    #tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
-    #newspaper_result['true_positives'] += tp
-    #newspaper_result['false_positives'] += fp
-    #newspaper_result['true_negatives'] += tn
-    #newspaper_result['false_negatives'] += fn
+    start = time.time()
+    result = run_newspaper(htmlstring)
+    newspaper_result['time'] += time.time() - start
+    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    newspaper_result['true_positives'] += tp
+    newspaper_result['false_positives'] += fp
+    newspaper_result['true_negatives'] += tn
+    newspaper_result['false_negatives'] += fn
     # newsplease
     start = time.time()
     result = run_newsplease(htmlstring)
@@ -257,14 +265,16 @@ for item in EVAL_PAGES:
     goose_result['true_negatives'] += tn
     goose_result['false_negatives'] += fn
 
+
 print('Sample Size:', i)
 table = [calculate_scores("htmldate extensive", htmldate_extensive_result), calculate_scores("htmldate fast", htmldate_fast_result),
-#calculate_scores("newspaper", newspaper_result), 
+calculate_scores("newspaper", newspaper_result),
 calculate_scores("newsplease", newsplease_result), calculate_scores("articledateextractor", articledateextractor_result),
-calculate_scores("date_guesser", dateguesser_result),  calculate_scores("goose", goose_result)]
-print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f"]))
+calculate_scores("date_guesser", dateguesser_result),  calculate_scores("goose", goose_result)
+]
+print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (s)", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f", ".3f", ".3f"]))
 
 
 with open('comparison_results.txt', 'w') as f:
-    print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f"]), file=f)
+    print(tabulate(table, headers = ["Name", "Precision", "Recall", "Accuracy", "F-score", "Time (s)", "Time (Relative to htmldate extensive)", "Time (Relative to htmldate fast)"], floatfmt=[".3f", ".3f", ".3f", ".3f", ".3f", ".3f"]), file=f)
 print("Results also saved as comparison_results.txt")
