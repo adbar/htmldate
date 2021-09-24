@@ -91,7 +91,7 @@ def run_newspaper(htmlstring):
     myarticle.html = htmlstring
     myarticle.download_state = ArticleDownloadState.SUCCESS
     myarticle.parse()
-    if myarticle.publish_date is None or myarticle.publish_date is '':
+    if myarticle.publish_date is None or myarticle.publish_date == '':
         return None
     date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
     return date
