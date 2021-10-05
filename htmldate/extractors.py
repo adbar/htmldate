@@ -420,16 +420,12 @@ def external_date_parser(string, outputformat):
 @lru_cache(maxsize=CACHE_SIZE)
 def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
-    # discard on formal criteria
-    # list(filter(str.isdigit, string))
-
-    # if string less than 6 runes, stop
+    # if string less than 6 chars, stop
     if not string or len(string) < 6:
         return None
 
     # count how many digit number in this string
-    digits_num = len([c for c in string if c.isdigit()])
-    if not 4 <= digits_num <= 18:
+    if not 4 <= len([c for c in string if c.isdigit()]) <= 18:
         return None
 
     # check if string only contains time/single year or digits and not a date
