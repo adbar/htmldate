@@ -44,12 +44,14 @@ def logstring(element):
 DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
                   'article.published', 'article:published_time', 
-                  'bt:pubdate', 'citation_publication_date', 'created',
-                  'cxenseparse:recs:publishtime', 'date', 'date_published',
+                  'bt:pubdate', 'citation_date', 'citation_publication_date',
+                  'created', 'cxenseparse:recs:publishtime',
+                  'date', 'date_published',
                   'datecreated', 'dateposted', 'datepublished',
                   # Dublin Core: https://wiki.whatwg.org/wiki/MetaExtensions
                   'dc.date', 'dc.created', 'dc.date.created',
-                  'dc.date.issued', 'dcterms.created', 'dcterms.date',
+                  'dc.date.issued', 'dc.date.publication',
+                  'dcterms.created', 'dcterms.date',
                   'dcterms.issued', 'dc:created', 'dc:date',
                   'gentime',
                   # Open Graph: https://opengraphprotocol.org/
@@ -57,7 +59,7 @@ DATE_ATTRIBUTES = {
                   'originalpublicationdate', 'parsely-pub-date',
                   'pubdate', 'publishdate', 'publish_date',
                   'published-date', 'publication_date',  'rnews:datepublished',
-                  'sailthru.date', 'timestamp'
+                  'sailthru.date', 'shareaholic:article_published_time', 'timestamp'
                   }
 PROPERTY_MODIFIED = {
                     'article:modified_time', 'datemodified',
