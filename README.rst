@@ -93,7 +93,7 @@ goose3 3.1.9                    0.821     0.453     0.412     0.584     8.2x
 htmldate[all] 0.9.1 (fast)      **0.839** 0.906     0.772     0.871     **1x**
 htmldate[all] 0.9.1 (extensive) 0.825     **0.990** **0.818** **0.900** 1.7x
 newspaper3k 0.2.8               0.729     0.630     0.510     0.675     8.4x
-news-please 1.5.21              0.823     0.691     0.572     0.728     30x
+news-please 1.5.21              0.769     0.691     0.572     0.728     30x
 =============================== ========= ========= ========= ========= =======
 
 For complete results and explanations see the `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
