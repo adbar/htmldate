@@ -26,16 +26,11 @@ except ImportError:
 
 from lxml import html
 
-try:
-    import cchardet as chardet
-except ImportError:
-    import chardet
-
 from htmldate.cli import examine, parse_args, process_args
 from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, MIN_DATE, LATEST_POSSIBLE
-from htmldate.utils import decode_response, fetch_url, load_html
+from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
 
 
@@ -122,23 +117,8 @@ MEDIACLOUD_PAGES = {
 
 def load_mock_page(url, dirname='cache', dictname=MOCK_PAGES):
     '''load mock page from samples'''
-    try:
-        with open(os.path.join(TEST_DIR, dirname, dictname[url]), 'r', encoding='utf-8') as inputf:
-            htmlstring = inputf.read()
-    # encoding/windows fix for the tests
-    except UnicodeDecodeError:
-        # read as binary
-        with open(os.path.join(TEST_DIR, dirname, dictname[url]), 'rb') as inputf:
-            htmlbinary = inputf.read()
-        guessed_encoding = chardet.detect(htmlbinary)['encoding']
-        if guessed_encoding is not None:
-            try:
-                htmlstring = htmlbinary.decode(guessed_encoding)
-            except UnicodeDecodeError:
-                htmlstring = htmlbinary
-        else:
-            print('Encoding error')
-    return htmlstring
+    with open(os.path.join(TEST_DIR, dirname, dictname[url]), 'rb') as inputf:
+        return inputf.read()
 
 
 def load_mediacloud_page(url):
@@ -647,7 +627,9 @@ def test_search_pattern(original_date=False, min_date=MIN_DATE, max_date=LATEST_
 def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
     '''test pattern search in HTML'''
     # file input + output format
-    assert search_page(load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/'), '%d %B %Y', original_date, min_date, max_date) == '06 April 2019'
+    fileinput = load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/')
+    encoding = detect_encoding(fileinput)
+    assert search_page(fileinput.decode(encoding), '%d %B %Y', original_date, min_date, max_date) == '06 April 2019'
     # tree input
     assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2010-05-01'
     assert search_page('<html><body><p>The date is 5.5.2010</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2010-05-05'
