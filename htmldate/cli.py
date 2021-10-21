@@ -23,12 +23,10 @@ def examine(htmlstring, extensive_bool=True, original_date=False,
         sys.stderr.write('# ERROR: file too large\n')
     elif len(htmlstring) < MIN_FILE_SIZE:
         sys.stderr.write('# ERROR: file too small\n')
-    # proceed
     else:
-        result = find_date(htmlstring, extensive_search=extensive_bool,
+        return find_date(htmlstring, extensive_search=extensive_bool,
                            original_date=original_date, verbose=verbose_flag,
                            min_date=mindate, max_date=maxdate)
-        return result
     return None
 
 

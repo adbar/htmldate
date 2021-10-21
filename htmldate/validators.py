@@ -56,7 +56,7 @@ def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_PO
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
-    if not isinstance(outputformat, str) or not '%' in outputformat:
+    if not isinstance(outputformat, str) or '%' not in outputformat:
         logging.error('malformed output format: %s', outputformat)
         return False
     # test with date object
@@ -107,12 +107,13 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-    if original_date is True:
-        if reference == 0 or timestamp < reference:
-            reference = timestamp
-    else:
-        if timestamp > reference:
-            reference = timestamp
+    if (
+        original_date is True
+        and (reference == 0 or timestamp < reference)
+        or original_date is not True
+        and timestamp > reference
+    ):
+        reference = timestamp
     return reference
 
 
@@ -121,19 +122,11 @@ def filter_ymd_candidate(bestmatch, pattern, original_date, copyear, outputforma
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
-        if date_validator(pagedate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
-            ## TODO: test and improve
-            #if original_date is True:
-            #    if copyear == 0 or int(bestmatch.group(1)) <= copyear:
-            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
-            #else:
-            #    if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
+        if date_validator(
+            pagedate, '%Y-%m-%d', earliest=min_date, latest=max_date
+        ) is True and (copyear == 0 or int(bestmatch.group(1)) >= copyear):
+            LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 

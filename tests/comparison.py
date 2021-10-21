@@ -71,14 +71,12 @@ def load_document(filename):
 
 def run_htmldate_extensive(htmlstring):
     '''run htmldate on content'''
-    result = find_date(htmlstring, original_date=True, extensive_search=True)
-    return result
+    return find_date(htmlstring, original_date=True, extensive_search=True)
 
 
 def run_htmldate_fast(htmlstring):
     '''run htmldate on content'''
-    result = find_date(htmlstring, original_date=True, extensive_search=False)
-    return result
+    return find_date(htmlstring, original_date=True, extensive_search=False)
 
 
 def run_newspaper(htmlstring):
@@ -93,8 +91,7 @@ def run_newspaper(htmlstring):
     myarticle.parse()
     if myarticle.publish_date is None or myarticle.publish_date == '':
         return None
-    date = convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-    return date
+    return convert_date(myarticle.publish_date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
 
 
 def run_newsplease(htmlstring):
@@ -103,29 +100,26 @@ def run_newsplease(htmlstring):
         article = NewsPlease.from_html(htmlstring, url=None)
         if article.date_publish is None:
              return None
-        date = convert_date(article.date_publish, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-        return date
+        return convert_date(article.date_publish, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
     except Exception as err:
         print('Exception:', err)
         return None
 
 
 def run_articledateextractor(htmlstring):
-   '''try with articleDateExtractor'''
-   dateresult = extractArticlePublishedDate('', html=htmlstring)
-   if dateresult is None:
-      return None
-   date = convert_date(dateresult, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-   return date
+    '''try with articleDateExtractor'''
+    dateresult = extractArticlePublishedDate('', html=htmlstring)
+    if dateresult is None:
+       return None
+    return convert_date(dateresult, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
 
 
 def run_dateguesser(htmlstring):
-   '''try with date_guesser'''
-   guess = guess_date(url='https://www.example.org/test/', html=htmlstring)
-   if guess.date is None:
-      return None
-   date = convert_date(guess.date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
-   return date
+    '''try with date_guesser'''
+    guess = guess_date(url='https://www.example.org/test/', html=htmlstring)
+    if guess.date is None:
+       return None
+    return convert_date(guess.date, '%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
 
 
 def run_goose(htmlstring):
@@ -136,9 +130,7 @@ def run_goose(htmlstring):
         return None
     datematch = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', article.publish_date)
     try:
-        result = datematch.group(0)
-        return result
-    # illogical result
+        return datematch.group(0)
     except AttributeError:
     #    print(article.publish_date)
         return None
@@ -153,7 +145,7 @@ def evaluate_result(result, EVAL_PAGES, item):
     datereference = EVAL_PAGES[item]['date']
     if result is None and datereference is None:
         true_negatives += 1
-    elif result is None and datereference is not None:
+    elif result is None:
         false_negatives += 1
     elif result == datereference:
         true_positives += 1
