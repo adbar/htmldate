@@ -236,10 +236,7 @@ def extract_partial_url_date(testurl, outputformat):
 def correct_year(year):
     """Adapt year from YY to YYYY format"""
     if year < 100:
-        if year >= 90:
-            year += 1900
-        else:
-            year += 2000
+        year += 1900 if year >= 90 else 2000
     return year
 
 
@@ -441,9 +438,10 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     if extensive_search is True:
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
-        if dateparser_result is not None:
-            if date_validator(dateparser_result, outputformat, earliest=min_date, latest=max_date):
-                return dateparser_result
+        if dateparser_result is not None and date_validator(
+            dateparser_result, outputformat, earliest=min_date, latest=max_date
+        ):
+            return dateparser_result
 
     return None
 
@@ -467,7 +465,7 @@ def json_search(tree, outputformat, original_date, min_date, max_date):
         json_pattern = JSON_PATTERN_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath('.//script[@type="application/ld+json"]|//script[@type="application/settings+json"]'):
-        if not elem.text or not '"date' in elem.text:
+        if not elem.text or '"date' not in elem.text:
             continue
         json_match = json_pattern.search(elem.text)
         if json_match and date_validator(json_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
@@ -515,10 +513,15 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
                                               int(match.group(groups[1])))
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
-    if candidate is not None:
-        if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-            LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
-            return convert_date(candidate, '%Y-%m-%d', outputformat)
+    if (
+        candidate is not None
+        and date_validator(
+            candidate, '%Y-%m-%d', earliest=min_date, latest=max_date
+        )
+        is True
+    ):
+        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
+        return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None
 
 

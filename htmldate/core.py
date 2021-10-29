@@ -147,20 +147,18 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
         # property attribute
         if 'property' in elem.attrib and 'content' in elem.attrib:
             attribute = elem.get('property').lower()
-            # original date
-            if original_date is True:
-                if attribute in DATE_ATTRIBUTES:
-                    LOGGER.debug('examining meta property: %s', logstring(elem))
-                    headerdate = tryfunc(elem.get('content'))
-            # modified date: override published_time
-            else:
-                if attribute in PROPERTY_MODIFIED:
-                    LOGGER.debug('examining meta property: %s', logstring(elem))
-                    headerdate = tryfunc(elem.get('content'))
-                elif attribute in DATE_ATTRIBUTES:
-                    LOGGER.debug('examining meta property: %s', logstring(elem))
-                    headerdate = tryfunc(elem.get('content'))
-        # name attribute
+            # original date or modified date: override published_time
+            if (
+                original_date is True
+                and attribute in DATE_ATTRIBUTES
+                or original_date is not True
+                and (
+                    attribute in PROPERTY_MODIFIED
+                    or attribute in DATE_ATTRIBUTES
+                )
+            ):
+                LOGGER.debug('examining meta property: %s', logstring(elem))
+                headerdate = tryfunc(elem.get('content'))
         elif 'name' in elem.attrib and 'content' in elem.attrib:
             # url
             if elem.get('name').lower() == 'og:url':
@@ -180,19 +178,14 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
             if elem.get('pubdate').lower() == 'pubdate':
                 LOGGER.debug('examining meta pubdate: %s', logstring(elem))
                 headerdate = tryfunc(elem.get('content'))
-        # other types # itemscope?
         elif 'itemprop' in elem.attrib:
             attribute = elem.get('itemprop').lower()
-            if attribute in (
-                    'datecreated', 'datepublished', 'pubyear'
-                ):
-                LOGGER.debug('examining meta itemprop: %s', logstring(elem))
-                if 'datetime' in elem.attrib:
-                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
-                elif 'content' in elem.attrib:
-                    headerdate = tryfunc(elem.get('content'))
-            # override
-            elif attribute == 'datemodified' and original_date is False:
+            # original: store / updated: override date
+            if (
+                attribute in ('datecreated', 'datepublished', 'pubyear')
+                or attribute == 'datemodified'
+                and original_date is False
+            ):
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
                     headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
@@ -205,7 +198,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                     attempt = '-'.join([elem.get('content'), '01', '01'])
                     if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
                         reserve = attempt
-        # http-equiv, rare http://www.standardista.com/html5/http-equiv-the-meta-attribute-explained/
+        # http-equiv, rare
         elif 'http-equiv' in elem.attrib:
             attribute = elem.get('http-equiv').lower()
             if attribute == 'date':
@@ -297,10 +290,8 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_expression(expression, outputformat, extensive_search, min_date, max_date)
     if attempt is not None:
-        new_reference = compare_values(reference, attempt, outputformat, original_date)
-    else:
-        new_reference = reference
-    return new_reference
+        return compare_values(reference, attempt, outputformat, original_date)
+    return reference
 
 
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
@@ -317,37 +308,36 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                     continue
                 LOGGER.debug('data-utime found: %s', candidate)
                 # look for original date
-                if original_date is True:
-                    if reference == 0:
-                        reference = candidate
-                    elif candidate < reference:
-                        reference = candidate
+                if original_date is True and (reference == 0 or candidate < reference):
+                    reference = candidate
                 # look for newest (i.e. largest time delta)
-                else:
-                    if candidate > reference:
-                        reference = candidate
+                elif original_date is False and candidate > reference:
+                    reference = candidate
             # class
-            if 'class' in elem.attrib:
-                if elem.get('class') in ('published', 'date-published', 'time published'):
-                    # other attributes
-                    if 'title' in elem.attrib:
-                        trytext = elem.get('title')
-                        LOGGER.debug('abbr published-title found: %s', trytext)
-                        # shortcut
-                        if original_date is True:
-                            attempt = try_ymd_date(trytext, outputformat, extensive_search, min_date, max_date)
-                            if attempt is not None:
-                                return attempt
-                        else:
-                            reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
-                            # faster execution
-                            if reference > 0:
-                                break
-                    # dates, not times of the day
-                    if elem.text and len(elem.text) > 10:
-                        trytext = re.sub(r'^am ', '', elem.text)
-                        LOGGER.debug('abbr published found: %s', trytext)
+            if 'class' in elem.attrib and elem.get('class') in (
+                'published',
+                'date-published',
+                'time published',
+            ):
+                # other attributes
+                if 'title' in elem.attrib:
+                    trytext = elem.get('title')
+                    LOGGER.debug('abbr published-title found: %s', trytext)
+                    # shortcut
+                    if original_date is True:
+                        attempt = try_ymd_date(trytext, outputformat, extensive_search, min_date, max_date)
+                        if attempt is not None:
+                            return attempt
+                    else:
                         reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
+                        # faster execution
+                        if reference > 0:
+                            break
+                # dates, not times of the day
+                if elem.text and len(elem.text) > 10:
+                    trytext = re.sub(r'^am ', '', elem.text)
+                    LOGGER.debug('abbr published found: %s', trytext)
+                    reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
         # convert and return
         converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
@@ -388,7 +378,7 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
                 else:
                     LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
                 # analyze attribute
-                if shortcut_flag is True:
+                if shortcut_flag:
                     attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                     if attempt is not None:
                         return attempt
@@ -400,7 +390,7 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug('time/datetime found: %s', elem.text)
                 reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, min_date, max_date)
-            # else...
+            # else...?
         # return
         converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
@@ -410,14 +400,12 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
 
 def normalize_match(match):
     '''Normalize string output by adding "0" if necessary.'''
-    if len(match.group(1)) == 1:
-        day = '0' + match.group(1)
-    else:
-        day = match.group(1)
-    if len(match.group(2)) == 1:
-        month = '0' + match.group(2)
-    else:
-        month = match.group(2)
+    day = match.group(1)
+    if len(day) == 1:
+        day = '0' + day
+    month = match.group(2)
+    if len(month) == 1:
+        month = '0' + month
     return day, month
 
 
@@ -468,7 +456,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # YYYY-MM-DD/DD-MM-YYYY
     candidates = plausible_year_filter(htmlstring, SELECT_YMD_PATTERN, SELECT_YMD_YEAR)
     # revert DD-MM-YYYY patterns before sorting
-    replacement = dict()
+    replacement = {}
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})', item)
         day, month = normalize_match(match)
@@ -490,7 +478,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # DD?/MM?/YY
     candidates = plausible_year_filter(htmlstring, SLASHES_PATTERN, SLASHES_YEAR, tocomplete=True)
     # revert DD-MM-YYYY patterns before sorting
-    replacement = dict()
+    replacement = {}
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.]([01]?[0-9])[/.]([0-9]{2})', item)
         day, month = normalize_match(match)
@@ -512,21 +500,21 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
-        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
-            if copyear == 0 or int(bestmatch.group(1)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and (
+            copyear == 0 or int(bestmatch.group(1)) >= copyear
+        ):
+            LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     # 2 components, second option
     candidates = plausible_year_filter(htmlstring, MMYYYY_PATTERN, MMYYYY_YEAR, original_date)
     # revert DD-MM-YYYY patterns before sorting
-    replacement = dict()
+    replacement = {}
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.-]([0-9]{4})', item)
-        if len(match.group(1)) == 1:
-            month = '0' + match.group(1)
-        else:
-            month = match.group(1)
+        month = match.group(1)
+        if len(month) == 1:
+            month = '0' + month
         candidate = '-'.join([match.group(2), month, '01'])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -546,10 +534,11 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
-        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True:
-            if copyear == 0 or int(bestmatch.group(0)) >= copyear:
-                LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
-                return convert_date(pagedate, '%Y-%m-%d', outputformat)
+        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and (
+            copyear == 0 or int(bestmatch.group(0)) >= copyear
+        ):
+            LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
+            return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
     return None
 

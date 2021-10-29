@@ -141,18 +141,17 @@ def load_html(htmlobject):
         if 'html' not in htmlobject[:50].decode(encoding='ascii', errors='ignore').lower():
             check_flag = True
         guessed_encoding = detect_encoding(htmlobject)
-        if guessed_encoding is not None:
-            if guessed_encoding == 'UTF-8':
-                tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-            else:
-                try:
-                    htmlobject = htmlobject.decode(guessed_encoding)
-                    tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-                except (LookupError, UnicodeDecodeError):  # VISCII encoding
-                    LOGGER.warning('encoding issue: %s', guessed_encoding)
-                    tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
-        else:
+        if guessed_encoding is None:
             tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
+        elif guessed_encoding == 'UTF-8':
+            tree = html.fromstring(htmlobject, parser=HTML_PARSER)
+        else:
+            try:
+                htmlobject = htmlobject.decode(guessed_encoding)
+                tree = html.fromstring(htmlobject, parser=HTML_PARSER)
+            except (LookupError, UnicodeDecodeError):  # VISCII encoding
+                LOGGER.warning('encoding issue: %s', guessed_encoding)
+                tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
     # use string if applicable
     elif isinstance(htmlobject, str):
         # the string is a URL, download it
@@ -183,8 +182,7 @@ def load_html(htmlobject):
     else:
         LOGGER.error('this type cannot be processed: %s', type(htmlobject))
     # further test: is it (well-formed) HTML at all?
-    if tree is not None and check_flag is True:
-        if len(tree) < 2:
-            LOGGER.error('parsed tree length: %s, wrong data type or not valid HTML', len(tree))
-            tree = None
+    if tree is not None and check_flag and len(tree) < 2:
+        LOGGER.error('parsed tree length: %s, wrong data type or not valid HTML', len(tree))
+        tree = None
     return tree
