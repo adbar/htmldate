@@ -131,6 +131,7 @@ def run_goose(htmlstring):
     datematch = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', article.publish_date)
     try:
         return datematch.group(0)
+    # illogical result
     except AttributeError:
     #    print(article.publish_date)
         return None
@@ -145,7 +146,7 @@ def evaluate_result(result, EVAL_PAGES, item):
     datereference = EVAL_PAGES[item]['date']
     if result is None and datereference is None:
         true_negatives += 1
-    elif result is None:
+    elif result is None and datereference is not None:
         false_negatives += 1
     elif result == datereference:
         true_positives += 1
