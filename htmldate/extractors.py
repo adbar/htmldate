@@ -385,11 +385,10 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
 
     # 7. Try the other regex pattern
     dateobject = regex_parse(string)
-    if dateobject is not None:
+    if date_validator(dateobject, outputformat) is True:
         try:
-            if date_validator(dateobject, outputformat) is True:
-                LOGGER.debug('custom parse result: %s', dateobject)
-                return dateobject.strftime(outputformat)
+            LOGGER.debug('custom parse result: %s', dateobject)
+            return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('value error during conversion: %s %s', string, err)
 
@@ -438,7 +437,7 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     if extensive_search is True:
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
-        if dateparser_result is not None and date_validator(
+        if date_validator(
             dateparser_result, outputformat, earliest=min_date, latest=max_date
         ):
             return dateparser_result
@@ -451,7 +450,7 @@ def img_search(tree, outputformat, min_date, max_date):
     element = tree.find('.//meta[@property="og:image"]')
     if element is not None and 'content' in element.attrib:
         result = extract_url_date(element.get('content'), outputformat)
-        if result is not None and date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
+        if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
             return result
     return None
 
@@ -513,13 +512,7 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
                                               int(match.group(groups[1])))
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
-    if (
-        candidate is not None
-        and date_validator(
-            candidate, '%Y-%m-%d', earliest=min_date, latest=max_date
-        )
-        is True
-    ):
+    if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
         LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
         return convert_date(candidate, '%Y-%m-%d', outputformat)
     return None

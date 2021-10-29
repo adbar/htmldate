@@ -24,6 +24,9 @@ LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 @lru_cache(maxsize=CACHE_SIZE)
 def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_POSSIBLE):
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
+    # safety check
+    if date_input is None:
+        return False
     # try if date can be parsed using chosen outputformat
     if not isinstance(date_input, datetime.date):
         # speed-up
