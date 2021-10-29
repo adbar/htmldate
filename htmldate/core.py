@@ -27,7 +27,8 @@ from .extractors import (discard_unwanted, extract_url_date,
                          DATESTRINGS_PATTERN, DATESTRINGS_CATCH,
                          SLASHES_PATTERN, SLASHES_YEAR,
                          YYYYMM_PATTERN, YYYYMM_CATCH, MMYYYY_PATTERN,
-                         MMYYYY_YEAR, SIMPLE_PATTERN)
+                         MMYYYY_YEAR, SIMPLE_PATTERN,
+                         THREE_COMP_REGEX_A, THREE_COMP_REGEX_B, TWO_COMP_REGEX)
 from .settings import CACHE_SIZE, HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
 from .utils import load_html
 from .validators import (check_extracted_reference, compare_values,
@@ -68,6 +69,14 @@ PROPERTY_MODIFIED = {
                     'release_date', 'updated_time'
                     }
 
+TRIM_REGEX = re.compile(r'[\n\r\s\t]+')
+NON_DIGITS_REGEX = re.compile(r'\D+$')
+GER_STRIP_REGEX = re.compile(r'^am ')
+
+LAST_MODIFIED = set(['lastmodified', 'last-modified'])
+ITEMPROP_ATTRS = set(['datecreated', 'datepublished', 'pubyear'])
+CLASS_ATTRS = set(['date-published', 'published', 'time published'])
+
 
 @lru_cache(maxsize=CACHE_SIZE)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
@@ -83,12 +92,12 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
     attempt = None
     for elem in elements:
         # trim
-        textcontent = re.sub(r'[\n\r\s\t]+', ' ', elem.text_content(), re.MULTILINE).strip()
+        textcontent = TRIM_REGEX.sub(' ', elem.text_content(), re.MULTILINE).strip()
         # simple length heuristics
         if textcontent is not None and len(textcontent) > 6:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            toexamine = re.sub(r'\D+$', '', textcontent[:48])
+            toexamine = NON_DIGITS_REGEX.sub('', textcontent[:48])
             # more than 4 digits required # list(filter(str.isdigit, toexamine))
             #if len([c for c in toexamine if c.isdigit()]) < 4:
             #    continue
@@ -102,7 +111,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
         # try link title (Blogspot)
         title_attr = elem.get('title')
         if title_attr is not None and len(title_attr) > 0:
-            toexamine = re.sub(r'\D+$', '', title_attr[:48])
+            toexamine = NON_DIGITS_REGEX.sub('', title_attr[:48])
             attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
             if attempt is not None:
                 break
@@ -168,7 +177,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                 LOGGER.debug('examining meta name: %s', logstring(elem))
                 headerdate = tryfunc(elem.get('content'))
             # modified
-            elif elem.get('name').lower() in ('lastmodified', 'last-modified'):
+            elif elem.get('name').lower() in LAST_MODIFIED:
                 LOGGER.debug('examining meta name: %s', logstring(elem))
                 if original_date is False:
                     headerdate = tryfunc(elem.get('content'))
@@ -182,9 +191,9 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
             attribute = elem.get('itemprop').lower()
             # original: store / updated: override date
             if (
-                attribute in ('datecreated', 'datepublished', 'pubyear')
-                or attribute == 'datemodified'
-                and original_date is False
+                attribute in ITEMPROP_ATTRS
+                or (attribute == 'datemodified'
+                and original_date is False)
             ):
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
@@ -277,7 +286,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date,
 def try_expression(expression, outputformat, extensive_search, min_date, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
-    textcontent = re.sub(r'[\n\r\s\t]+', ' ', expression, re.MULTILINE).strip()
+    textcontent = TRIM_REGEX.sub(' ', expression, re.MULTILINE).strip()
     # simple length heuristics list(filter(str.isdigit, textcontent))
     if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
         return None
@@ -314,11 +323,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                 elif original_date is False and candidate > reference:
                     reference = candidate
             # class
-            if 'class' in elem.attrib and elem.get('class') in (
-                'published',
-                'date-published',
-                'time published',
-            ):
+            if 'class' in elem.attrib and elem.get('class') in CLASS_ATTRS:
                 # other attributes
                 if 'title' in elem.attrib:
                     trytext = elem.get('title')
@@ -335,7 +340,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                             break
                 # dates, not times of the day
                 if elem.text and len(elem.text) > 10:
-                    trytext = re.sub(r'^am ', '', elem.text)
+                    trytext = GER_STRIP_REGEX.sub('', elem.text)
                     LOGGER.debug('abbr published found: %s', trytext)
                     reference = compare_reference(reference, trytext, outputformat, extensive_search, original_date, min_date, max_date)
         # convert and return
@@ -458,7 +463,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
     for item in candidates:
-        match = re.match(r'([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})', item)
+        match = THREE_COMP_REGEX_A.match(item)
         day, month = normalize_match(match)
         candidate = '-'.join([match.group(3), month, day])
         replacement[candidate] = candidates[item]
@@ -480,7 +485,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
     for item in candidates:
-        match = re.match(r'([0-3]?[0-9])[/.]([01]?[0-9])[/.]([0-9]{2})', item)
+        match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
         if match.group(3)[0] == '9':
             year = '19' + match.group(3)
@@ -511,7 +516,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
     for item in candidates:
-        match = re.match(r'([0-3]?[0-9])[/.-]([0-9]{4})', item)
+        match = TWO_COMP_REGEX.match(item)
         month = match.group(1)
         if len(month) == 1:
             month = '0' + month

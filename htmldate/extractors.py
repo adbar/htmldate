@@ -169,6 +169,11 @@ DE_PATTERNS = regex.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-
 TR_PATTERNS = regex.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
 ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)'''.replace('\n', ''), re.I)
 
+# core patterns
+THREE_COMP_REGEX_A = re.compile(r'([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})')
+THREE_COMP_REGEX_B = re.compile(r'([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{2})')
+TWO_COMP_REGEX = re.compile(r'([0-3]?[0-9])[/.-]([0-9]{4})')
+
 # extensive search patterns
 YEAR_PATTERN = re.compile(r'^\D?(199[0-9]|20[0-9]{2})')
 COPYRIGHT_PATTERN = re.compile(r'(?:©|\&copy;|Copyright|\(c\))\D*(?:[12][0-9]{3}-)?([12][0-9]{3})\D')
