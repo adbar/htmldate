@@ -107,12 +107,9 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
     timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
-    if (
-        original_date is True
-        and (reference == 0 or timestamp < reference)
-        or original_date is not True
-        and timestamp > reference
-    ):
+    if original_date is True and (reference == 0 or timestamp < reference):
+        reference = timestamp
+    elif original_date is False and timestamp > reference:
         reference = timestamp
     return reference
 
@@ -127,6 +124,15 @@ def filter_ymd_candidate(bestmatch, pattern, original_date, copyear, outputforma
         ) is True and (copyear == 0 or int(bestmatch.group(1)) >= copyear):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            ## TODO: test and improve
+            #if original_date is True:
+            #    if copyear == 0 or int(bestmatch.group(1)) <= copyear:
+            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            #else:
+            #    if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 
