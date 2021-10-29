@@ -1,0 +1,4 @@
+# version required
+sphinx==4.2.0
+# without version specifier
+htmldate

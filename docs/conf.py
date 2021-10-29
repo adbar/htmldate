@@ -21,7 +21,7 @@ import htmldate
 # -- Project information -----------------------------------------------------
 
 project = 'htmldate'
-copyright = '2017-2020, <a href="http://adrien.barbaresi.eu/">Adrien Barbaresi</a>'
+copyright = '2017-2021, <a href="http://adrien.barbaresi.eu/">Adrien Barbaresi</a>'
 author = 'Adrien Barbaresi'
 
 # -- General configuration ---------------------------------------------------
