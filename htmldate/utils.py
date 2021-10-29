@@ -69,7 +69,10 @@ def detect_encoding(bytesobject):
 def decode_response(response):
     """Read the urllib3 object corresponding to the server response,
        try to guess its encoding and decode it to return a unicode string"""
-    resp_content = response if isinstance(response, bytes) else response.data
+    if isinstance(response, bytes):
+        resp_content = response
+    else:
+        resp_content = response.data
     guessed_encoding = detect_encoding(resp_content)
     LOGGER.debug('response encoding: %s', guessed_encoding)
     # process
@@ -149,6 +152,7 @@ def load_html(htmlobject):
             except (LookupError, UnicodeDecodeError):  # VISCII encoding
                 LOGGER.warning('encoding issue: %s', guessed_encoding)
                 tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
+    # use string if applicable
     elif isinstance(htmlobject, str):
         # the string is a URL, download it
         if htmlobject.startswith('http'):
@@ -174,6 +178,7 @@ def load_html(htmlobject):
                 LOGGER.error('parser bytestring %s', err)
         except Exception as err:
             LOGGER.error('parsing failed: %s', err)
+    # default to None
     else:
         LOGGER.error('this type cannot be processed: %s', type(htmlobject))
     # further test: is it (well-formed) HTML at all?
