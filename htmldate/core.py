@@ -147,7 +147,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
         # property attribute
         if 'property' in elem.attrib and 'content' in elem.attrib:
             attribute = elem.get('property').lower()
-            # original date
+            # original date or modified date: override published_time
             if (
                 original_date is True
                 and attribute in DATE_ATTRIBUTES
@@ -180,6 +180,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                 headerdate = tryfunc(elem.get('content'))
         elif 'itemprop' in elem.attrib:
             attribute = elem.get('itemprop').lower()
+            # original: store / updated: override date
             if (
                 attribute in ('datecreated', 'datepublished', 'pubyear')
                 or attribute == 'datemodified'
@@ -190,12 +191,14 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                     headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
                     headerdate = tryfunc(elem.get('content'))
+            # reserve with copyrightyear
             elif attribute == 'copyrightyear':
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'content' in elem.attrib:
                     attempt = '-'.join([elem.get('content'), '01', '01'])
                     if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
                         reserve = attempt
+        # http-equiv, rare
         elif 'http-equiv' in elem.attrib:
             attribute = elem.get('http-equiv').lower()
             if attribute == 'date':
@@ -286,11 +289,9 @@ def try_expression(expression, outputformat, extensive_search, min_date, max_dat
 def compare_reference(reference, expression, outputformat, extensive_search, original_date, min_date, max_date):
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_expression(expression, outputformat, extensive_search, min_date, max_date)
-    return (
-        compare_values(reference, attempt, outputformat, original_date)
-        if attempt is not None
-        else reference
-    )
+    if attempt is not None:
+        return compare_values(reference, attempt, outputformat, original_date)
+    return reference
 
 
 def examine_abbr_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
@@ -307,12 +308,10 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                     continue
                 LOGGER.debug('data-utime found: %s', candidate)
                 # look for original date
-                if (
-                    original_date is True
-                    and (reference == 0 or candidate < reference)
-                    or original_date is not True
-                    and candidate > reference
-                ):
+                if original_date is True and (reference == 0 or candidate < reference):
+                    reference = candidate
+                # look for newest (i.e. largest time delta)
+                elif original_date is False and candidate > reference:
                     reference = candidate
             # class
             if 'class' in elem.attrib and elem.get('class') in (
@@ -387,10 +386,11 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
                     reference = compare_reference(reference, elem.get('datetime'), outputformat, extensive_search, original_date, min_date, max_date)
                     if reference > 0:
                         break
+            # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug('time/datetime found: %s', elem.text)
                 reference = compare_reference(reference, elem.text, outputformat, extensive_search, original_date, min_date, max_date)
-                    # else...
+            # else...?
         # return
         converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
@@ -400,8 +400,12 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
 
 def normalize_match(match):
     '''Normalize string output by adding "0" if necessary.'''
-    day = '0' + match.group(1) if len(match.group(1)) == 1 else match.group(1)
-    month = '0' + match.group(2) if len(match.group(2)) == 1 else match.group(2)
+    day = match.group(1)
+    if len(day) == 1:
+        day = '0' + day
+    month = match.group(2)
+    if len(month) == 1:
+        month = '0' + month
     return day, month
 
 
@@ -508,7 +512,9 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     replacement = {}
     for item in candidates:
         match = re.match(r'([0-3]?[0-9])[/.-]([0-9]{4})', item)
-        month = '0' + match.group(1) if len(match.group(1)) == 1 else match.group(1)
+        month = match.group(1)
+        if len(month) == 1:
+            month = '0' + month
         candidate = '-'.join([match.group(2), month, '01'])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
