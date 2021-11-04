@@ -159,7 +159,11 @@ Change the output to a format known to Python's ``datetime`` module, the default
 
     >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016' # may have changed since
+    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html', outputformat='%Y-%m-%dT%H:%M:%S%z')
+    '2016-12-23T05:11:00-0500'
 
+
+    
 Although the time delta between original publication and "last modified" info is usually a matter of hours or days, it can be useful to prioritize the **original publication date**:
 
 .. code-block:: python
