@@ -11,8 +11,9 @@ from setuptools import setup
 # some problems with installation solved this way
 extras = {
     'speed': [
-        'cchardet >= 2.1.7', # ; python_version > "3.4"
+        'cchardet >= 2.1.7',
         'ciso8601 >= 2.2.0',
+        'urllib3[brotli]',
         ],
 }
 extras['all'] = extras['speed']
@@ -30,7 +31,7 @@ def get_long_description():
 
 def get_version(package):
     "Return package version as listed in `__version__` in `init.py`"
-    # version = Path(package, '__init__.py').read_text() # Python >= 3.5
+    #version = Path(package, '__init__.py').read_text() # Python >= 3.5
     with open(str(Path(package, '__init__.py')), 'r', encoding='utf-8') as filehandle:
         initfile = filehandle.read()
     return re.search('__version__ = [\'"]([^\'"]+)[\'"]', initfile).group(1)
@@ -56,7 +57,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -73,20 +73,21 @@ setup(
         "Source": "https://github.com/adbar/htmldate",
         "Coverage": "https://codecov.io/github/adbar/htmldate",
         "Tracker": "https://github.com/adbar/htmldate/issues",
+        "Blog": "https://adrien.barbaresi.eu/blog/tag/htmldate.html",
     },
     author='Adrien Barbaresi',
     author_email='barbaresi@bbaw.de',
     license='GPLv3+',
     packages=['htmldate'],
     include_package_data=True,
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=[
         'charset_normalizer >= 2.0.7',
-        'dateparser >= 1.0.0',
-        'lxml >= 4.6.3',
+        'dateparser >= 1.1.0',
+        'lxml >= 4.6.4',
         'python-dateutil >= 2.8.2',
-        'regex >= 2021.8.28',
-        'urllib3 >= 1.25, <2',
+        'regex >= 2021.11.2',
+        'urllib3 >= 1.26, <2',
     ],
     extras_require=extras,
     entry_points = {
