@@ -28,7 +28,7 @@ htmldate: find the publication date of web pages
 .. image:: htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
-    :width: 85%
+    :width: 80%
     :target: https://htmldate.readthedocs.org/
 
 |
@@ -62,9 +62,17 @@ On the command-line:
 Features
 --------
 
-*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. URLs, HTML files, or HTML trees are given as input. It provides following ways to date a HTML document:
 
-1. **Markup in header**: common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
+-  Compatible with all recent versions of Python (see above)
+-  Multilingual, robust and efficient (used in production on millions of documents)
+-  URLs, HTML files, or HTML trees are given as input (includes batch processing)
+-  Output as string in any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_)
+-  Detection of both original and updated dates
+
+
+*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It provides following ways to date a HTML document:
+
+1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
 3. **Bare HTML content**: A series of heuristics is run on text and markup:
 
@@ -73,18 +81,13 @@ Features
 
 The output is thouroughly verified in terms of plausibility and adequateness and the library outputs a date string, corresponding to either the last update or the original publishing statement (the default), in the desired format (defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_).
 
--  Compatible with all recent versions of Python (currently 3.5 to 3.9)
--  Designed to be computationally efficient and used in production on millions of documents
--  Batch processing of a list of URLs
--  Switch between original and updated date
-
 Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support German, English and Turkish.
 
 
 Installation
 ------------
 
-This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.5 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 
@@ -100,7 +103,7 @@ Additional libraries can be installed to enhance efficiency: ``cchardet`` and ``
 
 You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
 
-*For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_
+*For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_.
 
 
 With Python
@@ -220,8 +223,21 @@ This effort is part of methods to derive information from web documents in order
    :target: https://doi.org/10.5281/zenodo.3459599
    :alt: Zenodo archive
 
+.. code-block:: shell
 
--  Barbaresi, A. "`htmldate: A Python package to extract publication dates from web pages <https://doi.org/10.21105/joss.02439>`_", Journal of Open Source Software, 5(51), 2439, 2020.
+    @article{barbaresi-2020-htmldate,
+      title = {{htmldate: A Python package to extract publication dates from web pages}},
+      author = "Barbaresi, Adrien",
+      journal = "Journal of Open Source Software",
+      volume = 5,
+      number = 51,
+      pages = 2439,
+      url = {https://doi.org/10.21105/joss.02439},
+      publisher = {The Open Journal},
+      year = 2020,
+    }
+
+-  Barbaresi, A. "`htmldate: A Python package to extract publication dates from web pages <https://doi.org/10.21105/joss.02439>`_", Journal of Open Source Software, 5(51), 2439, 2020. DOI: 10.21105/joss.02439
 -  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://hal.archives-ouvertes.fr/hal-02447264/document>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
 -  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
 
@@ -258,8 +274,6 @@ Besides, there are pages for which no date can be found, ever:
     >>>
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
-
-In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
 
 Tests
 ~~~~~
