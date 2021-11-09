@@ -68,10 +68,9 @@ setup(
         'Topic :: Text Processing :: Markup :: HTML',
     ],
     keywords=['datetime', 'date-parser', 'entity-extraction', 'html-extraction', 'html-parsing', 'metadata-extraction',  'webarchives', 'web-scraping'],
-    url='http://github.com/adbar/htmldate',
+    url='https://htmldate.readthedocs.io',
     project_urls={
         "Source": "https://github.com/adbar/htmldate",
-        "Coverage": "https://codecov.io/github/adbar/htmldate",
         "Tracker": "https://github.com/adbar/htmldate/issues",
         "Blog": "https://adrien.barbaresi.eu/blog/tag/htmldate.html",
     },

@@ -1,6 +1,12 @@
 ## Changelog
 
 
+### 1.0.0
+- faster and more accurate encoding detection
+- simplified code base
+- include support for Python 3.10 and dropped support for Python 3.5
+
+
 ### 0.9.1
 - improved generic date parsing (thanks @RadhiFadlillah)
 - specific support for French and Indonesian (thanks @RadhiFadlillah)
