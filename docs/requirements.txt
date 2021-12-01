@@ -1,4 +1,4 @@
 # version required
-sphinx==4.2.0
+sphinx==4.3.1
 # without version specifier
 htmldate
