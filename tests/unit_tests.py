@@ -678,6 +678,14 @@ def test_parser():
     assert args.original is False
     assert args.verbose is False
     assert args.mindate == '2015-12-31'
+    # version
+    f = io.StringIO()
+    testargs = ['', '--version']
+    with pytest.raises(SystemExit) as e, redirect_stdout(f):
+        with patch.object(sys, 'argv', testargs):
+            args = parse_args(testargs)
+    assert e.type == SystemExit and e.value.code == 0
+    assert re.match(r'Htmldate [0-9]\.[0-9]+\.[0-9] - Python [0-9]\.[0-9]+\.[0-9]', f.getvalue())
 
 
 def test_cli():

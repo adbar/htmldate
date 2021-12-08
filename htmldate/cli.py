@@ -8,6 +8,9 @@ Implementing a basic command-line interface.
 import argparse
 import sys
 
+from platform import python_version
+
+from . import __version__
 from .core import find_date
 from .utils import fetch_url
 from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
@@ -33,12 +36,13 @@ def examine(htmlstring, extensive_bool=True, original_date=False,
 def parse_args(args):
     """Define parser for command-line arguments"""
     argsparser = argparse.ArgumentParser()
-    argsparser.add_argument("-v", "--verbose",
-                            help="increase output verbosity",
-                            action="store_true")
     argsparser.add_argument("-f", "--fast",
                             help="fast mode: disable extensive search",
                             action="store_false")
+    argsparser.add_argument("-i", "--inputfile",
+                            help="""name of input file for batch processing
+                            (similar to wget -i)""",
+                            type=str)
     argsparser.add_argument("--original",
                             help="original date prioritized",
                             action="store_true")
@@ -48,13 +52,18 @@ def parse_args(args):
     argsparser.add_argument("-max", "--maxdate",
                             help="latest acceptable date (YYYY-MM-DD)",
                             type=str)
-    argsparser.add_argument("-i", "--inputfile",
-                            help="""name of input file for batch processing
-                            (similar to wget -i)""",
-                            type=str)
     argsparser.add_argument("-u", "--URL",
                             help="custom URL download",
                             type=str)
+    argsparser.add_argument("-v", "--verbose",
+                            help="increase output verbosity",
+                            action="store_true")
+    argsparser.add_argument("--version",
+                            help="show version information and exit",
+                            action="version",
+                            version="Htmldate {} - Python {}".format(
+                            __version__, python_version()
+                            ),)
     return argsparser.parse_args()
 
 

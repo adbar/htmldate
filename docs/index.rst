@@ -180,20 +180,21 @@ For usage instructions see ``htmldate -h``:
 .. code-block:: bash
 
     $ htmldate --help
-    htmldate [-h] [-v] [-f] [--original] [-min MINDATE] [-max MAXDATE] [-i INPUTFILE] [-u URL]
+    htmldate [-h] [-f] [-i INPUTFILE] [--original] [-min MINDATE] [-max MAXDATE] [-u URL] [-v] [--version]
     optional arguments:
-        -h, --help     show this help message and exit
-        -v, --verbose  increase output verbosity
-        -f, --fast     fast mode: disable extensive search
-        --original     original date prioritized
-        -min, --mindate MINDATE
-                       earliest acceptable date (YYYY-MM-DD)
-        -max, --maxdate MAXDATE
-                       latest acceptable date (YYYY-MM-DD)
-        -i, --inputfile INPUTFILE
-                       name of input file for batch processing (similar to
-                       wget -i)
-        -u, --URL URL     custom URL download
+        -h, --help            show this help message and exit
+        -f, --fast            fast mode: disable extensive search
+        -i INPUTFILE, --inputfile INPUTFILE
+                              name of input file for batch processing (similar to wget -i)
+        --original            original date prioritized
+        -min MINDATE, --mindate MINDATE
+                              earliest acceptable date (YYYY-MM-DD)
+        -max MAXDATE, --maxdate MAXDATE
+                              latest acceptable date (YYYY-MM-DD)
+        -u URL, --URL URL     custom URL download
+        -v, --verbose         increase output verbosity
+        --version             show version information and exit
+
 
 The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:
 
