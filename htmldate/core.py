@@ -539,9 +539,8 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(0), '01', '01'])
-        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and (
-            copyear == 0 or int(bestmatch.group(0)) >= copyear
-        ):
+        if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and \
+            int(bestmatch.group(0)) >= copyear:
             LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
