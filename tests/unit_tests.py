@@ -339,9 +339,8 @@ def test_approximate_date():
     assert find_date(load_mock_page('https://pixabay.com/en/service/terms/')) == '2017-08-09'
     assert find_date(load_mock_page('https://bayern.de/'),) == '2017-10-06' # most probably 2017-10-06
     assert find_date(load_mock_page('https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/')) == '2016-07-20' # most probably 2016-07-15
-    assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=False) == '2016-12-04' # 2010-11-01 in meta, 2016 more plausible
-    #print(find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=True))
-    #assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=True) == '2010-11-01' # 2010-11-01 in meta, 2016 more plausible
+    # LXML bug filed: https://bugs.launchpad.net/lxml/+bug/1955915
+    #assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=False) == '2016-12-04' # 2010-11-01 in meta, 2016 more plausible
     assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_date=False) == '2011-12-01'
     ## TODO: problem, take URL instead
     assert find_date(load_mock_page('http://www.pbrunst.de/news/2011/12/kein-cyberterrorismus-diesmal/'), original_date=True) == '2010-06-01'
