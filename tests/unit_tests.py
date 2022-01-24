@@ -15,7 +15,7 @@ import pytest
 
 from collections import Counter
 from contextlib import redirect_stdout
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 try:
     import dateparser
@@ -27,12 +27,13 @@ except ImportError:
 from lxml import html
 
 from htmldate.cli import examine, parse_args, process_args
-from htmldate.core import compare_reference, find_date, search_page, search_pattern, select_candidate, try_ymd_date
+from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
-from htmldate.settings import MIN_DATE, MIN_DATE, LATEST_POSSIBLE
+from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
 
+from urllib3 import HTTPResponse
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -129,14 +130,18 @@ def load_mediacloud_page(url):
 def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert load_html(123) is None
-    assert load_html('<html><body>XYZ</body></html>') is not None
     assert load_html('<'*100) is None
+    assert load_html('<html><body>XYZ</body></html>') is not None
     assert load_html(b'<html><body>XYZ</body></html>') is not None
     assert load_html(b'<'*100) is None
     assert load_html(b'<html><body>\x2f\x2e\x9f</body></html>') is not None
     assert load_html('<html><body>\x2f\x2e\x9f</body></html>'.encode('latin-1')) is not None
     assert load_html('https://httpbin.org/html') is not None
+    # response decoding
     assert decode_response(b'\x1f\x8babcdef') is not None
+    mock = Mock()
+    mock.data = (b' ')
+    assert decode_response(mock) is not None
     # find_date logic
     assert find_date(None) is None
     # min and max date output
@@ -146,6 +151,25 @@ def test_input():
     assert get_max_date('2020-02-20') == datetime.date(2020, 2, 20)
     assert get_max_date(None) == datetime.date.today()
     assert get_max_date('3030-30-50') == datetime.date.today()
+
+
+def test_sanity():
+    '''Test if function arguments are interpreted and processed correctly.'''
+    # XPath looking for date elements
+    mytree = html.fromstring('<html><body><p>Test.</p></body></html>')
+    result = examine_date_elements(mytree, '//[Error', True, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
+    assert result is None
+    result = examine_date_elements(mytree, '//p', True, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
+    assert result is None
+    # wrong field values in output format
+    assert output_format_validator('%Y-%m-%d') is True
+    assert output_format_validator('%M-%Y') is True
+    assert output_format_validator('ABC') is False
+    assert output_format_validator(123) is False
+    #assert output_format_validator('%\xaa') is False
+    # select_candidate()
+    # ...
+
 
 
 def test_no_date():
@@ -366,13 +390,6 @@ def test_convert_date():
     assert convert_date('18 November 2016', '%d %B %Y', '%Y-%m-%d') == '2016-11-18'
 
 
-def test_output_format_validator():
-    '''test internal output format validation'''
-    assert output_format_validator('%Y-%m-%d') is True
-    assert output_format_validator('%M-%Y') is True
-    assert output_format_validator('ABC') is False
-    assert output_format_validator(123) is False
-
 
 def test_try_ymd_date():
     '''test date extraction via external package'''
@@ -451,6 +468,12 @@ def test_regex_parse():
     assert custom_parse('12.12.2004', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('2019 28 meh', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
     assert custom_parse('2019 28 meh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    # regex-based matches
+    assert custom_parse('abcd 20041212 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2-12 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 32. Januar 2020 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     #for Nones caused by newlines and duplicates
     assert regex_parse("January 1st, 1998") is not None
     assert regex_parse("February 1st, 1998") is not None
@@ -697,6 +720,13 @@ def test_cli():
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-12-31') == '2016-07-12'
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-41-41') == '2016-07-12'
     # first test
+    testargs = ['', '-u', '123']
+    with patch.object(sys, 'argv', testargs):
+        args = parse_args(testargs)
+    with pytest.raises(SystemExit) as err:
+        process_args(args)
+    assert err.type == SystemExit
+    # meaningful test
     testargs = ['', '-u', 'https://httpbin.org/html']
     with patch.object(sys, 'argv', testargs):
         args = parse_args(testargs)
@@ -775,11 +805,11 @@ def test_dependencies():
 if __name__ == '__main__':
 
     # meta
-    test_output_format_validator()
     test_readme_examples()
 
     # function-level
     test_input()
+    test_sanity()
     test_date_validator()
     test_search_pattern()
     test_try_ymd_date()

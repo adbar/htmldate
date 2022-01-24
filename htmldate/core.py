@@ -608,14 +608,10 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             return dateresult
 
     # first, try header
-    try:
-        header_result = examine_header(tree, outputformat, extensive_search,
-                                       original_date, min_date, max_date)
-    except etree.XPathEvalError as err:
-        LOGGER.error('header XPath %s', err)
-    else:
-        if header_result is not None:
-            return header_result
+    header_result = examine_header(tree, outputformat, extensive_search,
+                                   original_date, min_date, max_date)
+    if header_result is not None:
+        return header_result
 
     # try to use JSON data
     json_result = json_search(tree, outputformat, original_date, min_date, max_date)

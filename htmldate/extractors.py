@@ -330,7 +330,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
-            year, month, day = int(match.group(0)[:4]), int(match.group(0)[4:6]), int(match.group(0)[6:8])
+            year, month, day = int(match.group(1)[:4]), int(match.group(1)[4:6]), int(match.group(1)[6:8])
             candidate = datetime.date(year, month, day)
         except ValueError:
             LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
@@ -340,6 +340,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # 4. Try Y-M-D pattern since it's the one used in ISO-8601
+    # see also fromisoformat() in Python >= 3.7
     match = YMD_PATTERN.search(string)
     if match:
         try:
