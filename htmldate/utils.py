@@ -125,6 +125,17 @@ def fetch_url(url):
     return None
 
 
+def is_dubious_html(htmlobject):
+    "Assess if the object is proper HTML (with a corresponding declaration)."
+    if isinstance(htmlobject, bytes):
+        if 'html' not in htmlobject[:50].decode(encoding='ascii', errors='ignore').lower():
+            return True
+    elif isinstance(htmlobject, str):
+        if 'html' not in htmlobject[:50].lower():
+            return True
+    return False
+
+
 def load_html(htmlobject):
     """Load object given as input and validate its type.
     Accepted: LXML tree, bytestring and string (HTML document or URL).
@@ -134,12 +145,9 @@ def load_html(htmlobject):
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         return htmlobject
     tree = None
-    check_flag = False
+    check_flag = is_dubious_html(htmlobject)
     # try to detect encoding and convert to string
     if isinstance(htmlobject, bytes):
-        # test
-        if 'html' not in htmlobject[:50].decode(encoding='ascii', errors='ignore').lower():
-            check_flag = True
         guessed_encoding = detect_encoding(htmlobject)
         if guessed_encoding is None:
             tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
@@ -165,9 +173,6 @@ def load_html(htmlobject):
             # log the error and quit
             if htmltext is None:
                 raise ValueError("URL couldn't be processed: %s", htmlobject)
-        # test
-        if 'html' not in htmlobject[:50].lower():
-            check_flag = True
         try:
             tree = html.fromstring(htmlobject, parser=HTML_PARSER)
         except ValueError:
