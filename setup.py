@@ -81,9 +81,9 @@ setup(
     include_package_data=True,
     python_requires='>=3.6',
     install_requires=[
-        'charset_normalizer >= 2.0.7',
+        'charset_normalizer >= 2.0.11',
         'dateparser >= 1.1.0',
-        'lxml >= 4.6.4',
+        'lxml >= 4.6.5',
         'python-dateutil >= 2.8.2',
         'urllib3 >= 1.26, <2',
     ],
