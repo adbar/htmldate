@@ -44,7 +44,7 @@ def logstring(element):
 
 DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
-                  'article.published', 'article:published_time', 
+                  'article.published', 'article:published_time',
                   'bt:pubdate', 'citation_date', 'citation_publication_date',
                   'created', 'cxenseparse:recs:publishtime',
                   'date', 'date_published',
@@ -73,9 +73,9 @@ TRIM_REGEX = re.compile(r'[\n\r\s\t]+')
 NON_DIGITS_REGEX = re.compile(r'\D+$')
 GER_STRIP_REGEX = re.compile(r'^am ')
 
-LAST_MODIFIED = set(['lastmodified', 'last-modified'])
-ITEMPROP_ATTRS = set(['datecreated', 'datepublished', 'pubyear'])
-CLASS_ATTRS = set(['date-published', 'published', 'time published'])
+LAST_MODIFIED = {'lastmodified', 'last-modified'}
+ITEMPROP_ATTRS = {'datecreated', 'datepublished', 'pubyear'}
+CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
 
 @lru_cache(maxsize=CACHE_SIZE)
