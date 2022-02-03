@@ -239,6 +239,7 @@ def test_exact_date():
 
     ## precise pattern in document body
     assert find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
+    assert find_date('<html><body><div>Erstausstrahlung: 01.01.2020</div><div>Preisstand: 03.02.2022 03:00 GMT+1</div></body></html>') == '2022-02-03'
     assert find_date('<html><body>Datum: 10.11.2017</body></html>') == '2017-11-10'
     assert find_date(load_mock_page('https://www.tagesausblick.de/Analyse/USA/DOW-Jones-Jahresendrally-ade__601.html')) == '2012-12-22'
     assert find_date(load_mock_page('http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/')) == '2018-02-15'

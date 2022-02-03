@@ -159,7 +159,7 @@ NO_TEXT_DATE_PATTERN = re.compile(r'\D+[0-9]{3,}\D+|[0-9]{3,}\D+[0-9]{3,}|[0-9]{
 
 # use of regex module for speed
 EN_PATTERNS = re.compile(r'(?:[Dd]ate[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
-DE_PATTERNS = re.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})')
+DE_PATTERNS = re.compile(r'(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})', re.I)
 TR_PATTERNS = re.compile(r'''(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
 ([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)'''.replace('\n', ''), re.I)
 
