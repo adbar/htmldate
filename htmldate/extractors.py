@@ -239,6 +239,14 @@ def correct_year(year):
     return year
 
 
+def try_swap_values(day, month):
+    """Swap day and month values if it seems feaaible."""
+    # If month is more than 12, swap it with the day
+    if month > 12 and day <= 12:
+        day, month = month, day
+    return day, month
+
+
 def regex_parse(string):
     """Full-text parse using a series of regular expressions"""
     dateobject = regex_parse_de(string)
@@ -286,6 +294,7 @@ def regex_parse_multilingual(string):
     try:
         int_day, int_month, int_year = int(day), int(month), int(year)
         int_year = correct_year(int_year)
+        int_day, int_month = try_swap_values(int_day, int_month)
         dateobject = datetime.date(int_year, int_month, int_day)
     except ValueError:
         return None
@@ -359,9 +368,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
         try:
             day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
             year = correct_year(year)
-            # If month is more than 12, swap it with the day
-            if month > 12 and day <= 12:
-                day, month = month, day
+            day, month = try_swap_values(day, month)
             candidate = datetime.date(year, month, day)
         except ValueError:
             LOGGER.debug('D-M-Y value error: %s', match.group(0))
@@ -486,30 +493,22 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
     '''Look for a precise pattern throughout the web page'''
     candidate = None
     match = idiosyncrasy.search(htmlstring)
-    groups = [0, 1, 2, 3] if match and match.group(3) else [] #because len(None) has no len
+    groups = [0, 1, 2, 3] if match and match.group(3) else []  #because len(None) has no len
     try:
-        groups = [0, 4, 5, 6] if match and match.group(6) else groups #because len(None) has no len
+        groups = [0, 4, 5, 6] if match and match.group(6) else groups
     except IndexError:
         pass
-    if match and groups: #because len(None) has no len
-        if match.group(1) is not None and len(match.group(1)) == 4:
+    if match and groups:
+        if match.group(groups[1]) is not None and len(match.group(groups[1])) == 4:
             candidate = datetime.date(int(match.group(groups[1])),
                                       int(match.group(groups[2])),
                                       int(match.group(groups[3])))
         elif len(match.group(groups[3])) in (2, 4):
-            # swap variables to switch to MM/DD/YY
-            if int(match.group(groups[2])) > 12:
-                groups[1], groups[2] = groups[2], groups[1]
             # DD/MM/YY
+            day, month = try_swap_values(int(match.group(groups[1])), int(match.group(groups[2])))
+            year = correct_year(int(match.group(groups[3])))
             try:
-                if len(match.group(groups[3])) == 2:
-                    candidate = datetime.date(int('20' + match.group(groups[3])),
-                                              int(match.group(groups[2])),
-                                              int(match.group(groups[1])))
-                else:
-                    candidate = datetime.date(int(match.group(groups[3])),
-                                              int(match.group(groups[2])),
-                                              int(match.group(groups[1])))
+                candidate = datetime.date(year, month, day)
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
     if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
