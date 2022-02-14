@@ -1,5 +1,5 @@
 """
-Seamlessly extract the date of web pages based on header or body.
+Seamlessly extract the date of web pages based on URL, header or body.
 http://github.com/adbar/htmldate
 """
 
@@ -40,7 +40,7 @@ def get_version(package):
 setup(
     name='htmldate',
     version=get_version('htmldate'),
-    description='Fast and robust extraction of original and updated publication dates from web pages.',
+    description='Fast and robust extraction of original and updated publication dates from URLs and web pages.',
     long_description=get_long_description(),
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -81,9 +81,9 @@ setup(
     include_package_data=True,
     python_requires='>=3.6',
     install_requires=[
-        'charset_normalizer >= 2.0.11',
+        'charset_normalizer >= 2.0.12',
         'dateparser >= 1.1.0',
-        'lxml >= 4.6.5',
+        'lxml >= 4.6.4',
         'python-dateutil >= 2.8.2',
         'urllib3 >= 1.26, <2',
     ],
