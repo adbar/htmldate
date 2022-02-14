@@ -14,11 +14,9 @@ import urllib3
 
 # CChardet is faster and can be more accurate
 try:
-    import cchardet
+    from cchardet import detect
 except ImportError:
-    cchardet = None
-
-from charset_normalizer import detect
+    from charset_normalizer import detect
 
 from lxml import etree, html
 
@@ -54,10 +52,7 @@ def detect_encoding(bytesobject):
     if isutf8(bytesobject):
         return 'UTF-8'
     # try one of the installed detectors on first part
-    if cchardet is not None:
-        guess = cchardet.detect(bytesobject[:5000])
-    else:
-        guess = detect(bytesobject[:5000])
+    guess = detect(bytesobject[:5000])
     LOGGER.debug('guessed encoding: %s, confidence: %s', guess['encoding'], guess['confidence'])
     # fallback on full response
     if guess is None or (guess['confidence'] is not None and guess['confidence'] < 0.98):
