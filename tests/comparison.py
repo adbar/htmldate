@@ -11,9 +11,9 @@ import json
 from lxml import etree, html
 
 try:
-    import cchardet as chardet
+    from cchardet import detect
 except ImportError:
-    import chardet
+    from charset_normalizer import detect
 
 from articleDateExtractor import extractArticlePublishedDate
 from date_guesser import guess_date, Accuracy
@@ -55,7 +55,7 @@ def load_document(filename):
         # read as binary
         with open(mypath, 'rb') as inputf:
             htmlbinary = inputf.read()
-        guessed_encoding = chardet.detect(htmlbinary)['encoding']
+        guessed_encoding = detect(htmlbinary)['encoding']
         if guessed_encoding is not None:
             try:
                 htmlstring = htmlbinary.decode(guessed_encoding)
