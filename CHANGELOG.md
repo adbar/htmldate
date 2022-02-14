@@ -1,6 +1,12 @@
 ## Changelog
 
 
+### 1.0.1
+- maintenance release, code base cleaned
+- command-line interface: `--version` added
+- file parsing reviewed
+
+
 ### 1.0.0
 - faster and more accurate encoding detection
 - simplified code base
