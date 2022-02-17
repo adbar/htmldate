@@ -14,9 +14,10 @@ import urllib3
 
 # CChardet is faster and can be more accurate
 try:
-    from cchardet import detect
+    from cchardet import detect as cchardet_detect
 except ImportError:
-    from charset_normalizer import detect
+    cchardet_detect = None
+from charset_normalizer import from_bytes
 
 from lxml import etree, html
 
@@ -24,6 +25,9 @@ from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
 
 LOGGER = logging.getLogger(__name__)
+
+UNICODE_ALIASES = {'utf-8', 'utf_8'}
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 RETRY_STRATEGY = urllib3.util.Retry(
     total=3,
@@ -32,8 +36,7 @@ RETRY_STRATEGY = urllib3.util.Retry(
 )
 HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 
-HTML_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True, encoding='utf-8')
-RECOVERY_PARSER = html.HTMLParser(remove_comments=True, remove_pis=True)
+HTML_PARSER = html.HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_comments=True, remove_pis=True)
 
 
 def isutf8(data):
@@ -47,40 +50,54 @@ def isutf8(data):
 
 
 def detect_encoding(bytesobject):
-    """Read the first chunk of input and return its encoding"""
+    """Read all input or first chunk and return a list of encodings"""
+    # alternatives: https://github.com/scrapy/w3lib/blob/master/w3lib/encoding.py
     # unicode-test
     if isutf8(bytesobject):
-        return 'UTF-8'
-    # try one of the installed detectors on first part
-    guess = detect(bytesobject[:5000])
-    LOGGER.debug('guessed encoding: %s, confidence: %s', guess['encoding'], guess['confidence'])
-    # fallback on full response
-    if guess is None or (guess['confidence'] is not None and guess['confidence'] < 0.98):
-        guess = detect(bytesobject)
-        LOGGER.debug('second-guessed encoding: %s, confidence: %s', guess['encoding'], guess['confidence'])
-    return guess['encoding']
+        return ['utf-8']
+    guesses = []
+    # additional module
+    if cchardet_detect is not None:
+        cchardet_guess = cchardet_detect(bytesobject)['encoding'].lower()
+        guesses.append(cchardet_guess)
+    # try charset_normalizer on first part, fallback on full document
+    detection_results = from_bytes(bytesobject[:15000]) or from_bytes(bytesobject)
+    # return alternatives
+    if len(detection_results) > 0:
+        guesses.extend([r.encoding for r in detection_results])
+    # it cannot be utf-8 (tested above)
+    return [g for g in guesses if g not in UNICODE_ALIASES]
+
+
+def decode_file(filecontent):
+    """Guess bytestring encoding and try to decode to Unicode string.
+       Resort to destructive conversion otherwise."""
+    # init
+    if isinstance(filecontent, str):
+        return filecontent
+    htmltext = None
+    # encoding
+    for guessed_encoding in detect_encoding(filecontent):
+        try:
+            htmltext = filecontent.decode(guessed_encoding)
+        except (LookupError, UnicodeDecodeError): # VISCII: lookup
+            LOGGER.warning('wrong encoding detected: %s', guessed_encoding)
+            htmltext = None
+        else:
+            break
+    # return original content if nothing else succeeded
+    return htmltext or str(filecontent, encoding='utf-8', errors='replace')
 
 
 def decode_response(response):
-    """Read the urllib3 object corresponding to the server response,
+    """Read the urllib3 object corresponding to the server response, then
        try to guess its encoding and decode it to return a unicode string"""
-    if isinstance(response, bytes):
-        resp_content = response
-    else:
+    # urllib3 response object / bytes switch
+    if isinstance(response, urllib3.response.HTTPResponse) or hasattr(response, 'data'):
         resp_content = response.data
-    guessed_encoding = detect_encoding(resp_content)
-    LOGGER.debug('response encoding: %s', guessed_encoding)
-    # process
-    htmltext = None
-    if guessed_encoding is not None:
-        try:
-            htmltext = resp_content.decode(guessed_encoding)
-        except UnicodeDecodeError:
-            LOGGER.warning('encoding error: %s', guessed_encoding)
-    # force decoding # ascii instead?
-    if htmltext is None:
-        htmltext = str(resp_content, encoding='utf-8', errors='replace')
-    return htmltext
+    else:
+        resp_content = response
+    return decode_file(resp_content)
 
 
 def fetch_url(url):
@@ -132,57 +149,45 @@ def is_dubious_html(htmlobject):
 
 
 def load_html(htmlobject):
-    """Load object given as input and validate its type.
-    Accepted: LXML tree, bytestring and string (HTML document or URL).
-    Raises ValueError if a URL is passed without result.
+    """Load object given as input and validate its type
+    (accepted: LXML tree, bytestring and string)
     """
     # use tree directly
     if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
         return htmlobject
+    # do not accept any other type after this point
+    if not isinstance(htmlobject, (bytes, str)):
+        raise TypeError('incompatible input type', type(htmlobject))
+    # the string is a URL, download it
+    if isinstance(htmlobject, str) and htmlobject.startswith('http'):
+        htmltext = None
+        if re.match(r'https?://[^ ]+$', htmlobject):
+            LOGGER.info('URL detected, downloading: %s', htmlobject)
+            htmltext = fetch_url(htmlobject)
+            if htmltext is not None:
+                htmlobject = htmltext
+        # log the error and quit
+        if htmltext is None:
+            raise ValueError("URL couldn't be processed: %s", htmlobject)
+    # start processing
     tree = None
+    # try to guess encoding and decode file: if None then keep original
+    htmlobject = decode_file(htmlobject)
+    # sanity check
     check_flag = is_dubious_html(htmlobject)
-    # try to detect encoding and convert to string
-    if isinstance(htmlobject, bytes):
-        guessed_encoding = detect_encoding(htmlobject)
-        if guessed_encoding is None:
-            tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
-        elif guessed_encoding == 'UTF-8':
-            tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-        else:
-            try:
-                htmlobject = htmlobject.decode(guessed_encoding)
-                tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-            except (LookupError, UnicodeDecodeError):  # VISCII encoding
-                LOGGER.warning('encoding issue: %s', guessed_encoding)
-                tree = html.fromstring(htmlobject, parser=RECOVERY_PARSER)
-    # use string if applicable
-    elif isinstance(htmlobject, str):
-        # the string is a URL, download it
-        if htmlobject.startswith('http'):
-            htmltext = None
-            if re.match(r'https?://[^ ]+$', htmlobject):
-                LOGGER.info('URL detected, downloading: %s', htmlobject)
-                htmltext = fetch_url(htmlobject)
-                if htmltext is not None:
-                    htmlobject = htmltext
-            # log the error and quit
-            if htmltext is None:
-                raise ValueError("URL couldn't be processed: %s", htmlobject)
+    # use Unicode string
+    try:
+        tree = html.fromstring(htmlobject, parser=HTML_PARSER)
+    except ValueError:
+        # "Unicode strings with encoding declaration are not supported."
         try:
-            tree = html.fromstring(htmlobject, parser=HTML_PARSER)
-        except ValueError:
-            # try to parse a bytestring
-            try:
-                tree = html.fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
-            except Exception as err:
-                LOGGER.error('parser bytestring %s', err)
+            tree = html.fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
         except Exception as err:
-            LOGGER.error('parsing failed: %s', err)
-    # default to None
-    else:
-        LOGGER.error('this type cannot be processed: %s', type(htmlobject))
-    # further test: is it (well-formed) HTML at all?
-    if tree is not None and check_flag and len(tree) < 2:
+            LOGGER.error('lxml parser bytestring %s', err)
+    except Exception as err:
+        LOGGER.error('lxml parsing failed: %s', err)
+    # rejection test: is it (well-formed) HTML at all?
+    if tree is not None and check_flag is True and len(tree) < 2:
         LOGGER.error('parsed tree length: %s, wrong data type or not valid HTML', len(tree))
         tree = None
     return tree

@@ -129,7 +129,8 @@ def load_mediacloud_page(url):
 
 def test_input():
     '''test if loaded strings/trees are handled properly'''
-    assert load_html(123) is None
+    with pytest.raises(TypeError):
+        assert load_html(123) is None
     assert load_html('<'*100) is None
     assert load_html('<html><body>XYZ</body></html>') is not None
     assert load_html(b'<html><body>XYZ</body></html>') is not None
@@ -143,7 +144,8 @@ def test_input():
     mock.data = (b' ')
     assert decode_response(mock) is not None
     # find_date logic
-    assert find_date(None) is None
+    with pytest.raises(TypeError):
+        assert find_date(None) is None
     # min and max date output
     assert get_min_date('2020-02-20') == datetime.date(2020, 2, 20)
     assert get_min_date(None) == datetime.date(1995, 1, 1)
@@ -652,7 +654,7 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
     '''test pattern search in HTML'''
     # file input + output format
     fileinput = load_mock_page('http://www.heimicke.de/chronik/zahlen-und-daten/')
-    encoding = detect_encoding(fileinput)
+    encoding = detect_encoding(fileinput)[0]
     assert search_page(fileinput.decode(encoding), '%d %B %Y', original_date, min_date, max_date) == '06 April 2019'
     # tree input
     assert search_page('<html><body><p>The date is 5/2010</p></body></html>', OUTPUTFORMAT, original_date, min_date, max_date) == '2010-05-01'
