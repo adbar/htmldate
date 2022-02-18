@@ -254,26 +254,29 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
     first_pattern, first_count = bestones[0][0], bestones[0][1]
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
-    # same number of occurrences: always take top of the pile
-    if first_count == second_count:
-        match = catch.search(first_pattern)
-    else:
-        year1 = int(yearpat.search(first_pattern).group(1))
-        year2 = int(yearpat.search(second_pattern).group(1))
-        # safety net: plausibility
-        if date_validator(str(year1), '%Y', earliest=min_date, latest=max_date) is False:
-            if date_validator(str(year2), '%Y', earliest=min_date, latest=max_date) is True:
-                # LOGGER.debug('first candidate not suitable: %s', year1)
-                match = catch.search(second_pattern)
-            else:
-                LOGGER.debug('no suitable candidate: %s %s', year1, year2)
-                return None
+    # plausibility heuristics
+    year1 = int(yearpat.search(first_pattern).group(1))
+    year2 = int(yearpat.search(second_pattern).group(1))
+    validation1 = date_validator(str(year1), '%Y', earliest=min_date, latest=max_date)
+    validation2 = date_validator(str(year2), '%Y', earliest=min_date, latest=max_date)
+    # safety net: plausibility
+    if validation1 is True and validation2 is True:
+        # same number of occurrences: always take top of the pile?
+        if first_count == second_count:
+            match = catch.search(first_pattern)
         # safety net: newer date but up to 50% less frequent
-        if year2 != year1 and second_count/first_count > 0.5:
+        elif year2 != year1 and second_count/first_count > 0.5:
             match = catch.search(second_pattern)
         # not newer or hopefully not significant
         else:
             match = catch.search(first_pattern)
+    elif validation1 is False and validation2 is True:
+        match = catch.search(second_pattern)
+    elif validation1 is True and validation2 is False:
+        match = catch.search(first_pattern)
+    else:
+        LOGGER.debug('no suitable candidate: %s %s', year1, year2)
+        return None
     return match
 
 
