@@ -36,7 +36,7 @@ RETRY_STRATEGY = urllib3.util.Retry(
 )
 HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 
-HTML_PARSER = html.HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_comments=True, remove_pis=True)
+HTML_PARSER = html.HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_pis=True)
 
 
 def isutf8(data):
