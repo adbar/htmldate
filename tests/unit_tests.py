@@ -26,7 +26,7 @@ except ImportError:
 
 from lxml import html
 
-from htmldate.cli import examine, parse_args, process_args
+from htmldate.cli import examine, main, parse_args, process_args
 from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate, try_ymd_date
 from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
@@ -742,6 +742,9 @@ def test_cli():
     '''test the command-line interface'''
     assert examine(' ', extensive_bool=True) is None
     assert examine('0'*int(10e7), extensive_bool=True) is None
+    assert examine(' ', False) is None
+    assert examine('0'*int(10e7), False) is None
+    assert examine('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body><p>A</p><p>B</p></body></html>') is None
     assert examine('<html><body><span class="entry-date">12. Juli 2016</span></body></html>', True) == '2016-07-12'
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True) == '2016-07-12'
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2015-01-01') is None
@@ -782,9 +785,9 @@ def test_cli():
 
 def test_download():
     '''test page download'''
-    assert examine(' ', False) is None
-    assert examine('0'*int(10e7), False) is None
-    assert fetch_url('https://httpbin.org/status/404') is None
+    with pytest.raises(SystemExit):
+        with patch.object(sys, 'argv', ['', '-u', 'https://httpbin.org/status/404']):
+            main()
     url = 'https://httpbin.org/status/200'
     teststring = fetch_url(url)
     assert teststring is None
