@@ -64,7 +64,7 @@ def load_document(filename):
         else:
             print('Encoding error')
     return htmlstring
-# bypass
+# bypass not possible: error by newspaper
 #    with open(mypath, 'rb') as inputf:
 #        return inputf.read()
 
