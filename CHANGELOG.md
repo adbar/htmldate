@@ -1,6 +1,10 @@
 ## Changelog
 
 
+### 1.1.0
+- better handling of file encodings
+- slight increase in accuracy, more efficient code
+
 ### 1.0.1
 - maintenance release, code base cleaned
 - command-line interface: `--version` added
