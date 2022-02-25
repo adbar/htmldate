@@ -74,7 +74,7 @@ NON_DIGITS_REGEX = re.compile(r'\D+$')
 GER_STRIP_REGEX = re.compile(r'^am ')
 
 LAST_MODIFIED = {'lastmodified', 'last-modified'}
-ITEMPROP_ATTRS = {'datecreated', 'datepublished', 'pubyear'}
+ITEMPROP_ATTRS = {'datecreated', 'datepublished', 'pubyear', 'dateupdate'}
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
 
