@@ -226,6 +226,8 @@ def test_exact_date():
     assert find_date('<html><head><meta pubdate="pubDate" content="2018-02-06"/></head><body></body></html>') == '2018-02-06'
     assert find_date('<html><head><meta itemprop="DateModified" datetime="2018-02-06"/></head><body></body></html>') == '2018-02-06'
     assert find_date('<html><head><meta name="DC.Issued" content="2021-07-13"/></head><body></body></html>') == '2021-07-13'
+    assert find_date('<html><head><meta itemprop="dateUpdate" datetime="2018-02-06"/></head><body></body></html>', original_date=True) == '2018-02-06'
+    assert find_date('<html><head><meta itemprop="dateUpdate" datetime="2018-02-06"/></head><body></body></html>', original_date=False) == '2018-02-06'
 
     ## time in document body
     assert find_date(load_mock_page('https://www.facebook.com/visitaustria/'), original_date=True) == '2017-10-06'
