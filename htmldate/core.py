@@ -74,7 +74,9 @@ NON_DIGITS_REGEX = re.compile(r'\D+$')
 GER_STRIP_REGEX = re.compile(r'^am ')
 
 LAST_MODIFIED = {'lastmodified', 'last-modified'}
-ITEMPROP_ATTRS = {'datecreated', 'datepublished', 'pubyear', 'dateupdate'}
+ITEMPROP_ATTRS_ORIGINAL = {'datecreated', 'datepublished', 'pubyear'}
+ITEMPROP_ATTRS_MODIFIED = {'datemodified', 'dateupdate'}
+ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
 
@@ -190,16 +192,21 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
         elif 'itemprop' in elem.attrib:
             attribute = elem.get('itemprop').lower()
             # original: store / updated: override date
-            if (
-                attribute in ITEMPROP_ATTRS
-                or (attribute == 'datemodified'
-                and original_date is False)
-            ):
+            if attribute in ITEMPROP_ATTRS:
+                attempt = None
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
-                    headerdate = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
+                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                 elif 'content' in elem.attrib:
-                    headerdate = tryfunc(elem.get('content'))
+                    attempt = tryfunc(elem.get('content'))
+                # store value
+                if attempt is not None:
+                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date is True) or \
+                       (attribute in ITEMPROP_ATTRS_MODIFIED and original_date is False):
+                        headerdate = attempt
+                    # put on hold
+                    else:
+                        reserve = attempt
             # reserve with copyrightyear
             elif attribute == 'copyrightyear':
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
