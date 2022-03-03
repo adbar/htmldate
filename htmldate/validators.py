@@ -60,7 +60,7 @@ def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test in abstracto
     if not isinstance(outputformat, str) or '%' not in outputformat:
-        logging.error('malformed output format: %s', outputformat)
+        LOGGER.error('malformed output format: %s', outputformat)
         return False
     # test with date object
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
@@ -68,7 +68,7 @@ def output_format_validator(outputformat):
         dateobject.strftime(outputformat)
     # Python < 3.7 only
     except (NameError, TypeError, UnicodeError, ValueError) as err:
-        logging.error('wrong output format or format type: %s %s', outputformat, err)
+        LOGGER.error('wrong output format or type: %s %s', outputformat, err)
         return False
     return True
 

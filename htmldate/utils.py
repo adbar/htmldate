@@ -124,15 +124,14 @@ def fetch_url(url):
     except urllib3.exceptions.TimeoutError as err:
         LOGGER.error('connection timeout: %s %s', url, err)
     except Exception as err:
-        logging.error('unknown error: %s %s', url, err) # sys.exc_info()[0]
+        LOGGER.error('unknown error: %s %s', url, err)  # sys.exc_info()[0]
     else:
         # safety checks
         if response.status != 200:
             LOGGER.error('not a 200 response: %s for URL %s', response.status, url)
-        elif response.data is None or len(response.data) < MIN_FILE_SIZE:
-            LOGGER.error('too small/incorrect for URL %s', url)
-        elif len(response.data) > MAX_FILE_SIZE:
-            LOGGER.error('too large: length %s for URL %s', len(response.data), url)
+        elif response.data is None or \
+            len(response.data) < MIN_FILE_SIZE or len(response.data) > MAX_FILE_SIZE:
+            LOGGER.error('incorrect input data for URL %s', url)
         else:
             return decode_response(response.data)
     return None
