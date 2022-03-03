@@ -11,11 +11,11 @@ import os
 import re
 import sys
 
-import pytest
-
 from collections import Counter
 from contextlib import redirect_stdout
 from unittest.mock import Mock, patch
+
+import pytest
 
 try:
     import dateparser
@@ -33,7 +33,6 @@ from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html, is_dubious_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
 
-from urllib3 import HTTPResponse
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = '%Y-%m-%d'
@@ -131,8 +130,9 @@ def test_input():
     '''test if loaded strings/trees are handled properly'''
     assert is_dubious_html('This is a string.') is True
     assert is_dubious_html(b'This is a string.') is True
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err:
         assert load_html(123) is None
+    assert 'incompatible' in str(err.value)
     assert load_html('<'*100) is None
     assert load_html('<html><body>XYZ</body></html>') is not None
     assert load_html(b'<html><body>XYZ</body></html>') is not None
@@ -701,6 +701,12 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
 def test_idiosyncrasies():
     assert find_date('<html><body><p><em>Last updated: 5/5/20</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Last updated: 01/23/2021</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 01/23/21</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 1/23/21</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 23/1/21</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 23/01/21</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 23/01/2021</em></p></body></html>') == '2021-01-23'
+    assert find_date('<html><body><p><em>Last updated: 33/23/3033</em></p></body></html>') is None
     assert find_date('<html><body><p><em>Published: 5/5/2020</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Published in: 05.05.2020</em></p></body></html>') == '2020-05-05'
     assert find_date('<html><body><p><em>Son güncelleme: 5/5/20</em></p></body></html>') == '2020-05-05'
