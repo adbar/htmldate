@@ -1,6 +1,10 @@
 ## Changelog
 
 
+### 1.1.1
+- bugfix: input encoding
+- improved extraction coverage (#47)
+
 ### 1.1.0
 - better handling of file encodings
 - slight increase in accuracy, more efficient code
@@ -10,19 +14,16 @@
 - command-line interface: `--version` added
 - file parsing reviewed
 
-
 ### 1.0.0
 - faster and more accurate encoding detection
 - simplified code base
 - include support for Python 3.10 and dropped support for Python 3.5
-
 
 ### 0.9.1
 - improved generic date parsing (thanks @RadhiFadlillah)
 - specific support for French and Indonesian (thanks @RadhiFadlillah)
 - additional evaluation for English news sites (kudos to @coreydockser & @rahulbot)
 - bugs fixed
-
 
 ### 0.9.0
 - improved exhaustive search
