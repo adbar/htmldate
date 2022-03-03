@@ -196,7 +196,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                 attempt = None
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
+                    attemp = tryfunc(elem.get('datetime'))
                 elif 'content' in elem.attrib:
                     attempt = tryfunc(elem.get('content'))
                 # store value
@@ -204,9 +204,9 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                     if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date is True) or \
                        (attribute in ITEMPROP_ATTRS_MODIFIED and original_date is False):
                         headerdate = attempt
-                    # put on hold
-                    else:
-                        reserve = attempt
+                    # put on hold: hurts precision
+                    #else:
+                    #    reserve = attempt
             # reserve with copyrightyear
             elif attribute == 'copyrightyear':
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
