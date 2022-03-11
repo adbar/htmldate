@@ -28,23 +28,27 @@ LATEST_POSSIBLE = datetime.date.today()
 MAX_YEAR = LATEST_POSSIBLE.year
 
 # set an upper limit to the number of candidates
-MAX_POSSIBLE_CANDIDATES = 150
+MAX_POSSIBLE_CANDIDATES = 1000
 
-# HTML_CLEANER config # http://lxml.de/api/lxml.html.clean.Cleaner-class.html
-HTML_CLEANER = Cleaner()
-HTML_CLEANER.comments = False
-HTML_CLEANER.embedded = True
-HTML_CLEANER.forms = False
-HTML_CLEANER.frames = True
-HTML_CLEANER.javascript = True
-HTML_CLEANER.links = False
-HTML_CLEANER.meta = False
-HTML_CLEANER.page_structure = True
-HTML_CLEANER.processing_instructions = True
-HTML_CLEANER.remove_unknown_tags = False
-HTML_CLEANER.safe_attrs_only = False
-HTML_CLEANER.scripts = False
-HTML_CLEANER.style = True
-HTML_CLEANER.kill_tags = ['applet', 'audio', 'canvas', 'datalist', 'embed',
-                          'figure', 'label', 'map', 'math', 'object',
-                          'picture', 'rdf', 'svg', 'video']
+# HTML_CLEANER config
+# https://lxml.de/api/lxml.html.clean.Cleaner-class.html
+# https://lxml.de/apidoc/lxml.html.clean.html
+HTML_CLEANER = Cleaner(
+    annoying_tags = False,
+    comments = False,
+    embedded = True,  # affects recall?
+    forms = False,
+    frames = True,
+    javascript = False,
+    links = False,
+    meta = False,
+    page_structure = True,
+    processing_instructions = False,
+    remove_unknown_tags = False,
+    safe_attrs_only = False,
+    scripts = False,
+    style = False,
+    kill_tags = ['applet', 'audio', 'canvas', 'datalist', 'embed',
+                 'figure', 'label', 'map', 'math', 'object',
+                 'picture', 'rdf', 'svg', 'video'],
+)
