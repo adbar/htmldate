@@ -95,7 +95,7 @@ This Python package is tested on Linux, macOS and Windows systems, it is compati
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
-Additional libraries can be installed to enhance efficiency: ``cchardet`` and ``ciso8601`` (for speed). They may not work on all platforms and have thus been singled out although installation is recommended:
+The additional library ``cchardet`` can be installed for better execution speed. They may not work on all platforms and have thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
@@ -254,7 +254,7 @@ Feel free to file issues on the `dedicated page <https://github.com/adbar/htmlda
 
 Kudos to the following software libraries:
 
--  `ciso8601 <https://github.com/closeio/ciso8601>`_, `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
+-  `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
 -  A few patterns are derived from the `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_ libraries. This module extends their coverage and robustness significantly.
 
 

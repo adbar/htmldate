@@ -13,9 +13,7 @@ import re
 
 from functools import lru_cache
 
-# conditional imports with fallbacks for compatibility
 # coverage for date parsing
-#try:
 from dateparser import DateDataParser  # third-party, slow
 from dateparser_data.settings import default_parsers
 EXTERNAL_PARSER = DateDataParser(settings={
@@ -26,25 +24,12 @@ EXTERNAL_PARSER = DateDataParser(settings={
     'PARSERS': [p for p in default_parsers if p not in ('no-spaces-time', 'relative-time', 'timestamp')],
 })
 
-#except ImportError:
-#    # try dateutil parser
-#    from dateutil.parser import parse as FULL_PARSE
-#    EXTERNAL_PARSER = None
-#    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
-#else:
-#FULL_PARSE = DEFAULT_PARSER_PARAMS = None
-
-# iso date parsing speedup
-try:
-    from ciso8601 import parse_datetime, parse_datetime_as_naive
-except ImportError:
-    #if not FULL_PARSE:
-    from dateutil.parser import parse as FULL_PARSE
-    parse_datetime = parse_datetime_as_naive = FULL_PARSE  # shortcut
+from dateutil.parser import parse as dateutil_parse
 
 # own
 from .settings import CACHE_SIZE
 from .validators import convert_date, date_validator
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -323,13 +308,8 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
 
     # 2. shortcut, much faster
     if string[0:4].isdigit():
-        # try speedup with ciso8601 (if installed)
         try:
-            if extensive_search is True:
-                result = parse_datetime(string)
-            # speed-up by ignoring time zone info if ciso8601 is installed
-            else:
-                result = parse_datetime_as_naive(string)
+            result = dateutil_parse(string, fuzzy=False)  # ignoretz=True
             if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('parsing result: %s', result)
                 return result.strftime(outputformat)
@@ -407,11 +387,7 @@ def external_date_parser(string, outputformat):
     """Use dateutil parser or dateparser module according to system settings"""
     LOGGER.debug('send to external parser: %s', string)
     try:
-        # dateparser installed or not
-        #if EXTERNAL_PARSER is not None:
         target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
-        #else:
-        #    target = FULL_PARSE(string, **DEFAULT_PARSER_PARAMS)
     # 2 types of errors possible
     except (OverflowError, ValueError):
         target = None

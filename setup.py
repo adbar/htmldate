@@ -12,7 +12,6 @@ from setuptools import setup
 extras = {
     'speed': [
         'cchardet >= 2.1.7',
-        'ciso8601 >= 2.2.0',
         'urllib3[brotli]',
         ],
 }
