@@ -10,7 +10,9 @@ Module bundling functions related to HTML processing.
 # standard
 import logging
 import re
+
 import urllib3
+
 
 # CChardet is faster and can be more accurate
 try:
@@ -19,7 +21,7 @@ except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
 
-from lxml import etree, html
+from lxml.html import HtmlElement, HTMLParser, fromstring
 
 from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
@@ -36,7 +38,7 @@ RETRY_STRATEGY = urllib3.util.Retry(
 )
 HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 
-HTML_PARSER = html.HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_pis=True)
+HTML_PARSER = HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_pis=True)
 
 
 def isutf8(data):
@@ -117,14 +119,8 @@ def fetch_url(url):
         # read by streaming chunks (stream=True, iter_content=xx)
         # so we can stop downloading as soon as MAX_FILE_SIZE is reached
         response = HTTP_POOL.request('GET', url, timeout=30)
-    except urllib3.exceptions.NewConnectionError as err:
-        LOGGER.error('connection refused: %s %s', url, err)
-    except urllib3.exceptions.MaxRetryError as err:
-        LOGGER.error('retries/redirects: %s %s', url, err)
-    except urllib3.exceptions.TimeoutError as err:
-        LOGGER.error('connection timeout: %s %s', url, err)
     except Exception as err:
-        LOGGER.error('unknown error: %s %s', url, err)  # sys.exc_info()[0]
+        LOGGER.error('download error: %s %s', url, err)  # sys.exc_info()[0]
     else:
         # safety checks
         if response.status != 200:
@@ -150,10 +146,10 @@ def is_dubious_html(htmlobject):
 
 def load_html(htmlobject):
     """Load object given as input and validate its type
-    (accepted: LXML tree, bytestring and string)
+    (accepted: lxml.html tree, bytestring and string)
     """
     # use tree directly
-    if isinstance(htmlobject, (etree._ElementTree, html.HtmlElement)):
+    if isinstance(htmlobject, HtmlElement):
         return htmlobject
     # do not accept any other type after this point
     if not isinstance(htmlobject, (bytes, str)):
@@ -177,11 +173,11 @@ def load_html(htmlobject):
     check_flag = is_dubious_html(htmlobject)
     # use Unicode string
     try:
-        tree = html.fromstring(htmlobject, parser=HTML_PARSER)
+        tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
         # "Unicode strings with encoding declaration are not supported."
         try:
-            tree = html.fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
+            tree = fromstring(htmlobject.encode('utf8'), parser=HTML_PARSER)
         except Exception as err:
             LOGGER.error('lxml parser bytestring %s', err)
     except Exception as err:

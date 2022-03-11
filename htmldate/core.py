@@ -13,7 +13,8 @@ import re
 from collections import Counter
 from copy import deepcopy
 from functools import lru_cache, partial
-from lxml import etree, html
+
+from lxml.html import tostring
 
 # own
 from .extractors import (discard_unwanted, extract_url_date,
@@ -40,7 +41,7 @@ from .validators import (check_extracted_reference, compare_values,
 LOGGER = logging.getLogger(__name__)
 def logstring(element):
     '''Format the element to be logged to a string.'''
-    return html.tostring(element, pretty_print=False, encoding='unicode').strip()
+    return tostring(element, pretty_print=False, encoding='unicode').strip()
 
 DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
@@ -85,7 +86,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
-    except etree.XPathEvalError as err:
+    except Exception as err:
         LOGGER.error('lxml expression %s throws an error: %s', expression, err)
         return None
     if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
@@ -103,7 +104,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
             # more than 4 digits required # list(filter(str.isdigit, toexamine))
             #if len([c for c in toexamine if c.isdigit()]) < 4:
             #    continue
-            LOGGER.debug('analyzing (HTML): %s', html.tostring(
+            LOGGER.debug('analyzing (HTML): %s', tostring(
                 elem, pretty_print=False, encoding='unicode').translate(
                     {ord(c): None for c in '\n\t\r'}
                 ).strip()[:100])
@@ -609,8 +610,8 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     if url is None:
         # link canonical
         for elem in tree.iterfind('.//link[@rel="canonical"]'):
-            if 'href' in elem.attrib:
-                url = elem.get('href')
+            url = elem.get('href')
+            if url is not None:
                 break
     if url is not None:
         dateresult = extract_url_date(url, outputformat)
@@ -665,15 +666,15 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # clean before string search
     try:
-        cleaned_html = HTML_CLEANER.clean_html(deepcopy(tree))
+        cleaned_html = HTML_CLEANER.clean_html(tree)
     # rare LXML error: no NULL bytes or control characters
     except ValueError:
         cleaned_html = tree
     # robust conversion to string
     try:
-        htmlstring = html.tostring(cleaned_html, pretty_print=False, encoding='unicode')
+        htmlstring = tostring(cleaned_html, pretty_print=False, encoding='unicode')
     except UnicodeDecodeError:
-        htmlstring = html.tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore')
+        htmlstring = tostring(cleaned_html, pretty_print=False).decode('utf-8', 'ignore')
     # remove comments by hand as faulty in lxml?
     # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 

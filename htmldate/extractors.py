@@ -2,6 +2,7 @@
 """
 Custom parsers and XPath expressions for date extraction
 """
+
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
@@ -15,17 +16,16 @@ from functools import lru_cache
 # conditional imports with fallbacks for compatibility
 # coverage for date parsing
 #try:
-import dateparser  # third-party, slow
-EXTERNAL_PARSER = dateparser.DateDataParser(settings={
-    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
-    'DATE_ORDER': 'DMY',
+from dateparser import DateDataParser  # third-party, slow
+from dateparser_data.settings import default_parsers
+EXTERNAL_PARSER = DateDataParser(settings={
+#    'DATE_ORDER': 'DMY',
+    'PREFER_DATES_FROM': 'past',
+#    'PREFER_DAY_OF_MONTH': 'first',
+    'STRICT_PARSING': True,
+    'PARSERS': [p for p in default_parsers if p not in ('no-spaces-time', 'relative-time', 'timestamp')],
 })
 
-# allow_redetect_language=False, languages=['de', 'en'],
-#EXTERNAL_PARSER_CONFIG = {
-#    'PREFER_DAY_OF_MONTH': 'first', 'PREFER_DATES_FROM': 'past',
-#    'DATE_ORDER': 'DMY'
-#}
 #except ImportError:
 #    # try dateutil parser
 #    from dateutil.parser import parse as FULL_PARSE
@@ -33,6 +33,7 @@ EXTERNAL_PARSER = dateparser.DateDataParser(settings={
 #    DEFAULT_PARSER_PARAMS = {'dayfirst': True, 'fuzzy': False}
 #else:
 #FULL_PARSE = DEFAULT_PARSER_PARAMS = None
+
 # iso date parsing speedup
 try:
     from ciso8601 import parse_datetime, parse_datetime_as_naive
