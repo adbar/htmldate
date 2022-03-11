@@ -150,7 +150,9 @@ def test_input():
     # find_date logic
     with pytest.raises(TypeError):
         assert find_date(None) is None
+    assert find_date('<'*100) is None
     assert find_date('<html></html>', verbose=True) is None
+    assert find_date('<html><body>\u0008this\xdf\n\u001f+\uffff</body></html>') is None
     # min and max date output
     assert get_min_date('2020-02-20') == datetime.date(2020, 2, 20)
     assert get_min_date(None) == datetime.date(1995, 1, 1)
