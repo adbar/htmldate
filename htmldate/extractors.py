@@ -187,7 +187,8 @@ def discard_unwanted(tree):
 
 def extract_url_date(testurl, outputformat):
     """Extract the date out of an URL string complying with the Y-M-D format"""
-    if match := COMPLETE_URL.search(testurl):
+    match = COMPLETE_URL.search(testurl)
+    if match:
         dateresult = match.group(0)
         LOGGER.debug('found date in URL: %s', dateresult)
         try:
@@ -203,8 +204,9 @@ def extract_url_date(testurl, outputformat):
 
 def extract_partial_url_date(testurl, outputformat):
     """Extract an approximate date out of an URL string in Y-M format"""
-    if match := PARTIAL_URL.search(testurl):
-        dateresult = f'{match.group(0)}/01'
+    match = PARTIAL_URL.search(testurl)
+    if match:
+        dateresult = match.group(0) + '/01'
         LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
             dateobject = datetime.datetime(int(match.group(1)),
@@ -261,12 +263,19 @@ def regex_parse_de(string):
 
 def regex_parse_multilingual(string):
     """Try full-text parse for English date elements"""
-    if match := LONG_MDY_PATTERN.search(string):
+    # https://github.com/vi3k6i5/flashtext ?
+
+    # American English
+    match = LONG_MDY_PATTERN.search(string)
+    if match:
         day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], match.group(4)
-    elif match := LONG_DMY_PATTERN.search(string):
-        day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], match.group(5)
+    # multilingual day-month-year pattern
     else:
-        return None
+        match = LONG_DMY_PATTERN.search(string)
+        if match:
+            day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], match.group(5)
+        else:
+            return None
 
     # process and return
     try:
@@ -308,7 +317,9 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
         except (OverflowError, TypeError, ValueError):
             LOGGER.debug('parsing error: %s', string)
 
-    if match := YMD_NO_SEP_PATTERN.search(string):
+    # 3. Try YYYYMMDD, use regex
+    match = YMD_NO_SEP_PATTERN.search(string)
+    if match:
         try:
             year, month, day = int(match.group(1)[:4]), int(match.group(1)[4:6]), int(match.group(1)[6:8])
             candidate = datetime.date(year, month, day)
@@ -319,7 +330,10 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('YYYYMMDD match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    if match := YMD_PATTERN.search(string):
+    # 4. Try Y-M-D pattern since it's the one used in ISO-8601
+    # see also fromisoformat() in Python >= 3.7
+    match = YMD_PATTERN.search(string)
+    if match:
         try:
             day, month, year = int(match.group(3)), int(match.group(2)), int(match.group(1))
             candidate = datetime.date(year, month, day)
@@ -330,7 +344,9 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('Y-M-D match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    if match := DMY_PATTERN.search(string):
+    # 5. Try the D-M-Y pattern since it's the most common date format in the world
+    match = DMY_PATTERN.search(string)
+    if match:
         try:
             day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
             year = correct_year(year)
@@ -343,7 +359,9 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
                 LOGGER.debug('D-M-Y match: %s', candidate)
                 return convert_date(candidate, '%Y-%m-%d', outputformat)
 
-    if match := YM_PATTERN.search(string):
+    # 6. Try the Y-M pattern
+    match = YM_PATTERN.search(string)
+    if match:
         try:
             year, month = int(match.group(1)), int(match.group(2))
             candidate = datetime.date(year, month, 1)
@@ -463,7 +481,7 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
             candidate = datetime.date(int(match.group(groups[1])),
                                       int(match.group(groups[2])),
                                       int(match.group(groups[3])))
-        elif len(match.group(groups[3])) in {2, 4}:
+        elif len(match.group(groups[3])) in (2, 4):
             # DD/MM/YY
             day, month = try_swap_values(int(match.group(groups[1])), int(match.group(groups[2])))
             year = correct_year(int(match.group(groups[3])))
