@@ -59,12 +59,11 @@ def parse_args(args):
                             help="increase output verbosity",
                             action="store_true")
     argsparser.add_argument(
-        "--version",
-        help="show version information and exit",
-        action="version",
-        version=f"Htmldate {__version__} - Python {python_version()}",
+                            "--version",
+                            help="show version information and exit",
+                            action="version",
+                            version=f"Htmldate {__version__} - Python {python_version()}",
     )
-
     return argsparser.parse_args()
 
 
@@ -76,6 +75,7 @@ def process_args(args):
             htmlstring = fetch_url(args.URL)
             if htmlstring is None:
                 sys.exit(f'# ERROR no valid result for url: {args.URL}' + '\n')
+        # unicode check
         else:
             try:
                 htmlstring = sys.stdin.read()
@@ -88,6 +88,7 @@ def process_args(args):
         if result is not None:
             sys.stdout.write(result + '\n')
 
+    # process input file line by line
     else:
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile:
             for line in inputfile:
