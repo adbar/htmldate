@@ -89,9 +89,9 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
             else:
                 lastdigits = yearpat.search(item).group(1)
                 if lastdigits[0] == '9':
-                    potential_year = int(f'19{lastdigits}')
+                    potential_year = int('19' + lastdigits)
                 else:
-                    potential_year = int(f'20{lastdigits}')
+                    potential_year = int('20' + lastdigits)
         except AttributeError:
             LOGGER.debug('not a year pattern: %s', item)
             toremove.add(item)
