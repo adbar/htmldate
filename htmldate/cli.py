@@ -58,12 +58,13 @@ def parse_args(args):
     argsparser.add_argument("-v", "--verbose",
                             help="increase output verbosity",
                             action="store_true")
-    argsparser.add_argument("--version",
-                            help="show version information and exit",
-                            action="version",
-                            version="Htmldate {} - Python {}".format(
-                            __version__, python_version()
-                            ),)
+    argsparser.add_argument(
+        "--version",
+        help="show version information and exit",
+        action="version",
+        version=f"Htmldate {__version__} - Python {python_version()}",
+    )
+
     return argsparser.parse_args()
 
 
@@ -74,13 +75,12 @@ def process_args(args):
         if args.URL:
             htmlstring = fetch_url(args.URL)
             if htmlstring is None:
-                sys.exit('# ERROR no valid result for url: ' + args.URL + '\n')
-        # unicode check
+                sys.exit(f'# ERROR no valid result for url: {args.URL}' + '\n')
         else:
             try:
                 htmlstring = sys.stdin.read()
             except UnicodeDecodeError as err:
-                sys.exit('# ERROR system/buffer encoding: ' + str(err) + '\n')
+                sys.exit(f'# ERROR system/buffer encoding: {str(err)}' + '\n')
         result = examine(htmlstring, extensive_bool=args.fast,
                          original_date=args.original,
                          verbose_flag=args.verbose,
@@ -88,7 +88,6 @@ def process_args(args):
         if result is not None:
             sys.stdout.write(result + '\n')
 
-    # process input file line by line
     else:
         with open(args.inputfile, mode='r', encoding='utf-8') as inputfile:
             for line in inputfile:

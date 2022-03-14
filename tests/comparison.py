@@ -146,7 +146,7 @@ def evaluate_result(result, EVAL_PAGES, item):
     datereference = EVAL_PAGES[item]['date']
     if result is None and datereference is None:
         true_negatives += 1
-    elif result is None and datereference is not None:
+    elif result is None:
         false_negatives += 1
     elif result == datereference:
         true_positives += 1
