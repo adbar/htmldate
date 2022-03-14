@@ -28,7 +28,7 @@ from lxml import html
 
 from htmldate.cli import examine, main, parse_args, process_args
 from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate, try_ymd_date
-from htmldate.extractors import custom_parse, external_date_parser, extract_partial_url_date, regex_parse
+from htmldate.extractors import DATE_EXPRESSIONS, custom_parse, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html, is_dubious_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
@@ -166,9 +166,9 @@ def test_sanity():
     '''Test if function arguments are interpreted and processed correctly.'''
     # XPath looking for date elements
     mytree = html.fromstring('<html><body><p>Test.</p></body></html>')
-    result = examine_date_elements(mytree, '//[Error', True, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
+    result = examine_date_elements(mytree, '//[Error', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
     assert result is None
-    result = examine_date_elements(mytree, '//p', True, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
+    result = examine_date_elements(mytree, '//p', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
     assert result is None
     # wrong field values in output format
     assert output_format_validator('%Y-%m-%d') is True
@@ -176,8 +176,6 @@ def test_sanity():
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
     #assert output_format_validator('%\xaa') is False
-    # select_candidate()
-    # ...
 
 
 
@@ -358,7 +356,6 @@ def test_exact_date():
     # in link title
     assert find_date('<html><body><a class="ribbon date " title="12th December 2018" href="https://example.org/" itemprop="url">Text</a></body></html>') == '2018-12-12'
 
-
     # archive.org documents
     assert find_date(load_mock_page('http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/'), extensive_search=False) is None
     assert find_date(load_mock_page('http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/'), extensive_search=True) == '2021-07-13'
@@ -426,6 +423,8 @@ def test_try_ymd_date():
     assert try_ymd_date('12:00 h', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     # date range
     assert try_ymd_date('2005-2006', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    # Mandarin
+    assert try_ymd_date('发布时间: 2022-02-25 14:34', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2022-02-25'
 
 
 # def test_header():

@@ -141,7 +141,8 @@ TEXT_MONTHS = {
 }
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
-NO_TEXT_DATE_PATTERN = re.compile(r'\D+[0-9]{3,}\D+|[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$|\+[0-9]{2}\D+')
+NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$|\+[0-9]{2}\D+')
+# leads to errors: \D+[0-9]{3,}\D+|
 
 # use of regex module for speed
 EN_PATTERNS = re.compile(r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
