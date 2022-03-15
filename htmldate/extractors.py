@@ -296,7 +296,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
     LOGGER.debug('custom parse test: %s', string)
 
     # 1. '201709011234' not covered by dateparser, and regex too slow
-    if string[0:8].isdigit():
+    if string[:8].isdigit():
         try:
             candidate = datetime.date(int(string[:4]),
                                       int(string[4:6]),
@@ -308,7 +308,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
             return convert_date(candidate, '%Y-%m-%d', outputformat)
 
     # 2. shortcut, much faster
-    if string[0:4].isdigit():
+    if string[:4].isdigit():
         try:
             result = dateutil_parse(string, fuzzy=False)  # ignoretz=True
             if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
