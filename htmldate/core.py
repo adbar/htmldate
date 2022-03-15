@@ -201,23 +201,21 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                 elif 'content' in elem.attrib:
                     attempt = tryfunc(elem.get('content'))
                 # store value
-                if attempt is not None and (
-                    (
-                        attribute in ITEMPROP_ATTRS_ORIGINAL
-                        and original_date is True
-                    )
-                    or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED
-                        and original_date is False
-                    )
-                ):
-                    headerdate = attempt
+                if attempt is not None:
+                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date is True) or \
+                       (attribute in ITEMPROP_ATTRS_MODIFIED and original_date is False):
+                        headerdate = attempt
+                    # put on hold: hurts precision
+                    #else:
+                    #    reserve = attempt
+            # reserve with copyrightyear
             elif attribute == 'copyrightyear':
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'content' in elem.attrib:
                     attempt = '-'.join([elem.get('content'), '01', '01'])
                     if date_validator(attempt, '%Y-%m-%d', latest=max_date) is True:
                         reserve = attempt
+        # http-equiv, rare
         elif 'http-equiv' in elem.attrib:
             attribute = elem.get('http-equiv').lower()
             if attribute == 'date':
@@ -420,10 +418,10 @@ def normalize_match(match):
     '''Normalize string output by adding "0" if necessary.'''
     day = match.group(1)
     if len(day) == 1:
-        day = f'0{day}'
+        day = '0' + day
     month = match.group(2)
     if len(month) == 1:
-        month = f'0{month}'
+        month = '0' + month
     return day, month
 
 
@@ -501,9 +499,9 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
         if match.group(3)[0] == '9':
-            year = f'19{match.group(3)}'
+            year = '19' + match.group(3)
         else:
-            year = f'20{match.group(3)}'
+            year = '20' + match.group(3)
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -532,7 +530,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
         match = TWO_COMP_REGEX.match(item)
         month = match.group(1)
         if len(month) == 1:
-            month = f'0{month}'
+            month = '0' + month
         candidate = '-'.join([match.group(2), month, '01'])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
