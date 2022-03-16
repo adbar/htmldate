@@ -84,6 +84,7 @@ setup(
         'dateparser >= 1.1.0',
         'lxml >= 4.6.4',
         'python-dateutil >= 2.8.2',
+        'regex <= 2022.3.2',  # due to dateparser bug
         'urllib3 >= 1.26, <2',
     ],
     extras_require=extras,
