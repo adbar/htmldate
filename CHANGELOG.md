@@ -1,6 +1,11 @@
 ## Changelog
 
 
+### 1.2.0
+- better performance
+- remove unnecessary ciso8601 dependency
+- temporary fix for scrapinghub/dateparser#1045 bug
+
 ### 1.1.1
 - bugfix: input encoding
 - improved extraction coverage (#47)
