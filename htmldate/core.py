@@ -197,7 +197,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
                 attempt = None
                 LOGGER.debug('examining meta itemprop: %s', logstring(elem))
                 if 'datetime' in elem.attrib:
-                    attemp = tryfunc(elem.get('datetime'))
+                    attempt = tryfunc(elem.get('datetime'))
                 elif 'content' in elem.attrib:
                     attempt = tryfunc(elem.get('content'))
                 # store value
