@@ -34,46 +34,43 @@ from .validators import convert_date, date_validator
 LOGGER = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = """
-    .//*[contains(@id, 'date') or contains(@id, 'Date') or
-    contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
-    or contains(@class, 'post-meta-time')]
+    .//*[contains(@id, 'date') or contains(@id, 'Date')
+    or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
+    or contains(@class, 'post-meta-time')
+    or contains(@class, 'date') or contains(@class, 'Date')
+    or contains(@class, 'datum') or contains(@class, 'Datum')
+    or @class='meta' or @class='meta-before' or @class='asset-meta'
+    or contains(@class, 'postmeta') or contains(@id, 'metadata')
+    or contains(@class, 'entry-date') or contains(@class, 'postMeta')
+    or contains(@class, 'post_meta') or contains(@class, 'post__meta')
+    or contains(@class, 'article__date') or contains(@class, 'post_detail')
+    or contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
+    or contains(@class, 'block-content') or contains(@class, 'byline')
+    or contains(@class, 'dateline') or contains(@class, 'subline')
+    or contains(@class, 'published') or contains(@class, 'posted')
+    or contains(@class, 'submitted') or contains(@class, 'updated')
+    or contains(@class, 'created-post')
+    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')
+    or contains(@class, '-meta') or contains(@id, '-meta')
+    or contains(@id, 'lastmod') or contains(@itemprop, 'date')
+    or contains(@class, 'time') or contains(@id, 'publish')
+    or @class='post-footer' or @class='footer' or @id='footer'
+    or contains(@class, 'author') or contains(@class, 'autor')
+    or contains(@class, 'field-content')
+    or contains(@class, 'info') or contains(@class, 'fa-clock-o')
+    or contains(@class, 'fa-calendar') or contains(@class, 'publication')
+    or contains(@class, 'fecha') or contains(@class, 'parution')]
     |
-    .//*[contains(@class, 'date') or contains(@class, 'Date')
-    or contains(@class, 'datum') or contains(@class, 'Datum')]
-    |
-    .//*[contains(@class, 'postmeta') or contains(@class, 'post-meta')
-    or contains(@class, 'entry-meta') or contains(@class, 'entry-date') or contains(@class, 'postMeta')
-    or contains(@class, 'post_meta') or contains(@class, 'post__meta') or
-    contains(@class, 'article__date') or contains(@class, 'post_detail') or @class='meta'
-    or @class='meta-before' or @class='asset-meta' or
-    contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'block-content') or contains(@class, 'byline') or
-    contains(@class, 'dateline') or contains(@class, 'subline')
-    or contains(@class, 'published') or contains(@class, 'posted') or
-    contains(@class, 'submitted') or contains(@class, 'updated') or contains(@class, 'created-post')
-    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')]
-    |
-    .//*[contains(@id, 'lastmod') or contains(@itemprop, 'date') or
-    contains(@class, 'time') or contains(@id, 'metadata') or contains(@id, 'publish')]
-    |
-    .//footer
-    |
-    .//*[@class='post-footer' or @class='footer' or @id='footer']
-    |
-    .//small
-    |
-    .//*[contains(@class, 'author') or contains(@class, 'autor') or
-    contains(@class, 'field-content') or @class='meta' or
-    contains(@class, 'info') or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar') or
-    contains(@class, 'publication')]"""
-
-# supply more expressions for more languages
-ADDITIONAL_EXPRESSIONS = ".//*[contains(@class, 'fecha') or contains(@class, 'parution')]"
+    .//footer|.//small
+    """
+# contains(@class, '_meta') or contains(@class, '-Meta')
 
 # discard parts of the webpage
-DISCARD_EXPRESSIONS = """.//footer
-    |.//*[(self::div or self::section)][@id="footer" or @class="footer"]
-    |.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""  # archive.org banner inserts
+# archive.org banner inserts
+DISCARD_EXPRESSIONS = """.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""
+# not discarded for consistency (see above):
+# .//footer
+# .//*[(self::div or self::section)][@id="footer" or @class="footer"]
 
 # regex cache
 YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')
