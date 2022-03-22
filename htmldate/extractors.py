@@ -75,13 +75,14 @@ DISCARD_EXPRESSIONS = """.//footer
     |.//*[(self::div or self::section)][@id="footer" or @class="footer"]
     |.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""  # archive.org banner inserts
 
-# Regex cache
+# regex cache
 YMD_NO_SEP_PATTERN = re.compile(r'(?:\D|^)(\d{8})(?:\D|$)')
 YMD_PATTERN = re.compile(r'(?:\D|^)(\d{4})[\-/.](\d{1,2})[\-/.](\d{1,2})(?:\D|$)')
 DMY_PATTERN = re.compile(r'(?:\D|^)(\d{1,2})[\-/.](\d{1,2})[\-/.](\d{2,4})(?:\D|$)')
 YM_PATTERN = re.compile(r'(?:\D|^)(\d{4})[\-/.](\d{1,2})(?:\D|$)')
 MY_PATTERN = re.compile(r'(?:\D|^)(\d{1,2})[\-/.](\d{4})(?:\D|$)')
-LONG_MDY_PATTERN = re.compile(r'''(
+
+REGEX_MONTHS = '''
 January|February|March|April|May|June|July|August|September|October|November|December|
 Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
 Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
@@ -89,59 +90,53 @@ Januar|Jänner|Februar|Feber|März|Mai|Dezember|
 janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
-) ([0-9]{1,2})(st|nd|rd|th)?,? ([0-9]{4})'''.replace('\n', ''))
-LONG_DMY_PATTERN = re.compile(r'''([0-9]{1,2})(st|nd|rd|th)? (of )?(
-January|February|March|April|May|June|July|August|September|October|November|December|
-Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
-Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
-Januar|Jänner|Februar|Feber|März|Mai|Dezember|
-janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
-Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
-Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
-),? ([0-9]{4})'''.replace('\n', ''))
+'''  # "août" hurts performance?
+LONG_MDY_PATTERN = re.compile(fr'''({REGEX_MONTHS})\s
+([0-9]{{1,2}})(?:st|nd|rd|th)?,? ([0-9]{{4}})'''.replace('\n', ''), re.I)
+LONG_DMY_PATTERN = re.compile(fr'''([0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
+({REGEX_MONTHS}),? ([0-9]{{4}})'''.replace('\n', ''), re.I)
+
 COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
 PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
-GERMAN_TEXTSEARCH = re.compile(r'''([0-9]{1,2})\.? (Januar|Jänner|Februar|Feber|März|April|
-Mai|Juni|Juli|August|September|Oktober|November|Dezember) ([0-9]{4})'''.replace('\n', ''))
-JSON_PATTERN_MODIFIED = \
-  re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
-JSON_PATTERN_PUBLISHED = \
-  re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})')
+
+JSON_MODIFIED = re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
+JSON_PUBLISHED = re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 TIMESTAMP_PATTERN = re.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}')
 
 # English, French, German, Indonesian and Turkish dates cache
 TEXT_MONTHS = {
     # January
-    'Januar': '01', 'Jänner': '01', 'January': '01', 'Januari': '01', 'Jan': '01',
-    'Ocak': '01', 'Oca': '01', 'janvier': '01',
+    'januar': '01', 'jänner': '01', 'january': '01', 'januari': '01', 'jan': '01',
+    'ocak': '01', 'oca': '01', 'janvier': '01',
     # February
-    'Februar': '02', 'Feber': '02', 'February': '02', 'Februari': '02', 'Feb': '02',
-    'Şubat': '02', 'Şub': '02', 'février': '02',
+    'februar': '02', 'feber': '02', 'february': '02', 'februari': '02', 'feb': '02',
+    'şubat': '02', 'şub': '02', 'février': '02',
     # March
-    'März': '03', 'March': '03', 'Maret': '03', 'Mar': '03', 'Mart': '03', 'mars': '03',
+    'märz': '03', 'march': '03', 'maret': '03', 'mar': '03', 'mart': '03', 'mars': '03',
     # April
-    'April': '04', 'Apr': '04', 'Nisan': '04', 'Nis': '04', 'avril': '04',
+    'april': '04', 'apr': '04', 'nisan': '04', 'nis': '04', 'avril': '04',
     # May
-    'Mai': '05', 'May': '05', 'Mei': '05', 'Mayıs': '05', 'mai': '05',
+    'mai': '05', 'may': '05', 'mei': '05', 'mayıs': '05',
     # June
-    'Juni': '06', 'June': '06', 'Jun': '06', 'Haziran': '06', 'Haz': '06', 'juin': '06',
+    'juni': '06', 'june': '06', 'jun': '06', 'haziran': '06', 'haz': '06', 'juin': '06',
     # July
-    'Juli': '07', 'July': '07', 'Jul': '07', 'Temmuz': '07', 'Tem': '07', 'juillet': '07',
+    'juli': '07', 'july': '07', 'jul': '07', 'temmuz': '07', 'tem': '07', 'juillet': '07',
     # August
-    'August': '08', 'Agustus': '08', 'Aug': '08', 'Ağustos': '08', 'Ağu': '08', 'aout': '08',
+    'august': '08', 'agustus': '08', 'aug': '08', 'ağustos': '08', 'ağu': '08',
+    'août': '08', 'aout': '08',
     # September
-    'September': '09', 'Sep': '09', 'Eylül': '09', 'Eyl': '09', 'septembre': '09',
+    'september': '09', 'sep': '09', 'eylül': '09', 'eyl': '09', 'septembre': '09',
     # October
-    'Oktober': '10', 'October': '10', 'Oct': '10', 'Ekim': '10', 'Eki': '10', 'octobre': '10',
+    'oktober': '10', 'october': '10', 'oct': '10', 'ekim': '10', 'eki': '10', 'octobre': '10',
     # November
-    'November': '11', 'Nov': '11', 'Kasım': '11', 'Kas': '11', 'novembre': '11',
+    'november': '11', 'nov': '11', 'kasım': '11', 'kas': '11', 'novembre': '11',
     # December
-    'Dezember': '12', 'December': '12', 'Desember': '12', 'Dec': '12', 'Aralık': '12',
-    'Ara': '12', 'décembre': '12'
+    'dezember': '12', 'december': '12', 'desember': '12', 'dec': '12', 'aralık': '12',
+    'ara': '12', 'décembre': '12'
 }
 
 TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
-NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\D*[0-9]{4}\D*$|\+[0-9]{2}\D+')
+NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\+[0-9]{2}\D+|\D*[0-9]{4}\D*$')
 # leads to errors: \D+[0-9]{3,}\D+|
 
 # use of regex module for speed
@@ -235,48 +230,20 @@ def try_swap_values(day, month):
 
 
 def regex_parse(string):
-    """Full-text parse using a series of regular expressions"""
-    dateobject = regex_parse_de(string)
-    if dateobject is None:
-        dateobject = regex_parse_multilingual(string)
-    return dateobject
-
-
-def regex_parse_de(string):
-    """Try full-text parse for German date elements"""
-    # text match
-    match = GERMAN_TEXTSEARCH.search(string)
-    if not match:
-        return None
-    # second element
-    secondelem = TEXT_MONTHS[match.group(2)]
-    # process and return
-    try:
-        dateobject = datetime.date(int(match.group(3)),
-                                   int(secondelem),
-                                   int(match.group(1)))
-    except ValueError:
-        return None
-    LOGGER.debug('German text parse: %s', dateobject)
-    return dateobject
-
-
-def regex_parse_multilingual(string):
-    """Try full-text parse for English date elements"""
+    """Try full-text parse for date elements using a series of regular expressions
+       with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
-
-    # American English
-    match = LONG_MDY_PATTERN.search(string)
-    if match:
-        day, month, year = match.group(2), TEXT_MONTHS[match.group(1)], match.group(4)
     # multilingual day-month-year pattern
+    match = LONG_DMY_PATTERN.search(string)
+    if match:
+        day, month, year = match.group(1), TEXT_MONTHS[match.group(2).lower()], match.group(3)
     else:
-        match = LONG_DMY_PATTERN.search(string)
+        # American English
+        match = LONG_MDY_PATTERN.search(string)
         if match:
-            day, month, year = match.group(1), TEXT_MONTHS[match.group(4)], match.group(5)
+            day, month, year = match.group(2), TEXT_MONTHS[match.group(1).lower()], match.group(3)
         else:
             return None
-
     # process and return
     try:
         int_day, int_month, int_year = int(day), int(month), int(year)
@@ -285,9 +252,9 @@ def regex_parse_multilingual(string):
         dateobject = datetime.date(int_year, int_month, int_day)
     except ValueError:
         return None
-
-    LOGGER.debug('multilingual text found: %s', dateobject)
-    return dateobject
+    else:
+        LOGGER.debug('multilingual text found: %s', dateobject)
+        return dateobject
 
 
 # TODO: check what's necessary here and what's not
@@ -444,9 +411,9 @@ def json_search(tree, outputformat, original_date, min_date, max_date):
     '''Look for JSON time patterns in JSON sections of the tree'''
     # determine pattern
     if original_date is True:
-        json_pattern = JSON_PATTERN_PUBLISHED
+        json_pattern = JSON_PUBLISHED
     else:
-        json_pattern = JSON_PATTERN_MODIFIED
+        json_pattern = JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath('.//script[@type="application/ld+json"]|//script[@type="application/settings+json"]'):
         if not elem.text or '"date' not in elem.text:
