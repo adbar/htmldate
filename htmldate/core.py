@@ -645,11 +645,11 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         return dateresult
 
     # search in discarded parts (currently: footers and archive.org-banner)
-    for subtree in discarded:
-        dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS,
-            outputformat, extensive_search, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
+    #for subtree in discarded:
+    #    dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS,
+    #        outputformat, extensive_search, min_date, max_date)
+    #    if dateresult is not None:
+    #        return dateresult
 
     # try time elements
     time_result = examine_time_elements(

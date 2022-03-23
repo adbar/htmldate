@@ -34,36 +34,38 @@ from .validators import convert_date, date_validator
 LOGGER = logging.getLogger(__name__)
 
 DATE_EXPRESSIONS = """
-    .//*[contains(@id, 'date') or contains(@id, 'Date')
-    or contains(@id, 'datum') or contains(@id, 'Datum') or contains(@id, 'time')
-    or contains(@class, 'post-meta-time')
-    or contains(@class, 'date') or contains(@class, 'Date')
-    or contains(@class, 'datum') or contains(@class, 'Datum')
-    or @class='meta' or @class='meta-before' or @class='asset-meta'
-    or contains(@class, 'postmeta') or contains(@id, 'metadata')
-    or contains(@class, 'entry-date') or contains(@class, 'postMeta')
-    or contains(@class, 'post_meta') or contains(@class, 'post__meta')
-    or contains(@class, 'article__date') or contains(@class, 'post_detail')
-    or contains(@id, 'article-metadata') or contains(@class, 'article-metadata')
-    or contains(@class, 'block-content') or contains(@class, 'byline')
-    or contains(@class, 'dateline') or contains(@class, 'subline')
-    or contains(@class, 'published') or contains(@class, 'posted')
-    or contains(@class, 'submitted') or contains(@class, 'updated')
+    .//*[contains(translate(@id, "D", "d"), 'date')
+    or contains(translate(@class, "D", "d"), 'date')
+    or contains(translate(@itemprop, "D", "d"), 'date')
+    or contains(translate(@id, "D", "d"), 'datum')
+    or contains(translate(@class, "D", "d"), 'datum')
+    or contains(@id, 'time') or contains(@class, 'time')
+    or @class='meta' or contains(translate(@id, "M", "m"), 'metadata')
+    or contains(translate(@class, "M", "m"), 'meta-')
+    or contains(translate(@class, "M", "m"), '-meta')
+    or contains(translate(@id, "M", "m"), '-meta')
+    or contains(translate(@class, "M", "m"), '_meta')
+    or contains(translate(@class, "M", "m"), 'postmeta')
+    or contains(@class, 'info') or contains(@class, 'post_detail')
+    or contains(@class, 'block-content')
+    or contains(@class, 'byline') or contains(@class, 'subline')
+    or contains(@class, 'posted') or contains(@class, 'submitted')
     or contains(@class, 'created-post')
-    or contains(@id, 'post-timestamp') or contains(@class, 'post-timestamp')
-    or contains(@class, '-meta') or contains(@id, '-meta')
-    or contains(@id, 'lastmod') or contains(@itemprop, 'date')
-    or contains(@class, 'time') or contains(@id, 'publish')
-    or @class='post-footer' or @class='footer' or @id='footer'
+    or contains(@id, 'publish') or contains(@class, 'publish')
+    or contains(@class, 'publication')
     or contains(@class, 'author') or contains(@class, 'autor')
     or contains(@class, 'field-content')
-    or contains(@class, 'info') or contains(@class, 'fa-clock-o')
-    or contains(@class, 'fa-calendar') or contains(@class, 'publication')
-    or contains(@class, 'fecha') or contains(@class, 'parution')]
+    or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar')
+    or contains(@class, 'fecha') or contains(@class, 'parution')
+    or @id='footer' or @class='post-footer' or @class='footer']
     |
     .//footer|.//small
     """
-# contains(@class, '_meta') or contains(@class, '-Meta')
+# further tests needed:
+# or contains(@class, 'article')
+# or contains(@class, 'footer') or contains(@id, 'footer')
+# or contains(@id, 'lastmod') or contains(@class, 'updated')
+# .//i|.//em|.//span
 
 # discard parts of the webpage
 # archive.org banner inserts
