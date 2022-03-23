@@ -65,7 +65,10 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@class, 'footer') or contains(@id, 'footer')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
-# .//i|.//em|.//span
+# .//i|.//em|.//span|.//font|.//strong
+
+FREE_TEXT_EXPRESSIONS = './/div/text()|.//p/text()'
+# .//li/text()|.//span/text()
 
 # discard parts of the webpage
 # archive.org banner inserts

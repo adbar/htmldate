@@ -20,7 +20,7 @@ from lxml.html import tostring
 from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
                          img_search, json_search, timestamp_search, try_ymd_date,
-                         DATE_EXPRESSIONS,
+                         DATE_EXPRESSIONS, FREE_TEXT_EXPRESSIONS,
                          YEAR_PATTERN, YMD_PATTERN, COPYRIGHT_PATTERN,
                          THREE_PATTERN, THREE_CATCH,
                          THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH,
@@ -704,11 +704,10 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # last resort
     if extensive_search is True:
         LOGGER.debug('extensive search started')
-        # div and p elements?
-        # TODO: check all and decide according to original_date
+        # TODO: further tests & decide according to original_date
         reference = 0
-        for textpart in [t for t in cleaned_html.xpath('.//div/text()|.//p/text()') if 0 < len(t) < 80]:
-            reference = compare_reference(reference, textpart, outputformat, extensive_search, original_date, min_date, max_date)
+        for segment in [t for t in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS) if 6 < len(t) < 60]:
+            reference = compare_reference(reference, segment, outputformat, extensive_search, original_date, min_date, max_date)
         # return
         converted = check_extracted_reference(reference, outputformat, min_date, max_date)
         if converted is not None:
