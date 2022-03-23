@@ -33,8 +33,11 @@ from .validators import convert_date, date_validator
 
 LOGGER = logging.getLogger(__name__)
 
+FAST_PREPEND = './/*[(self::div or self::li or self::p or self::span)]'
+SLOW_PREPEND = './/*'
+# TODO: test [(self::a or self::div or self::li or self::p or self::span or self::ul)]
 DATE_EXPRESSIONS = """
-    .//*[contains(translate(@id, "D", "d"), 'date')
+    [contains(translate(@id, "D", "d"), 'date')
     or contains(translate(@class, "D", "d"), 'date')
     or contains(translate(@itemprop, "D", "d"), 'date')
     or contains(translate(@id, "D", "d"), 'datum')
@@ -65,10 +68,8 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@class, 'footer') or contains(@id, 'footer')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
-# .//i|.//em|.//span|.//font|.//strong
 
-FREE_TEXT_EXPRESSIONS = './/div/text()|.//p/text()'
-# .//li/text()|.//span/text()
+FREE_TEXT_EXPRESSIONS = './/*[(self::div or self::em or self::font or self::i or self::li or self::p or self::span or self::strong)]/text()'
 
 # discard parts of the webpage
 # archive.org banner inserts

@@ -291,8 +291,8 @@ def test_exact_date():
     assert find_date(load_mock_page('http://www.stuttgart.de/')) == '2017-10-09'
 
     ## in document body
-    assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
-    #assert find_date(load_mock_page('https://github.com/adbar/htmldate'), original_date=True) == '2016-07-12'
+    #assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
+    assert find_date(load_mock_page('https://github.com/adbar/htmldate'), original_date=True) == '2016-07-12'
 
     assert find_date(load_mock_page('https://en.blog.wordpress.com/')) == '2017-08-30'
     assert find_date(load_mock_page('https://www.austria.info/')) == '2017-09-07'

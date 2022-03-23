@@ -20,7 +20,8 @@ from lxml.html import tostring
 from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
                          img_search, json_search, timestamp_search, try_ymd_date,
-                         DATE_EXPRESSIONS, FREE_TEXT_EXPRESSIONS,
+                         DATE_EXPRESSIONS, FAST_PREPEND, SLOW_PREPEND,
+                         FREE_TEXT_EXPRESSIONS,
                          YEAR_PATTERN, YMD_PATTERN, COPYRIGHT_PATTERN,
                          THREE_PATTERN, THREE_CATCH,
                          THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH,
@@ -637,14 +638,19 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         return abbr_result
 
     # expressions + text_content
+    if extensive_search is True:
+        date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
+    else:
+        date_expr = FAST_PREPEND + DATE_EXPRESSIONS
     # first try in pruned tree
     search_tree, discarded = discard_unwanted(deepcopy(tree))
-    dateresult = examine_date_elements(search_tree, DATE_EXPRESSIONS,
+    dateresult = examine_date_elements(search_tree, date_expr,
         outputformat, extensive_search, min_date, max_date)
     if dateresult is not None:
         return dateresult
 
-    # search in discarded parts (currently: footers and archive.org-banner)
+    # TODO: decide on this
+    # search in discarded parts (e.g. archive.org-banner)
     #for subtree in discarded:
     #    dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS,
     #        outputformat, extensive_search, min_date, max_date)
