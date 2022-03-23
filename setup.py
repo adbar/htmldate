@@ -81,10 +81,9 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'charset_normalizer >= 2.0.12',
-        'dateparser >= 1.1.0',
+        'dateparser >= 1.1.1',
         'lxml >= 4.6.4',
         'python-dateutil >= 2.8.2',
-        'regex <= 2022.3.2',  # due to dateparser bug
         'urllib3 >= 1.26, <2',
     ],
     extras_require=extras,

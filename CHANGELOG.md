@@ -1,6 +1,11 @@
 ## Changelog
 
 
+### 1.2.1
+- speed and accuracy gains
+- better extraction coverage, simpler code
+- bug fixed (typo in variable)
+
 ### 1.2.0
 - better performance
 - remove unnecessary ciso8601 dependency
