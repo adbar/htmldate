@@ -70,7 +70,7 @@ Features
 -  Detection of both original and updated dates
 
 
-*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It provides following ways to date a HTML document:
+*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It provides the following ways to date an HTML document:
 
 1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
 2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
@@ -87,7 +87,7 @@ Markup-based extraction is multilingual by nature, text-based refinements for be
 Installation
 ------------
 
-This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 
