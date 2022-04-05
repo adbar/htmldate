@@ -6,6 +6,7 @@ Implementing a basic command-line interface.
 ## under GNU GPL v3 license
 
 import argparse
+import logging
 import sys
 
 from platform import python_version
@@ -69,6 +70,11 @@ def parse_args(args):
 
 def process_args(args):
     """Process the arguments passed on the command-line."""
+    # verbosity
+    if args.verbose is True:
+        logging.basicConfig(level=logging.DEBUG)
+
+    # input type
     if not args.inputfile:
         # URL as input
         if args.URL:

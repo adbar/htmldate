@@ -760,7 +760,7 @@ def test_cli():
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-12-31') == '2016-07-12'
     assert examine('<html><body>2016-07-12</body></html>', extensive_bool=True, maxdate='2017-41-41') == '2016-07-12'
     # first test
-    testargs = ['', '-u', '123']
+    testargs = ['', '-u', '123', '-v']
     with patch.object(sys, 'argv', testargs):
         args = parse_args(testargs)
     with pytest.raises(SystemExit) as err:
