@@ -447,28 +447,28 @@ def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
     catch = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})')
     yearpat = re.compile(r'^([0-9]{4})')
     # nonsense
-    allmatches = ['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28']
-    occurrences = Counter(allmatches)
+    occurrences = Counter(['20208956', '20208956', '20208956', '19018956', '209561', '22020895607-12', '2-28'])
     result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
     assert result is None
     # plausible
-    allmatches = ['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28']
-    occurrences = Counter(allmatches)
+    occurrences = Counter(['2016-12-23', '2016-12-23', '2016-12-23', '2016-12-23', '2017-08-11', '2016-07-12', '2017-11-28'])
     result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
     assert result.group(0) == '2017-11-28'
     original_date = True
     result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
     assert result.group(0) == '2016-07-12'
     # mix plausible/implausible
-    allmatches = ['2116-12-23', '2116-12-23', '2116-12-23', '2017-08-11', '2017-08-11']
-    occurrences = Counter(allmatches)
+    occurrences = Counter(['2116-12-23', '2116-12-23', '2116-12-23', '2017-08-11', '2017-08-11'])
     result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
     assert result.group(0) == '2017-08-11'
     original_date = False
-    allmatches = ['2116-12-23', '2116-12-23', '2116-12-23', '2017-08-11', '2017-08-11']
-    occurrences = Counter(allmatches)
+    occurrences = Counter(['2116-12-23', '2116-12-23', '2116-12-23', '2017-08-11', '2017-08-11'])
     result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
     assert result.group(0) == '2017-08-11'
+    # taking date present twice, corner case
+    occurrences = Counter(['2016-12-23', '2016-12-23', '2017-08-11', '2017-08-11', '2017-08-11'])
+    result = select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date)
+    assert result.group(0) == '2016-12-23'
 
 
 def test_regex_parse():
