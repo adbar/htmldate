@@ -640,7 +640,7 @@ def test_external_date_parser():
     assert external_date_parser('Wednesday, January 1st 2020', OUTPUTFORMAT) == '2020-01-01'
     assert external_date_parser('Random text with 2020', OUTPUTFORMAT) is None
     # https://github.com/scrapinghub/dateparser/issues/333
-    assert external_date_parser('1 January 0001', '%d %B %Y') == '01 January 1'
+    assert external_date_parser('1 January 0001', '%d %B %Y') in ('01 January 1', '01 January 0001')
     # https://github.com/scrapinghub/dateparser/issues/406
     assert external_date_parser('2018-04-12 17:20:03.12345678999a', OUTPUTFORMAT) == '2018-12-04'
     # https://github.com/scrapinghub/dateparser/issues/685
