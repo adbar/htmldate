@@ -349,7 +349,7 @@ def custom_parse(string, outputformat, extensive_search, min_date, max_date):
             LOGGER.debug('custom parse result: %s', dateobject)
             return dateobject.strftime(outputformat)
         except ValueError as err:
-            LOGGER.debug('value error during conversion: %s %s', string, err)
+            LOGGER.error('value error during conversion: %s %s', string, err)
 
     return None
 
@@ -360,8 +360,9 @@ def external_date_parser(string, outputformat):
     try:
         target = EXTERNAL_PARSER.get_date_data(string)['date_obj']
     # 2 types of errors possible
-    except (OverflowError, ValueError):
+    except (OverflowError, ValueError) as err:
         target = None
+        LOGGER.error('external parser error: %s %s', string, err)
     # issue with data type
     if target is not None:
         return datetime.date.strftime(target, outputformat)

@@ -28,7 +28,7 @@ from lxml import html
 
 from htmldate.cli import examine, main, parse_args, process_args
 from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate, try_ymd_date
-from htmldate.extractors import DATE_EXPRESSIONS, custom_parse, external_date_parser, extract_partial_url_date, regex_parse
+from htmldate.extractors import DATE_EXPRESSIONS, custom_parse, discard_unwanted, external_date_parser, extract_partial_url_date, regex_parse
 from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html, is_dubious_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
@@ -176,7 +176,8 @@ def test_sanity():
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
     #assert output_format_validator('%\xaa') is False
-
+    _, discarded = discard_unwanted(html.fromstring('<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'))
+    assert len(discarded) == 1
 
 
 def test_no_date():
@@ -504,6 +505,11 @@ def test_regex_parse():
     assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse('abcd 32. Januar 2020 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    # plausible but impossible dates
+    assert custom_parse('February 29 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
+    assert custom_parse('February 30 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('XXTag, den 29. Februar 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
+    assert custom_parse('XXTag, den 30. Februar 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
     #for Nones caused by newlines and duplicates
     assert regex_parse("January 1st, 1998") is not None
     assert regex_parse("February 1st, 1998") is not None
@@ -633,6 +639,15 @@ def test_external_date_parser():
     '''test external date parser'''
     assert external_date_parser('Wednesday, January 1st 2020', OUTPUTFORMAT) == '2020-01-01'
     assert external_date_parser('Random text with 2020', OUTPUTFORMAT) is None
+    # https://github.com/scrapinghub/dateparser/issues/333
+    assert external_date_parser('1 January 0001', '%d %B %Y') == '01 January 1'
+    # https://github.com/scrapinghub/dateparser/issues/406
+    assert external_date_parser('2018-04-12 17:20:03.12345678999a', OUTPUTFORMAT) == '2018-12-04'
+    # https://github.com/scrapinghub/dateparser/issues/685
+    assert external_date_parser('12345678912 days', OUTPUTFORMAT) is None
+    # https://github.com/scrapinghub/dateparser/issues/680
+    assert external_date_parser('2.2250738585072011e-308', OUTPUTFORMAT) is None
+    assert external_date_parser('⁰⁴⁵₀₁₂', OUTPUTFORMAT) is None
 
 
 def test_url():

@@ -11,4 +11,3 @@ exclude_lines =
     if __name__ == .__main__.:
     except .*ImportError.*:
     except .*UnicodeDecodeError.*:
-    except .*urllib3.exceptions.*:

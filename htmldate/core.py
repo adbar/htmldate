@@ -670,6 +670,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     # rare LXML error: no NULL bytes or control characters
     except ValueError:
         cleaned_html = tree
+        LOGGER.error('lxml cleaner error')
     # robust conversion to string
     try:
         htmlstring = tostring(cleaned_html, pretty_print=False, encoding='unicode')
