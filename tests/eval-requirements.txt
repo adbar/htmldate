@@ -6,7 +6,7 @@ articleDateExtractor==0.20
 date_guesser==2.1.4
 goose3==3.1.11
 newspaper3k==0.2.8
-news-please==1.5.21
+news-please==1.5.22
 
 # helpers
 tabulate==0.8.9
