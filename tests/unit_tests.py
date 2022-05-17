@@ -175,6 +175,7 @@ def test_sanity():
     assert output_format_validator('%M-%Y') is True
     assert output_format_validator('ABC') is False
     assert output_format_validator(123) is False
+    assert output_format_validator(('a', 'b')) is False
     #assert output_format_validator('%\xaa') is False
     _, discarded = discard_unwanted(html.fromstring('<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'))
     assert len(discarded) == 1
@@ -484,32 +485,32 @@ def test_regex_parse():
     assert regex_parse('Salı, Mart 26, 2019') is not None
     assert regex_parse('36/14/2016') is None
     assert regex_parse('January 36 1998') is None
-    assert custom_parse('January 12 1098', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('1998-01', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('10.10.98', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('12122004', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('3/14/2016', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('20041212', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('20041212', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('1212-20-04', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('1212-20-04', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('2004-12-12', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('2004-12-12', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('33.20.2004', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('12.12.2004', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('2019 28 meh', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('2019 28 meh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('January 12 1098', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('1998-01', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('10.10.98', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('12122004', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('3/14/2016', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('20041212', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('20041212', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('1212-20-04', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('1212-20-04', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('2004-12-12', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('2004-12-12', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('33.20.2004', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('12.12.2004', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('2019 28 meh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('2019 28 meh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     # regex-based matches
-    assert custom_parse('abcd 20041212 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('abcd 2004-2-12 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse('abcd 32. Januar 2020 efgh', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('abcd 20041212 efgh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2-12 efgh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 2004-2 efgh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse('abcd 32. Januar 2020 efgh', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     # plausible but impossible dates
-    assert custom_parse('February 29 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
-    assert custom_parse('February 30 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse('XXTag, den 29. Februar 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
-    assert custom_parse('XXTag, den 30. Februar 2008', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('February 29 2008', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
+    assert custom_parse('February 30 2008', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    assert custom_parse('XXTag, den 29. Februar 2008', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) == '2008-02-29'
+    assert custom_parse('XXTag, den 30. Februar 2008', OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     #for Nones caused by newlines and duplicates
     assert regex_parse("January 1st, 1998") is not None
     assert regex_parse("February 1st, 1998") is not None
@@ -640,7 +641,8 @@ def test_external_date_parser():
     assert external_date_parser('Wednesday, January 1st 2020', OUTPUTFORMAT) == '2020-01-01'
     assert external_date_parser('Random text with 2020', OUTPUTFORMAT) is None
     # https://github.com/scrapinghub/dateparser/issues/333
-    assert external_date_parser('1 January 0001', '%d %B %Y') in ('01 January 1', '01 January 0001')
+    #assert external_date_parser('1 January 0001', '%d %B %Y') in ('01 January 1', '01 January 0001')
+    assert external_date_parser('1 January 1900', '%d %B %Y') == '01 January 1900'
     # https://github.com/scrapinghub/dateparser/issues/406
     assert external_date_parser('2018-04-12 17:20:03.12345678999a', OUTPUTFORMAT) == '2018-12-04'
     # https://github.com/scrapinghub/dateparser/issues/685

@@ -13,18 +13,11 @@ import re
 
 from functools import lru_cache
 
+from dateutil.parser import parse as dateutil_parse
+
 # coverage for date parsing
 from dateparser import DateDataParser  # third-party, slow
 from dateparser_data.settings import default_parsers
-EXTERNAL_PARSER = DateDataParser(settings={
-#    'DATE_ORDER': 'DMY',
-    'PREFER_DATES_FROM': 'past',
-#    'PREFER_DAY_OF_MONTH': 'first',
-    'STRICT_PARSING': True,
-    'PARSERS': [p for p in default_parsers if p not in ('no-spaces-time', 'relative-time', 'timestamp')],
-})
-
-from dateutil.parser import parse as dateutil_parse
 
 # own
 from .settings import CACHE_SIZE
@@ -33,9 +26,17 @@ from .validators import convert_date, date_validator
 
 LOGGER = logging.getLogger(__name__)
 
-FAST_PREPEND = './/*[(self::div or self::li or self::p or self::span)]'
+EXTERNAL_PARSER = DateDataParser(settings={
+#    'DATE_ORDER': 'DMY',
+    'PREFER_DATES_FROM': 'past',
+#    'PREFER_DAY_OF_MONTH': 'first',
+    'STRICT_PARSING': True,
+    'PARSERS': [p for p in default_parsers if p not in ('no-spaces-time', 'relative-time', 'timestamp')],
+})
+
+
+FAST_PREPEND = './/*[(self::b or self::div or self::em or self::font or self::i or self::li or self::p or self::span or self::strong)]'
 SLOW_PREPEND = './/*'
-# TODO: test [(self::a or self::div or self::li or self::p or self::span or self::ul)]
 DATE_EXPRESSIONS = """
     [contains(translate(@id, "D", "d"), 'date')
     or contains(translate(@class, "D", "d"), 'date')
@@ -60,16 +61,15 @@ DATE_EXPRESSIONS = """
     or contains(@class, 'field-content')
     or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar')
     or contains(@class, 'fecha') or contains(@class, 'parution')
-    or @id='footer' or @class='post-footer' or @class='footer']
+    or contains(@class, 'footer') or contains(@id, 'footer')]
     |
     .//footer|.//small
     """
 # further tests needed:
 # or contains(@class, 'article')
-# or contains(@class, 'footer') or contains(@id, 'footer')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
-FREE_TEXT_EXPRESSIONS = './/*[(self::div or self::em or self::font or self::i or self::li or self::p or self::span or self::strong)]/text()'
+FREE_TEXT_EXPRESSIONS = FAST_PREPEND + '/text()'
 
 # discard parts of the webpage
 # archive.org banner inserts
@@ -261,7 +261,7 @@ def regex_parse(string):
 
 
 # TODO: check what's necessary here and what's not
-def custom_parse(string, outputformat, extensive_search, min_date, max_date):
+def custom_parse(string, outputformat, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
 
@@ -385,7 +385,7 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
         return None
 
     # try to parse using the faster method
-    customresult = custom_parse(string, outputformat, extensive_search, min_date, max_date)
+    customresult = custom_parse(string, outputformat, min_date, max_date)
     if customresult is not None:
         return customresult
 

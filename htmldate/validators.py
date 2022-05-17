@@ -58,18 +58,19 @@ def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_PO
 
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
-    # test in abstracto
-    if not isinstance(outputformat, str) or '%' not in outputformat:
-        LOGGER.error('malformed output format: %s', outputformat)
-        return False
     # test with date object
     dateobject = datetime.datetime(2017, 9, 1, 0, 0)
     try:
         dateobject.strftime(outputformat)
-    # Python < 3.7 only
-    except (NameError, TypeError, UnicodeError, ValueError) as err:
+    # other than ValueError: Python < 3.7 only
+    except (NameError, TypeError, ValueError) as err:
         LOGGER.error('wrong output format or type: %s %s', outputformat, err)
         return False
+    else:
+        # test in abstracto
+        if not isinstance(outputformat, str) or '%' not in outputformat:
+            LOGGER.error('malformed output format: %s', outputformat)
+            return False
     return True
 
 
