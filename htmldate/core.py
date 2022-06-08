@@ -47,6 +47,7 @@ def logstring(element):
 DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
                   'article.published', 'article:published_time',
+                  'article:publicationdate',
                   'bt:pubdate', 'citation_date', 'citation_publication_date',
                   'created', 'cxenseparse:recs:publishtime',
                   'date', 'date_published',
@@ -71,7 +72,6 @@ PROPERTY_MODIFIED = {
                     'release_date', 'updated_time'
                     }
 
-TRIM_REGEX = re.compile(r'[\n\r\s\t]+')
 NON_DIGITS_REGEX = re.compile(r'\D+$')
 GER_STRIP_REGEX = re.compile(r'^am ')
 
@@ -96,15 +96,12 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
     attempt = None
     for elem in elements:
         # trim
-        textcontent = TRIM_REGEX.sub(' ', elem.text_content(), re.MULTILINE).strip()
+        textcontent = ' '.join(elem.text_content().split()).strip()
         # simple length heuristics
         if textcontent is not None and len(textcontent) > 6:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
             toexamine = NON_DIGITS_REGEX.sub('', textcontent[:48])
-            # more than 4 digits required # list(filter(str.isdigit, toexamine))
-            #if len([c for c in toexamine if c.isdigit()]) < 4:
-            #    continue
             LOGGER.debug('analyzing (HTML): %s', tostring(
                 elem, pretty_print=False, encoding='unicode').translate(
                     {ord(c): None for c in '\n\t\r'}
@@ -298,7 +295,7 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date,
 def try_expression(expression, outputformat, extensive_search, min_date, max_date):
     '''Check if the text string could be a valid date expression'''
     # trim
-    textcontent = TRIM_REGEX.sub(' ', expression, re.MULTILINE).strip()
+    textcontent = ' '.join(expression.split()).strip()
     # simple length heuristics list(filter(str.isdigit, textcontent))
     if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
         return None
