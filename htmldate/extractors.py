@@ -94,14 +94,14 @@ Januar|Jänner|Februar|Feber|März|Mai|Dezember|
 janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
-'''  # "août" hurts performance?
+'''  # todo: check "août"
 LONG_MDY_PATTERN = re.compile(fr'''({REGEX_MONTHS})\s
 ([0-9]{{1,2}})(?:st|nd|rd|th)?,? ([0-9]{{4}})'''.replace('\n', ''), re.I)
 LONG_DMY_PATTERN = re.compile(fr'''([0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
 ({REGEX_MONTHS}),? ([0-9]{{4}})'''.replace('\n', ''), re.I)
 
-COMPLETE_URL = re.compile(r'([0-9]{4})[/-]([0-9]{1,2})[/-]([0-9]{1,2})')
-PARTIAL_URL = re.compile(r'/([0-9]{4})/([0-9]{1,2})/')
+COMPLETE_URL = re.compile(r'\D([0-9]{4})[/_-]([0-9]{1,2})[/_-]([0-9]{1,2})(?:\D|$)')
+PARTIAL_URL = re.compile(r'\D([0-9]{4})[/_-]([0-9]{2})(?:\D|$)')
 
 JSON_MODIFIED = re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 JSON_PUBLISHED = re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
@@ -143,10 +143,10 @@ TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^\d+$')
 NO_TEXT_DATE_PATTERN = re.compile(r'\d{3,}\D+\d{3,}|\d{2}:\d{2}(:| )|\+\d{2}\D+|\D*\d{4}\D*$')
 # leads to errors: \D+\d{3,}\D+
 
-DISCARD_PATTERNS = re.compile(r'[$€¥Ұ£¢₽₱฿#]|CNY|EUR|GBP|JPY|USD|http|\.(com|net|org)|IBAN')
+DISCARD_PATTERNS = re.compile(r'[$€¥Ұ£¢₽₱฿#]|CNY|EUR|GBP|JPY|USD|http|\.(com|net|org)|IBAN|\+\d{2}\b')
 # further testing required:
-# \d[,.]\d+
-# |\+\d{2}\b|\b\d{5}\s
+# \d[,.]\d+  # currency amounts
+# \b\d{5}\s  # postal codes
 
 # use of regex module for speed
 EN_PATTERNS = re.compile(r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
