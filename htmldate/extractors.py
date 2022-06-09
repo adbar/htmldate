@@ -138,9 +138,14 @@ TEXT_MONTHS = {
     'ara': '12', 'décembre': '12'
 }
 
-TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^[0-9]+$')
-NO_TEXT_DATE_PATTERN = re.compile(r'[0-9]{3,}\D+[0-9]{3,}|[0-9]{2}:[0-9]{2}(:| )|\+[0-9]{2}\D+|\D*[0-9]{4}\D*$')
-# leads to errors: \D+[0-9]{3,}\D+|
+TEXT_DATE_PATTERN = re.compile(r'[.:,_/ -]|^\d+$')
+NO_TEXT_DATE_PATTERN = re.compile(r'\d{3,}\D+\d{3,}|\d{2}:\d{2}(:| )|\+\d{2}\D+|\D*\d{4}\D*$')
+# leads to errors: \D+\d{3,}\D+
+
+DISCARD_PATTERNS = re.compile(r'[$€¥Ұ£¢₽₱฿#]|CNY|EUR|GBP|JPY|USD|http|\.(com|net|org)|IBAN')
+# further testing required:
+# \d[,.]\d+
+# |\+\d{2}\b|\b\d{5}\s
 
 # use of regex module for speed
 EN_PATTERNS = re.compile(r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})', re.I)
@@ -190,9 +195,9 @@ def extract_url_date(testurl, outputformat):
         dateresult = match.group(0)
         LOGGER.debug('found date in URL: %s', dateresult)
         try:
-            dateobject = datetime.datetime(int(match.group(1)),
-                                           int(match.group(2)),
-                                           int(match.group(3)))
+            dateobject = datetime.date(int(match.group(1)),
+                                       int(match.group(2)),
+                                       int(match.group(3)))
             if date_validator(dateobject, outputformat) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
@@ -207,9 +212,9 @@ def extract_partial_url_date(testurl, outputformat):
         dateresult = match.group(0) + '/01'
         LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
-            dateobject = datetime.datetime(int(match.group(1)),
-                                           int(match.group(2)),
-                                           1)
+            dateobject = datetime.date(int(match.group(1)),
+                                       int(match.group(2)),
+                                       1)
             if date_validator(dateobject, outputformat) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
@@ -265,29 +270,30 @@ def custom_parse(string, outputformat, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
 
-    # 1. '201709011234' not covered by dateparser, and regex too slow
-    if string[:8].isdigit():
-        try:
-            candidate = datetime.date(int(string[:4]),
-                                      int(string[4:6]),
-                                      int(string[6:8]))
-        except ValueError:
-            return None
-        if date_validator(candidate, '%Y-%m-%d') is True:
-            LOGGER.debug('ymd match: %s', candidate)
-            return convert_date(candidate, '%Y-%m-%d', outputformat)
-
-    # 2. shortcut, much faster
+    # 1. shortcut
     if string[:4].isdigit():
-        try:
-            result = dateutil_parse(string, fuzzy=False)  # ignoretz=True
-            if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
-                LOGGER.debug('parsing result: %s', result)
-                return result.strftime(outputformat)
-        except (OverflowError, TypeError, ValueError):
-            LOGGER.debug('parsing error: %s', string)
+        candidate = None
+        # a. '201709011234' not covered by dateparser, and regex too slow
+        if string[:8].isdigit():
+            try:
+                candidate = datetime.date(int(string[:4]),
+                                          int(string[4:6]),
+                                          int(string[6:8]))
+            except ValueError:
+                LOGGER.debug('8-digit error: %s', string[:8])  # return None
+        # b. much faster than extensive parsing
+        else:
+            try:
+                candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+            except (OverflowError, TypeError, ValueError):
+                LOGGER.debug('parsing error: %s', string)
+        # c. plausibility test
+        if candidate is not None:
+            if date_validator(candidate, outputformat, earliest=min_date, latest=max_date) is True:
+                LOGGER.debug('parsing result: %s', candidate)
+                return candidate.strftime(outputformat)
 
-    # 3. Try YYYYMMDD, use regex
+    # 2. Try YYYYMMDD, use regex
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
@@ -296,11 +302,11 @@ def custom_parse(string, outputformat, min_date, max_date):
         except ValueError:
             LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
         else:
-            if date_validator(candidate, '%Y-%m-%d') is True:
+            if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('YYYYMMDD match: %s', candidate)
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+                return candidate.strftime(outputformat)
 
-    # 4. Try Y-M-D pattern since it's the one used in ISO-8601
+    # 3. Try YMD and Y-M-D pattern since it's the one used in ISO-8601
     # see also fromisoformat() in Python >= 3.7
     match = YMD_PATTERN.search(string)
     if match:
@@ -310,11 +316,11 @@ def custom_parse(string, outputformat, min_date, max_date):
         except ValueError:
             LOGGER.debug('Y-M-D value error: %s', match.group(0))
         else:
-            if date_validator(candidate, '%Y-%m-%d') is True:
+            if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('Y-M-D match: %s', candidate)
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+                return candidate.strftime(outputformat)
 
-    # 5. Try the D-M-Y pattern since it's the most common date format in the world
+    # 4. Try the D-M-Y pattern since it's the most common date format in the world
     match = DMY_PATTERN.search(string)
     if match:
         try:
@@ -325,11 +331,11 @@ def custom_parse(string, outputformat, min_date, max_date):
         except ValueError:
             LOGGER.debug('D-M-Y value error: %s', match.group(0))
         else:
-            if date_validator(candidate, '%Y-%m-%d') is True:
+            if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('D-M-Y match: %s', candidate)
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+                return candidate.strftime(outputformat)
 
-    # 6. Try the Y-M pattern
+    # 5. Try the Y-M pattern
     match = YM_PATTERN.search(string)
     if match:
         try:
@@ -338,13 +344,13 @@ def custom_parse(string, outputformat, min_date, max_date):
         except ValueError:
             LOGGER.debug('Y-M value error: %s', match.group(0))
         else:
-            if date_validator(candidate, '%Y-%m-%d') is True:
+            if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('Y-M match: %s', candidate)
-                return convert_date(candidate, '%Y-%m-%d', outputformat)
+                return candidate.strftime(outputformat)
 
-    # 7. Try the other regex pattern
+    # 6. Try the other regex pattern
     dateobject = regex_parse(string)
-    if date_validator(dateobject, outputformat) is True:
+    if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
         try:
             LOGGER.debug('custom parse result: %s', dateobject)
             return dateobject.strftime(outputformat)
@@ -372,16 +378,12 @@ def external_date_parser(string, outputformat):
 @lru_cache(maxsize=CACHE_SIZE)
 def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
-    # if string less than 6 chars, stop
-    if not string or len(string) < 6:
-        return None
-
-    # count how many digit number in this string
-    if not 4 <= len([c for c in string if c.isdigit()]) <= 18:
+    # formal constraint: 4 to 18 digits
+    if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:
         return None
 
     # check if string only contains time/single year or digits and not a date
-    if not TEXT_DATE_PATTERN.search(string) or NO_TEXT_DATE_PATTERN.match(string):
+    if NO_TEXT_DATE_PATTERN.match(string):
         return None
 
     # try to parse using the faster method
@@ -391,8 +393,11 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
 
     # use slow but extensive search
     if extensive_search is True:
+        # additional filters to prevent computational cost
+        if not TEXT_DATE_PATTERN.search(string) or DISCARD_PATTERNS.search(string):
+            return None
         # send to date parser
-        dateparser_result = external_date_parser(string, outputformat)
+        dateparser_result = external_date_parser(string[:48], outputformat)
         if date_validator(
             dateparser_result, outputformat, earliest=min_date, latest=max_date
         ):

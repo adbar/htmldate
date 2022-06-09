@@ -81,6 +81,8 @@ ITEMPROP_ATTRS_MODIFIED = {'datemodified', 'dateupdate'}
 ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
+MAX_STRING_SIZE = 48
+
 
 @lru_cache(maxsize=CACHE_SIZE)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
@@ -101,7 +103,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
         if textcontent is not None and len(textcontent) > 6:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            toexamine = NON_DIGITS_REGEX.sub('', textcontent[:48])
+            toexamine = NON_DIGITS_REGEX.sub('', textcontent[:MAX_STRING_SIZE])
             LOGGER.debug('analyzing (HTML): %s', tostring(
                 elem, pretty_print=False, encoding='unicode').translate(
                     {ord(c): None for c in '\n\t\r'}
@@ -112,7 +114,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
         # try link title (Blogspot)
         title_attr = elem.get('title')
         if title_attr is not None and len(title_attr) > 0:
-            toexamine = NON_DIGITS_REGEX.sub('', title_attr[:48])
+            toexamine = NON_DIGITS_REGEX.sub('', title_attr[:MAX_STRING_SIZE])
             attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
             if attempt is not None:
                 break
@@ -296,11 +298,8 @@ def try_expression(expression, outputformat, extensive_search, min_date, max_dat
     '''Check if the text string could be a valid date expression'''
     # trim
     textcontent = ' '.join(expression.split()).strip()
-    # simple length heuristics list(filter(str.isdigit, textcontent))
-    if not textcontent or len([c for c in textcontent if c.isdigit()]) < 4:
-        return None
     # try the beginning of the string
-    return try_ymd_date(textcontent[:48], outputformat, extensive_search, min_date, max_date)
+    return try_ymd_date(textcontent[:MAX_STRING_SIZE], outputformat, extensive_search, min_date, max_date)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
