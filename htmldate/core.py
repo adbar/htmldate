@@ -19,9 +19,9 @@ from lxml.html import tostring
 # own
 from .extractors import (discard_unwanted, extract_url_date,
                          extract_partial_url_date, idiosyncrasies_search,
-                         img_search, json_search, timestamp_search, try_ymd_date,
+                         img_search, json_search, timestamp_search, try_date_expr,
                          DATE_EXPRESSIONS, FAST_PREPEND, SLOW_PREPEND,
-                         FREE_TEXT_EXPRESSIONS,
+                         FREE_TEXT_EXPRESSIONS, MAX_TEXT_SIZE,
                          YEAR_PATTERN, YMD_PATTERN, COPYRIGHT_PATTERN,
                          THREE_PATTERN, THREE_CATCH,
                          THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH,
@@ -81,8 +81,6 @@ ITEMPROP_ATTRS_MODIFIED = {'datemodified', 'dateupdate'}
 ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
-MAX_STRING_SIZE = 48
-
 
 @lru_cache(maxsize=CACHE_SIZE)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
@@ -103,19 +101,19 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
         if textcontent is not None and len(textcontent) > 6:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            toexamine = NON_DIGITS_REGEX.sub('', textcontent[:MAX_STRING_SIZE])
+            toexamine = NON_DIGITS_REGEX.sub('', textcontent[:MAX_TEXT_SIZE])
             LOGGER.debug('analyzing (HTML): %s', tostring(
                 elem, pretty_print=False, encoding='unicode').translate(
                     {ord(c): None for c in '\n\t\r'}
                 ).strip()[:100])
-            attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
+            attempt = try_date_expr(toexamine, outputformat, extensive_search, min_date, max_date)
             if attempt is not None:
                 break
         # try link title (Blogspot)
         title_attr = elem.get('title')
         if title_attr is not None and len(title_attr) > 0:
-            toexamine = NON_DIGITS_REGEX.sub('', title_attr[:MAX_STRING_SIZE])
-            attempt = try_ymd_date(toexamine, outputformat, extensive_search, min_date, max_date)
+            toexamine = NON_DIGITS_REGEX.sub('', title_attr[:MAX_TEXT_SIZE])
+            attempt = try_date_expr(toexamine, outputformat, extensive_search, min_date, max_date)
             if attempt is not None:
                 break
     # catchall
@@ -150,7 +148,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
 
     """
     headerdate, reserve = None, None
-    tryfunc = partial(try_ymd_date, outputformat=outputformat, extensive_search=extensive_search, min_date=min_date, max_date=max_date)
+    tryfunc = partial(try_date_expr, outputformat=outputformat, extensive_search=extensive_search, min_date=min_date, max_date=max_date)
     # loop through all meta elements
     for elem in tree.iterfind('.//meta'):
         # safeguard
@@ -174,7 +172,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
         elif 'name' in elem.attrib and 'content' in elem.attrib:
             # url
             if elem.get('name').lower() == 'og:url':
-                headerdate = extract_url_date(elem.get('content'), outputformat)
+                headerdate = extract_url_date(elem.get('content'), outputformat, min_date, max_date)
             # date
             elif elem.get('name').lower() in DATE_ATTRIBUTES:
                 LOGGER.debug('examining meta name: %s', logstring(elem))
@@ -294,18 +292,10 @@ def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date,
     return select_candidate(candidates, catch, yearpat, original_date, min_date, max_date)
 
 
-def try_expression(expression, outputformat, extensive_search, min_date, max_date):
-    '''Check if the text string could be a valid date expression'''
-    # trim
-    textcontent = ' '.join(expression.split()).strip()
-    # try the beginning of the string
-    return try_ymd_date(textcontent[:MAX_STRING_SIZE], outputformat, extensive_search, min_date, max_date)
-
-
 @lru_cache(maxsize=CACHE_SIZE)
 def compare_reference(reference, expression, outputformat, extensive_search, original_date, min_date, max_date):
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
-    attempt = try_expression(expression, outputformat, extensive_search, min_date, max_date)
+    attempt = try_date_expr(expression, outputformat, extensive_search, min_date, max_date)
     if attempt is not None:
         return compare_values(reference, attempt, outputformat, original_date)
     return reference
@@ -338,7 +328,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
                     LOGGER.debug('abbr published-title found: %s', trytext)
                     # shortcut
                     if original_date is True:
-                        attempt = try_ymd_date(trytext, outputformat, extensive_search, min_date, max_date)
+                        attempt = try_date_expr(trytext, outputformat, extensive_search, min_date, max_date)
                         if attempt is not None:
                             return attempt
                     else:
@@ -392,7 +382,7 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
                     LOGGER.debug('time/datetime found: %s', elem.get('datetime'))
                 # analyze attribute
                 if shortcut_flag:
-                    attempt = try_ymd_date(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
+                    attempt = try_date_expr(elem.get('datetime'), outputformat, extensive_search, min_date, max_date)
                     if attempt is not None:
                         return attempt
                 else:
@@ -611,7 +601,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
             if url is not None:
                 break
     if url is not None:
-        dateresult = extract_url_date(url, outputformat)
+        dateresult = extract_url_date(url, outputformat, min_date, max_date)
         if dateresult is not None:
             return dateresult
 
@@ -687,13 +677,13 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
 
     # title
     for title_elem in tree.iter('title', 'h1'):
-        attempt = try_ymd_date(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
+        attempt = try_date_expr(title_elem.text_content(), outputformat, extensive_search, min_date, max_date)
         if attempt is not None:
             return attempt
 
     # last try: URL 2
     if url is not None:
-        dateresult = extract_partial_url_date(url, outputformat)
+        dateresult = extract_partial_url_date(url, outputformat, min_date, max_date)
         if dateresult is not None:
             return dateresult
 

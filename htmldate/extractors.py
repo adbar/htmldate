@@ -70,6 +70,7 @@ DATE_EXPRESSIONS = """
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
 FREE_TEXT_EXPRESSIONS = FAST_PREPEND + '/text()'
+MAX_TEXT_SIZE = 48
 
 # discard parts of the webpage
 # archive.org banner inserts
@@ -188,7 +189,7 @@ def discard_unwanted(tree):
     return tree, my_discarded
 
 
-def extract_url_date(testurl, outputformat):
+def extract_url_date(testurl, outputformat, min_date, max_date):
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
     if match:
@@ -198,14 +199,14 @@ def extract_url_date(testurl, outputformat):
             dateobject = datetime.date(int(match.group(1)),
                                        int(match.group(2)),
                                        int(match.group(3)))
-            if date_validator(dateobject, outputformat) is True:
+            if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('conversion error: %s %s', dateresult, err)
     return None
 
 
-def extract_partial_url_date(testurl, outputformat):
+def extract_partial_url_date(testurl, outputformat, min_date, max_date):
     """Extract an approximate date out of an URL string in Y-M format"""
     match = PARTIAL_URL.search(testurl)
     if match:
@@ -215,7 +216,7 @@ def extract_partial_url_date(testurl, outputformat):
             dateobject = datetime.date(int(match.group(1)),
                                        int(match.group(2)),
                                        1)
-            if date_validator(dateobject, outputformat) is True:
+            if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug('conversion error: %s %s', dateresult, err)
@@ -376,8 +377,11 @@ def external_date_parser(string, outputformat):
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
+def try_date_expr(string, outputformat, extensive_search, min_date, max_date):
     """Use a series of heuristics and rules to parse a potential date expression"""
+    # trim
+    string = ' '.join(string[:MAX_TEXT_SIZE].split()).strip()
+
     # formal constraint: 4 to 18 digits
     if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:
         return None
@@ -397,7 +401,7 @@ def try_ymd_date(string, outputformat, extensive_search, min_date, max_date):
         if not TEXT_DATE_PATTERN.search(string) or DISCARD_PATTERNS.search(string):
             return None
         # send to date parser
-        dateparser_result = external_date_parser(string[:48], outputformat)
+        dateparser_result = external_date_parser(string, outputformat)
         if date_validator(
             dateparser_result, outputformat, earliest=min_date, latest=max_date
         ):
@@ -410,8 +414,8 @@ def img_search(tree, outputformat, min_date, max_date):
     '''Skim through image elements'''
     element = tree.find('.//meta[@property="og:image"]')
     if element is not None and 'content' in element.attrib:
-        result = extract_url_date(element.get('content'), outputformat)
-        if date_validator(result, outputformat, earliest=min_date, latest=max_date) is True:
+        result = extract_url_date(element.get('content'), outputformat, min_date, max_date)
+        if result is not None:
             return result
     return None
 

@@ -27,8 +27,8 @@ except ImportError:
 from lxml import html
 
 from htmldate.cli import examine, main, parse_args, process_args
-from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate, try_ymd_date
-from htmldate.extractors import DATE_EXPRESSIONS, custom_parse, discard_unwanted, external_date_parser, extract_partial_url_date, regex_parse
+from htmldate.core import compare_reference, examine_date_elements, find_date, search_page, search_pattern, select_candidate
+from htmldate.extractors import DATE_EXPRESSIONS, custom_parse, discard_unwanted, external_date_parser, extract_partial_url_date, regex_parse, try_date_expr
 from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import decode_response, detect_encoding, fetch_url, load_html, is_dubious_html
 from htmldate.validators import convert_date, date_validator, get_max_date, get_min_date, output_format_validator
@@ -404,29 +404,29 @@ def test_convert_date():
 
 
 
-def test_try_ymd_date():
+def test_try_date_expr():
     '''test date extraction via external package'''
     find_date.extensive_search = False
-    assert try_ymd_date('Fri, Sept 1, 2017', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert try_date_expr('Fri, Sept 1, 2017', OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
     find_date.extensive_search = True
-    assert try_ymd_date('Friday, September 01, 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('Freitag, 01. September 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('Fri - September 1 - 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('1.9.2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
-    assert try_ymd_date('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01' # assuming MDY format
-    assert try_ymd_date('201709011234', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('Friday, September 01, 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('Fr, 1 Sep 2017 16:27:51 MESZ', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('Freitag, 01. September 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('Am 1. September 2017 um 15:36 Uhr schrieb', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('Fri - September 1 - 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('1.9.2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+    assert try_date_expr('1/9/17', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01' # assuming MDY format
+    assert try_date_expr('201709011234', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
     # other output format
-    assert try_ymd_date('1.9.2017', '%d %B %Y', True, MIN_DATE, LATEST_POSSIBLE) == '01 September 2017'
+    assert try_date_expr('1.9.2017', '%d %B %Y', True, MIN_DATE, LATEST_POSSIBLE) == '01 September 2017'
     # wrong
-    assert try_ymd_date('201', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    assert try_ymd_date('14:35:10', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    assert try_ymd_date('12:00 h', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert try_date_expr('201', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert try_date_expr('14:35:10', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert try_date_expr('12:00 h', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     # date range
-    assert try_ymd_date('2005-2006', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+    assert try_date_expr('2005-2006', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     # Mandarin
-    assert try_ymd_date('发布时间: 2022-02-25 14:34', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2022-02-25'
+    assert try_date_expr('发布时间: 2022-02-25 14:34', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2022-02-25'
 
 
 # def test_header():
@@ -660,8 +660,8 @@ def test_url():
     assert find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/2012-11/keine-kurzung-bei-der-jugend-klubs-konnen-vorerst-aufatmen-bvv-beschliest-haushaltsplan/') is None
     assert find_date('<html><body><p>Aaa, bbb.</p></body></html>', url='http://www.kreditwesen.org/widerstand-berlin/6666-42-87/') is None
     assert find_date('<html><body><p>Z.</p></body></html>', url='https://www.pamelaandersonfoundation.org/news/2019/6/26/dm4wjh7skxerzzw8qa8cklj8xdri5j') == '2019-06-26'
-    assert extract_partial_url_date('https://testsite.org/2018/01/test', '%Y-%m-%d') == '2018-01-01'
-    assert extract_partial_url_date('https://testsite.org/2018/33/test', '%Y-%m-%d') is None
+    assert extract_partial_url_date('https://testsite.org/2018/01/test', '%Y-%m-%d', MIN_DATE, LATEST_POSSIBLE) == '2018-01-01'
+    assert extract_partial_url_date('https://testsite.org/2018/33/test', '%Y-%m-%d', MIN_DATE, LATEST_POSSIBLE) is None
 
 
 def test_approximate_url():
@@ -852,7 +852,7 @@ def test_readme_examples():
 def test_dependencies():
     '''Test README example for consistency'''
     if EXT_PARSER is True:
-        assert try_ymd_date('Fri | September 1 | 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
+        assert try_date_expr('Fri | September 1 | 2017', OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) == '2017-09-01'
         assert find_date(load_mock_page('https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique'), original_date=True) == '2019-06-27'
         assert find_date(load_mock_page('https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany')) == '2019-06-28'
         assert find_date(load_mock_page('https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme')) == '2019-06-13'
@@ -869,7 +869,7 @@ if __name__ == '__main__':
     test_sanity()
     test_date_validator()
     test_search_pattern()
-    test_try_ymd_date()
+    test_try_date_expr()
     test_convert_date()
     test_compare_reference()
     test_candidate_selection()
