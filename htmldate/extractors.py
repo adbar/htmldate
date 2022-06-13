@@ -30,8 +30,11 @@ EXTERNAL_PARSER = DateDataParser(settings={
 #    'DATE_ORDER': 'DMY',
     'PREFER_DATES_FROM': 'past',
 #    'PREFER_DAY_OF_MONTH': 'first',
+#    'PREFER_LOCALE_DATE_ORDER': True,
     'STRICT_PARSING': True,
     'PARSERS': [p for p in default_parsers if p not in ('no-spaces-time', 'relative-time', 'timestamp')],
+    'RETURN_AS_TIMEZONE_AWARE': False,
+#    'NORMALIZE': False,
 })
 
 

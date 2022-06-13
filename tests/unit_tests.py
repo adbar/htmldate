@@ -249,6 +249,9 @@ def test_exact_date():
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=False) == '2011-09-28'
     assert find_date('<html><body><time datetime="2011-09-28" pubdate="pubdate"></time></body></html>', original_date=True) == '2011-09-28'
     assert find_date('<html><body><time datetime="2011-09-28" class="entry-date"></time></body></html>', original_date=True) == '2011-09-28'
+    # bug #54
+    assert find_date('<html><body><time class="Feed-module--feed__item-meta-time--3t1fg" dateTime="November 29, 2020">November 2020</time></body></html>', outputformat='%Y-%m-%d %H:%m:%S') == '2020-01-01 00:01:00'
+    assert find_date('<html><body><time class="Feed-module--feed__item-meta-time--3t1fg" dateTime="November 29, 2020">November 2020</time></body></html>', outputformat='%Y-%m-%d') == '2020-11-29'
 
     ## precise pattern in document body
     assert find_date('<html><body><font size="2" face="Arial,Geneva,Helvetica">Bei <a href="../../sonstiges/anfrage.php"><b>Bestellungen</b></a> bitte Angabe der Titelnummer nicht vergessen!<br><br>Stand: 03.04.2019</font></body></html>') == '2019-04-03'
