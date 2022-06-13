@@ -1,6 +1,12 @@
 ## Changelog
 
 
+### 1.2.2
+- slightly higher accuracy & faster extensive extraction
+- maintenance: code base simplified, more tests
+- bugs addressed: #51, #54
+- docs: fix by @MSK1582
+
 ### 1.2.1
 - speed and accuracy gains
 - better extraction coverage, simpler code
