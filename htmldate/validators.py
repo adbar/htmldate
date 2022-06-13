@@ -110,7 +110,11 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 
 def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
-    timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+    try:
+        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+    except Exception as err:
+        LOGGER.debug('datetime.strptime exception: %s for string %s', err, attempt)
+        return reference
     if original_date is True and (reference == 0 or timestamp < reference):
         reference = timestamp
     elif original_date is False and timestamp > reference:
