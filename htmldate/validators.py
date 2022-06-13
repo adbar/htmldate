@@ -7,11 +7,11 @@ Filters for date parsing and date validators.
 ## under GNU GPL v3 license
 
 # standard
-import datetime
 import logging
 import time
 
 from collections import Counter
+from datetime import datetime
 from functools import lru_cache
 
 from .settings import CACHE_SIZE, LATEST_POSSIBLE, MAX_YEAR, MIN_DATE, MIN_YEAR
@@ -28,30 +28,26 @@ def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_PO
     if date_input is None:
         return False
     # try if date can be parsed using chosen outputformat
-    if not isinstance(date_input, datetime.date):
+    if not isinstance(date_input, datetime):
         # speed-up
         try:
             if outputformat == '%Y-%m-%d':
-                dateobject = datetime.date(int(date_input[:4]),
-                                           int(date_input[5:7]),
-                                           int(date_input[8:10]))
+                dateobject = datetime(int(date_input[:4]),
+                                      int(date_input[5:7]),
+                                      int(date_input[8:10]))
             # default
             else:
-                dateobject = datetime.datetime.strptime(date_input, outputformat)
+                dateobject = datetime.strptime(date_input, outputformat)
         except ValueError:
             return False
     else:
         dateobject = date_input
     # basic year validation
-    year = int(datetime.date.strftime(dateobject, '%Y'))
+    year = int(datetime.strftime(dateobject, '%Y'))
     if MIN_YEAR <= year <= MAX_YEAR:
         # not newer than today or stored variable
-        try:
-            if earliest <= dateobject.date() <= latest:
-                return True
-        except AttributeError:
-            if earliest <= dateobject <= latest:
-                return True
+        if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
+            return True
     LOGGER.debug('date not valid: %s', date_input)
     return False
 
@@ -59,7 +55,7 @@ def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_PO
 def output_format_validator(outputformat):
     """Validate the output format in the settings"""
     # test with date object
-    dateobject = datetime.datetime(2017, 9, 1, 0, 0)
+    dateobject = datetime(2017, 9, 1, 0, 0)
     try:
         dateobject.strftime(outputformat)
     # other than ValueError: Python < 3.7 only
@@ -111,7 +107,7 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
 def compare_values(reference, attempt, outputformat, original_date):
     """Compare the date expression to a reference"""
     try:
-        timestamp = time.mktime(datetime.datetime.strptime(attempt, outputformat).timetuple())
+        timestamp = time.mktime(datetime.strptime(attempt, outputformat).timetuple())
     except Exception as err:
         LOGGER.debug('datetime.strptime exception: %s for string %s', err, attempt)
         return reference
@@ -150,17 +146,17 @@ def convert_date(datestring, inputformat, outputformat):
     if inputformat == outputformat:
         return str(datestring)
     # date object (speedup)
-    if isinstance(datestring, datetime.date):
+    if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
     # normal
-    dateobject = datetime.datetime.strptime(datestring, inputformat)
+    dateobject = datetime.strptime(datestring, inputformat)
     return dateobject.strftime(outputformat)
 
 
 def check_extracted_reference(reference, outputformat, min_date, max_date):
     '''Test if the extracted reference date can be returned'''
     if reference > 0:
-        dateobject = datetime.datetime.fromtimestamp(reference)
+        dateobject = datetime.fromtimestamp(reference)
         converted = dateobject.strftime(outputformat)
         if date_validator(converted, outputformat, earliest=min_date, latest=max_date) is True:
             return converted
@@ -172,9 +168,9 @@ def get_min_date(min_date):
     if min_date is not None:
         try:
             # internal conversion from Y-M-D format
-            min_date = datetime.date(int(min_date[:4]),
-                                     int(min_date[5:7]),
-                                     int(min_date[8:10]))
+            min_date = datetime(int(min_date[:4]),
+                                int(min_date[5:7]),
+                                int(min_date[8:10]))
         except ValueError:
             min_date = MIN_DATE
     else:
@@ -187,9 +183,9 @@ def get_max_date(max_date):
     if max_date is not None:
         try:
             # internal conversion from Y-M-D format
-            max_date = datetime.date(int(max_date[:4]),
-                                     int(max_date[5:7]),
-                                     int(max_date[8:10]))
+            max_date = datetime(int(max_date[:4]),
+                                int(max_date[5:7]),
+                                int(max_date[8:10]))
         except ValueError:
             max_date = LATEST_POSSIBLE
     else:

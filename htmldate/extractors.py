@@ -7,10 +7,10 @@ Custom parsers and XPath expressions for date extraction
 ## under GNU GPL v3 license
 
 # standard
-import datetime
 import logging
 import re
 
+from datetime import datetime
 from functools import lru_cache
 
 from dateutil.parser import parse as dateutil_parse
@@ -35,8 +35,10 @@ EXTERNAL_PARSER = DateDataParser(settings={
 })
 
 
-FAST_PREPEND = './/*[(self::b or self::div or self::em or self::font or self::i or self::li or self::p or self::span or self::strong)]'
+FAST_PREPEND = './/*[(self::div or self::li or self::p or self::span)]'
+# self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = './/*'
+
 DATE_EXPRESSIONS = """
     [contains(translate(@id, "D", "d"), 'date')
     or contains(translate(@class, "D", "d"), 'date')
@@ -196,9 +198,9 @@ def extract_url_date(testurl, outputformat, min_date, max_date):
         dateresult = match.group(0)
         LOGGER.debug('found date in URL: %s', dateresult)
         try:
-            dateobject = datetime.date(int(match.group(1)),
-                                       int(match.group(2)),
-                                       int(match.group(3)))
+            dateobject = datetime(int(match.group(1)),
+                                  int(match.group(2)),
+                                  int(match.group(3)))
             if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
@@ -213,9 +215,9 @@ def extract_partial_url_date(testurl, outputformat, min_date, max_date):
         dateresult = match.group(0) + '/01'
         LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
-            dateobject = datetime.date(int(match.group(1)),
-                                       int(match.group(2)),
-                                       1)
+            dateobject = datetime(int(match.group(1)),
+                                  int(match.group(2)),
+                                  1)
             if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
@@ -258,7 +260,7 @@ def regex_parse(string):
         int_day, int_month, int_year = int(day), int(month), int(year)
         int_year = correct_year(int_year)
         int_day, int_month = try_swap_values(int_day, int_month)
-        dateobject = datetime.date(int_year, int_month, int_day)
+        dateobject = datetime(int_year, int_month, int_day)
     except ValueError:
         return None
     else:
@@ -266,7 +268,6 @@ def regex_parse(string):
         return dateobject
 
 
-# TODO: check what's necessary here and what's not
 def custom_parse(string, outputformat, min_date, max_date):
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
@@ -277,9 +278,9 @@ def custom_parse(string, outputformat, min_date, max_date):
         # a. '201709011234' not covered by dateparser, and regex too slow
         if string[:8].isdigit():
             try:
-                candidate = datetime.date(int(string[:4]),
-                                          int(string[4:6]),
-                                          int(string[6:8]))
+                candidate = datetime(int(string[:4]),
+                                     int(string[4:6]),
+                                     int(string[6:8]))
             except ValueError:
                 LOGGER.debug('8-digit error: %s', string[:8])  # return None
         # b. much faster than extensive parsing
@@ -299,7 +300,7 @@ def custom_parse(string, outputformat, min_date, max_date):
     if match:
         try:
             year, month, day = int(match.group(1)[:4]), int(match.group(1)[4:6]), int(match.group(1)[6:8])
-            candidate = datetime.date(year, month, day)
+            candidate = datetime(year, month, day)
         except ValueError:
             LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
         else:
@@ -313,7 +314,7 @@ def custom_parse(string, outputformat, min_date, max_date):
     if match:
         try:
             day, month, year = int(match.group(3)), int(match.group(2)), int(match.group(1))
-            candidate = datetime.date(year, month, day)
+            candidate = datetime(year, month, day)
         except ValueError:
             LOGGER.debug('Y-M-D value error: %s', match.group(0))
         else:
@@ -328,7 +329,7 @@ def custom_parse(string, outputformat, min_date, max_date):
             day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
             year = correct_year(year)
             day, month = try_swap_values(day, month)
-            candidate = datetime.date(year, month, day)
+            candidate = datetime(year, month, day)
         except ValueError:
             LOGGER.debug('D-M-Y value error: %s', match.group(0))
         else:
@@ -341,7 +342,7 @@ def custom_parse(string, outputformat, min_date, max_date):
     if match:
         try:
             year, month = int(match.group(1)), int(match.group(2))
-            candidate = datetime.date(year, month, 1)
+            candidate = datetime(year, month, 1)
         except ValueError:
             LOGGER.debug('Y-M value error: %s', match.group(0))
         else:
@@ -372,7 +373,7 @@ def external_date_parser(string, outputformat):
         LOGGER.error('external parser error: %s %s', string, err)
     # issue with data type
     if target is not None:
-        return datetime.date.strftime(target, outputformat)
+        return datetime.strftime(target, outputformat)
     return None
 
 
@@ -458,20 +459,20 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
         pass
     if match and groups:
         if match.group(groups[1]) is not None and len(match.group(groups[1])) == 4:
-            candidate = datetime.date(int(match.group(groups[1])),
-                                      int(match.group(groups[2])),
-                                      int(match.group(groups[3])))
+            candidate = datetime(int(match.group(groups[1])),
+                                 int(match.group(groups[2])),
+                                 int(match.group(groups[3])))
         elif len(match.group(groups[3])) in (2, 4):
             # DD/MM/YY
             day, month = try_swap_values(int(match.group(groups[1])), int(match.group(groups[2])))
             year = correct_year(int(match.group(groups[3])))
             try:
-                candidate = datetime.date(year, month, day)
+                candidate = datetime(year, month, day)
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
     if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
         LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
-        return convert_date(candidate, '%Y-%m-%d', outputformat)
+        return candidate.strftime(outputformat)
     return None
 
 

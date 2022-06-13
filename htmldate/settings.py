@@ -6,7 +6,7 @@ Listing a series of settings that are applied module-wide.
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
-import datetime
+from datetime import datetime
 
 from lxml.html.clean import Cleaner
 
@@ -20,10 +20,10 @@ MIN_FILE_SIZE = 10
 
 # Plausible dates
 # earliest possible year to take into account (inclusive)
-MIN_DATE = datetime.date(1995, 1, 1)
+MIN_DATE = datetime(1995, 1, 1)
 MIN_YEAR = MIN_DATE.year
 # latest possible date
-LATEST_POSSIBLE = datetime.date.today()
+LATEST_POSSIBLE = datetime.today()
 # latest possible year
 MAX_YEAR = LATEST_POSSIBLE.year
 

@@ -154,12 +154,12 @@ def test_input():
     assert find_date('<html></html>', verbose=True) is None
     assert find_date('<html><body>\u0008this\xdf\n\u001f+\uffff</body></html>') is None
     # min and max date output
-    assert get_min_date('2020-02-20') == datetime.date(2020, 2, 20)
-    assert get_min_date(None) == datetime.date(1995, 1, 1)
-    assert get_min_date('3030-30-50') == datetime.date(1995, 1, 1)
-    assert get_max_date('2020-02-20') == datetime.date(2020, 2, 20)
-    assert get_max_date(None) == datetime.date.today()
-    assert get_max_date('3030-30-50') == datetime.date.today()
+    assert get_min_date('2020-02-20').date() == datetime.date(2020, 2, 20)
+    assert get_min_date(None).date() == datetime.date(1995, 1, 1)
+    assert get_min_date('3030-30-50').date() == datetime.date(1995, 1, 1)
+    assert get_max_date('2020-02-20').date() == datetime.date(2020, 2, 20)
+    assert get_max_date(None).date() == datetime.date.today()
+    assert get_max_date('3030-30-50').date() == datetime.date.today()
 
 
 def test_sanity():
