@@ -82,7 +82,6 @@ ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
 
-@lru_cache(maxsize=CACHE_SIZE)
 def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
     """Check HTML elements one by one for date expressions"""
     try:
@@ -628,6 +627,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
         date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
     else:
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
+
     # first try in pruned tree
     search_tree, discarded = discard_unwanted(deepcopy(tree))
     dateresult = examine_date_elements(search_tree, date_expr,
@@ -657,6 +657,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     except ValueError:
         cleaned_html = tree
         LOGGER.error('lxml cleaner error')
+
     # robust conversion to string
     try:
         htmlstring = tostring(cleaned_html, pretty_print=False, encoding='unicode')
