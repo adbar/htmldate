@@ -70,7 +70,6 @@ def output_format_validator(outputformat):
     return True
 
 
-@lru_cache(maxsize=CACHE_SIZE)
 def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     """Filter the date patterns to find plausible years only"""
     # slow!
