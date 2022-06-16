@@ -1,6 +1,10 @@
 ## Changelog
 
 
+### 1.2.3
+- fix for memory leak (#56)
+- docs updated
+
 ### 1.2.2
 - slightly higher accuracy & faster extensive extraction
 - maintenance: code base simplified, more tests
