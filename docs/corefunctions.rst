@@ -18,7 +18,7 @@ Handling date extraction
 Useful internal functions
 -------------------------
 
-.. autofunction:: htmldate.extractors.try_ymd_date
+.. autofunction:: htmldate.extractors.try_date_expr
 
 .. autofunction:: htmldate.extractors.custom_parse
 
