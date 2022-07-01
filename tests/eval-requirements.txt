@@ -1,5 +1,5 @@
 # package
-htmldate==1.2.1
+htmldate==1.2.3
 
 # alternatives
 articleDateExtractor==0.20
