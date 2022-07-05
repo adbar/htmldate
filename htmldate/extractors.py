@@ -16,7 +16,7 @@ from typing import List, Optional, Pattern, Tuple
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
-from dateparser_data.settings import default_parsers  # type: ignore
+from dateparser_data.settings import default_parsers
 
 from dateutil.parser import parse as dateutil_parse
 
