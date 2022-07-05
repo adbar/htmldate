@@ -12,12 +12,15 @@ import re
 
 from datetime import datetime
 from functools import lru_cache
+from typing import List, Optional, Pattern, Tuple
+
+# coverage for date parsing
+from dateparser import DateDataParser  # type: ignore  # third-party, slow
+from dateparser_data.settings import default_parsers  # type: ignore
 
 from dateutil.parser import parse as dateutil_parse
 
-# coverage for date parsing
-from dateparser import DateDataParser  # third-party, slow
-from dateparser_data.settings import default_parsers
+from lxml.html import HtmlElement  # type: ignore
 
 # own
 from .settings import CACHE_SIZE
@@ -185,7 +188,7 @@ MMYYYY_YEAR = re.compile(r'([12][0-9]{3})\D?$')
 SIMPLE_PATTERN = re.compile(r'\D(199[0-9]|20[0-9]{2})\D')
 
 
-def discard_unwanted(tree):
+def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
     '''Delete unwanted sections of an HTML document and return them as a list'''
     my_discarded = []
     for subtree in tree.xpath(DISCARD_EXPRESSIONS):
@@ -194,7 +197,7 @@ def discard_unwanted(tree):
     return tree, my_discarded
 
 
-def extract_url_date(testurl, outputformat, min_date, max_date):
+def extract_url_date(testurl: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
     if match:
@@ -211,7 +214,7 @@ def extract_url_date(testurl, outputformat, min_date, max_date):
     return None
 
 
-def extract_partial_url_date(testurl, outputformat, min_date, max_date):
+def extract_partial_url_date(testurl: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Extract an approximate date out of an URL string in Y-M format"""
     match = PARTIAL_URL.search(testurl)
     if match:
@@ -228,14 +231,14 @@ def extract_partial_url_date(testurl, outputformat, min_date, max_date):
     return None
 
 
-def correct_year(year):
+def correct_year(year: int) -> int:
     """Adapt year from YY to YYYY format"""
     if year < 100:
         year += 1900 if year >= 90 else 2000
     return year
 
 
-def try_swap_values(day, month):
+def try_swap_values(day: int, month: int) -> Tuple[int, int]:
     """Swap day and month values if it seems feaaible."""
     # If month is more than 12, swap it with the day
     if month > 12 and day <= 12:
@@ -243,7 +246,7 @@ def try_swap_values(day, month):
     return day, month
 
 
-def regex_parse(string):
+def regex_parse(string: str) -> Optional[datetime]:
     """Try full-text parse for date elements using a series of regular expressions
        with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
@@ -271,7 +274,7 @@ def regex_parse(string):
         return dateobject
 
 
-def custom_parse(string, outputformat, min_date, max_date):
+def custom_parse(string: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Try to bypass the slow dateparser"""
     LOGGER.debug('custom parse test: %s', string)
 
@@ -358,14 +361,14 @@ def custom_parse(string, outputformat, min_date, max_date):
     if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
         try:
             LOGGER.debug('custom parse result: %s', dateobject)
-            return dateobject.strftime(outputformat)
+            return dateobject.strftime(outputformat)  # type: ignore
         except ValueError as err:
             LOGGER.error('value error during conversion: %s %s', string, err)
 
     return None
 
 
-def external_date_parser(string, outputformat):
+def external_date_parser(string: str, outputformat: str) -> Optional[str]:
     """Use dateutil parser or dateparser module according to system settings"""
     LOGGER.debug('send to external parser: %s', string)
     try:
@@ -381,7 +384,7 @@ def external_date_parser(string, outputformat):
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def try_date_expr(string, outputformat, extensive_search, min_date, max_date):
+def try_date_expr(string: str, outputformat: str, extensive_search: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Use a series of heuristics and rules to parse a potential date expression"""
     # trim
     string = ' '.join(string[:MAX_TEXT_SIZE].split()).strip()
@@ -414,7 +417,7 @@ def try_date_expr(string, outputformat, extensive_search, min_date, max_date):
     return None
 
 
-def img_search(tree, outputformat, min_date, max_date):
+def img_search(tree: HtmlElement, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Skim through image elements'''
     element = tree.find('.//meta[@property="og:image"]')
     if element is not None and 'content' in element.attrib:
@@ -424,7 +427,7 @@ def img_search(tree, outputformat, min_date, max_date):
     return None
 
 
-def json_search(tree, outputformat, original_date, min_date, max_date):
+def json_search(tree: HtmlElement, outputformat: str, original_date: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Look for JSON time patterns in JSON sections of the tree'''
     # determine pattern
     if original_date is True:
@@ -442,7 +445,7 @@ def json_search(tree, outputformat, original_date, min_date, max_date):
     return None
 
 
-def timestamp_search(htmlstring, outputformat, min_date, max_date):
+def timestamp_search(htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Look for timestamps throughout the web page'''
     tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
     if tstamp_match and date_validator(tstamp_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
@@ -451,7 +454,7 @@ def timestamp_search(htmlstring, outputformat, min_date, max_date):
     return None
 
 
-def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_date):
+def extract_idiosyncrasy(idiosyncrasy: Pattern[str], htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Look for a precise pattern throughout the web page'''
     candidate = None
     match = idiosyncrasy.search(htmlstring)
@@ -474,12 +477,12 @@ def extract_idiosyncrasy(idiosyncrasy, htmlstring, outputformat, min_date, max_d
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
     if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))
-        return candidate.strftime(outputformat)
+        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))  # type: ignore
+        return candidate.strftime(outputformat)  # type: ignore
     return None
 
 
-def idiosyncrasies_search(htmlstring, outputformat, min_date, max_date):
+def idiosyncrasies_search(htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Look for author-written dates throughout the web page'''
     result = None
     # DE

@@ -8,7 +8,7 @@ Listing a series of settings that are applied module-wide.
 
 from datetime import datetime
 
-from lxml.html.clean import Cleaner
+from lxml.html.clean import Cleaner  # type: ignore
 
 
 # Function cache

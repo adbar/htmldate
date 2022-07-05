@@ -8,11 +8,12 @@ Filters for date parsing and date validators.
 
 # standard
 import logging
-import time
 
 from collections import Counter
 from datetime import datetime
 from functools import lru_cache
+from time import mktime
+from typing import Any, Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from .settings import CACHE_SIZE, LATEST_POSSIBLE, MAX_YEAR, MIN_DATE, MIN_YEAR
 
@@ -22,7 +23,7 @@ LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_POSSIBLE):
+def date_validator(date_input: Optional[Union[datetime, str]], outputformat: str, earliest: datetime=MIN_DATE, latest: datetime=LATEST_POSSIBLE) -> bool:
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # safety check
     if date_input is None:
@@ -52,7 +53,7 @@ def date_validator(date_input, outputformat, earliest=MIN_DATE, latest=LATEST_PO
     return False
 
 
-def output_format_validator(outputformat):
+def output_format_validator(outputformat: str) -> bool:
     """Validate the output format in the settings"""
     # test with date object
     dateobject = datetime(2017, 9, 1, 0, 0)
@@ -70,7 +71,7 @@ def output_format_validator(outputformat):
     return True
 
 
-def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
+def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Pattern[str], tocomplete: bool=False) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
     # slow!
     allmatches = pattern.findall(htmlstring)
@@ -81,9 +82,9 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
         # scrap implausible dates
         try:
             if tocomplete is False:
-                potential_year = int(yearpat.search(item).group(1))
+                potential_year = int(yearpat.search(item).group(1))  # type: ignore
             else:
-                lastdigits = yearpat.search(item).group(1)
+                lastdigits = yearpat.search(item).group(1)  # type: ignore
                 if lastdigits[0] == '9':
                     potential_year = int('19' + lastdigits)
                 else:
@@ -103,10 +104,10 @@ def plausible_year_filter(htmlstring, pattern, yearpat, tocomplete=False):
     return occurrences
 
 
-def compare_values(reference, attempt, outputformat, original_date):
+def compare_values(reference: int, attempt: str, outputformat: str, original_date: bool) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = time.mktime(datetime.strptime(attempt, outputformat).timetuple())
+        timestamp = int(mktime(datetime.strptime(attempt, outputformat).timetuple()))
     except Exception as err:
         LOGGER.debug('datetime.strptime exception: %s for string %s', err, attempt)
         return reference
@@ -118,7 +119,7 @@ def compare_values(reference, attempt, outputformat, original_date):
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def filter_ymd_candidate(bestmatch, pattern, original_date, copyear, outputformat, min_date, max_date):
+def filter_ymd_candidate(bestmatch: Match[str], pattern: Pattern[str], original_date: bool, copyear: int, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
@@ -139,7 +140,7 @@ def filter_ymd_candidate(bestmatch, pattern, original_date, copyear, outputforma
     return None
 
 
-def convert_date(datestring, inputformat, outputformat):
+def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)
     if inputformat == outputformat:
@@ -152,7 +153,7 @@ def convert_date(datestring, inputformat, outputformat):
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(reference, outputformat, min_date, max_date):
+def check_extracted_reference(reference: int, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Test if the extracted reference date can be returned'''
     if reference > 0:
         dateobject = datetime.fromtimestamp(reference)
@@ -162,7 +163,7 @@ def check_extracted_reference(reference, outputformat, min_date, max_date):
     return None
 
 
-def get_min_date(min_date):
+def get_min_date(min_date: Optional[Any]) -> datetime:
     '''Validates the minimum date and/or defaults to earliest plausible date'''
     if min_date is not None:
         try:
@@ -177,7 +178,7 @@ def get_min_date(min_date):
     return min_date
 
 
-def get_max_date(max_date):
+def get_max_date(max_date: Optional[Any]) -> datetime:
     '''Validates the maximum date and/or defaults to latest plausible date'''
     if max_date is not None:
         try:

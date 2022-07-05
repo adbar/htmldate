@@ -10,6 +10,7 @@ import logging
 import sys
 
 from platform import python_version
+from typing import Any, Optional
 
 from . import __version__
 from .core import find_date
@@ -17,8 +18,8 @@ from .utils import fetch_url
 from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
 
 
-def examine(htmlstring, extensive_bool=True, original_date=False,
-            verbose_flag=False, mindate=None, maxdate=None):
+def examine(htmlstring: Optional[str], extensive_bool: bool=True, original_date: bool=False,
+            verbose_flag: bool=False, mindate: Optional[Any]=None, maxdate: Optional[Any]=None) -> Optional[str]:
     """ Generic safeguards and triggers """
     # safety check
     if htmlstring is None:
@@ -34,7 +35,7 @@ def examine(htmlstring, extensive_bool=True, original_date=False,
     return None
 
 
-def parse_args(args):
+def parse_args(args: Any) -> Any:
     """Define parser for command-line arguments"""
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument("-f", "--fast",
@@ -68,7 +69,7 @@ def parse_args(args):
     return argsparser.parse_args()
 
 
-def process_args(args):
+def process_args(args: Any) -> None:
     """Process the arguments passed on the command-line."""
     # verbosity
     if args.verbose is True:
@@ -108,7 +109,7 @@ def process_args(args):
                 sys.stdout.write(line.strip() + '\t' + result + '\n')
 
 
-def main():
+def main() -> None:
     """ Run as a command-line utility. """
     # arguments
     args = parse_args(sys.argv[1:])

@@ -12,9 +12,11 @@ import re
 
 from collections import Counter
 from copy import deepcopy
+from datetime import datetime
 from functools import lru_cache, partial
+from typing import Match, Optional, Pattern, Tuple, Counter as Counter_Type
 
-from lxml.html import tostring
+from lxml.html import HtmlElement, tostring  # type: ignore
 
 # own
 from .extractors import (discard_unwanted, extract_url_date,
@@ -40,9 +42,12 @@ from .validators import (check_extracted_reference, compare_values,
 
 
 LOGGER = logging.getLogger(__name__)
-def logstring(element):
+
+
+def logstring(element: HtmlElement) -> str:
     '''Format the element to be logged to a string.'''
-    return tostring(element, pretty_print=False, encoding='unicode').strip()
+    return tostring(element, pretty_print=False, encoding='unicode').strip()  # type: ignore
+
 
 DATE_ATTRIBUTES = {
                   'article.created', 'article_date_original',
@@ -65,12 +70,15 @@ DATE_ATTRIBUTES = {
                   'published-date', 'publication_date',  'rnews:datepublished',
                   'sailthru.date', 'shareaholic:article_published_time', 'timestamp'
                   }
+
+
 PROPERTY_MODIFIED = {
                     'article:modified_time', 'datemodified',
                     'dc.modified', 'dcterms.modified', 'modified_time',
                     'og:article:modified_time', 'og:updated_time',
                     'release_date', 'updated_time'
                     }
+
 
 NON_DIGITS_REGEX = re.compile(r'\D+$')
 GER_STRIP_REGEX = re.compile(r'^am ')
@@ -82,7 +90,7 @@ ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {'date-published', 'published', 'time published'}
 
 
-def examine_date_elements(tree, expression, outputformat, extensive_search, min_date, max_date):
+def examine_date_elements(tree: HtmlElement, expression: str, outputformat: str, extensive_search: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Check HTML elements one by one for date expressions"""
     try:
         elements = tree.xpath(expression)
@@ -119,7 +127,7 @@ def examine_date_elements(tree, expression, outputformat, extensive_search, min_
     return attempt
 
 
-def examine_header(tree, outputformat, extensive_search, original_date, min_date, max_date):
+def examine_header(tree: HtmlElement, outputformat: str, extensive_search: bool, original_date: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     """
     Parse header elements to find date cues
 
@@ -238,7 +246,7 @@ def examine_header(tree, outputformat, extensive_search, original_date, min_date
     return headerdate
 
 
-def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_date):
+def select_candidate(occurrences: Counter_Type[str], catch: Pattern[str], yearpat: Pattern[str], original_date: bool, min_date: datetime, max_date: datetime) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
     match = None
     # LOGGER.debug('occurrences: %s', occurrences)
@@ -260,8 +268,8 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
     # plausibility heuristics
-    year1 = int(yearpat.search(first_pattern).group(1))
-    year2 = int(yearpat.search(second_pattern).group(1))
+    year1 = int(yearpat.search(first_pattern).group(1))  # type: ignore
+    year2 = int(yearpat.search(second_pattern).group(1))  # type: ignore
     validation1 = date_validator(str(year1), '%Y', earliest=min_date, latest=max_date)
     validation2 = date_validator(str(year2), '%Y', earliest=min_date, latest=max_date)
     # safety net: plausibility
@@ -285,14 +293,14 @@ def select_candidate(occurrences, catch, yearpat, original_date, min_date, max_d
     return match
 
 
-def search_pattern(htmlstring, pattern, catch, yearpat, original_date, min_date, max_date):
+def search_pattern(htmlstring: str, pattern: Pattern[str], catch: Pattern[str], yearpat: Pattern[str], original_date: bool, min_date: datetime, max_date: datetime) -> Optional[Match[str]]:
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(htmlstring, pattern, yearpat)
     return select_candidate(candidates, catch, yearpat, original_date, min_date, max_date)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def compare_reference(reference, expression, outputformat, extensive_search, original_date, min_date, max_date):
+def compare_reference(reference: int, expression: str, outputformat: str, extensive_search: bool, original_date: bool, min_date: datetime, max_date: datetime) -> int:
     '''Compare candidate to current date reference (includes date validation and older/newer test)'''
     attempt = try_date_expr(expression, outputformat, extensive_search, min_date, max_date)
     if attempt is not None:
@@ -300,7 +308,7 @@ def compare_reference(reference, expression, outputformat, extensive_search, ori
     return reference
 
 
-def examine_abbr_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
+def examine_abbr_elements(tree: HtmlElement, outputformat: str, extensive_search: bool, original_date: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Scan the page for abbr elements and check if their content contains an eligible date'''
     elements = tree.findall('.//abbr')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
@@ -351,7 +359,7 @@ def examine_abbr_elements(tree, outputformat, extensive_search, original_date, m
     return None
 
 
-def examine_time_elements(tree, outputformat, extensive_search, original_date, min_date, max_date):
+def examine_time_elements(tree: HtmlElement, outputformat: str, extensive_search: bool, original_date: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Scan the page for time elements and check if their content contains an eligible date'''
     elements = tree.findall('.//time')
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
@@ -400,18 +408,18 @@ def examine_time_elements(tree, outputformat, extensive_search, original_date, m
     return None
 
 
-def normalize_match(match):
+def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
     '''Normalize string output by adding "0" if necessary.'''
-    day = match.group(1)
+    day = match.group(1)  # type: ignore
     if len(day) == 1:
         day = '0' + day
-    month = match.group(2)
+    month = match.group(2)  # type: ignore
     if len(month) == 1:
         month = '0' + month
     return day, month
 
 
-def search_page(htmlstring, outputformat, original_date, min_date, max_date):
+def search_page(htmlstring: str, outputformat: str, original_date: bool, min_date: datetime, max_date: datetime) -> Optional[str]:
     """
     Opportunistically search the HTML text for common text patterns
 
@@ -462,7 +470,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     for item in candidates:
         match = THREE_COMP_REGEX_A.match(item)
         day, month = normalize_match(match)
-        candidate = '-'.join([match.group(3), month, day])
+        candidate = '-'.join([match.group(3), month, day])  # type: ignore
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
@@ -484,10 +492,10 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
-        if match.group(3)[0] == '9':
-            year = '19' + match.group(3)
+        if match.group(3)[0] == '9':  # type: ignore
+            year = '19' + match.group(3)  # type: ignore
         else:
-            year = '20' + match.group(3)
+            year = '20' + match.group(3)  # type: ignore
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -514,10 +522,10 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     replacement = {}
     for item in candidates:
         match = TWO_COMP_REGEX.match(item)
-        month = match.group(1)
+        month = match.group(1)  # type: ignore
         if len(month) == 1:
             month = '0' + month
-        candidate = '-'.join([match.group(2), month, '01'])
+        candidate = '-'.join([match.group(2), month, '01'])  # type: ignore
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
@@ -544,7 +552,7 @@ def search_page(htmlstring, outputformat, original_date, min_date, max_date):
     return None
 
 
-def find_date(htmlobject, extensive_search=True, original_date=False, outputformat='%Y-%m-%d', url=None, verbose=False, min_date=None, max_date=None):
+def find_date(htmlobject: HtmlElement, extensive_search: bool=True, original_date: bool=False, outputformat: str='%Y-%m-%d', url: None=None, verbose: bool=False, min_date: Optional[datetime]=None, max_date: Optional[datetime]=None) -> Optional[str]:
     """
     Extract dates from HTML documents using markup analysis and text patterns
 
@@ -583,7 +591,7 @@ def find_date(htmlobject, extensive_search=True, original_date=False, outputform
     if verbose is True:
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
-    find_date.extensive_search = extensive_search
+    find_date.extensive_search = extensive_search  # type: ignore
     min_date, max_date = get_min_date(min_date), get_max_date(max_date)
 
     # safety

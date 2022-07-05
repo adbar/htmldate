@@ -11,17 +11,19 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 
-import urllib3
+from typing import Any, List, Optional, Union
+
+import urllib3  # type: ignore
 
 
 # CChardet is faster and can be more accurate
 try:
-    from cchardet import detect as cchardet_detect
+    from cchardet import detect as cchardet_detect  # type: ignore
 except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
 
-from lxml.html import HtmlElement, HTMLParser, fromstring
+from lxml.html import HtmlElement, HTMLParser, fromstring  # type: ignore
 
 from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
@@ -41,7 +43,7 @@ HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 HTML_PARSER = HTMLParser(collect_ids=False, default_doctype=False, encoding='utf-8', remove_pis=True)
 
 
-def isutf8(data):
+def isutf8(data: bytes) -> bool:
     """Simple heuristic to determine if a bytestring uses standard unicode encoding"""
     try:
         data.decode('UTF-8')
@@ -51,7 +53,7 @@ def isutf8(data):
         return True
 
 
-def detect_encoding(bytesobject):
+def detect_encoding(bytesobject: bytes) -> List[str]:
     """Read all input or first chunk and return a list of encodings"""
     # alternatives: https://github.com/scrapy/w3lib/blob/master/w3lib/encoding.py
     # unicode-test
@@ -72,7 +74,7 @@ def detect_encoding(bytesobject):
     return [g for g in guesses if g not in UNICODE_ALIASES]
 
 
-def decode_file(filecontent):
+def decode_file(filecontent: Union[bytes, str]) -> str:
     """Guess bytestring encoding and try to decode to Unicode string.
        Resort to destructive conversion otherwise."""
     # init
@@ -92,7 +94,7 @@ def decode_file(filecontent):
     return htmltext or str(filecontent, encoding='utf-8', errors='replace')
 
 
-def decode_response(response):
+def decode_response(response: Any) -> str:
     """Read the urllib3 object corresponding to the server response, then
        try to guess its encoding and decode it to return a unicode string"""
     # urllib3 response object / bytes switch
@@ -103,7 +105,7 @@ def decode_response(response):
     return decode_file(resp_content)
 
 
-def fetch_url(url):
+def fetch_url(url: str) -> Optional[str]:
     """Fetches page using urllib3 and decodes the response.
 
     Args:
@@ -133,7 +135,7 @@ def fetch_url(url):
     return None
 
 
-def is_dubious_html(htmlobject):
+def is_dubious_html(htmlobject: Union[bytes, str]) -> bool:
     "Assess if the object is proper HTML (with a corresponding declaration)."
     if isinstance(htmlobject, bytes):
         if 'html' not in htmlobject[:50].decode(encoding='ascii', errors='ignore').lower():
@@ -144,7 +146,7 @@ def is_dubious_html(htmlobject):
     return False
 
 
-def load_html(htmlobject):
+def load_html(htmlobject: HtmlElement) -> HtmlElement:
     """Load object given as input and validate its type
     (accepted: lxml.html tree, bytestring and string)
     """
@@ -153,7 +155,7 @@ def load_html(htmlobject):
         return htmlobject
     # do not accept any other type after this point
     if not isinstance(htmlobject, (bytes, str)):
-        raise TypeError('incompatible input type', type(htmlobject))
+        raise TypeError('incompatible input type: %s', type(htmlobject))
     # the string is a URL, download it
     if isinstance(htmlobject, str) and htmlobject.startswith('http'):
         htmltext = None
