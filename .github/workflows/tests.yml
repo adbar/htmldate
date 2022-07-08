@@ -39,7 +39,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Upgrade pip
-      run: python -m pip install --upgrade pip setuptools wheel
+      run: python -m pip install --upgrade pip
 
     - name: Get pip cache dir
       id: pip-cache
@@ -54,20 +54,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    # optional, just for certain versions
-    - name: Install LXML dependencies
-      if: ${{ matrix.python-version == '3.11-dev' }}
-      run: sudo apt-get install libxml2-dev libxslt-dev
-
     # package setup
-    - uses: actions/checkout@v2
-
-    - name: Install dependencies
-      run: python -m pip install -e "."
-
-    - name: Install full dependencies
-      if: ${{ matrix.env.MINIMAL == 'false'}}
-      run: python -m pip install -e ".[all]"
+    - uses: actions/checkout@v3
 
     # tests
     - name: Lint with flake8
@@ -78,9 +66,26 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name: Code format with black
+      run: |
+        python -m pip install --upgrade black
+        black --check --diff htmldate
+
+    # optional, just for certain versions
+    - name: Install LXML dependencies
+      if: ${{ matrix.python-version == '3.11-dev' }}
+      run: sudo apt-get install libxml2-dev libxslt-dev
+
+    - name: Install dependencies
+      run: python -m pip install -e "."
+
+    - name: Install full dependencies
+      if: ${{ matrix.env.MINIMAL == 'false'}}
+      run: python -m pip install -e ".[all]"
+
     - name: Type checking with mypy
       run: |
-        python -m pip install --upgrade mypy types-python-dateutil types-dateparser
+        python -m pip install --upgrade mypy types-dateparser types-python-dateutil types-urllib3
         mypy -p htmldate
 
     - name: Test with pytest
