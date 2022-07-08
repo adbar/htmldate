@@ -82,9 +82,9 @@ def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Patte
         # scrap implausible dates
         try:
             if tocomplete is False:
-                potential_year = int(yearpat.search(item).group(1))  # type: ignore
+                potential_year = int(yearpat.search(item).group(1))  # type: ignore[union-attr]
             else:
-                lastdigits = yearpat.search(item).group(1)  # type: ignore
+                lastdigits = yearpat.search(item).group(1)  # type: ignore[union-attr]
                 if lastdigits[0] == '9':
                     potential_year = int('19' + lastdigits)
                 else:
@@ -163,9 +163,9 @@ def check_extracted_reference(reference: int, outputformat: str, min_date: datet
     return None
 
 
-def get_min_date(min_date: Optional[Any]) -> datetime:
+def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
     '''Validates the minimum date and/or defaults to earliest plausible date'''
-    if min_date is not None:
+    if min_date is not None and isinstance(min_date, str):
         try:
             # internal conversion from Y-M-D format
             min_date = datetime(int(min_date[:4]),
@@ -178,9 +178,9 @@ def get_min_date(min_date: Optional[Any]) -> datetime:
     return min_date
 
 
-def get_max_date(max_date: Optional[Any]) -> datetime:
+def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
     '''Validates the maximum date and/or defaults to latest plausible date'''
-    if max_date is not None:
+    if max_date is not None and isinstance(max_date, str):
         try:
             # internal conversion from Y-M-D format
             max_date = datetime(int(max_date[:4]),

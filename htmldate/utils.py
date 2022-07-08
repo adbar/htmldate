@@ -11,9 +11,9 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Set, Union
 
-import urllib3  # type: ignore
+import urllib3
 
 
 # CChardet is faster and can be more accurate
@@ -30,7 +30,7 @@ from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 
 LOGGER = logging.getLogger(__name__)
 
-UNICODE_ALIASES = {'utf-8', 'utf_8'}
+UNICODE_ALIASES: Set[str] = {'utf-8', 'utf_8'}
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 RETRY_STRATEGY = urllib3.util.Retry(
@@ -120,7 +120,7 @@ def fetch_url(url: str) -> Optional[str]:
     try:
         # read by streaming chunks (stream=True, iter_content=xx)
         # so we can stop downloading as soon as MAX_FILE_SIZE is reached
-        response = HTTP_POOL.request('GET', url, timeout=30)
+        response = HTTP_POOL.request('GET', url, timeout=30)  # type: ignore
     except Exception as err:
         LOGGER.error('download error: %s %s', url, err)  # sys.exc_info()[0]
     else:

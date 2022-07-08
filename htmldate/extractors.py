@@ -477,7 +477,7 @@ def extract_idiosyncrasy(idiosyncrasy: Pattern[str], htmlstring: str, outputform
             except ValueError:
                 LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
     if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))  # type: ignore
+        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))  # type: ignore[union-attr]
         return candidate.strftime(outputformat)  # type: ignore
     return None
 
