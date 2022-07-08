@@ -201,12 +201,12 @@ def extract_url_date(testurl: str, outputformat: str, min_date: datetime, max_da
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
     if match:
-        dateresult = match.group(0)
+        dateresult = match[0]
         LOGGER.debug('found date in URL: %s', dateresult)
         try:
-            dateobject = datetime(int(match.group(1)),
-                                  int(match.group(2)),
-                                  int(match.group(3)))
+            dateobject = datetime(int(match[1]),
+                                  int(match[2]),
+                                  int(match[3]))
             if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
         except ValueError as err:
@@ -218,11 +218,11 @@ def extract_partial_url_date(testurl: str, outputformat: str, min_date: datetime
     """Extract an approximate date out of an URL string in Y-M format"""
     match = PARTIAL_URL.search(testurl)
     if match:
-        dateresult = match.group(0) + '/01'
+        dateresult = match[0] + '/01'
         LOGGER.debug('found partial date in URL: %s', dateresult)
         try:
-            dateobject = datetime(int(match.group(1)),
-                                  int(match.group(2)),
+            dateobject = datetime(int(match[1]),
+                                  int(match[2]),
                                   1)
             if date_validator(dateobject, outputformat, earliest=min_date, latest=max_date) is True:
                 return dateobject.strftime(outputformat)
@@ -253,12 +253,12 @@ def regex_parse(string: str) -> Optional[datetime]:
     # multilingual day-month-year pattern
     match = LONG_DMY_PATTERN.search(string)
     if match:
-        day, month, year = match.group(1), TEXT_MONTHS[match.group(2).lower()], match.group(3)
+        day, month, year = match[1], TEXT_MONTHS[match[2].lower()], match[3]
     else:
         # American English
         match = LONG_MDY_PATTERN.search(string)
         if match:
-            day, month, year = match.group(2), TEXT_MONTHS[match.group(1).lower()], match.group(3)
+            day, month, year = match[2], TEXT_MONTHS[match[1].lower()], match[3]
         else:
             return None
     # process and return
@@ -305,10 +305,10 @@ def custom_parse(string: str, outputformat: str, min_date: datetime, max_date: d
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
-            year, month, day = int(match.group(1)[:4]), int(match.group(1)[4:6]), int(match.group(1)[6:8])
+            year, month, day = int(match[1][:4]), int(match[1][4:6]), int(match[1][6:8])
             candidate = datetime(year, month, day)
         except ValueError:
-            LOGGER.debug('YYYYMMDD value error: %s', match.group(0))
+            LOGGER.debug('YYYYMMDD value error: %s', match[0])
         else:
             if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('YYYYMMDD match: %s', candidate)
@@ -319,10 +319,10 @@ def custom_parse(string: str, outputformat: str, min_date: datetime, max_date: d
     match = YMD_PATTERN.search(string)
     if match:
         try:
-            day, month, year = int(match.group(3)), int(match.group(2)), int(match.group(1))
+            day, month, year = int(match[3]), int(match[2]), int(match[1])
             candidate = datetime(year, month, day)
         except ValueError:
-            LOGGER.debug('Y-M-D value error: %s', match.group(0))
+            LOGGER.debug('Y-M-D value error: %s', match[0])
         else:
             if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('Y-M-D match: %s', candidate)
@@ -332,12 +332,12 @@ def custom_parse(string: str, outputformat: str, min_date: datetime, max_date: d
     match = DMY_PATTERN.search(string)
     if match:
         try:
-            day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            day, month, year = int(match[1]), int(match[2]), int(match[3])
             year = correct_year(year)
             day, month = try_swap_values(day, month)
             candidate = datetime(year, month, day)
         except ValueError:
-            LOGGER.debug('D-M-Y value error: %s', match.group(0))
+            LOGGER.debug('D-M-Y value error: %s', match[0])
         else:
             if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('D-M-Y match: %s', candidate)
@@ -347,10 +347,10 @@ def custom_parse(string: str, outputformat: str, min_date: datetime, max_date: d
     match = YM_PATTERN.search(string)
     if match:
         try:
-            year, month = int(match.group(1)), int(match.group(2))
+            year, month = int(match[1]), int(match[2])
             candidate = datetime(year, month, 1)
         except ValueError:
-            LOGGER.debug('Y-M value error: %s', match.group(0))
+            LOGGER.debug('Y-M value error: %s', match[0])
         else:
             if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
                 LOGGER.debug('Y-M match: %s', candidate)
@@ -439,18 +439,18 @@ def json_search(tree: HtmlElement, outputformat: str, original_date: bool, min_d
         if not elem.text or '"date' not in elem.text:
             continue
         json_match = json_pattern.search(elem.text)
-        if json_match and date_validator(json_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
-            LOGGER.debug('JSON time found: %s', json_match.group(0))
-            return convert_date(json_match.group(1), '%Y-%m-%d', outputformat)
+        if json_match and date_validator(json_match[1], '%Y-%m-%d', earliest=min_date, latest=max_date):
+            LOGGER.debug('JSON time found: %s', json_match[0])
+            return convert_date(json_match[1], '%Y-%m-%d', outputformat)
     return None
 
 
 def timestamp_search(htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     '''Look for timestamps throughout the web page'''
     tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if tstamp_match and date_validator(tstamp_match.group(1), '%Y-%m-%d', earliest=min_date, latest=max_date):
-        LOGGER.debug('time regex found: %s', tstamp_match.group(0))
-        return convert_date(tstamp_match.group(1), '%Y-%m-%d', outputformat)
+    if tstamp_match and date_validator(tstamp_match[1], '%Y-%m-%d', earliest=min_date, latest=max_date):
+        LOGGER.debug('time regex found: %s', tstamp_match[0])
+        return convert_date(tstamp_match[1], '%Y-%m-%d', outputformat)
     return None
 
 
@@ -458,26 +458,26 @@ def extract_idiosyncrasy(idiosyncrasy: Pattern[str], htmlstring: str, outputform
     '''Look for a precise pattern throughout the web page'''
     candidate = None
     match = idiosyncrasy.search(htmlstring)
-    groups = [0, 1, 2, 3] if match and match.group(3) else []  #because len(None) has no len
+    parts = [0, 1, 2, 3] if match and match[3] else []  #because len(None) has no len
     try:
-        groups = [0, 4, 5, 6] if match and match.group(6) else groups
+        parts = [0, 4, 5, 6] if match and match[6] else parts
     except IndexError:
         pass
-    if match and groups:
-        if match.group(groups[1]) is not None and len(match.group(groups[1])) == 4:
-            candidate = datetime(int(match.group(groups[1])),
-                                 int(match.group(groups[2])),
-                                 int(match.group(groups[3])))
-        elif len(match.group(groups[3])) in (2, 4):
+    if match and parts:
+        if match[parts[1]] is not None and len(match[parts[1]]) == 4:
+            candidate = datetime(int(match[parts[1]]),
+                                 int(match[parts[2]]),
+                                 int(match[parts[3]]))
+        elif len(match[parts[3]]) in (2, 4):
             # DD/MM/YY
-            day, month = try_swap_values(int(match.group(groups[1])), int(match.group(groups[2])))
-            year = correct_year(int(match.group(groups[3])))
+            day, month = try_swap_values(int(match[parts[1]]), int(match[parts[2]]))
+            year = correct_year(int(match[parts[3]]))
             try:
                 candidate = datetime(year, month, day)
             except ValueError:
-                LOGGER.debug('value error in idiosyncrasies: %s', match.group(0))
+                LOGGER.debug('value error in idiosyncrasies: %s', match[0])
     if date_validator(candidate, '%Y-%m-%d', earliest=min_date, latest=max_date) is True:
-        LOGGER.debug('idiosyncratic pattern found: %s', match.group(0))  # type: ignore[union-attr]
+        LOGGER.debug('idiosyncratic pattern found: %s', match[0])  # type: ignore[index]
         return candidate.strftime(outputformat)  # type: ignore
     return None
 

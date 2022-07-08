@@ -80,24 +80,24 @@ def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Patte
     # LOGGER.debug('occurrences: %s', occurrences)
     for item in occurrences.keys():
         # scrap implausible dates
-        try:
+        year_match = yearpat.search(item)
+        if year_match is not None:
             if tocomplete is False:
-                potential_year = int(yearpat.search(item).group(1))  # type: ignore[union-attr]
+                potential_year = int(year_match[1])
             else:
-                lastdigits = yearpat.search(item).group(1)  # type: ignore[union-attr]
+                lastdigits = year_match[1]
                 if lastdigits[0] == '9':
                     potential_year = int('19' + lastdigits)
                 else:
                     potential_year = int('20' + lastdigits)
-        except AttributeError:
-            LOGGER.debug('not a year pattern: %s', item)
-            toremove.add(item)
-        else:
             if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
                 LOGGER.debug('no potential year: %s', item)
                 toremove.add(item)
             # occurrences.remove(item)
             # continue
+        else:
+            LOGGER.debug('not a year pattern: %s', item)
+            toremove.add(item)
     # preventing dictionary changed size during iteration error
     for item in toremove:
         del occurrences[item]
@@ -122,19 +122,19 @@ def compare_values(reference: int, attempt: str, outputformat: str, original_dat
 def filter_ymd_candidate(bestmatch: Match[str], pattern: Pattern[str], original_date: bool, copyear: int, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), bestmatch.group(3)])
+        pagedate = '-'.join([bestmatch[1], bestmatch[2], bestmatch[3]])
         if date_validator(
             pagedate, '%Y-%m-%d', earliest=min_date, latest=max_date
-        ) is True and (copyear == 0 or int(bestmatch.group(1)) >= copyear):
+        ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
             ## TODO: test and improve
             #if original_date is True:
-            #    if copyear == 0 or int(bestmatch.group(1)) <= copyear:
+            #    if copyear == 0 or int(bestmatch[1]) <= copyear:
             #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
             #else:
-            #    if copyear == 0 or int(bestmatch.group(1)) >= copyear:
+            #    if copyear == 0 or int(bestmatch[1]) >= copyear:
             #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None

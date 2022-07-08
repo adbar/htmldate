@@ -268,8 +268,8 @@ def select_candidate(occurrences: Counter_Type[str], catch: Pattern[str], yearpa
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
     # plausibility heuristics
-    year1 = int(yearpat.search(first_pattern).group(1))  # type: ignore[union-attr]
-    year2 = int(yearpat.search(second_pattern).group(1))  # type: ignore[union-attr]
+    year1 = int(yearpat.search(first_pattern)[1])  # type: ignore[index]
+    year2 = int(yearpat.search(second_pattern)[1])  # type: ignore[index]
     validation1 = date_validator(str(year1), '%Y', earliest=min_date, latest=max_date)
     validation2 = date_validator(str(year2), '%Y', earliest=min_date, latest=max_date)
     # safety net: plausibility
@@ -410,10 +410,10 @@ def examine_time_elements(tree: HtmlElement, outputformat: str, extensive_search
 
 def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
     '''Normalize string output by adding "0" if necessary.'''
-    day = match.group(1)  # type: ignore[union-attr]
+    day = match[1]  # type: ignore[index]
     if len(day) == 1:
         day = '0' + day
-    month = match.group(2)  # type: ignore[union-attr]
+    month = match[2]  # type: ignore[index]
     if len(month) == 1:
         month = '0' + month
     return day, month
@@ -444,10 +444,10 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     copyear = 0
     bestmatch = search_pattern(htmlstring, COPYRIGHT_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
-        LOGGER.debug('Copyright detected: %s', bestmatch.group(0))
-        if date_validator(bestmatch.group(0), '%Y', latest=max_date) is True:
-            LOGGER.debug('copyright year/footer pattern found: %s', bestmatch.group(0))
-            copyear = int(bestmatch.group(0))
+        LOGGER.debug('Copyright detected: %s', bestmatch[0])
+        if date_validator(bestmatch[0], '%Y', latest=max_date) is True:
+            LOGGER.debug('copyright year/footer pattern found: %s', bestmatch[0])
+            copyear = int(bestmatch[0])
 
     # 3 components
     LOGGER.debug('3 components')
@@ -470,7 +470,7 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     for item in candidates:
         match = THREE_COMP_REGEX_A.match(item)
         day, month = normalize_match(match)
-        candidate = '-'.join([match.group(3), month, day])  # type: ignore[union-attr]
+        candidate = '-'.join([match[3], month, day])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
@@ -492,10 +492,10 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
-        if match.group(3)[0] == '9':  # type: ignore[union-attr]
-            year = '19' + match.group(3)  # type: ignore[union-attr]
+        if match[3][0] == '9':  # type: ignore[index]
+            year = '19' + match[3]  # type: ignore[index]
         else:
-            year = '20' + match.group(3)  # type: ignore[union-attr]
+            year = '20' + match[3]  # type: ignore[index]
         candidate = '-'.join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -509,9 +509,9 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     # first option
     bestmatch = search_pattern(htmlstring, YYYYMM_PATTERN, YYYYMM_CATCH, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(1), bestmatch.group(2), '01'])
+        pagedate = '-'.join([bestmatch[1], bestmatch[2], '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and (
-            copyear == 0 or int(bestmatch.group(1)) >= copyear
+            copyear == 0 or int(bestmatch[1]) >= copyear
         ):
             LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
@@ -522,10 +522,10 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     replacement = {}
     for item in candidates:
         match = TWO_COMP_REGEX.match(item)
-        month = match.group(1)  # type: ignore[union-attr]
+        month = match[1]  # type: ignore[index]
         if len(month) == 1:
             month = '0' + month
-        candidate = '-'.join([match.group(2), month, '01'])  # type: ignore[union-attr]
+        candidate = '-'.join([match[2], month, '01'])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
@@ -543,9 +543,9 @@ def search_page(htmlstring: str, outputformat: str, original_date: bool, min_dat
     LOGGER.debug('switching to one component')
     bestmatch = search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, original_date, min_date, max_date)
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch.group(0), '01', '01'])
+        pagedate = '-'.join([bestmatch[0], '01', '01'])
         if date_validator(pagedate, '%Y-%m-%d', latest=max_date) is True and \
-            int(bestmatch.group(0)) >= copyear:
+            int(bestmatch[0]) >= copyear:
             LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
             return convert_date(pagedate, '%Y-%m-%d', outputformat)
 
