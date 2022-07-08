@@ -13,17 +13,22 @@ from collections import Counter
 from datetime import datetime
 from functools import lru_cache
 from time import mktime
-from typing import Any, Match, Optional, Pattern, Union, Counter as Counter_Type
+from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from .settings import CACHE_SIZE, LATEST_POSSIBLE, MAX_YEAR, MIN_DATE, MIN_YEAR
 
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.debug('date settings: %s %s %s', MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
+LOGGER.debug("date settings: %s %s %s", MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def date_validator(date_input: Optional[Union[datetime, str]], outputformat: str, earliest: datetime=MIN_DATE, latest: datetime=LATEST_POSSIBLE) -> bool:
+def date_validator(
+    date_input: Optional[Union[datetime, str]],
+    outputformat: str,
+    earliest: datetime = MIN_DATE,
+    latest: datetime = LATEST_POSSIBLE,
+) -> bool:
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # safety check
     if date_input is None:
@@ -32,10 +37,10 @@ def date_validator(date_input: Optional[Union[datetime, str]], outputformat: str
     if not isinstance(date_input, datetime):
         # speed-up
         try:
-            if outputformat == '%Y-%m-%d':
-                dateobject = datetime(int(date_input[:4]),
-                                      int(date_input[5:7]),
-                                      int(date_input[8:10]))
+            if outputformat == "%Y-%m-%d":
+                dateobject = datetime(
+                    int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
+                )
             # default
             else:
                 dateobject = datetime.strptime(date_input, outputformat)
@@ -44,12 +49,12 @@ def date_validator(date_input: Optional[Union[datetime, str]], outputformat: str
     else:
         dateobject = date_input
     # basic year validation
-    year = int(datetime.strftime(dateobject, '%Y'))
+    year = int(datetime.strftime(dateobject, "%Y"))
     if MIN_YEAR <= year <= MAX_YEAR:
         # not newer than today or stored variable
         if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
             return True
-    LOGGER.debug('date not valid: %s', date_input)
+    LOGGER.debug("date not valid: %s", date_input)
     return False
 
 
@@ -61,17 +66,22 @@ def output_format_validator(outputformat: str) -> bool:
         dateobject.strftime(outputformat)
     # other than ValueError: Python < 3.7 only
     except (NameError, TypeError, ValueError) as err:
-        LOGGER.error('wrong output format or type: %s %s', outputformat, err)
+        LOGGER.error("wrong output format or type: %s %s", outputformat, err)
         return False
     else:
         # test in abstracto
-        if not isinstance(outputformat, str) or '%' not in outputformat:
-            LOGGER.error('malformed output format: %s', outputformat)
+        if not isinstance(outputformat, str) or "%" not in outputformat:
+            LOGGER.error("malformed output format: %s", outputformat)
             return False
     return True
 
 
-def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Pattern[str], tocomplete: bool=False) -> Counter_Type[str]:
+def plausible_year_filter(
+    htmlstring: str,
+    pattern: Pattern[str],
+    yearpat: Pattern[str],
+    tocomplete: bool = False,
+) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
     # slow!
     allmatches = pattern.findall(htmlstring)
@@ -86,17 +96,17 @@ def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Patte
                 potential_year = int(year_match[1])
             else:
                 lastdigits = year_match[1]
-                if lastdigits[0] == '9':
-                    potential_year = int('19' + lastdigits)
+                if lastdigits[0] == "9":
+                    potential_year = int("19" + lastdigits)
                 else:
-                    potential_year = int('20' + lastdigits)
+                    potential_year = int("20" + lastdigits)
             if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
-                LOGGER.debug('no potential year: %s', item)
+                LOGGER.debug("no potential year: %s", item)
                 toremove.add(item)
             # occurrences.remove(item)
             # continue
         else:
-            LOGGER.debug('not a year pattern: %s', item)
+            LOGGER.debug("not a year pattern: %s", item)
             toremove.add(item)
     # preventing dictionary changed size during iteration error
     for item in toremove:
@@ -104,12 +114,14 @@ def plausible_year_filter(htmlstring: str, pattern: Pattern[str], yearpat: Patte
     return occurrences
 
 
-def compare_values(reference: int, attempt: str, outputformat: str, original_date: bool) -> int:
+def compare_values(
+    reference: int, attempt: str, outputformat: str, original_date: bool
+) -> int:
     """Compare the date expression to a reference"""
     try:
         timestamp = int(mktime(datetime.strptime(attempt, outputformat).timetuple()))
     except Exception as err:
-        LOGGER.debug('datetime.strptime exception: %s for string %s', err, attempt)
+        LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
     if original_date is True and (reference == 0 or timestamp < reference):
         reference = timestamp
@@ -119,21 +131,29 @@ def compare_values(reference: int, attempt: str, outputformat: str, original_dat
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def filter_ymd_candidate(bestmatch: Match[str], pattern: Pattern[str], original_date: bool, copyear: int, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
+def filter_ymd_candidate(
+    bestmatch: Match[str],
+    pattern: Pattern[str],
+    original_date: bool,
+    copyear: int,
+    outputformat: str,
+    min_date: datetime,
+    max_date: datetime,
+) -> Optional[str]:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
-        pagedate = '-'.join([bestmatch[1], bestmatch[2], bestmatch[3]])
+        pagedate = "-".join([bestmatch[1], bestmatch[2], bestmatch[3]])
         if date_validator(
-            pagedate, '%Y-%m-%d', earliest=min_date, latest=max_date
+            pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date
         ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-            return convert_date(pagedate, '%Y-%m-%d', outputformat)
+            return convert_date(pagedate, "%Y-%m-%d", outputformat)
             ## TODO: test and improve
-            #if original_date is True:
+            # if original_date is True:
             #    if copyear == 0 or int(bestmatch[1]) <= copyear:
             #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
-            #else:
+            # else:
             #    if copyear == 0 or int(bestmatch[1]) >= copyear:
             #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
@@ -153,24 +173,29 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(reference: int, outputformat: str, min_date: datetime, max_date: datetime) -> Optional[str]:
-    '''Test if the extracted reference date can be returned'''
+def check_extracted_reference(
+    reference: int, outputformat: str, min_date: datetime, max_date: datetime
+) -> Optional[str]:
+    """Test if the extracted reference date can be returned"""
     if reference > 0:
         dateobject = datetime.fromtimestamp(reference)
         converted = dateobject.strftime(outputformat)
-        if date_validator(converted, outputformat, earliest=min_date, latest=max_date) is True:
+        if (
+            date_validator(converted, outputformat, earliest=min_date, latest=max_date)
+            is True
+        ):
             return converted
     return None
 
 
 def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
-    '''Validates the minimum date and/or defaults to earliest plausible date'''
+    """Validates the minimum date and/or defaults to earliest plausible date"""
     if min_date is not None and isinstance(min_date, str):
         try:
             # internal conversion from Y-M-D format
-            min_date = datetime(int(min_date[:4]),
-                                int(min_date[5:7]),
-                                int(min_date[8:10]))
+            min_date = datetime(
+                int(min_date[:4]), int(min_date[5:7]), int(min_date[8:10])
+            )
         except ValueError:
             min_date = MIN_DATE
     else:
@@ -179,13 +204,13 @@ def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
 
 
 def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
-    '''Validates the maximum date and/or defaults to latest plausible date'''
+    """Validates the maximum date and/or defaults to latest plausible date"""
     if max_date is not None and isinstance(max_date, str):
         try:
             # internal conversion from Y-M-D format
-            max_date = datetime(int(max_date[:4]),
-                                int(max_date[5:7]),
-                                int(max_date[8:10]))
+            max_date = datetime(
+                int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10])
+            )
         except ValueError:
             max_date = LATEST_POSSIBLE
     else:
