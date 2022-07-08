@@ -268,10 +268,15 @@ def select_candidate(occurrences: Counter_Type[str], catch: Pattern[str], yearpa
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug('bestones: %s', bestones)
     # plausibility heuristics
-    year1 = int(yearpat.search(first_pattern)[1])  # type: ignore[index]
-    year2 = int(yearpat.search(second_pattern)[1])  # type: ignore[index]
-    validation1 = date_validator(str(year1), '%Y', earliest=min_date, latest=max_date)
-    validation2 = date_validator(str(year2), '%Y', earliest=min_date, latest=max_date)
+    validation1, validation2 = False, False
+    match1 = yearpat.search(first_pattern)
+    if match1 is not None:
+        year1 = match1[1]
+        validation1 = date_validator(year1, '%Y', earliest=min_date, latest=max_date)
+    match2 = yearpat.search(second_pattern)
+    if match2 is not None:
+        year2 = match2[1]
+        validation2 = date_validator(year2, '%Y', earliest=min_date, latest=max_date)
     # safety net: plausibility
     if validation1 is True and validation2 is True:
         # same number of occurrences: always take top of the pile?
