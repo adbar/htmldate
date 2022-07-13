@@ -3,6 +3,7 @@
 Custom parsers and XPath expressions for date extraction
 """
 
+
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
@@ -83,7 +84,7 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
-FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
+FREE_TEXT_EXPRESSIONS = f"{FAST_PREPEND}/text()"
 MAX_TEXT_SIZE = 48
 
 # discard parts of the webpage
@@ -294,8 +295,7 @@ def extract_url_date(
     testurl: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
-    match = COMPLETE_URL.search(testurl)
-    if match:
+    if match := COMPLETE_URL.search(testurl):
         dateresult = match[0]
         LOGGER.debug("found date in URL: %s", dateresult)
         try:
@@ -316,9 +316,8 @@ def extract_partial_url_date(
     testurl: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Extract an approximate date out of an URL string in Y-M format"""
-    match = PARTIAL_URL.search(testurl)
-    if match:
-        dateresult = match[0] + "/01"
+    if match := PARTIAL_URL.search(testurl):
+        dateresult = f"{match[0]}/01"
         LOGGER.debug("found partial date in URL: %s", dateresult)
         try:
             dateobject = datetime(int(match[1]), int(match[2]), 1)
@@ -352,18 +351,12 @@ def try_swap_values(day: int, month: int) -> Tuple[int, int]:
 def regex_parse(string: str) -> Optional[datetime]:
     """Try full-text parse for date elements using a series of regular expressions
     with particular emphasis on English, French, German and Turkish"""
-    # https://github.com/vi3k6i5/flashtext ?
-    # multilingual day-month-year pattern
-    match = LONG_DMY_PATTERN.search(string)
-    if match:
+    if match := LONG_DMY_PATTERN.search(string):
         day, month, year = match[1], TEXT_MONTHS[match[2].lower()], match[3]
+    elif match := LONG_MDY_PATTERN.search(string):
+        day, month, year = match[2], TEXT_MONTHS[match[1].lower()], match[3]
     else:
-        # American English
-        match = LONG_MDY_PATTERN.search(string)
-        if match:
-            day, month, year = match[2], TEXT_MONTHS[match[1].lower()], match[3]
-        else:
-            return None
+        return None
     # process and return
     try:
         int_day, int_month, int_year = int(day), int(month), int(year)
@@ -401,19 +394,16 @@ def custom_parse(
             except (OverflowError, TypeError, ValueError):
                 LOGGER.debug("parsing error: %s", string)
         # c. plausibility test
-        if candidate is not None:
-            if (
-                date_validator(
-                    candidate, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
-            ):
-                LOGGER.debug("parsing result: %s", candidate)
-                return candidate.strftime(outputformat)
+        if candidate is not None and (
+            date_validator(
+                candidate, outputformat, earliest=min_date, latest=max_date
+            )
+            is True
+        ):
+            LOGGER.debug("parsing result: %s", candidate)
+            return candidate.strftime(outputformat)
 
-    # 2. Try YYYYMMDD, use regex
-    match = YMD_NO_SEP_PATTERN.search(string)
-    if match:
+    if match := YMD_NO_SEP_PATTERN.search(string):
         try:
             year, month, day = int(match[1][:4]), int(match[1][4:6]), int(match[1][6:8])
             candidate = datetime(year, month, day)
@@ -429,10 +419,7 @@ def custom_parse(
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 3. Try YMD and Y-M-D pattern since it's the one used in ISO-8601
-    # see also fromisoformat() in Python >= 3.7
-    match = YMD_PATTERN.search(string)
-    if match:
+    if match := YMD_PATTERN.search(string):
         try:
             day, month, year = int(match[3]), int(match[2]), int(match[1])
             candidate = datetime(year, month, day)
@@ -448,9 +435,7 @@ def custom_parse(
                 LOGGER.debug("Y-M-D match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 4. Try the D-M-Y pattern since it's the most common date format in the world
-    match = DMY_PATTERN.search(string)
-    if match:
+    if match := DMY_PATTERN.search(string):
         try:
             day, month, year = int(match[1]), int(match[2]), int(match[3])
             year = correct_year(year)
@@ -468,9 +453,7 @@ def custom_parse(
                 LOGGER.debug("D-M-Y match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 5. Try the Y-M pattern
-    match = YM_PATTERN.search(string)
-    if match:
+    if match := YM_PATTERN.search(string):
         try:
             year, month = int(match[1]), int(match[2])
             candidate = datetime(year, month, 1)
@@ -511,9 +494,7 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type
-    if target is not None:
-        return datetime.strftime(target, outputformat)
-    return None
+    return datetime.strftime(target, outputformat) if target is not None else None
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -542,7 +523,7 @@ def try_date_expr(
         return customresult
 
     # use slow but extensive search
-    if extensive_search is True:
+    if extensive_search:
         # additional filters to prevent computational cost
         if not TEXT_DATE_PATTERN.search(string) or DISCARD_PATTERNS.search(string):
             return None
@@ -579,10 +560,7 @@ def json_search(
 ) -> Optional[str]:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
-    if original_date is True:
-        json_pattern = JSON_PUBLISHED
-    else:
-        json_pattern = JSON_MODIFIED
+    json_pattern = JSON_PUBLISHED if original_date else JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath(
         './/script[@type="application/ld+json"]|//script[@type="application/settings+json"]'
@@ -631,7 +609,7 @@ def extract_idiosyncrasy(
             candidate = datetime(
                 int(match[parts[1]]), int(match[parts[2]]), int(match[parts[3]])
             )
-        elif len(match[parts[3]]) in (2, 4):
+        elif len(match[parts[3]]) in {2, 4}:
             # DD/MM/YY
             day, month = try_swap_values(int(match[parts[1]]), int(match[parts[2]]))
             year = correct_year(int(match[parts[3]]))

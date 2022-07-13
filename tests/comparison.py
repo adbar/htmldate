@@ -2,6 +2,7 @@
 Compare extraction results with other libraries of the same kind.
 """
 
+
 # import logging
 import os
 import re
@@ -37,7 +38,7 @@ EVAL_PAGES = {}
 for each in eval_paths:
     evalpath = os.path.join(TEST_DIR, each)
     with open(evalpath) as f:
-        EVAL_PAGES.update(json.load(f))
+        EVAL_PAGES |= json.load(f)
 
 
 def load_document(filename):
@@ -130,8 +131,7 @@ def run_goose(htmlstring):
         return None
     datematch = re.match(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', article.publish_date)
     try:
-        return datematch.group(0)
-    # illogical result
+        return datematch[0]
     except AttributeError:
     #    print(article.publish_date)
         return None
@@ -146,7 +146,7 @@ def evaluate_result(result, EVAL_PAGES, item):
     datereference = EVAL_PAGES[item]['date']
     if result is None and datereference is None:
         true_negatives += 1
-    elif result is None and datereference is not None:
+    elif result is None:
         false_negatives += 1
     elif result == datereference:
         true_positives += 1

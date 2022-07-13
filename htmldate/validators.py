@@ -50,10 +50,13 @@ def date_validator(
         dateobject = date_input
     # basic year validation
     year = int(datetime.strftime(dateobject, "%Y"))
-    if MIN_YEAR <= year <= MAX_YEAR:
-        # not newer than today or stored variable
-        if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
-            return True
+    if (
+        MIN_YEAR <= year <= MAX_YEAR
+        and earliest.timestamp()
+        <= dateobject.timestamp()
+        <= latest.timestamp()
+    ):
+        return True
     LOGGER.debug("date not valid: %s", date_input)
     return False
 
@@ -92,19 +95,19 @@ def plausible_year_filter(
         # scrap implausible dates
         year_match = yearpat.search(item)
         if year_match is not None:
-            if tocomplete is False:
+            if not tocomplete:
                 potential_year = int(year_match[1])
             else:
                 lastdigits = year_match[1]
                 if lastdigits[0] == "9":
-                    potential_year = int("19" + lastdigits)
+                    potential_year = int(f"19{lastdigits}")
                 else:
-                    potential_year = int("20" + lastdigits)
+                    potential_year = int(f"20{lastdigits}")
             if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
                 LOGGER.debug("no potential year: %s", item)
                 toremove.add(item)
-            # occurrences.remove(item)
-            # continue
+                    # occurrences.remove(item)
+                    # continue
         else:
             LOGGER.debug("not a year pattern: %s", item)
             toremove.add(item)
@@ -123,9 +126,9 @@ def compare_values(
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if original_date is True and (reference == 0 or timestamp < reference):
+    if original_date and ((reference == 0 or timestamp < reference)):
         reference = timestamp
-    elif original_date is False and timestamp > reference:
+    elif not original_date and timestamp > reference:
         reference = timestamp
     return reference
 
@@ -164,7 +167,7 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)
     if inputformat == outputformat:
-        return str(datestring)
+        return datestring
     # date object (speedup)
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
