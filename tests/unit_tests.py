@@ -53,6 +53,7 @@ from htmldate.extractors import (
     regex_parse,
     try_date_expr,
 )
+from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
 from htmldate.utils import (
     decode_response,
@@ -216,6 +217,11 @@ def test_sanity():
         mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
     )
     assert result is None
+    mytree = html.fromstring("<html><body><p>1999/03/05</p></body></html>")
+    result = examine_date_elements(
+        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
+    )
+    assert result is not None
     # wrong field values in output format
     assert output_format_validator("%Y-%m-%d") is True
     assert output_format_validator("%M-%Y") is True
@@ -229,6 +235,10 @@ def test_sanity():
         )
     )
     assert len(discarded) == 1
+    # reset caches: examine_date_elements used above
+    old_values = try_date_expr.cache_info()
+    reset_caches()
+    assert try_date_expr.cache_info() != old_values
 
 
 def test_no_date():
