@@ -164,7 +164,7 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)
     if inputformat == outputformat:
-        return str(datestring)
+        return datestring
     # date object (speedup)
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)

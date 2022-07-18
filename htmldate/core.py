@@ -156,28 +156,24 @@ def examine_date_elements(
     max_date: datetime,
 ) -> Optional[str]:
     """Check HTML elements one by one for date expressions"""
-    try:
-        elements = tree.xpath(expression)
-    except Exception as err:
-        LOGGER.error("lxml expression %s throws an error: %s", expression, err)
-        return None
+    elements = tree.xpath(expression)
     if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
         return None
     # loop through the elements to analyze
     attempt = None
     for elem in elements:
         # trim
-        textcontent = " ".join(elem.text_content().split()).strip()
-        # simple length heuristics
-        if textcontent is not None and len(textcontent) > 6:
+        text = " ".join(elem.text_content().split()).strip()
+        # simple length heuristic
+        if len(text) > 6:  # could be 8 or 9
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            toexamine = NON_DIGITS_REGEX.sub("", textcontent[:MAX_TEXT_SIZE])
+            toexamine = NON_DIGITS_REGEX.sub("", text[:MAX_TEXT_SIZE])
             LOGGER.debug(
                 "analyzing (HTML): %s",
-                tostring(elem, pretty_print=False, encoding="unicode")
-                .translate({ord(c): None for c in "\n\t\r"})
-                .strip()[:100],
+                " ".join(
+                    tostring(elem, pretty_print=False, encoding="unicode").split()
+                ).strip()[:100],
             )
             attempt = try_date_expr(
                 toexamine, outputformat, extensive_search, min_date, max_date
@@ -1024,7 +1020,9 @@ def find_date(
         # TODO: further tests & decide according to original_date
         reference = 0
         for segment in [
-            t for t in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS) if 6 < len(t) < 60
+            t
+            for t in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS)
+            if 6 < len(t) < MAX_TEXT_SIZE
         ]:
             reference = compare_reference(
                 reference,

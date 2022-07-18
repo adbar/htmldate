@@ -23,7 +23,7 @@ MIN_FILE_SIZE: int = 10
 MIN_DATE: datetime = datetime(1995, 1, 1)
 MIN_YEAR: int = MIN_DATE.year
 # latest possible date
-LATEST_POSSIBLE: datetime = datetime.today()
+LATEST_POSSIBLE: datetime = datetime.now()
 # latest possible year
 MAX_YEAR: int = LATEST_POSSIBLE.year
 

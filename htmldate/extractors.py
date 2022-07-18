@@ -296,8 +296,7 @@ def extract_url_date(
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
     if match:
-        dateresult = match[0]
-        LOGGER.debug("found date in URL: %s", dateresult)
+        LOGGER.debug("found date in URL: %s", match[0])
         try:
             dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
             if (
@@ -308,7 +307,7 @@ def extract_url_date(
             ):
                 return dateobject.strftime(outputformat)
         except ValueError as err:
-            LOGGER.debug("conversion error: %s %s", dateresult, err)
+            LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
 
 
@@ -560,8 +559,8 @@ def img_search(
     tree: HtmlElement, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Skim through image elements"""
-    element = tree.find('.//meta[@property="og:image"]')
-    if element is not None and "content" in element.attrib:
+    element = tree.find('.//meta[@property="og:image"][@content]')
+    if element is not None:
         result = extract_url_date(
             element.get("content"), outputformat, min_date, max_date
         )
@@ -585,7 +584,7 @@ def json_search(
         json_pattern = JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath(
-        './/script[@type="application/ld+json"]|//script[@type="application/settings+json"]'
+        './/script[@type="application/ld+json" or @type="application/settings+json"]'
     ):
         if not elem.text or '"date' not in elem.text:
             continue
