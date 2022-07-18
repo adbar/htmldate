@@ -1,4 +1,5 @@
 include README.rst LICENSE pytest.ini CHANGELOG.md CONTRIBUTING.md
+include htmldate/py.typed
 include tests/unit_tests.py
 include tests/testlist.txt
 graft tests/cache/

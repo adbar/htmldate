@@ -4,10 +4,10 @@ http://github.com/adbar/htmldate
 """
 
 import re
+import sys
+
 from pathlib import Path
 from setuptools import setup
-
-# from mypyc.build import mypycify
 
 
 # some problems with installation solved this way
@@ -32,10 +32,30 @@ def get_long_description():
 
 def get_version(package):
     "Return package version as listed in `__version__` in `init.py`"
-    # version = Path(package, '__init__.py').read_text() # Python >= 3.5
-    with open(str(Path(package, "__init__.py")), "r", encoding="utf-8") as filehandle:
-        initfile = filehandle.read()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", initfile).group(1)
+    initfile = Path(package, '__init__.py').read_text()  # Python >= 3.5
+    return re.search('__version__ = [\'"]([^\'"]+)[\'"]', initfile)[1]
+
+
+# add argument to compile with mypyc
+if len(sys.argv) > 1 and sys.argv[1] == "--use-mypyc":
+    sys.argv.pop(1)
+    USE_MYPYC = True
+    from mypyc.build import mypycify
+
+    ext_modules = mypycify(
+        [
+            'htmldate/__init__.py',
+            'htmldate/core.py',
+            'htmldate/extractors.py',
+            'htmldate/settings.py',
+            'htmldate/utils.py',
+            'htmldate/validators.py',
+        ],
+        opt_level="3",
+        multi_file=True,
+    )
+else:
+    ext_modules = []
 
 
 setup(
@@ -46,7 +66,7 @@ setup(
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
-        #'Development Status :: 6 - Mature',
+        # 'Development Status :: 6 - Mature',
         "Environment :: Console",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
@@ -63,6 +83,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        # "Programming Language :: Python :: 3.11",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Text Processing :: Linguistic",
@@ -91,7 +112,7 @@ setup(
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=[
-        "charset_normalizer >= 2.0.12",
+        "charset_normalizer >= 2.1.0",
         "dateparser >= 1.1.1",
         "lxml >= 4.6.4",
         "python-dateutil >= 2.8.2",
@@ -104,13 +125,6 @@ setup(
     # platforms='any',
     tests_require=["pytest"],
     zip_safe=False,
-    # mypyc
-    # ext_modules=mypycify([
-    #    'htmldate/__init__.py',
-    #    'htmldate/core.py',
-    #    'htmldate/extractors.py',
-    #    'htmldate/settings.py',
-    #    'htmldate/utils.py',
-    #    'htmldate/validators.py',
-    # ]),
+    # optional use of mypyc
+    ext_modules=ext_modules,
 )
