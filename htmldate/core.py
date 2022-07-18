@@ -1019,11 +1019,11 @@ def find_date(
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
-        for segment in [
-            t
-            for t in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS)
-            if 6 < len(t) < MAX_TEXT_SIZE
-        ]:
+        for segment in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS):
+            segment = segment.strip()
+            # basic filter: minimum could be 8 or 9
+            if not 6 < len(segment) < MAX_TEXT_SIZE:
+                continue
             reference = compare_reference(
                 reference,
                 segment,

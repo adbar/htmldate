@@ -33,6 +33,7 @@ except ImportError:
     EXT_PARSER = False
 
 from lxml import html
+from lxml.etree import XPathEvalError
 
 from htmldate.cli import examine, main, parse_args, process_args
 from htmldate.core import (
@@ -207,12 +208,12 @@ def test_sanity():
     """Test if function arguments are interpreted and processed correctly."""
     # XPath looking for date elements
     mytree = html.fromstring("<html><body><p>Test.</p></body></html>")
+    with pytest.raises(XPathEvalError):
+        examine_date_elements(
+            mytree, ".//[Error", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
+        )
     result = examine_date_elements(
-        mytree, "//[Error", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-    )
-    assert result is None
-    result = examine_date_elements(
-        mytree, "//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
+        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
     )
     assert result is None
     # wrong field values in output format
