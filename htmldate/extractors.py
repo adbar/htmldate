@@ -101,11 +101,15 @@ DISCARD_EXPRESSIONS = """.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
 
 # regex cache
-YMD_NO_SEP_PATTERN = re.compile(r"(?:\D|^)(\d{8})(?:\D|$)")
-YMD_PATTERN = re.compile(r"(?:\D|^)(\d{4})[\-/.](\d{1,2})[\-/.](\d{1,2})(?:\D|$)")
-DMY_PATTERN = re.compile(r"(?:\D|^)(\d{1,2})[\-/.](\d{1,2})[\-/.](\d{2,4})(?:\D|$)")
-YM_PATTERN = re.compile(r"(?:\D|^)(\d{4})[\-/.](\d{1,2})(?:\D|$)")
-MY_PATTERN = re.compile(r"(?:\D|^)(\d{1,2})[\-/.](\d{4})(?:\D|$)")
+YMD_NO_SEP_PATTERN = re.compile(r"\b(\d{8})\b")
+YMD_PATTERN = re.compile(
+    r"(?:\D|^)(?P<year>\d{4})[\-/.](?P<month>\d{1,2})[\-/.](?P<day>\d{1,2})(?:\D|$)|"
+    r"(?:\D|^)(?P<day2>\d{1,2})[\-/.](?P<month2>\d{1,2})[\-/.](?P<year2>\d{2,4})(?:\D|$)"
+)
+YM_PATTERN = re.compile(
+    r"(?:\D|^)(?P<year>\d{4})[\-/.](?P<month>\d{1,2})(?:\D|$)|"
+    r"(?:\D|^)(?P<month2>\d{1,2})[\-/.](?P<year2>\d{4})(?:\D|$)"
+)
 
 REGEX_MONTHS = """
 January|February|March|April|May|June|July|August|September|October|November|December|
@@ -116,16 +120,10 @@ janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|dé
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 """  # todo: check "août"
-LONG_MDY_PATTERN = re.compile(
-    rf"""({REGEX_MONTHS})\s
-([0-9]{{1,2}})(?:st|nd|rd|th)?,? ([0-9]{{4}})""".replace(
-        "\n", ""
-    ),
-    re.I,
-)
-LONG_DMY_PATTERN = re.compile(
-    rf"""([0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
-({REGEX_MONTHS}),? ([0-9]{{4}})""".replace(
+LONG_TEXT_PATTERN = re.compile(
+    rf"""(?P<month>{REGEX_MONTHS})\s
+(?P<day>[0-9]{{1,2}})(?:st|nd|rd|th)?,? (?P<year>[0-9]{{4}})|(?P<day2>[0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
+(?P<month2>{REGEX_MONTHS}),? (?P<year2>[0-9]{{4}})""".replace(
         "\n", ""
     ),
     re.I,
@@ -242,7 +240,7 @@ DISCARD_PATTERNS = re.compile(
 # \d[,.]\d+  # currency amounts
 # \b\d{5}\s  # postal codes
 
-# use of regex module for speed
+# use of regex module for speed?
 EN_PATTERNS = re.compile(
     r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})',
     re.I,
@@ -251,10 +249,8 @@ DE_PATTERNS = re.compile(
     r"(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})", re.I
 )
 TR_PATTERNS = re.compile(
-    r"""(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|
-([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)""".replace(
-        "\n", ""
-    ),
+    r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
+    r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",
     re.I,
 )
 
@@ -359,23 +355,27 @@ def regex_parse(string: str) -> Optional[datetime]:
     """Try full-text parse for date elements using a series of regular expressions
     with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
-    # multilingual day-month-year pattern
-    match = LONG_DMY_PATTERN.search(string)
-    if match:
-        day, month, year = match[1], TEXT_MONTHS[match[2].lower()], match[3]
-    else:
-        # American English
-        match = LONG_MDY_PATTERN.search(string)
-        if match:
-            day, month, year = match[2], TEXT_MONTHS[match[1].lower()], match[3]
-        else:
-            return None
+    # multilingual day-month-year + American English patterns
+    match = LONG_TEXT_PATTERN.search(string)
+    if not match:
+        return None
     # process and return
     try:
-        int_day, int_month, int_year = int(day), int(month), int(year)
-        int_year = correct_year(int_year)
-        int_day, int_month = try_swap_values(int_day, int_month)
-        dateobject = datetime(int_year, int_month, int_day)
+        if match.lastgroup == "year":
+            day, month, year = (
+                int(match.group("day")),
+                int(TEXT_MONTHS[match.group("month").lower()]),
+                int(match.group("year")),
+            )
+        else:
+            day, month, year = (
+                int(match.group("day2")),
+                int(TEXT_MONTHS[match.group("month2").lower()]),
+                int(match.group("year2")),
+            )
+        year = correct_year(year)
+        day, month = try_swap_values(day, month)
+        dateobject = datetime(year, month, day)
     except ValueError:
         return None
     else:
@@ -436,14 +436,29 @@ def custom_parse(
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 3. Try YMD and Y-M-D pattern since it's the one used in ISO-8601
+    # 3. Try the very common YMD, Y-M-D, and D-M-Y patterns
     match = YMD_PATTERN.search(string)
     if match:
         try:
-            day, month, year = int(match[3]), int(match[2]), int(match[1])
-            candidate = datetime(year, month, day)
+            # YMD
+            if match.lastgroup == "day":
+                candidate = datetime(
+                    int(match.group("year")),
+                    int(match.group("month")),
+                    int(match.group("day")),
+                )
+            # DMY
+            else:
+                day, month, year = (
+                    int(match.group("day2")),
+                    int(match.group("month2")),
+                    int(match.group("year2")),
+                )
+                year = correct_year(year)
+                day, month = try_swap_values(day, month)
+                candidate = datetime(year, month, day)
         except ValueError:
-            LOGGER.debug("Y-M-D value error: %s", match[0])
+            LOGGER.debug("regex value error: %s", match[0])
         else:
             if (
                 date_validator(
@@ -451,35 +466,21 @@ def custom_parse(
                 )
                 is True
             ):
-                LOGGER.debug("Y-M-D match: %s", candidate)
+                LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 4. Try the D-M-Y pattern since it's the most common date format in the world
-    match = DMY_PATTERN.search(string)
-    if match:
-        try:
-            day, month, year = int(match[1]), int(match[2]), int(match[3])
-            year = correct_year(year)
-            day, month = try_swap_values(day, month)
-            candidate = datetime(year, month, day)
-        except ValueError:
-            LOGGER.debug("D-M-Y value error: %s", match[0])
-        else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
-            ):
-                LOGGER.debug("D-M-Y match: %s", candidate)
-                return candidate.strftime(outputformat)
-
-    # 5. Try the Y-M pattern
+    # 4. Try the Y-M and M-Y patterns
     match = YM_PATTERN.search(string)
     if match:
         try:
-            year, month = int(match[1]), int(match[2])
-            candidate = datetime(year, month, 1)
+            if match.lastgroup == "month":
+                candidate = datetime(
+                    int(match.group("year")), int(match.group("month")), 1
+                )
+            else:
+                candidate = datetime(
+                    int(match.group("year2")), int(match.group("month2")), 1
+                )
         except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
@@ -492,7 +493,7 @@ def custom_parse(
                 LOGGER.debug("Y-M match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 6. Try the other regex pattern
+    # 5. Try the other regex pattern
     dateobject = regex_parse(string)
     if (
         date_validator(dateobject, outputformat, earliest=min_date, latest=max_date)
