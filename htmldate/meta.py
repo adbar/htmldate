@@ -12,7 +12,6 @@ except ImportError:
 
 from .core import compare_reference
 from .extractors import try_date_expr
-from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
 from .validators import date_validator, filter_ymd_candidate
 
 
