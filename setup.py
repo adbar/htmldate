@@ -32,8 +32,8 @@ def get_long_description():
 
 def get_version(package):
     "Return package version as listed in `__version__` in `init.py`"
-    initfile = Path(package, '__init__.py').read_text()  # Python >= 3.5
-    return re.search('__version__ = [\'"]([^\'"]+)[\'"]', initfile)[1]
+    initfile = Path(package, "__init__.py").read_text()  # Python >= 3.5
+    return re.search("__version__ = ['\"]([^'\"]+)['\"]", initfile)[1]
 
 
 # add argument to compile with mypyc
@@ -44,12 +44,12 @@ if len(sys.argv) > 1 and sys.argv[1] == "--use-mypyc":
 
     ext_modules = mypycify(
         [
-            'htmldate/__init__.py',
-            'htmldate/core.py',
-            'htmldate/extractors.py',
-            'htmldate/settings.py',
-            'htmldate/utils.py',
-            'htmldate/validators.py',
+            "htmldate/__init__.py",
+            "htmldate/core.py",
+            "htmldate/extractors.py",
+            "htmldate/settings.py",
+            "htmldate/utils.py",
+            "htmldate/validators.py",
         ],
         opt_level="3",
         multi_file=True,
@@ -112,6 +112,7 @@ setup(
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=[
+        "backports-datetime-fromisoformat; python_version < '3.7'",
         "charset_normalizer >= 2.1.0",
         "dateparser >= 1.1.1",
         "lxml >= 4.6.4",

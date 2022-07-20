@@ -22,6 +22,13 @@ from dateutil.parser import parse as dateutil_parse
 
 from lxml.html import HtmlElement  # type: ignore
 
+try:
+    datetime.fromisoformat  # type: ignore[attr-defined]
+except AttributeError:  # Python 3.6
+    from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
+
+    MonkeyPatch.patch_fromisoformat()
+
 # own
 from .settings import CACHE_SIZE
 from .validators import convert_date, date_validator
@@ -386,7 +393,7 @@ def custom_parse(
     if string[:4].isdigit():
         candidate = None
         # a. '201709011234' not covered by dateparser, and regex too slow
-        if string[:8].isdigit():
+        if string[4:8].isdigit():
             try:
                 candidate = datetime(
                     int(string[:4]), int(string[4:6]), int(string[6:8])
@@ -396,19 +403,20 @@ def custom_parse(
         # b. much faster than extensive parsing
         else:
             try:
-                candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
-            except (OverflowError, TypeError, ValueError):
-                LOGGER.debug("parsing error: %s", string)
+                candidate = datetime.fromisoformat(string)  # type: ignore[attr-defined]
+            except ValueError:
+                LOGGER.debug("not an ISO date string: %s", string)
+                try:
+                    candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+                except (OverflowError, TypeError, ValueError):
+                    LOGGER.debug("dateutil parsing error: %s", string)
         # c. plausibility test
-        if candidate is not None:
-            if (
-                date_validator(
-                    candidate, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
-            ):
-                LOGGER.debug("parsing result: %s", candidate)
-                return candidate.strftime(outputformat)
+        if candidate is not None and (
+            date_validator(candidate, outputformat, earliest=min_date, latest=max_date)
+            is True
+        ):
+            LOGGER.debug("parsing result: %s", candidate)
+            return candidate.strftime(outputformat)
 
     # 2. Try YYYYMMDD, use regex
     match = YMD_NO_SEP_PATTERN.search(string)
@@ -429,7 +437,6 @@ def custom_parse(
                 return candidate.strftime(outputformat)
 
     # 3. Try YMD and Y-M-D pattern since it's the one used in ISO-8601
-    # see also fromisoformat() in Python >= 3.7
     match = YMD_PATTERN.search(string)
     if match:
         try:
