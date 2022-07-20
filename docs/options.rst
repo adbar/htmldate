@@ -1,10 +1,6 @@
 Options
 =======
 
-.. contents:: **Contents**
-    :backlinks: none
-
-
 Configuration
 -------------
 
@@ -45,12 +41,14 @@ An external module can be used for download, as described in versions anterior t
 Date format
 ~~~~~~~~~~~
 
-The output format of the dates found can be set in a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
+Change the output to a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
 
 .. code-block:: python
 
     >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016' # may have changed since
+    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html', outputformat='%Y-%m-%dT%H:%M:%S%z')
+    '2016-12-23T05:11:00-0500'
 
 
 .. autofunction:: htmldate.validators.output_format_validator
@@ -80,3 +78,26 @@ See ``settings.py`` file:
    :undoc-members:
 
 The module can then be re-compiled locally to apply changes to the settings.
+
+
+Clearing caches
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    >>> from htmldate.meta import reset_caches
+    # at a given point in time
+    >>> reset_caches()
+
+*New in version 1.3.0.*
+
+
+Tests
+-----
+
+A series of HTML pages and patterns triggering different structural and content patterns is included for testing purposes:
+
+.. code-block:: bash
+
+    $ python3 -m pip install pytest
+    $ pytest

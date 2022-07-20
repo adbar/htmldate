@@ -1,6 +1,11 @@
 ## Changelog
 
 
+### 1.3.0
+- entirely type-checked code base
+- new function `clear_caches()` (#57)
+- slightly more efficient code (about 5% faster)
+
 ### 1.2.3
 - fix for memory leak (#56)
 - docs updated

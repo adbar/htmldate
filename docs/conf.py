@@ -48,6 +48,7 @@ language = 'en'
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon', 'sphinx.ext.viewcode']
 #'sphinx.ext.autosummary', 
 #autosummary_generate = True
+autodoc_typehints = 'description'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -76,7 +77,10 @@ html_theme_options = {
     "show_powered_by": False,
     "github_user": "adbar",
     "github_repo": "htmldate",
-    "github_banner": True,
+    "github_banner": False,
+    "github_button": True,
+    "github_count": True,
+    "github_type": "star",
     "show_related": False,
     "analytics_id": "G-5BS735G6BB",
 #    "note_bg": "#FFF59C",

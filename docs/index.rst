@@ -13,37 +13,43 @@ htmldate: find the publication date of web pages
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
 
-.. image:: https://static.pepy.tech/badge/htmldate/month
+.. image:: https://img.shields.io/pypi/dm/htmldate?color=informational
     :target: https://pepy.tech/project/htmldate
     :alt: Downloads
 
+.. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
+   :target: https://doi.org/10.21105/joss.02439
+   :alt: JOSS article reference DOI: 10.21105/joss.02439
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+   :alt: Code style: black
+
 |
 
-:Code:           https://github.com/adbar/htmldate
-:Documentation:  https://htmldate.readthedocs.io
-:Issue tracker:  https://github.com/adbar/htmldate/issues
+Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
+
+
+In a nutshell
+-------------
 
 |
 
 .. image:: htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
-    :width: 80%
+    :width: 95%
     :target: https://htmldate.readthedocs.org/
 
 |
 
-Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
-
-In a nutshell, with Python:
+With Python:
 
 .. code-block:: python
 
     >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
-    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)
-    '2016-06-23'
 
 On the command-line:
 
@@ -52,40 +58,36 @@ On the command-line:
     $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
     '2016-12-23'
 
-|
-
-.. contents:: **Contents**
-    :backlinks: none
-
-|
 
 Features
 --------
 
-
--  Compatible with all recent versions of Python (see above)
 -  Multilingual, robust and efficient (used in production on millions of documents)
 -  URLs, HTML files, or HTML trees are given as input (includes batch processing)
 -  Output as string in any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_)
 -  Detection of both original and updated dates
+-  Compatible with all recent versions of Python
 
 
-*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It provides the following ways to date an HTML document:
+``htmldate`` can examine markup and text. It provides the following ways to date an HTML document:
 
 1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
-2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
-3. **Bare HTML content**: A series of heuristics is run on text and markup:
+2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` or ``time`` elements and a series of attributes (e.g. ``postmetadata``)
+3. **Bare HTML content**: Heuristics are run on text and markup:
 
   - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
+  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the most probable one
 
-The output is thouroughly verified in terms of plausibility and adequateness and the library outputs a date string, corresponding to either the last update or the original publishing statement (the default), in the desired format (defaults to `ISO 8601 YMD format <https://en.wikipedia.org/wiki/ISO_8601>`_).
+The output is thoroughly verified in terms of plausibility and adequateness. If a valid date has been found the library outputs a date string corresponding to either the last update or the original publishing statement (the default), in the desired format.
 
 Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support German, English and Turkish.
 
 
 Installation
 ------------
+
+Main package
+~~~~~~~~~~~~
 
 This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
@@ -94,6 +96,10 @@ This Python package is tested on Linux, macOS and Windows systems; it is compati
     $ pip install htmldate # pip3 install on systems where both Python 2 and 3 are installed
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
+
+
+Optional
+~~~~~~~~
 
 The additional library ``cchardet`` can be installed for better execution speed. They may not work on all platforms and have thus been singled out although installation is recommended:
 
@@ -106,10 +112,21 @@ You can also install or update the packages separately, *htmldate* will detect w
 *For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_.
 
 
+Experimental
+~~~~~~~~~~~~
+
+Experimental compilation with ``mypyc``, as using pre-compiled library may shorten processing speed:
+
+1. Install ``mypy``: ``pip3 install mypy``
+2. Compile the package: ``python setup.py --use-mypyc bdist_wheel``
+3. Use the newly created wheel: ``pip3 install dist/...``
+
+
 With Python
 -----------
 
-All the functions of the module are currently bundled in *htmldate*.
+``find_date``
+~~~~~~~~~~~~~
 
 In case the web page features easily readable metadata in the header, the extraction is straightforward. A more advanced analysis of the document structure is sometimes needed:
 
@@ -117,8 +134,8 @@ In case the web page features easily readable metadata in the header, the extrac
 
     >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    '# DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>'
-    '# DEBUG result: 2016-12-23'
+    # DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>
+    # DEBUG result: 2016-12-23
     '2016-12-23'
 
 ``htmldate`` can resort to a guess based on a complete screening of the document (``extensive_search`` parameter) which can be deactivated:
@@ -144,14 +161,20 @@ Already parsed HTML (that is a LXML tree object):
     >>> find_date(mytree)
     '2016-07-12'
 
+
+Output format
+~~~~~~~~~~~~~
+
 Change the output to a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
 
 .. code-block:: python
 
     >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
     '18 November 2016'  # may have changed since
-    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html', outputformat='%Y-%m-%dT%H:%M:%S%z')
-    '2016-12-23T05:11:00-0500'
+
+
+Original vs. updated dates
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although the time delta between original publication and "last modified" info is usually a matter of hours or days, it can be useful to prioritize the **original publication date**:
 
@@ -216,13 +239,14 @@ Author
 
 This effort is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing). Extracting and pre-processing web texts to the exacting standards of scientific research presents a substantial challenge for those who conduct such research. There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
 
-.. image:: https://joss.theoj.org/papers/10.21105/joss.02439/status.svg
+.. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
-   :alt: JOSS article
+   :alt: JOSS article reference DOI: 10.21105/joss.02439
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3459599.svg
+.. image:: https://img.shields.io/badge/DOI-10.5281%2Fzenodo.3459599-blue
    :target: https://doi.org/10.5281/zenodo.3459599
-   :alt: Zenodo archive
+   :alt: Zenodo archive DOI: 10.5281/zenodo.3459599
+
 
 .. code-block:: shell
 
@@ -275,15 +299,6 @@ Besides, there are pages for which no date can be found, ever:
     >>>
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
-
-Tests
-~~~~~
-
-A series of webpages triggering different structural and content patterns is included for testing purposes:
-
-.. code-block:: bash
-
-    $ pytest tests/unit_tests.py
 
 
 .. toctree::

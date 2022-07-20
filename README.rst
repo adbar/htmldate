@@ -17,15 +17,17 @@ htmldate: find the publication date of web pages
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
 
-.. image:: https://static.pepy.tech/badge/htmldate/month
+.. image:: https://img.shields.io/pypi/dm/htmldate?color=informational
     :target: https://pepy.tech/project/htmldate
     :alt: Downloads
 
-|
+.. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
+   :target: https://doi.org/10.21105/joss.02439
+   :alt: JOSS article reference DOI: 10.21105/joss.02439
 
-:Code:           https://github.com/adbar/htmldate
-:Documentation:  https://htmldate.readthedocs.io
-:Issue tracker:  https://github.com/adbar/htmldate/issues
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+   :alt: Code style: black
 
 |
 
@@ -51,8 +53,6 @@ With Python:
     >>> from htmldate import find_date
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
-    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)
-    '2016-06-23'
 
 On the command-line:
 
@@ -65,22 +65,23 @@ On the command-line:
 Features
 --------
 
-
--  Compatible with all recent versions of Python (see above)
 -  Multilingual, robust and efficient (used in production on millions of documents)
 -  URLs, HTML files, or HTML trees are given as input (includes batch processing)
 -  Output as string in any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_)
 -  Detection of both original and updated dates
+-  Compatible with all recent versions of Python
 
 
-*htmldate* finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It provides following ways to date an HTML document:
+``htmldate`` can examine markup and text. It provides the following ways to date an HTML document:
 
-1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
-2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` and ``time`` elements as well as a series of attributes (e.g. ``postmetadata``)
-3. **Bare HTML content**: A series of heuristics is run on text and markup:
+1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes
+2. **HTML code**: The whole document is searched for structural markers: ``abbr`` or ``time`` elements and a series of attributes (e.g. ``postmetadata``)
+3. **Bare HTML content**: Heuristics are run on text and markup:
 
   - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
   - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
+
+Finally the output is validated and converted to the chosen format.
 
 
 Performance
@@ -128,13 +129,14 @@ Author
 
 This effort is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing). Extracting and pre-processing web texts to the exacting standards of scientific research presents a substantial challenge for those who conduct such research. There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
 
-.. image:: https://joss.theoj.org/papers/10.21105/joss.02439/status.svg
+.. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
-   :alt: JOSS article
+   :alt: JOSS article reference DOI: 10.21105/joss.02439
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3459599.svg
+.. image:: https://img.shields.io/badge/DOI-10.5281%2Fzenodo.3459599-blue
    :target: https://doi.org/10.5281/zenodo.3459599
-   :alt: Zenodo archive
+   :alt: Zenodo archive DOI: 10.5281/zenodo.3459599
+
 
 .. code-block:: shell
 
