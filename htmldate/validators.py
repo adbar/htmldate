@@ -52,10 +52,13 @@ def date_validator(
     year = int(datetime.strftime(dateobject, "%Y"))
     min_year, max_year = earliest.year, latest.year
     # full validation
-    if min_year <= year <= max_year:
-        # not newer than today or stored variable
-        if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
-            return True
+    if (
+        min_year <= year <= max_year
+        and earliest.timestamp()
+        <= dateobject.timestamp()
+        <= latest.timestamp()
+    ):
+        return True
     LOGGER.debug("date not valid: %s", date_input)
     return False
 
@@ -97,19 +100,19 @@ def plausible_year_filter(
         # scrap implausible dates
         year_match = yearpat.search(item)
         if year_match is not None:
-            if tocomplete is False:
+            if not tocomplete:
                 potential_year = int(year_match[1])
             else:
                 lastdigits = year_match[1]
                 if lastdigits[0] == "9":
-                    potential_year = int("19" + lastdigits)
+                    potential_year = int(f"19{lastdigits}")
                 else:
-                    potential_year = int("20" + lastdigits)
+                    potential_year = int(f"20{lastdigits}")
             if not earliest.year <= potential_year <= latest.year:
                 LOGGER.debug("no potential year: %s", item)
                 toremove.add(item)
-            # occurrences.remove(item)
-            # continue
+                    # occurrences.remove(item)
+                    # continue
         else:
             LOGGER.debug("not a year pattern: %s", item)
             toremove.add(item)
@@ -128,9 +131,9 @@ def compare_values(
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if original_date is True and (reference == 0 or timestamp < reference):
+    if original_date and ((reference == 0 or timestamp < reference)):
         reference = timestamp
-    elif original_date is False and timestamp > reference:
+    elif not original_date and timestamp > reference:
         reference = timestamp
     return reference
 

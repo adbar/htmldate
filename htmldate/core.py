@@ -245,10 +245,15 @@ def examine_header(
             attribute = elem.get("property").lower()
             # original date or modified date: override published_time
             if (
-                original_date is True
+                original_date
                 and attribute in DATE_ATTRIBUTES
-                or original_date is not True
-                and (attribute in PROPERTY_MODIFIED or attribute in DATE_ATTRIBUTES)
+                or not original_date
+                and (
+                    (
+                        attribute in PROPERTY_MODIFIED
+                        or attribute in DATE_ATTRIBUTES
+                    )
+                )
             ):
                 LOGGER.debug("examining meta property: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
@@ -258,14 +263,12 @@ def examine_header(
                 headerdate = extract_url_date(
                     elem.get("content"), outputformat, min_date, max_date
                 )
-            # date
             elif elem.get("name").lower() in DATE_ATTRIBUTES:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
-            # modified
             elif elem.get("name").lower() in LAST_MODIFIED:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
-                if original_date is False:
+                if not original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -284,17 +287,13 @@ def examine_header(
                 elif "content" in elem.attrib:
                     attempt = tryfunc(elem.get("content"))
                 # store value
-                if attempt is not None:
-                    if (
-                        attribute in ITEMPROP_ATTRS_ORIGINAL and original_date is True
-                    ) or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED and original_date is False
-                    ):
-                        headerdate = attempt
-                    # put on hold: hurts precision
-                    # else:
-                    #    reserve = attempt
-            # reserve with copyrightyear
+                if attempt is not None and (
+                    attribute in ITEMPROP_ATTRS_ORIGINAL
+                    and original_date
+                    or attribute in ITEMPROP_ATTRS_MODIFIED
+                    and not original_date
+                ):
+                    headerdate = attempt
             elif attribute == "copyrightyear":
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
                 if "content" in elem.attrib:
@@ -306,18 +305,17 @@ def examine_header(
                         is True
                     ):
                         reserve = attempt
-        # http-equiv, rare
         elif "http-equiv" in elem.attrib:
             attribute = elem.get("http-equiv").lower()
             if attribute == "date":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date is True:
+                if original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
             elif attribute == "last-modified":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date is False:
+                if not original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -353,10 +351,12 @@ def select_candidate(
     firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    if original_date is False:
-        bestones = sorted(firstselect, reverse=True)[:2]
-    else:
-        bestones = sorted(firstselect)[:2]
+    bestones = (
+        sorted(firstselect)[:2]
+        if original_date
+        else sorted(firstselect, reverse=True)[:2]
+    )
+
     first_pattern, first_count = bestones[0][0], bestones[0][1]
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug("bestones: %s", bestones)
@@ -449,10 +449,11 @@ def examine_abbr_elements(
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
                 # look for original date
-                if original_date is True and (reference == 0 or candidate < reference):
+                if original_date and (
+                    (reference == 0 or candidate < reference)
+                ):
                     reference = candidate
-                # look for newest (i.e. largest time delta)
-                elif original_date is False and candidate > reference:
+                elif not original_date and candidate > reference:
                     reference = candidate
             # class
             if "class" in elem.attrib and elem.get("class") in CLASS_ATTRS:
@@ -461,7 +462,7 @@ def examine_abbr_elements(
                     trytext = elem.get("title")
                     LOGGER.debug("abbr published-title found: %s", trytext)
                     # shortcut
-                    if original_date is True:
+                    if original_date:
                         attempt = try_date_expr(
                             trytext, outputformat, extensive_search, min_date, max_date
                         )
@@ -527,24 +528,21 @@ def examine_time_elements(
             if "datetime" in elem.attrib and len(elem.get("datetime")) > 6:
                 # shortcut: time pubdate
                 if "pubdate" in elem.attrib and elem.get("pubdate") == "pubdate":
-                    if original_date is True:
+                    if original_date:
                         shortcut_flag = True
                     LOGGER.debug("time pubdate found: %s", elem.get("datetime"))
-                # first choice: entry-date + datetime attribute
                 elif "class" in elem.attrib:
                     if elem.get("class").startswith("entry-date") or elem.get(
                         "class"
                     ).startswith("entry-time"):
                         # shortcut
-                        if original_date is True:
+                        if original_date:
                             shortcut_flag = True
                         LOGGER.debug("time/datetime found: %s", elem.get("datetime"))
-                    # updated time
-                    elif elem.get("class") == "updated" and original_date is False:
+                    elif elem.get("class") == "updated" and not original_date:
                         LOGGER.debug(
                             "updated time/datetime found: %s", elem.get("datetime")
                         )
-                # datetime attribute
                 else:
                     LOGGER.debug("time/datetime found: %s", elem.get("datetime"))
                 # analyze attribute
@@ -570,7 +568,6 @@ def examine_time_elements(
                     )
                     if reference > 0:
                         break
-            # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug("time/datetime found: %s", elem.text)
                 reference = compare_reference(
@@ -582,7 +579,7 @@ def examine_time_elements(
                     min_date,
                     max_date,
                 )
-            # else...?
+                    # else...?
         # return
         converted = check_extracted_reference(
             reference, outputformat, min_date, max_date
@@ -596,10 +593,10 @@ def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
     """Normalize string output by adding "0" if necessary."""
     day = match[1]  # type: ignore[index]
     if len(day) == 1:
-        day = "0" + day
+        day = f"0{day}"
     month = match[2]  # type: ignore[index]
     if len(month) == 1:
-        month = "0" + month
+        month = f"0{month}"
     return day, month
 
 
@@ -764,10 +761,7 @@ def search_page(
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
-        if match[3][0] == "9":  # type: ignore[index]
-            year = "19" + match[3]  # type: ignore[index]
-        else:
-            year = "20" + match[3]  # type: ignore[index]
+        year = f"19{match[3]}" if match[3][0] == "9" else f"20{match[3]}"
         candidate = "-".join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -821,7 +815,7 @@ def search_page(
         match = TWO_COMP_REGEX.match(item)
         month = match[1]  # type: ignore[index]
         if len(month) == 1:
-            month = "0" + month
+            month = f"0{month}"
         candidate = "-".join([match[2], month, "01"])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -917,7 +911,7 @@ def find_date(
     """
 
     # init
-    if verbose is True:
+    if verbose:
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
     # unclear what this line is for and it impedes type checking:
@@ -962,7 +956,7 @@ def find_date(
         return abbr_result
 
     # expressions + text_content
-    if extensive_search is True:
+    if extensive_search:
         date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
     else:
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
@@ -1042,7 +1036,7 @@ def find_date(
         return img_result
 
     # last resort
-    if extensive_search is True:
+    if extensive_search:
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
