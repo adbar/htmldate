@@ -80,16 +80,19 @@ def output_format_validator(outputformat: str) -> bool:
 
 def plausible_year_filter(
     htmlstring: str,
+    *,
     pattern: Pattern[str],
     yearpat: Pattern[str],
+    earliest: datetime = MIN_DATE,
+    latest: datetime = LATEST_POSSIBLE,
     tocomplete: bool = False,
 ) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
     # slow!
-    allmatches = pattern.findall(htmlstring)
-    occurrences = Counter(allmatches)
+    occurrences = Counter(pattern.findall(htmlstring))
     toremove = set()
     # LOGGER.debug('occurrences: %s', occurrences)
+    # look for implausible dates
     for item in occurrences.keys():
         # scrap implausible dates
         year_match = yearpat.search(item)
@@ -102,15 +105,15 @@ def plausible_year_filter(
                     potential_year = int("19" + lastdigits)
                 else:
                     potential_year = int("20" + lastdigits)
-            # if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
-            #    LOGGER.debug("no potential year: %s", item)
-            #    toremove.add(item)
+            if not earliest.year <= potential_year <= latest.year:
+                LOGGER.debug("no potential year: %s", item)
+                toremove.add(item)
             # occurrences.remove(item)
             # continue
         else:
             LOGGER.debug("not a year pattern: %s", item)
             toremove.add(item)
-    # preventing dictionary changed size during iteration error
+    # remove candidates
     for item in toremove:
         del occurrences[item]
     return occurrences

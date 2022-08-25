@@ -401,7 +401,9 @@ def search_pattern(
     max_date: datetime,
 ) -> Optional[Match[str]]:
     """Chained candidate filtering and selection"""
-    candidates = plausible_year_filter(htmlstring, pattern, yearpat)
+    candidates = plausible_year_filter(
+        htmlstring, pattern=pattern, yearpat=yearpat, earliest=min_date, latest=max_date
+    )
     return select_candidate(
         candidates, catch, yearpat, original_date, min_date, max_date
     )
@@ -695,7 +697,13 @@ def search_page(
         return result
 
     # YYYY-MM-DD/DD-MM-YYYY
-    candidates = plausible_year_filter(htmlstring, SELECT_YMD_PATTERN, SELECT_YMD_YEAR)
+    candidates = plausible_year_filter(
+        htmlstring,
+        pattern=SELECT_YMD_PATTERN,
+        yearpat=SELECT_YMD_YEAR,
+        earliest=min_date,
+        latest=max_date,
+    )
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
     for item in candidates:
@@ -744,7 +752,12 @@ def search_page(
 
     # DD?/MM?/YY
     candidates = plausible_year_filter(
-        htmlstring, SLASHES_PATTERN, SLASHES_YEAR, tocomplete=True
+        htmlstring,
+        pattern=SLASHES_PATTERN,
+        yearpat=SLASHES_YEAR,
+        earliest=min_date,
+        latest=max_date,
+        tocomplete=True,
     )
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
@@ -795,7 +808,12 @@ def search_page(
 
     # 2 components, second option
     candidates = plausible_year_filter(
-        htmlstring, MMYYYY_PATTERN, MMYYYY_YEAR, original_date
+        htmlstring,
+        pattern=MMYYYY_PATTERN,
+        yearpat=MMYYYY_YEAR,
+        earliest=min_date,
+        latest=max_date,
+        tocomplete=original_date,
     )
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
