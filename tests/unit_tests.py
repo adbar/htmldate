@@ -1083,6 +1083,22 @@ def test_exact_date():
         == "2021-07-13"
     )
 
+    # min_date parameter
+    assert (
+        find_date(
+            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+01:00"></meta><body></body></html>',
+            min_date="2000-01-01",
+        )
+        is None
+    )
+    assert (
+        find_date(
+            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+01:00"></meta><body></body></html>',
+            min_date="1990-01-01",
+        )
+        == "1991-01-02"
+    )
+
 
 def test_approximate_date():
     """this page should return an approximate date"""
@@ -1175,6 +1191,11 @@ def test_date_validator():
     assert date_validator("202-01", OUTPUTFORMAT) is False
     assert date_validator("1922", "%Y") is False
     assert date_validator("2004", "%Y") is True
+    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1)) is True
+    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1992, 1, 1)) is False
+    assert date_validator("1991-01-02", OUTPUTFORMAT, latest=datetime.datetime(1990, 1, 1)) is False
+    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1), latest=datetime.datetime(1995, 1, 1)) is True
+    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1), latest=datetime.datetime(1990, 12, 31)) is False
 
 
 def test_convert_date():

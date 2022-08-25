@@ -15,11 +15,11 @@ from functools import lru_cache
 from time import mktime
 from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
-from .settings import CACHE_SIZE, LATEST_POSSIBLE, MAX_YEAR, MIN_DATE, MIN_YEAR
+from .settings import CACHE_SIZE, LATEST_POSSIBLE, MIN_DATE
 
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.debug("date settings: %s %s %s", MIN_YEAR, LATEST_POSSIBLE, MAX_YEAR)
+LOGGER.debug("date settings: %s %s", MIN_DATE, LATEST_POSSIBLE)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -50,7 +50,9 @@ def date_validator(
         dateobject = date_input
     # basic year validation
     year = int(datetime.strftime(dateobject, "%Y"))
-    if MIN_YEAR <= year <= MAX_YEAR:
+    min_year, max_year = earliest.year, latest.year
+    # full validation
+    if min_year <= year <= max_year:
         # not newer than today or stored variable
         if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
             return True
@@ -100,9 +102,9 @@ def plausible_year_filter(
                     potential_year = int("19" + lastdigits)
                 else:
                     potential_year = int("20" + lastdigits)
-            if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
-                LOGGER.debug("no potential year: %s", item)
-                toremove.add(item)
+            # if potential_year < MIN_YEAR or potential_year > MAX_YEAR:
+            #    LOGGER.debug("no potential year: %s", item)
+            #    toremove.add(item)
             # occurrences.remove(item)
             # continue
         else:

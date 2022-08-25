@@ -19,13 +19,10 @@ MAX_FILE_SIZE: int = 20000000
 MIN_FILE_SIZE: int = 10
 
 # Plausible dates
-# earliest possible year to take into account (inclusive)
+# earliest possible date to take into account (inclusive)
 MIN_DATE: datetime = datetime(1995, 1, 1)
-MIN_YEAR: int = MIN_DATE.year
 # latest possible date
 LATEST_POSSIBLE: datetime = datetime.now()
-# latest possible year
-MAX_YEAR: int = LATEST_POSSIBLE.year
 
 # set an upper limit to the number of candidates
 MAX_POSSIBLE_CANDIDATES: int = 1000

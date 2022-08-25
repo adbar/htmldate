@@ -299,7 +299,12 @@ def examine_header(
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
                 if "content" in elem.attrib:
                     attempt = "-".join([elem.get("content"), "01", "01"])
-                    if date_validator(attempt, "%Y-%m-%d", latest=max_date) is True:
+                    if (
+                        date_validator(
+                            attempt, "%Y-%m-%d", earliest=min_date, latest=max_date
+                        )
+                        is True
+                    ):
                         reserve = attempt
         # http-equiv, rare
         elif "http-equiv" in elem.attrib:
@@ -636,7 +641,10 @@ def search_page(
     )
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
-        if date_validator(bestmatch[0], "%Y", latest=max_date) is True:
+        if (
+            date_validator(bestmatch[0], "%Y", earliest=min_date, latest=max_date)
+            is True
+        ):
             LOGGER.debug("copyright year/footer pattern found: %s", bestmatch[0])
             copyear = int(bestmatch[0])
 
@@ -779,9 +787,9 @@ def search_page(
     )
     if bestmatch is not None:
         pagedate = "-".join([bestmatch[1], bestmatch[2], "01"])
-        if date_validator(pagedate, "%Y-%m-%d", latest=max_date) is True and (
-            copyear == 0 or int(bestmatch[1]) >= copyear
-        ):
+        if date_validator(
+            pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date
+        ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
             LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
 
@@ -836,7 +844,8 @@ def search_page(
     if bestmatch is not None:
         pagedate = "-".join([bestmatch[0], "01", "01"])
         if (
-            date_validator(pagedate, "%Y-%m-%d", latest=max_date) is True
+            date_validator(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date)
+            is True
             and int(bestmatch[0]) >= copyear
         ):
             LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
