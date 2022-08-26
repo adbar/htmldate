@@ -245,7 +245,7 @@ def examine_header(
             attribute = elem.get("property").lower()
             # original date or modified date: override published_time
             if (
-                original_date is True
+                original_date
                 and attribute in DATE_ATTRIBUTES
                 or original_date is not True
                 and (attribute in PROPERTY_MODIFIED or attribute in DATE_ATTRIBUTES)
@@ -285,10 +285,8 @@ def examine_header(
                     attempt = tryfunc(elem.get("content"))
                 # store value
                 if attempt is not None:
-                    if (
-                        attribute in ITEMPROP_ATTRS_ORIGINAL and original_date is True
-                    ) or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED and original_date is False
+                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date) or (
+                        attribute in ITEMPROP_ATTRS_MODIFIED and not original_date
                     ):
                         headerdate = attempt
                     # put on hold: hurts precision
@@ -311,7 +309,7 @@ def examine_header(
             attribute = elem.get("http-equiv").lower()
             if attribute == "date":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date is True:
+                if original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -353,10 +351,11 @@ def select_candidate(
     firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    if original_date is False:
-        bestones = sorted(firstselect, reverse=True)[:2]
-    else:
+    if original_date:
         bestones = sorted(firstselect)[:2]
+    else:
+        bestones = sorted(firstselect, reverse=True)[:2]
+
     first_pattern, first_count = bestones[0][0], bestones[0][1]
     second_pattern, second_count = bestones[1][0], bestones[1][1]
     LOGGER.debug("bestones: %s", bestones)
@@ -449,10 +448,10 @@ def examine_abbr_elements(
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
                 # look for original date
-                if original_date is True and (reference == 0 or candidate < reference):
+                if original_date and (reference == 0 or candidate < reference):
                     reference = candidate
                 # look for newest (i.e. largest time delta)
-                elif original_date is False and candidate > reference:
+                elif not original_date and candidate > reference:
                     reference = candidate
             # class
             if "class" in elem.attrib and elem.get("class") in CLASS_ATTRS:
@@ -461,7 +460,7 @@ def examine_abbr_elements(
                     trytext = elem.get("title")
                     LOGGER.debug("abbr published-title found: %s", trytext)
                     # shortcut
-                    if original_date is True:
+                    if original_date:
                         attempt = try_date_expr(
                             trytext, outputformat, extensive_search, min_date, max_date
                         )
@@ -527,7 +526,7 @@ def examine_time_elements(
             if "datetime" in elem.attrib and len(elem.get("datetime")) > 6:
                 # shortcut: time pubdate
                 if "pubdate" in elem.attrib and elem.get("pubdate") == "pubdate":
-                    if original_date is True:
+                    if original_date:
                         shortcut_flag = True
                     LOGGER.debug("time pubdate found: %s", elem.get("datetime"))
                 # first choice: entry-date + datetime attribute
@@ -536,11 +535,11 @@ def examine_time_elements(
                         "class"
                     ).startswith("entry-time"):
                         # shortcut
-                        if original_date is True:
+                        if original_date:
                             shortcut_flag = True
                         LOGGER.debug("time/datetime found: %s", elem.get("datetime"))
                     # updated time
-                    elif elem.get("class") == "updated" and original_date is False:
+                    elif elem.get("class") == "updated" and not original_date:
                         LOGGER.debug(
                             "updated time/datetime found: %s", elem.get("datetime")
                         )
@@ -917,7 +916,7 @@ def find_date(
     """
 
     # init
-    if verbose is True:
+    if verbose:
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
     # unclear what this line is for and it impedes type checking:
@@ -927,7 +926,7 @@ def find_date(
     # safety
     if tree is None:
         return None
-    if outputformat != "%Y-%m-%d" and output_format_validator(outputformat) is False:
+    if outputformat != "%Y-%m-%d" and not output_format_validator(outputformat):
         return None
 
     # URL
@@ -962,7 +961,7 @@ def find_date(
         return abbr_result
 
     # expressions + text_content
-    if extensive_search is True:
+    if extensive_search:
         date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
     else:
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
@@ -1042,7 +1041,7 @@ def find_date(
         return img_result
 
     # last resort
-    if extensive_search is True:
+    if extensive_search:
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0

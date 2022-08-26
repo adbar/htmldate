@@ -549,7 +549,7 @@ def try_date_expr(
         return customresult
 
     # use slow but extensive search
-    if extensive_search is True:
+    if extensive_search:
         # additional filters to prevent computational cost
         if not TEXT_DATE_PATTERN.search(string) or DISCARD_PATTERNS.search(string):
             return None
@@ -586,10 +586,7 @@ def json_search(
 ) -> Optional[str]:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
-    if original_date is True:
-        json_pattern = JSON_PUBLISHED
-    else:
-        json_pattern = JSON_MODIFIED
+    json_pattern = JSON_PUBLISHED if original_date else JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath(
         './/script[@type="application/ld+json" or @type="application/settings+json"]'

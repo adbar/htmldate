@@ -51,11 +51,12 @@ def date_validator(
     # basic year validation
     year = int(datetime.strftime(dateobject, "%Y"))
     min_year, max_year = earliest.year, latest.year
-    # full validation
-    if min_year <= year <= max_year:
-        # not newer than today or stored variable
-        if earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp():
-            return True
+    # full validation: not newer than today or stored variable
+    if (
+        min_year <= year <= max_year
+        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
+    ):
+        return True
     LOGGER.debug("date not valid: %s", date_input)
     return False
 
@@ -128,9 +129,9 @@ def compare_values(
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if original_date is True and (reference == 0 or timestamp < reference):
+    if original_date and (reference == 0 or timestamp < reference):
         reference = timestamp
-    elif original_date is False and timestamp > reference:
+    elif not original_date and timestamp > reference:
         reference = timestamp
     return reference
 
