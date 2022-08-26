@@ -1,6 +1,10 @@
 ## Changelog
 
 
+## 1.3.1
+- fix for use of `min_date` & `max_date` (#62)
+- simplified code & updated setup
+
 ### 1.3.0
 - entirely type-checked code base
 - new function `clear_caches()` (#57)
