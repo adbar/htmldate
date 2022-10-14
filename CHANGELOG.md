@@ -1,6 +1,9 @@
 ## Changelog
 
 
+## 1.3.2
+- technical release: explicit support for Python 3.11 and logo
+
 ## 1.3.1
 - fix for use of `min_date` & `max_date` (#62)
 - simplified code & updated setup
