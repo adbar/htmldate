@@ -27,6 +27,13 @@ htmldate: find the publication date of web pages
 
 |
 
+.. image:: htmldate-logo.png
+    :alt: Logo as PNG image
+    :align: center
+    :width: 60%
+
+|
+
 Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
 
 

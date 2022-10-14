@@ -1,6 +1,7 @@
 htmldate: find the publication date of web pages
 ================================================
 
+
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
     :target: https://pypi.python.org/pypi/htmldate
     :alt: Python package
@@ -28,6 +29,14 @@ htmldate: find the publication date of web pages
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: Code style: black
+
+|
+
+
+.. image:: docs/htmldate-logo.png
+    :alt: Logo as PNG image
+    :align: center
+    :width: 60%
 
 |
 
