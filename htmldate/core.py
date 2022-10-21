@@ -880,7 +880,7 @@ def find_date(
     verbose: bool = False,
     min_date: Optional[datetime] = None,
     max_date: Optional[datetime] = None,
-    url_delayed: bool = False
+    url_delayed: bool = False,
 ) -> Optional[str]:
     """
     Extract dates from HTML documents using markup analysis and text patterns
