@@ -880,6 +880,7 @@ def find_date(
     verbose: bool = False,
     min_date: Optional[datetime] = None,
     max_date: Optional[datetime] = None,
+    url_delayed: bool = False
 ) -> Optional[str]:
     """
     Extract dates from HTML documents using markup analysis and text patterns
@@ -912,6 +913,9 @@ def find_date(
     :param max_date:
         Set the latest acceptable date manually (YYYY-MM-DD format)
     :type max_date: string
+    :param url_delayed:
+        Uses the url extractor last. This can improve precision for extractions that include times, eg: `%Y-%m-%d %H:%M:%S`
+    :type url_delayed: boolean
     :return: Returns a valid date expression as a string, or None
     """
 
@@ -936,7 +940,7 @@ def find_date(
             url = elem.get("href")
             if url is not None:
                 break
-    if url is not None:
+    if url is not None and not url_delayed:
         dateresult = extract_url_date(url, outputformat, min_date, max_date)
         if dateresult is not None:
             return dateresult
@@ -952,6 +956,11 @@ def find_date(
     json_result = json_search(tree, outputformat, original_date, min_date, max_date)
     if json_result is not None:
         return json_result
+
+    if url is not None:
+        dateresult = extract_url_date(url, outputformat, min_date, max_date)
+        if dateresult is not None:
+            return dateresult
 
     # try abbr elements
     abbr_result = examine_abbr_elements(
