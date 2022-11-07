@@ -2,17 +2,23 @@
 Meta-functions to be applied module-wide.
 """
 
+import logging
+
+from .core import compare_reference
+from .extractors import try_date_expr
+from .validators import date_validator, filter_ymd_candidate
+
+
+LOGGER = logging.getLogger(__name__)
+
+
 try:
     from charset_normalizer.cd import encoding_languages
     from charset_normalizer.md import is_suspiciously_successive_range
     from charset_normalizer.utils import is_accentuated
 # prevent possible changes in function names
 except ImportError:
-    pass
-
-from .core import compare_reference
-from .extractors import try_date_expr
-from .validators import date_validator, filter_ymd_candidate
+    LOGGER.error("impossible to import charset function name")
 
 
 def reset_caches() -> None:
@@ -30,4 +36,4 @@ def reset_caches() -> None:
         is_accentuated.cache_clear()
     # prevent possible changes in function names
     except NameError:
-        pass
+        LOGGER.error("impossible to import htmldate function name")

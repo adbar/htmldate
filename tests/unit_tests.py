@@ -45,7 +45,6 @@ from htmldate.core import (
     select_candidate,
 )
 from htmldate.extractors import (
-    DATE_EXPRESSIONS,
     custom_parse,
     discard_unwanted,
     external_date_parser,
@@ -1192,11 +1191,40 @@ def test_date_validator():
     assert date_validator("202-01", OUTPUTFORMAT) is False
     assert date_validator("1922", "%Y") is False
     assert date_validator("2004", "%Y") is True
-    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1)) is True
-    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1992, 1, 1)) is False
-    assert date_validator("1991-01-02", OUTPUTFORMAT, latest=datetime.datetime(1990, 1, 1)) is False
-    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1), latest=datetime.datetime(1995, 1, 1)) is True
-    assert date_validator("1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1), latest=datetime.datetime(1990, 12, 31)) is False
+    assert (
+        date_validator(
+            "1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1)
+        )
+        is True
+    )
+    assert (
+        date_validator(
+            "1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1992, 1, 1)
+        )
+        is False
+    )
+    assert (
+        date_validator("1991-01-02", OUTPUTFORMAT, latest=datetime.datetime(1990, 1, 1))
+        is False
+    )
+    assert (
+        date_validator(
+            "1991-01-02",
+            OUTPUTFORMAT,
+            earliest=datetime.datetime(1990, 1, 1),
+            latest=datetime.datetime(1995, 1, 1),
+        )
+        is True
+    )
+    assert (
+        date_validator(
+            "1991-01-02",
+            OUTPUTFORMAT,
+            earliest=datetime.datetime(1990, 1, 1),
+            latest=datetime.datetime(1990, 12, 31),
+        )
+        is False
+    )
 
 
 def test_convert_date():
@@ -2176,7 +2204,11 @@ def test_cli():
     # third test: Linux and MacOS only
     if os.name != "nt":
         args.inputfile = None
-        sys.stdin = open(os.path.join(TEST_DIR, "cache", "befifty.montauk.html"), "r")
+        sys.stdin = open(
+            os.path.join(TEST_DIR, "cache", "befifty.montauk.html"),
+            "r",
+            encoding="utf-8",
+        )
         f = io.StringIO()
         with redirect_stdout(f):
             process_args(args)

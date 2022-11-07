@@ -629,7 +629,7 @@ def extract_idiosyncrasy(
     try:
         parts = [0, 4, 5, 6] if match and match[6] else parts
     except IndexError:
-        pass
+        LOGGER.debug("index error in idiosyncrasies: %s", match[0])
     if match and parts:
         if match[parts[1]] is not None and len(match[parts[1]]) == 4:
             candidate = datetime(

@@ -345,7 +345,7 @@ def select_candidate(
     max_date: datetime,
 ) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
-    match = None
+    match, year1, year2 = None, None, None
     # LOGGER.debug('occurrences: %s', occurrences)
     if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
         return None
