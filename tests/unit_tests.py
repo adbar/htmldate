@@ -1563,6 +1563,7 @@ def test_regex_parse():
     assert regex_parse("August 1, 1998") is not None
     assert regex_parse("September 1, 1998") is not None
     assert regex_parse("Oktober 1, 1998") is not None
+    assert regex_parse("1. Okt. 1998") is not None
     assert regex_parse("November 1, 1998") is not None
     assert regex_parse("Dezember 1, 1998") is not None
     assert regex_parse("Ocak 1, 1998") is not None

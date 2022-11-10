@@ -112,10 +112,10 @@ YM_PATTERN = re.compile(
 )
 
 REGEX_MONTHS = """
-January|February|March|April|May|June|July|August|September|October|November|December|
-Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember|
-Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|
-Januar|Jänner|Februar|Feber|März|Mai|Dezember|
+January?|February?|March|April|Ma[iy]|Jun[ei]|Jul[iy]|August|September|O[ck]tober|November|De[cz]ember|
+Jan\.?|Feb\.?|M[aä]r\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|O[ck]t\.?|Nov\.?|De[cz]\.?|
+Januari|Februari|Maret|Mei|Agustus|Desember|
+Jänner|Feber|März|
 janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
@@ -163,6 +163,7 @@ TEXT_MONTHS = {
     "march": "03",
     "maret": "03",
     "mar": "03",
+    "mär": "03",
     "mart": "03",
     "mars": "03",
     # April
@@ -208,6 +209,7 @@ TEXT_MONTHS = {
     "oktober": "10",
     "october": "10",
     "oct": "10",
+    "okt": "10",
     "ekim": "10",
     "eki": "10",
     "octobre": "10",
@@ -222,6 +224,7 @@ TEXT_MONTHS = {
     "december": "12",
     "desember": "12",
     "dec": "12",
+    "dez": "12",
     "aralık": "12",
     "ara": "12",
     "décembre": "12",
@@ -364,13 +367,13 @@ def regex_parse(string: str) -> Optional[datetime]:
         if match.lastgroup == "year":
             day, month, year = (
                 int(match.group("day")),
-                int(TEXT_MONTHS[match.group("month").lower()]),
+                int(TEXT_MONTHS[match.group("month").lower().strip(".")]),
                 int(match.group("year")),
             )
         else:
             day, month, year = (
                 int(match.group("day2")),
-                int(TEXT_MONTHS[match.group("month2").lower()]),
+                int(TEXT_MONTHS[match.group("month2").lower().strip(".")]),
                 int(match.group("year2")),
             )
         year = correct_year(year)
