@@ -190,7 +190,7 @@ def load_html(htmlobject: HtmlElement) -> HtmlElement:
             tree = fromstring(htmlobject.encode("utf8"), parser=HTML_PARSER)
         except Exception as err:
             LOGGER.error("lxml parser bytestring %s", err)
-    except Exception as err:
+    except Exception as err:  # pragma: no cover
         LOGGER.error("lxml parsing failed: %s", err)
     # rejection test: is it (well-formed) HTML at all?
     if tree is not None and check_flag is True and len(tree) < 2:

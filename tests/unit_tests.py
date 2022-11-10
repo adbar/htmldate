@@ -1231,6 +1231,8 @@ def test_convert_date():
     """test date conversion"""
     assert convert_date("2016-11-18", "%Y-%m-%d", "%d %B %Y") == "18 November 2016"
     assert convert_date("18 November 2016", "%d %B %Y", "%Y-%m-%d") == "2016-11-18"
+    dateobject = datetime.datetime.strptime("2016-11-18", "%Y-%m-%d")
+    assert convert_date(dateobject, "%d %B %Y", "%Y-%m-%d") == "2016-11-18"
 
 
 def test_try_date_expr():

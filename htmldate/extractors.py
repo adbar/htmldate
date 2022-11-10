@@ -517,7 +517,7 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
     try:
         target = EXTERNAL_PARSER.get_date_data(string)["date_obj"]
     # 2 types of errors possible
-    except (OverflowError, ValueError) as err:
+    except (OverflowError, ValueError) as err:  # pragma: no cover
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type

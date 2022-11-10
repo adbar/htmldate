@@ -35,5 +35,5 @@ def reset_caches() -> None:
         is_suspiciously_successive_range.cache_clear()
         is_accentuated.cache_clear()
     # prevent possible changes in function names
-    except NameError:
-        LOGGER.error("impossible to import htmldate function name")
+    except (AttributeError, NameError) as err:  # pragma: no cover
+        LOGGER.error("impossible to clear cache for function: %s", err)

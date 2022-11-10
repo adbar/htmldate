@@ -1026,7 +1026,7 @@ def find_date(
     try:
         cleaned_html = HTML_CLEANER.clean_html(tree)
     # rare LXML error: no NULL bytes or control characters
-    except ValueError:
+    except ValueError:  # pragma: no cover
         cleaned_html = tree
         LOGGER.error("lxml cleaner error")
 
