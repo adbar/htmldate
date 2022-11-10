@@ -112,18 +112,18 @@ YM_PATTERN = re.compile(
 )
 
 REGEX_MONTHS = """
-January?|February?|March|April|Ma[iy]|Jun[ei]|Jul[iy]|August|September|O[ck]tober|November|De[cz]ember|
-Jan\.?|Feb\.?|M[aä]r\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|O[ck]t\.?|Nov\.?|De[cz]\.?|
-Januari|Februari|Maret|Mei|Agustus|Desember|
+January?|February?|March|A[pv]ril|Ma[iy]|Jun[ei]|Jul[iy]|August|September|O[ck]tober|November|De[csz]ember|
+Jan|Feb|M[aä]r|Apr|Jun|Jul|Aug|Sep|O[ck]t|Nov|De[cz]|
+Januari|Februari|Maret|Mei|Agustus|
 Jänner|Feber|März|
-janvier|février|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|décembre|
+janvier|février|mars|juin|juillet|aout|septembre|octobre|novembre|décembre|
 Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
 Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 """  # todo: check "août"
 LONG_TEXT_PATTERN = re.compile(
     rf"""(?P<month>{REGEX_MONTHS})\s
 (?P<day>[0-9]{{1,2}})(?:st|nd|rd|th)?,? (?P<year>[0-9]{{4}})|(?P<day2>[0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
-(?P<month2>{REGEX_MONTHS}),? (?P<year2>[0-9]{{4}})""".replace(
+(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>[0-9]{{4}})""".replace(
         "\n", ""
     ),
     re.I,
@@ -145,19 +145,19 @@ TEXT_MONTHS = {
     "jänner": "01",
     "january": "01",
     "januari": "01",
+    "janvier": "01",
     "jan": "01",
     "ocak": "01",
     "oca": "01",
-    "janvier": "01",
     # February
     "februar": "02",
     "feber": "02",
     "february": "02",
     "februari": "02",
+    "février": "02",
     "feb": "02",
     "şubat": "02",
     "şub": "02",
-    "février": "02",
     # March
     "märz": "03",
     "march": "03",
@@ -169,9 +169,9 @@ TEXT_MONTHS = {
     # April
     "april": "04",
     "apr": "04",
+    "avril": "04",
     "nisan": "04",
     "nis": "04",
-    "avril": "04",
     # May
     "mai": "05",
     "may": "05",
@@ -180,39 +180,39 @@ TEXT_MONTHS = {
     # June
     "juni": "06",
     "june": "06",
+    "juin": "06",
     "jun": "06",
     "haziran": "06",
     "haz": "06",
-    "juin": "06",
     # July
     "juli": "07",
     "july": "07",
+    "juillet": "07",
     "jul": "07",
     "temmuz": "07",
     "tem": "07",
-    "juillet": "07",
     # August
     "august": "08",
     "agustus": "08",
     "aug": "08",
     "ağustos": "08",
     "ağu": "08",
-    "août": "08",
     "aout": "08",
+    # "août": "08",
     # September
     "september": "09",
+    "septembre": "09",
     "sep": "09",
     "eylül": "09",
     "eyl": "09",
-    "septembre": "09",
     # October
     "oktober": "10",
     "october": "10",
+    "octobre": "10",
     "oct": "10",
     "okt": "10",
     "ekim": "10",
     "eki": "10",
-    "octobre": "10",
     # November
     "november": "11",
     "nov": "11",
@@ -223,11 +223,11 @@ TEXT_MONTHS = {
     "dezember": "12",
     "december": "12",
     "desember": "12",
+    "décembre": "12",
     "dec": "12",
     "dez": "12",
     "aralık": "12",
     "ara": "12",
-    "décembre": "12",
 }
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
