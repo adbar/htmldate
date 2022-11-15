@@ -1098,6 +1098,12 @@ def test_exact_date():
         == "1991-01-02"
     )
 
+    # wild text in body
+    assert (
+        find_date("<html><body>Wed, 19 Oct 2022 14:24:05 +0000</body></html>")
+        == "2022-10-19"
+    )
+
 
 def test_approximate_date():
     """this page should return an approximate date"""
@@ -1153,7 +1159,15 @@ def test_approximate_date():
         == "2016-07-20"
     )  # most probably 2016-07-15
     # LXML bug filed: https://bugs.launchpad.net/lxml/+bug/1955915
-    # assert find_date(load_mock_page('http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50'), original_date=False) == '2016-12-04' # 2010-11-01 in meta, 2016 more plausible
+    #assert (
+    #    find_date(
+    #        load_mock_page(
+    #            "http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50"
+    #        ),
+    #        original_date=False,
+    #    )
+    #    == "2016-12-04"
+    #)  # 2010-11-01 in meta, 2016 more plausible
     assert (
         find_date(
             load_mock_page(
@@ -2293,11 +2307,24 @@ def test_readme_examples():
         )
         == "2018-06-28"
     )
-    precise_date_html = '''
+    precise_date_html = """
         <!doctype html> <html lang="en-CA" class="no-js"> <head> <link rel="canonical" href="https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/"/> <meta property="article:published_time" content="2022-10-20T18:45:00+00:00"/><meta property="article:modified_time" content="2022-10-20T18:35:08+00:00"/> <script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#webpage","url":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/","name":"3 Stable Stocks I'd Buy if the Market Tanks Further | The Motley Fool Canada","isPartOf":{"@id":"https://www.fool.ca/#website"},"datePublished":"2022-10-20T18:45:00+00:00","dateModified":"2022-10-20T18:35:08+00:00","description":"Dividend aristocrats contain stable stocks that any investor should consider, but these three offer the best chance at future growth as well.","breadcrumb":{"@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#breadcrumb"},"inLanguage":"en-CA"},{"@type":"NewsArticle","@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#article","isPartOf":{"@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#webpage"},"author":{"@id":"https://www.fool.ca/#/schema/person/e0d452bd1e82135f310295e7dc650aca"},"headline":"3 Stable Stocks I&#8217;d Buy if the Market Tanks Further","datePublished":"2022-10-20T18:45:00+00:00","dateModified":"2022-10-20T18:35:08+00:00"}]}</script> </head> <body class="post-template-default single single-post postid-1378278 single-format-standard mega-menu-main-menu-2020 mega-menu-footer-2020" data-has-main-nav="true"> <span class="posted-on">Published <time class="entry-date published" datetime="2022-10-20T14:45:00-04:00">October 20, 2:45 pm EDT</time></span> </body> </html>
-    '''
-    assert find_date(precise_date_html, outputformat='%Y-%m-%dT%H:%M:%S%z', original_date=True, deferred_url_extractor=True) == '2022-10-20T18:45:00+0000'
-    assert find_date(precise_date_html, outputformat='%Y-%m-%dT%H:%M:%S%z', original_date=True) == '2022-10-20T00:00:00'
+    """
+    assert (
+        find_date(
+            precise_date_html,
+            outputformat="%Y-%m-%dT%H:%M:%S%z",
+            original_date=True,
+            deferred_url_extractor=True,
+        )
+        == "2022-10-20T18:45:00+0000"
+    )
+    assert (
+        find_date(
+            precise_date_html, outputformat="%Y-%m-%dT%H:%M:%S%z", original_date=True
+        )
+        == "2022-10-20T00:00:00"
+    )
 
 
 def test_dependencies():

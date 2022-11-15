@@ -250,10 +250,8 @@ def examine_header(
         if "property" in elem.attrib and "content" in elem.attrib:
             attribute = elem.get("property").lower()
             # original date or modified date: override published_time
-            if (
-                original_date
-                and attribute in DATE_ATTRIBUTES
-                or original_date is not True
+            if (original_date and attribute in DATE_ATTRIBUTES) or (
+                not original_date
                 and (attribute in PROPERTY_MODIFIED or attribute in DATE_ATTRIBUTES)
             ):
                 LOGGER.debug("examining meta property: %s", logstring(elem))
@@ -762,7 +760,7 @@ def search_page(
         yearpat=SLASHES_YEAR,
         earliest=min_date,
         latest=max_date,
-        tocomplete=True,
+        incomplete=True,
     )
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}
@@ -818,7 +816,7 @@ def search_page(
         yearpat=MMYYYY_YEAR,
         earliest=min_date,
         latest=max_date,
-        tocomplete=original_date,
+        incomplete=original_date,
     )
     # revert DD-MM-YYYY patterns before sorting
     replacement = {}

@@ -130,7 +130,7 @@ def run_goose(htmlstring):
         return None
     datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
     try:
-        return datematch.group(0)
+        return datematch[0]
     # illogical result
     except AttributeError:
         #    print(article.publish_date)

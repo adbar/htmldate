@@ -86,7 +86,7 @@ def plausible_year_filter(
     yearpat: Pattern[str],
     earliest: datetime = MIN_DATE,
     latest: datetime = LATEST_POSSIBLE,
-    tocomplete: bool = False,
+    incomplete: bool = False,
 ) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
     # slow!
@@ -98,7 +98,7 @@ def plausible_year_filter(
         # scrap implausible dates
         year_match = yearpat.search(item)
         if year_match is not None:
-            if tocomplete is False:
+            if not incomplete:
                 potential_year = int(year_match[1])
             else:
                 lastdigits = year_match[1]

@@ -521,9 +521,7 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type
-    if target is not None:
-        return datetime.strftime(target, outputformat)
-    return None
+    return datetime.strftime(target, outputformat) if target is not None else None
 
 
 @lru_cache(maxsize=CACHE_SIZE)
