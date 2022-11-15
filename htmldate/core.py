@@ -26,7 +26,7 @@ from .extractors import (
     idiosyncrasies_search,
     img_search,
     json_search,
-    # regex_parse,
+    regex_parse,
     timestamp_search,
     try_date_expr,
     DATE_EXPRESSIONS,
@@ -846,6 +846,20 @@ def search_page(
     if result is not None:
         return result
 
+    # try full-blown text regex on all HTML?
+    dateobject = regex_parse(htmlstring)
+    # todo: find all candidates and disambiguate?
+    if date_validator(
+        dateobject, outputformat, earliest=min_date, latest=max_date
+    ) is True and (
+        copyear == 0 or dateobject.year >= copyear  # type: ignore[union-attr]
+    ):
+        try:
+            LOGGER.debug("regex result on HTML: %s", dateobject)
+            return dateobject.strftime(outputformat)  # type: ignore
+        except ValueError as err:
+            LOGGER.error("value error during conversion: %s %s", dateobject, err)
+
     # catchall: copyright mention
     if copyear != 0:
         LOGGER.debug("using copyright year as default")
@@ -853,20 +867,7 @@ def search_page(
             "-".join([str(copyear), "01", "01"]), "%Y-%m-%d", outputformat
         )
 
-    # try full-blown text regex on all HTML?
-    # dateobject = regex_parse(htmlstring)
-    # todo: find all candidates and disambiguate?
-    # if (
-    #    date_validator(dateobject, outputformat, earliest=min_date, latest=max_date)
-    #    is True
-    # ):
-    #    try:
-    #        LOGGER.debug("regex result on HTML: %s", dateobject)
-    #        return dateobject.strftime(outputformat)  # type: ignore
-    #    except ValueError as err:
-    #        LOGGER.error("value error during conversion: %s %s", string, err)
-
-    # 1 component, last try
+    # last resort: 1 component
     LOGGER.debug("switching to one component")
     bestmatch = search_pattern(
         htmlstring,

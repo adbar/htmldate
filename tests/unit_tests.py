@@ -559,8 +559,7 @@ def test_exact_date():
             '<html><body><time class="Feed-module--feed__item-meta-time--3t1fg" dateTime="November 29, 2020">November 2020</time></body></html>',
             outputformat="%Y-%m-%d %H:%m:%S",
         )
-        == "2020-01-01 00:01:00"  # solution so far
-        # == "2020-11-29 00:11:00"  # better
+        == "2020-11-29 00:11:00"  # 00:11 unclear
     )
     assert (
         find_date(
