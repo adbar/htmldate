@@ -2,6 +2,7 @@
 Compare extraction results with other libraries of the same kind.
 """
 
+
 # import logging
 import os
 import re
@@ -35,7 +36,7 @@ EVAL_PAGES = {}
 for each in eval_paths:
     evalpath = os.path.join(TEST_DIR, each)
     with open(evalpath, "r", encoding="utf-8") as f:
-        EVAL_PAGES.update(json.load(f))
+        EVAL_PAGES |= json.load(f)
 
 
 def load_document(filename):
@@ -130,8 +131,7 @@ def run_goose(htmlstring):
         return None
     datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
     try:
-        return datematch.group(0)
-    # illogical result
+        return datematch[0]
     except AttributeError:
         #    print(article.publish_date)
         return None
@@ -192,15 +192,15 @@ template_dict = {
     dateguesser_result,
     goose_result,
 ) = ({}, {}, {}, {}, {}, {}, {}, {}, {})
-everything.update(template_dict)
-nothing.update(template_dict)
-htmldate_extensive_result.update(template_dict)
-htmldate_fast_result.update(template_dict)
-newspaper_result.update(template_dict)
-newsplease_result.update(template_dict)
-articledateextractor_result.update(template_dict)
-dateguesser_result.update(template_dict)
-goose_result.update(template_dict)
+everything |= template_dict
+nothing |= template_dict
+htmldate_extensive_result |= template_dict
+htmldate_fast_result |= template_dict
+newspaper_result |= template_dict
+newsplease_result |= template_dict
+articledateextractor_result |= template_dict
+dateguesser_result |= template_dict
+goose_result |= template_dict
 
 
 i = 0
