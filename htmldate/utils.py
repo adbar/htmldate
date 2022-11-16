@@ -163,7 +163,17 @@ def strip_faulty_doctypes(htmlstring: str) -> str:
     return DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
 
 
-def load_html(htmlobject: HtmlElement) -> HtmlElement:
+def fromstring_bytes(htmlobject: str) -> Optional[HtmlElement]:
+    "Try to pass bytes to LXML parser."
+    tree = None
+    try:
+        tree = fromstring(htmlobject.encode("utf8"), parser=HTML_PARSER)
+    except Exception as err:
+        LOGGER.error("lxml parser bytestring %s", err)
+    return tree
+
+
+def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElement]:
     """Load object given as input and validate its type
     (accepted: lxml.html tree, bytestring and string)
     """
@@ -190,19 +200,23 @@ def load_html(htmlobject: HtmlElement) -> HtmlElement:
     htmlobject = decode_file(htmlobject)
     # sanity check
     check_flag = is_dubious_html(htmlobject)
-    # use Unicode string
-    htmlobject = strip_faulty_doctypes(htmlobject)  # repair first
+    fallback_parse = False
+    # repair first
+    htmlobject = strip_faulty_doctypes(htmlobject)
+    # first pass: use Unicode string
     try:
         tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
         # "Unicode strings with encoding declaration are not supported."
-        try:
-            tree = fromstring(htmlobject.encode("utf8"), parser=HTML_PARSER)
-        except Exception as err:
-            LOGGER.error("lxml parser bytestring %s", err)
+        fallback_parse = True
+        tree = fromstring_bytes(htmlobject)
     except Exception as err:  # pragma: no cover
         LOGGER.error("lxml parsing failed: %s", err)
+    # second pass: try passing bytes to LXML
+    if (tree is None or len(tree) < 2) and fallback_parse is False:
+        tree = fromstring_bytes(htmlobject)
     # rejection test: is it (well-formed) HTML at all?
+    # log parsing errors
     if tree is not None and check_flag is True and len(tree) < 2:
         LOGGER.error(
             "parsed tree length: %s, wrong data type or not valid HTML", len(tree)
