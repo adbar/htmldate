@@ -58,8 +58,9 @@ from htmldate.utils import (
     decode_response,
     detect_encoding,
     fetch_url,
-    load_html,
     is_dubious_html,
+    load_html,
+    strip_faulty_doctypes
 )
 from htmldate.validators import (
     convert_date,
@@ -164,6 +165,7 @@ def test_input():
     """test if loaded strings/trees are handled properly"""
     assert is_dubious_html("This is a string.") is True
     assert is_dubious_html(b"This is a string.") is True
+    assert strip_faulty_doctypes("<!DOCTYPE html PUBLIC />\n") == "\n"
     with pytest.raises(TypeError) as err:
         assert load_html(123) is None
     assert "incompatible" in str(err.value)
@@ -1159,15 +1161,15 @@ def test_approximate_date():
         == "2016-07-20"
     )  # most probably 2016-07-15
     # LXML bug filed: https://bugs.launchpad.net/lxml/+bug/1955915
-    #assert (
-    #    find_date(
-    #        load_mock_page(
-    #            "http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50"
-    #        ),
-    #        original_date=False,
-    #    )
-    #    == "2016-12-04"
-    #)  # 2010-11-01 in meta, 2016 more plausible
+    assert (
+        find_date(
+            load_mock_page(
+                "http://www.hundeverein-querfurt.de/index.php?option=com_content&view=article&id=54&Itemid=50"
+            ),
+            original_date=False,
+        )
+        == "2016-12-04"
+    )  # 2010-11-01 in meta, 2016 more plausible
     assert (
         find_date(
             load_mock_page(

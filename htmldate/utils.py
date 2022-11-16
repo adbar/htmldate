@@ -44,6 +44,8 @@ HTML_PARSER = HTMLParser(
     collect_ids=False, default_doctype=False, encoding="utf-8", remove_pis=True
 )
 
+DOCTYPE_TAG = re.compile("<!DOCTYPE.+?/>", re.I)
+
 
 def isutf8(data: bytes) -> bool:
     """Simple heuristic to determine if a bytestring uses standard unicode encoding"""
@@ -154,6 +156,13 @@ def is_dubious_html(htmlobject: Union[bytes, str]) -> bool:
     return False
 
 
+def strip_faulty_doctypes(htmlstring: str) -> str:
+    "Repair faulty doctype strings to make then palatable for libxml2."
+    # libxml2/LXML issue: https://bugs.launchpad.net/lxml/+bug/1955915
+    firstline, _, rest = htmlstring.partition("\n")
+    return DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
+
+
 def load_html(htmlobject: HtmlElement) -> HtmlElement:
     """Load object given as input and validate its type
     (accepted: lxml.html tree, bytestring and string)
@@ -182,6 +191,7 @@ def load_html(htmlobject: HtmlElement) -> HtmlElement:
     # sanity check
     check_flag = is_dubious_html(htmlobject)
     # use Unicode string
+    htmlobject = strip_faulty_doctypes(htmlobject)  # repair first
     try:
         tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
