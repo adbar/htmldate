@@ -60,7 +60,7 @@ from htmldate.utils import (
     fetch_url,
     is_dubious_html,
     load_html,
-    strip_faulty_doctypes
+    strip_faulty_doctypes,
 )
 from htmldate.validators import (
     convert_date,
@@ -164,8 +164,9 @@ def load_mediacloud_page(url):
 def test_input():
     """test if loaded strings/trees are handled properly"""
     assert is_dubious_html("This is a string.") is True
-    assert is_dubious_html(b"This is a string.") is True
-    assert strip_faulty_doctypes("<!DOCTYPE html PUBLIC />\n") == "\n"
+    htmlstring = "<!DOCTYPE html PUBLIC />\n<html/>"
+    beginning = htmlstring[:50].lower()
+    assert strip_faulty_doctypes(htmlstring, beginning) == "\n<html/>"
     with pytest.raises(TypeError) as err:
         assert load_html(123) is None
     assert "incompatible" in str(err.value)

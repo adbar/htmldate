@@ -142,25 +142,18 @@ def fetch_url(url: str) -> Optional[str]:
     return None
 
 
-def is_dubious_html(htmlobject: Union[bytes, str]) -> bool:
-    "Assess if the object is proper HTML (with a corresponding declaration)."
-    if isinstance(htmlobject, bytes):
-        if (
-            "html"
-            not in htmlobject[:50].decode(encoding="ascii", errors="ignore").lower()
-        ):
-            return True
-    elif isinstance(htmlobject, str):
-        if "html" not in htmlobject[:50].lower():
-            return True
-    return False
+def is_dubious_html(beginning: str) -> bool:
+    "Assess if the object is proper HTML (awith a corresponding tag or declaration)."
+    return "html" not in beginning
 
 
-def strip_faulty_doctypes(htmlstring: str) -> str:
+def strip_faulty_doctypes(htmlstring: str, beginning: str) -> str:
     "Repair faulty doctype strings to make then palatable for libxml2."
     # libxml2/LXML issue: https://bugs.launchpad.net/lxml/+bug/1955915
-    firstline, _, rest = htmlstring.partition("\n")
-    return DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
+    if "doctype" in beginning:
+        firstline, _, rest = htmlstring.partition("\n")
+        return DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
+    return htmlstring
 
 
 def fromstring_bytes(htmlobject: str) -> Optional[HtmlElement]:
@@ -198,12 +191,13 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     tree = None
     # try to guess encoding and decode file: if None then keep original
     htmlobject = decode_file(htmlobject)
-    # sanity check
-    check_flag = is_dubious_html(htmlobject)
-    fallback_parse = False
+    # sanity checks
+    beginning = htmlobject[:50].lower()
+    check_flag = is_dubious_html(beginning)
     # repair first
-    htmlobject = strip_faulty_doctypes(htmlobject)
+    htmlobject = strip_faulty_doctypes(htmlobject, beginning)
     # first pass: use Unicode string
+    fallback_parse = False
     try:
         tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
