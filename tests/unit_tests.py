@@ -167,6 +167,9 @@ def test_input():
     htmlstring = "<!DOCTYPE html PUBLIC />\n<html/>"
     beginning = htmlstring[:50].lower()
     assert strip_faulty_doctypes(htmlstring, beginning) == "\n<html/>"
+    htmlstring = "<html>\n</html>"
+    beginning = htmlstring[:50].lower()
+    assert strip_faulty_doctypes(htmlstring, beginning) == htmlstring
     with pytest.raises(TypeError) as err:
         assert load_html(123) is None
     assert "incompatible" in str(err.value)

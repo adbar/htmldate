@@ -44,7 +44,7 @@ HTML_PARSER = HTMLParser(
     collect_ids=False, default_doctype=False, encoding="utf-8", remove_pis=True
 )
 
-DOCTYPE_TAG = re.compile("<!DOCTYPE.+?/>", re.I)
+DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 
 
 def isutf8(data: bytes) -> bool:
