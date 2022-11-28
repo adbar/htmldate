@@ -1,6 +1,14 @@
 ## Changelog
 
 
+## 1.4.0
+- additional search of free text in whole document (#67)
+- optional parameter for subdaily precision with @getorca (#66)
+- fix for HTML doctype parsing (#44)
+- cleaner code for multilingual month expressions
+- extended expressions for extraction in HTML meta fields
+- update of dependencies and evaluation
+
 ## 1.3.2
 - technical release: explicit support for Python 3.11 and logo
 
