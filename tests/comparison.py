@@ -37,6 +37,8 @@ for each in eval_paths:
     with open(evalpath, "r", encoding="utf-8") as f:
         EVAL_PAGES.update(json.load(f))
 
+G = Goose()
+
 
 def load_document(filename):
     """load mock page from samples"""
@@ -88,7 +90,10 @@ def run_newspaper(htmlstring):
         return None
     myarticle.html = htmlstring
     myarticle.download_state = ArticleDownloadState.SUCCESS
-    myarticle.parse()
+    try:
+        myarticle.parse()
+    except UnicodeEncodeError:
+        return None
     if myarticle.publish_date is None or myarticle.publish_date == "":
         return None
     return convert_date(myarticle.publish_date, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
@@ -124,15 +129,14 @@ def run_dateguesser(htmlstring):
 
 def run_goose(htmlstring):
     """try with the goose algorithm"""
-    g = Goose()
-    article = g.extract(raw_html=htmlstring)
+    article = G.extract(raw_html=htmlstring)
     if article.publish_date is None:
         return None
     datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
     try:
         return datematch[0]
     # illogical result
-    except AttributeError:
+    except TypeError:
         #    print(article.publish_date)
         return None
 
