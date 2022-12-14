@@ -534,7 +534,7 @@ def try_date_expr(
 ) -> Optional[str]:
     """Use a series of heuristics and rules to parse a potential date expression"""
     # trim
-    string = " ".join(string[:MAX_TEXT_SIZE].split()).strip()
+    string = " ".join(string.strip()[:MAX_TEXT_SIZE].split())
 
     # formal constraint: 4 to 18 digits
     if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:

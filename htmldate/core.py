@@ -152,14 +152,13 @@ PROPERTY_MODIFIED = {
 }
 
 
-NON_DIGITS_REGEX = re.compile(r"\D+$")
-GER_STRIP_REGEX = re.compile(r"^am ")
-
 LAST_MODIFIED = {"lastmodified", "last-modified"}
 ITEMPROP_ATTRS_ORIGINAL = {"datecreated", "datepublished", "pubyear"}
 ITEMPROP_ATTRS_MODIFIED = {"datemodified", "dateupdate"}
 ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
 CLASS_ATTRS = {"date-published", "published", "time published"}
+
+NON_DIGITS_REGEX = re.compile(r"\D+$")
 
 
 def examine_date_elements(
@@ -178,29 +177,27 @@ def examine_date_elements(
     attempt = None
     for elem in elements:
         # trim
-        text = " ".join(elem.text_content().split()).strip()
+        text = elem.text_content().strip()
         # simple length heuristic
         if len(text) > 6:  # could be 8 or 9
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            toexamine = NON_DIGITS_REGEX.sub("", text[:MAX_TEXT_SIZE])
+            text = NON_DIGITS_REGEX.sub("", text[:MAX_TEXT_SIZE])
             LOGGER.debug(
                 "analyzing (HTML): %s",
-                " ".join(
-                    tostring(elem, pretty_print=False, encoding="unicode").split()
-                ).strip()[:100],
+                " ".join(logstring(elem).split())[:100],
             )
             attempt = try_date_expr(
-                toexamine, outputformat, extensive_search, min_date, max_date
+                text, outputformat, extensive_search, min_date, max_date
             )
             if attempt is not None:
                 break
         # try link title (Blogspot)
-        title_attr = elem.get("title")
+        title_attr = elem.get("title", "").strip()
         if title_attr is not None and len(title_attr) > 0:
-            toexamine = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
+            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
             attempt = try_date_expr(
-                toexamine, outputformat, extensive_search, min_date, max_date
+                title_attr, outputformat, extensive_search, min_date, max_date
             )
             if attempt is not None:
                 break
@@ -494,11 +491,10 @@ def examine_abbr_elements(
                             break
                 # dates, not times of the day
                 if elem.text and len(elem.text) > 10:
-                    trytext = GER_STRIP_REGEX.sub("", elem.text)
-                    LOGGER.debug("abbr published found: %s", trytext)
+                    LOGGER.debug("abbr published found: %s", elem.text)
                     reference = compare_reference(
                         reference,
-                        trytext,
+                        elem.text,
                         outputformat,
                         extensive_search,
                         original_date,
