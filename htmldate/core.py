@@ -81,10 +81,12 @@ def logstring(element: HtmlElement) -> str:
 
 
 DATE_ATTRIBUTES = {
+    "analyticsattributes.articledate",
     "article.created",
     "article_date_original",
     "article:post_date",
     "article.published",
+    "article:published",
     "article:published_time",
     "article:publicationdate",
     "bt:pubdate",
@@ -105,6 +107,7 @@ DATE_ATTRIBUTES = {
     "dc.date.created",
     "dc.date.issued",
     "dc.date.publication",
+    "dcsext.articlefirstpublished",
     "dcterms.created",
     "dcterms.date",
     "dcterms.issued",
@@ -114,15 +117,19 @@ DATE_ATTRIBUTES = {
     "doc_date",
     "field-name-post-date",
     "gentime",
+    "mediator_published_time",
     "meta",  # too loose?
     # Open Graph: https://opengraphprotocol.org/
     "og:published_time",
     "og:article:published_time",
     "originalpublicationdate",
     "parsely-pub-date",
+    "pdate",
+    "ptime",
     "pubdate",
     "publishdate",
     "publish_date",
+    "publish-date",
     "published-date",
     "publication_date",
     "rbpubdate",
@@ -137,7 +144,11 @@ DATE_ATTRIBUTES = {
 }
 
 
+NAME_MODIFIED = {"lastmod", "lastmodified", "last-modified", "modified", "utime"}
+
+
 PROPERTY_MODIFIED = {
+    "article:modified",
     "article:modified_time",
     "datemodified",
     "dc.modified",
@@ -152,7 +163,6 @@ PROPERTY_MODIFIED = {
 }
 
 
-LAST_MODIFIED = {"lastmodified", "last-modified"}
 ITEMPROP_ATTRS_ORIGINAL = {"datecreated", "datepublished", "pubyear"}
 ITEMPROP_ATTRS_MODIFIED = {"datemodified", "dateupdate"}
 ITEMPROP_ATTRS = ITEMPROP_ATTRS_ORIGINAL.union(ITEMPROP_ATTRS_MODIFIED)
@@ -273,7 +283,7 @@ def examine_header(
                 LOGGER.debug("examining meta name: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
             # modified
-            elif elem.get("name").lower() in LAST_MODIFIED:
+            elif elem.get("name").lower() in NAME_MODIFIED:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
                 if original_date is False:
                     headerdate = tryfunc(elem.get("content"))
