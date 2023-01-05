@@ -207,7 +207,7 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     except Exception as err:  # pragma: no cover
         LOGGER.error("lxml parsing failed: %s", err)
     # second pass: try passing bytes to LXML
-    if (tree is None or len(tree) < 2) and fallback_parse is False:
+    if (tree is None or len(tree) < 2) and not fallback_parse:
         tree = fromstring_bytes(htmlobject)
     # rejection test: is it (well-formed) HTML at all?
     # log parsing errors

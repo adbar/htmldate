@@ -278,14 +278,12 @@ def examine_header(
                 headerdate = extract_url_date(
                     elem.get("content"), outputformat, min_date, max_date
                 )
-            # date
             elif elem.get("name").lower() in DATE_ATTRIBUTES:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
-            # modified
             elif elem.get("name").lower() in NAME_MODIFIED:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
-                if original_date is False:
+                if not original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -304,15 +302,17 @@ def examine_header(
                 elif "content" in elem.attrib:
                     attempt = tryfunc(elem.get("content"))
                 # store value
-                if attempt is not None:
-                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date) or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED and not original_date
-                    ):
-                        headerdate = attempt
-                    # put on hold: hurts precision
-                    # else:
-                    #    reserve = attempt
-            # reserve with copyrightyear
+                if (
+                    attempt is not None
+                    and (
+                        attribute in ITEMPROP_ATTRS_ORIGINAL and original_date
+                    )
+                    or (
+                        attribute in ITEMPROP_ATTRS_MODIFIED
+                        and not original_date
+                    )
+                ):
+                    headerdate = attempt
             elif attribute == "copyrightyear":
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
                 if "content" in elem.attrib:
@@ -324,7 +324,6 @@ def examine_header(
                         is True
                     ):
                         reserve = attempt
-        # http-equiv, rare
         elif "http-equiv" in elem.attrib:
             attribute = elem.get("http-equiv").lower()
             if attribute == "date":
@@ -335,7 +334,7 @@ def examine_header(
                     reserve = tryfunc(elem.get("content"))
             elif attribute == "last-modified":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date is False:
+                if not original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -614,10 +613,10 @@ def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
     """Normalize string output by adding "0" if necessary."""
     day = match[1]  # type: ignore[index]
     if len(day) == 1:
-        day = "0" + day
+        day = f"0{day}"
     month = match[2]  # type: ignore[index]
     if len(month) == 1:
-        month = "0" + month
+        month = f"0{month}"
     return day, month
 
 
@@ -782,10 +781,7 @@ def search_page(
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
-        if match[3][0] == "9":  # type: ignore[index]
-            year = "19" + match[3]  # type: ignore[index]
-        else:
-            year = "20" + match[3]  # type: ignore[index]
+        year = f"19{match[3]}" if match[3][0] == "9" else f"20{match[3]}"
         candidate = "-".join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -839,7 +835,7 @@ def search_page(
         match = TWO_COMP_REGEX.match(item)
         month = match[1]  # type: ignore[index]
         if len(month) == 1:
-            month = "0" + month
+            month = f"0{month}"
         candidate = "-".join([match[2], month, "01"])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)

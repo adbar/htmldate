@@ -3,6 +3,7 @@
 Custom parsers and XPath expressions for date extraction
 """
 
+
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
@@ -90,7 +91,7 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
-FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
+FREE_TEXT_EXPRESSIONS = f"{FAST_PREPEND}/text()"
 MAX_TEXT_SIZE = 48
 
 # discard parts of the webpage
@@ -300,8 +301,7 @@ def extract_url_date(
     testurl: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
-    match = COMPLETE_URL.search(testurl)
-    if match:
+    if match := COMPLETE_URL.search(testurl):
         LOGGER.debug("found date in URL: %s", match[0])
         try:
             dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
@@ -321,9 +321,8 @@ def extract_partial_url_date(
     testurl: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Extract an approximate date out of an URL string in Y-M format"""
-    match = PARTIAL_URL.search(testurl)
-    if match:
-        dateresult = match[0] + "/01"
+    if match := PARTIAL_URL.search(testurl):
+        dateresult = f"{match[0]}/01"
         LOGGER.debug("found partial date in URL: %s", dateresult)
         try:
             dateobject = datetime(int(match[1]), int(match[2]), 1)
@@ -421,9 +420,7 @@ def custom_parse(
             LOGGER.debug("parsing result: %s", candidate)
             return candidate.strftime(outputformat)
 
-    # 2. Try YYYYMMDD, use regex
-    match = YMD_NO_SEP_PATTERN.search(string)
-    if match:
+    if match := YMD_NO_SEP_PATTERN.search(string):
         try:
             year, month, day = int(match[1][:4]), int(match[1][4:6]), int(match[1][6:8])
             candidate = datetime(year, month, day)
@@ -439,9 +436,7 @@ def custom_parse(
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 3. Try the very common YMD, Y-M-D, and D-M-Y patterns
-    match = YMD_PATTERN.search(string)
-    if match:
+    if match := YMD_PATTERN.search(string):
         try:
             # YMD
             if match.lastgroup == "day":
@@ -472,9 +467,7 @@ def custom_parse(
                 LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 4. Try the Y-M and M-Y patterns
-    match = YM_PATTERN.search(string)
-    if match:
+    if match := YM_PATTERN.search(string):
         try:
             if match.lastgroup == "month":
                 candidate = datetime(
@@ -636,7 +629,7 @@ def extract_idiosyncrasy(
             candidate = datetime(
                 int(match[parts[1]]), int(match[parts[2]]), int(match[parts[3]])
             )
-        elif len(match[parts[3]]) in (2, 4):
+        elif len(match[parts[3]]) in {2, 4}:
             # DD/MM/YY
             day, month = try_swap_values(int(match[parts[1]]), int(match[parts[2]]))
             year = correct_year(int(match[parts[3]]))
