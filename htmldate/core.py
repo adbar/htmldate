@@ -260,10 +260,31 @@ def examine_header(
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
         # safeguard
-        if not elem.attrib:  # len(elem.attrib) < 1:
+        if not elem.attrib or (
+            not "content" in elem.attrib and not "datetime" in elem.attrib
+        ):
             continue
+        # name attribute, most frequent
+        if "name" in elem.attrib:
+            attribute = elem.get("name").lower()
+            # url
+            if attribute == "og:url":
+                reserve = extract_url_date(
+                    elem.get("content"), outputformat, min_date, max_date
+                )
+            # date
+            elif attribute in DATE_ATTRIBUTES:
+                LOGGER.debug("examining meta name: %s", logstring(elem))
+                headerdate = tryfunc(elem.get("content"))
+            # modified
+            elif attribute in NAME_MODIFIED:
+                LOGGER.debug("examining meta name: %s", logstring(elem))
+                if not original_date:
+                    headerdate = tryfunc(elem.get("content"))
+                else:
+                    reserve = tryfunc(elem.get("content"))
         # property attribute
-        if "property" in elem.attrib and "content" in elem.attrib:
+        elif "property" in elem.attrib:
             attribute = elem.get("property").lower()
             # original date or modified date: override published_time
             if (original_date and attribute in DATE_ATTRIBUTES) or (
@@ -272,37 +293,13 @@ def examine_header(
             ):
                 LOGGER.debug("examining meta property: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
-        elif "name" in elem.attrib and "content" in elem.attrib:
-            # url
-            if elem.get("name").lower() == "og:url":
-                headerdate = extract_url_date(
-                    elem.get("content"), outputformat, min_date, max_date
-                )
-            # date
-            elif elem.get("name").lower() in DATE_ATTRIBUTES:
-                LOGGER.debug("examining meta name: %s", logstring(elem))
-                headerdate = tryfunc(elem.get("content"))
-            # modified
-            elif elem.get("name").lower() in NAME_MODIFIED:
-                LOGGER.debug("examining meta name: %s", logstring(elem))
-                if original_date is False:
-                    headerdate = tryfunc(elem.get("content"))
-                else:
-                    reserve = tryfunc(elem.get("content"))
-        elif "pubdate" in elem.attrib:
-            if elem.get("pubdate").lower() == "pubdate":
-                LOGGER.debug("examining meta pubdate: %s", logstring(elem))
-                headerdate = tryfunc(elem.get("content"))
+        # itemprop
         elif "itemprop" in elem.attrib:
             attribute = elem.get("itemprop").lower()
             # original: store / updated: override date
             if attribute in ITEMPROP_ATTRS:
-                attempt = None
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
-                if "datetime" in elem.attrib:
-                    attempt = tryfunc(elem.get("datetime"))
-                elif "content" in elem.attrib:
-                    attempt = tryfunc(elem.get("content"))
+                attempt = tryfunc(elem.get("datetime") or elem.get("content"))
                 # store value
                 if attempt is not None:
                     if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date) or (
@@ -324,6 +321,11 @@ def examine_header(
                         is True
                     ):
                         reserve = attempt
+        # pubdate, relatively rare
+        elif "pubdate" in elem.attrib:
+            if elem.get("pubdate").lower() == "pubdate":
+                LOGGER.debug("examining meta pubdate: %s", logstring(elem))
+                headerdate = tryfunc(elem.get("content"))
         # http-equiv, rare
         elif "http-equiv" in elem.attrib:
             attribute = elem.get("http-equiv").lower()
@@ -335,7 +337,7 @@ def examine_header(
                     reserve = tryfunc(elem.get("content"))
             elif attribute == "last-modified":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date is False:
+                if not original_date:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -474,7 +476,7 @@ def examine_abbr_elements(
                 elif not original_date and candidate > reference:
                     reference = candidate
             # class
-            if "class" in elem.attrib and elem.get("class") in CLASS_ATTRS:
+            elif elem.get("class") in CLASS_ATTRS:
                 # other attributes
                 if "title" in elem.attrib:
                     trytext = elem.get("title")
@@ -500,7 +502,7 @@ def examine_abbr_elements(
                         if reference > 0:
                             break
                 # dates, not times of the day
-                if elem.text and len(elem.text) > 10:
+                elif elem.text and len(elem.text) > 10:
                     LOGGER.debug("abbr published found: %s", elem.text)
                     reference = compare_reference(
                         reference,
@@ -993,6 +995,15 @@ def find_date(
     json_result = json_search(tree, outputformat, original_date, min_date, max_date)
     if json_result is not None:
         return json_result
+
+    # URL
+    if url is None:
+        # probe for canonical links
+        for elem in tree.iterfind('.//link[@rel="canonical"]'):
+            url = elem.get("href")
+            if url is not None:
+                # break out of the loop
+                break
 
     # deferred processing of URL info (may be moved even further down if necessary)
     if url is not None and deferred_url_extractor:

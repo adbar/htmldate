@@ -37,20 +37,21 @@ from .validators import convert_date, date_validator
 LOGGER = logging.getLogger(__name__)
 
 EXTERNAL_PARSER = DateDataParser(
+    languages=None,
+    locales=None,
+    region=None,
     settings={
-        #    'DATE_ORDER': 'DMY',
-        "PREFER_DATES_FROM": "past",
-        #    'PREFER_DAY_OF_MONTH': 'first',
-        #    'PREFER_LOCALE_DATE_ORDER': True,
-        "STRICT_PARSING": True,
+        "NORMALIZE": True,  # False may be faster
         "PARSERS": [
             p
             for p in default_parsers
             if p not in ("no-spaces-time", "relative-time", "timestamp")
         ],
+        "PREFER_DATES_FROM": "past",
+        "PREFER_LOCALE_DATE_ORDER": True,
         "RETURN_AS_TIMEZONE_AWARE": False,
-        #    'NORMALIZE': False,
-    }
+        "STRICT_PARSING": True,
+    },
 )
 
 
@@ -244,16 +245,11 @@ DISCARD_PATTERNS = re.compile(
 # \b\d{5}\s  # postal codes
 
 # use of regex module for speed?
-EN_PATTERNS = re.compile(
-    r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})',
-    re.I,
-)
-DE_PATTERNS = re.compile(
-    r"(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})", re.I
-)
-TR_PATTERNS = re.compile(
+TEXT_PATTERNS = re.compile(
+    r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
+    r"(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
-    r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",
+    r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
 )
 
@@ -658,18 +654,8 @@ def idiosyncrasies_search(
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
     result = None
-    # DE
+    # EN+DE+TR
     result = extract_idiosyncrasy(
-        DE_PATTERNS, htmlstring, outputformat, min_date, max_date
+        TEXT_PATTERNS, htmlstring, outputformat, min_date, max_date
     )
-    # EN
-    if result is None:
-        result = extract_idiosyncrasy(
-            EN_PATTERNS, htmlstring, outputformat, min_date, max_date
-        )
-    # TR
-    if result is None:
-        result = extract_idiosyncrasy(
-            TR_PATTERNS, htmlstring, outputformat, min_date, max_date
-        )
     return result
