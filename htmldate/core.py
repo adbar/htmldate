@@ -959,15 +959,17 @@ def find_date(
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     tree = load_html(htmlobject)
-    # unclear what this line is for and it impedes type checking:
-    # find_date.extensive_search = extensive_search
-    min_date, max_date = get_min_date(min_date), get_max_date(max_date)
 
-    # safety
+    # safeguards
     if tree is None:
         return None
     if outputformat != "%Y-%m-%d" and not output_format_validator(outputformat):
         return None
+
+    # define time boundaries
+    min_date, max_date = get_min_date(min_date), get_max_date(max_date)
+    # unclear what this line is for and it impedes type checking:
+    # find_date.extensive_search = extensive_search
 
     # URL
     if url is None:

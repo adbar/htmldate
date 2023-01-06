@@ -53,7 +53,7 @@ from htmldate.extractors import (
     try_date_expr,
 )
 from htmldate.meta import reset_caches
-from htmldate.settings import MIN_DATE, LATEST_POSSIBLE
+from htmldate.settings import MIN_DATE
 from htmldate.utils import (
     decode_response,
     detect_encoding,
@@ -73,6 +73,8 @@ from htmldate.validators import (
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = "%Y-%m-%d"
+
+LATEST_POSSIBLE = datetime.datetime.now()
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -1202,28 +1204,73 @@ def test_approximate_date():
 
 def test_date_validator():
     """test internal date validation"""
-    assert date_validator("2016-01-01", OUTPUTFORMAT) is True
-    assert date_validator("1998-08-08", OUTPUTFORMAT) is True
-    assert date_validator("2001-12-31", OUTPUTFORMAT) is True
-    assert date_validator("1992-07-30", OUTPUTFORMAT) is False
-    assert date_validator("1901-13-98", OUTPUTFORMAT) is False
-    assert date_validator("202-01", OUTPUTFORMAT) is False
-    assert date_validator("1922", "%Y") is False
-    assert date_validator("2004", "%Y") is True
     assert (
         date_validator(
-            "1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1990, 1, 1)
+            "2016-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
         date_validator(
-            "1991-01-02", OUTPUTFORMAT, earliest=datetime.datetime(1992, 1, 1)
+            "1998-08-08", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is True
+    )
+    assert (
+        date_validator(
+            "2001-12-31", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is True
+    )
+    assert (
+        date_validator(
+            "1992-07-30", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is False
     )
     assert (
-        date_validator("1991-01-02", OUTPUTFORMAT, latest=datetime.datetime(1990, 1, 1))
+        date_validator(
+            "1901-13-98", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is False
+    )
+    assert (
+        date_validator(
+            "202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is False
+    )
+    assert (
+        date_validator("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
+    )
+    assert (
+        date_validator("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
+    )
+    assert (
+        date_validator(
+            "1991-01-02",
+            OUTPUTFORMAT,
+            earliest=datetime.datetime(1990, 1, 1),
+            latest=LATEST_POSSIBLE,
+        )
+        is True
+    )
+    assert (
+        date_validator(
+            "1991-01-02",
+            OUTPUTFORMAT,
+            earliest=datetime.datetime(1992, 1, 1),
+            latest=LATEST_POSSIBLE,
+        )
+        is False
+    )
+    assert (
+        date_validator(
+            "1991-01-02",
+            OUTPUTFORMAT,
+            earliest=MIN_DATE,
+            latest=datetime.datetime(1990, 1, 1),
+        )
         is False
     )
     assert (

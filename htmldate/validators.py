@@ -15,19 +15,19 @@ from functools import lru_cache
 from time import mktime
 from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
-from .settings import CACHE_SIZE, LATEST_POSSIBLE, MIN_DATE
+from .settings import CACHE_SIZE, MIN_DATE
 
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.debug("date settings: %s %s", MIN_DATE, LATEST_POSSIBLE)
+LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
 def date_validator(
     date_input: Optional[Union[datetime, str]],
     outputformat: str,
-    earliest: datetime = MIN_DATE,
-    latest: datetime = LATEST_POSSIBLE,
+    earliest: datetime,
+    latest: datetime,
 ) -> bool:
     """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
     # safety check
@@ -84,8 +84,8 @@ def plausible_year_filter(
     *,
     pattern: Pattern[str],
     yearpat: Pattern[str],
-    earliest: datetime = MIN_DATE,
-    latest: datetime = LATEST_POSSIBLE,
+    earliest: datetime,
+    latest: datetime,
     incomplete: bool = False,
 ) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
@@ -218,7 +218,7 @@ def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
                 int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10])
             )
         except ValueError:
-            max_date = LATEST_POSSIBLE
+            max_date = datetime.now()
     else:
-        max_date = LATEST_POSSIBLE
+        max_date = datetime.now()
     return max_date
