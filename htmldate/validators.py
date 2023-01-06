@@ -61,6 +61,7 @@ def date_validator(
     return False
 
 
+@lru_cache(maxsize=16)
 def output_format_validator(outputformat: str) -> bool:
     """Validate the output format in the settings"""
     # test with date object

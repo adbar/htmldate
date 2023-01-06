@@ -6,7 +6,7 @@ import logging
 
 from .core import compare_reference
 from .extractors import try_date_expr
-from .validators import date_validator, filter_ymd_candidate
+from .validators import date_validator, filter_ymd_candidate, output_format_validator
 
 
 LOGGER = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ def reset_caches() -> None:
     compare_reference.cache_clear()
     date_validator.cache_clear()
     filter_ymd_candidate.cache_clear()
+    output_format_validator.cache_clear()
     try_date_expr.cache_clear()
     # charset_normalizer
     try:
