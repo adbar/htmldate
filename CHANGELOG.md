@@ -1,6 +1,13 @@
 ## Changelog
 
 
+## 1.4.1
+- better coverage of relevant HTML attributes
+- automatically define upper time bound at each function call (#70)
+- reviewed and simplified extraction code
+- cache validation for format diverging from `%Y-%m-%d`
+- updated dependencies and removed real-world tests from package
+
 ## 1.4.0
 - additional search of free text in whole document (#67)
 - optional parameter for subdaily precision with @getorca (#66)

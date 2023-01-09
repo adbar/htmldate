@@ -108,13 +108,15 @@ This Python package is tested on Linux, macOS and Windows systems; it is compati
 Optional
 ~~~~~~~~
 
-The additional library ``cchardet`` can be installed for better execution speed. They may not work on all platforms and have thus been singled out although installation is recommended:
+The additional library ``cchardet`` (or its fork ``faust-cchardet``) can be installed for better execution speed. They may not work on all platforms and have thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
     $ pip install htmldate[speed] # install with additional functionality
 
 You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
+
+The ``dateparser`` package is noticeably slower in its latest versions, version ``1.1.2`` is recommended for speed.
 
 *For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_.
 

@@ -19,6 +19,7 @@ Institutional users
 ^^^^^^^^^^^^^^^^^^^
 
 - `Media Cloud platform <https://mediacloud.org>`_ for media analysis through its `meta-extractor <https://github.com/mediacloud/meta-extractor>`_ package
+- The Internet Archive's `sandcrawler <https://github.com/internetarchive/sandcrawler>`_ which crawls and processes the scholarly web for the `Fatcat catalog <https://fatcat.wiki/>`_ of research publications
 - `SciencesPo médialab <https://medialab.sciencespo.fr>`_ through its `Minet <https://github.com/medialab/minet>`_ webmining package
 
 
