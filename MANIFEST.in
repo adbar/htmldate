@@ -2,4 +2,8 @@ include README.rst LICENSE pytest.ini CHANGELOG.md CONTRIBUTING.md
 include htmldate/py.typed
 include tests/unit_tests.py
 include tests/testlist.txt
-graft tests/cache/
+
+exclude tests/realworld_tests.py
+recursive-exclude tests/cache/
+recursive-exclude tests/eval/
+recursive-exclude tests/test_set/
