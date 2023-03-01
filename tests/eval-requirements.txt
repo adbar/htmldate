@@ -4,7 +4,7 @@ htmldate>=1.4.0
 # alternatives
 articleDateExtractor==0.20
 date_guesser==2.1.4
-goose3==3.1.12
+goose3==3.1.13
 newspaper3k==0.2.8
 news-please==1.5.22
 
