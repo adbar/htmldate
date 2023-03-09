@@ -157,7 +157,14 @@ DATE_ATTRIBUTES = {
 }
 
 
-NAME_MODIFIED = {"lastmod", "lastmodified", "last-modified", "lastDate", "modified", "utime"}
+NAME_MODIFIED = {
+    "lastdate",
+    "lastmod",
+    "lastmodified",
+    "last-modified",
+    "modified",
+    "utime",
+}
 
 
 PROPERTY_MODIFIED = {
