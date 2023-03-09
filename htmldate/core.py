@@ -131,7 +131,7 @@ DATE_ATTRIBUTES = {
     "publish_date",
     "publish-date",
     "published-date",
-    "publishedDate",
+    "publisheddate",
     "publication_date",
     "rbpubdate",
     "release_date",
