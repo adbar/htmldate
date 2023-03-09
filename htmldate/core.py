@@ -131,6 +131,7 @@ DATE_ATTRIBUTES = {
     "publish_date",
     "publish-date",
     "published-date",
+    "publishedDate",
     "publication_date",
     "rbpubdate",
     "release_date",
@@ -144,7 +145,7 @@ DATE_ATTRIBUTES = {
 }
 
 
-NAME_MODIFIED = {"lastmod", "lastmodified", "last-modified", "modified", "utime"}
+NAME_MODIFIED = {"lastmod", "lastmodified", "last-modified", "lastDate", "modified", "utime"}
 
 
 PROPERTY_MODIFIED = {
