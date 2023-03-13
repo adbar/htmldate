@@ -571,23 +571,31 @@ def examine_time_elements(
             # go for datetime
             if "datetime" in elem.attrib and len(elem.get("datetime")) > 6:
                 # shortcut: time pubdate
-                if "pubdate" in elem.attrib and elem.get("pubdate") == "pubdate":
-                    if original_date:
-                        shortcut_flag = True
-                    LOGGER.debug("time pubdate found: %s", elem.get("datetime"))
-                # first choice: entry-date + datetime attribute
+                if (
+                    "pubdate" in elem.attrib
+                    and elem.get("pubdate") == "pubdate"
+                    and original_date
+                ):
+                    shortcut_flag = True
+                    LOGGER.debug(
+                        "shortcut for time pubdate found: %s", elem.get("datetime")
+                    )
+                # shortcuts: class attribute
                 elif "class" in elem.attrib:
-                    if elem.get("class").startswith("entry-date") or elem.get(
-                        "class"
-                    ).startswith("entry-time"):
-                        # shortcut
-                        if original_date:
-                            shortcut_flag = True
-                        LOGGER.debug("time/datetime found: %s", elem.get("datetime"))
-                    # updated time
-                    elif elem.get("class") == "updated" and not original_date:
+                    if original_date and (
+                        elem.get("class").startswith("entry-date")
+                        or elem.get("class").startswith("entry-time")
+                    ):
+                        shortcut_flag = True
                         LOGGER.debug(
-                            "updated time/datetime found: %s", elem.get("datetime")
+                            "shortcut for time/datetime found: %s", elem.get("datetime")
+                        )
+                    # updated time
+                    elif not original_date and elem.get("class") == "updated":
+                        shortcut_flag = True
+                        LOGGER.debug(
+                            "shortcut for updated time/datetime found: %s",
+                            elem.get("datetime"),
                         )
                 # datetime attribute
                 else:
@@ -613,11 +621,9 @@ def examine_time_elements(
                         min_date,
                         max_date,
                     )
-                    if reference > 0:
-                        break
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
-                LOGGER.debug("time/datetime found: %s", elem.text)
+                LOGGER.debug("time/datetime found in text: %s", elem.text)
                 reference = compare_reference(
                     reference,
                     elem.text,

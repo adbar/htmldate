@@ -392,9 +392,9 @@ def test_exact_date():
         )
         == "2011-09-27"
     )
-    # problem here:
-    # assert find_date('<html><body><time datetime="2011-09-27" class="entry-date"></time><time datetime="2011-09-28" class="updated"></time></body></html>', original_date=False) == '2011-09-28'
-    # assert find_date('<html><body><time datetime="2011-09-28" class="updated"></time><time datetime="2011-09-27" class="entry-date"></time></body></html>', original_date=True) == '2011-09-27'
+    # updated vs original in time elements
+    assert find_date('<html><body><time datetime="2011-09-27" class="entry-date"></time><time datetime="2011-09-28" class="updated"></time></body></html>', original_date=False) == '2011-09-28'
+    assert find_date('<html><body><time datetime="2011-09-28" class="updated"></time><time datetime="2011-09-27" class="entry-date"></time></body></html>', original_date=True) == '2011-09-27'
     assert (
         find_date(
             '<html><body><time datetime="2011-09-28" class="updated"></time><time datetime="2011-09-27" class="entry-date"></time></body></html>',
@@ -1151,7 +1151,7 @@ def test_external_date_parser():
     )
     assert external_date_parser("Random text with 2020", OUTPUTFORMAT) is None
     # https://github.com/scrapinghub/dateparser/issues/333
-    # assert external_date_parser('1 January 0001', '%d %B %Y') in ('01 January 1', '01 January 0001')
+    assert external_date_parser('1 January 0001', '%d %B %Y') in ('01 January 1', '01 January 0001')
     assert external_date_parser("1 January 1900", "%d %B %Y") == "01 January 1900"
     # https://github.com/scrapinghub/dateparser/issues/406
     assert (
