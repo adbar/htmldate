@@ -72,11 +72,10 @@ def output_format_validator(outputformat: str) -> bool:
     except (NameError, TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
         return False
-    else:
-        # test in abstracto
-        if not isinstance(outputformat, str) or "%" not in outputformat:
-            LOGGER.error("malformed output format: %s", outputformat)
-            return False
+    # test in abstracto
+    if not isinstance(outputformat, str) or "%" not in outputformat:
+        LOGGER.error("malformed output format: %s", outputformat)
+        return False
     return True
 
 

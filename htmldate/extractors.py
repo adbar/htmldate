@@ -377,9 +377,8 @@ def regex_parse(string: str) -> Optional[datetime]:
         dateobject = datetime(year, month, day)
     except ValueError:
         return None
-    else:
-        LOGGER.debug("multilingual text found: %s", dateobject)
-        return dateobject
+    LOGGER.debug("multilingual text found: %s", dateobject)
+    return dateobject
 
 
 def custom_parse(

@@ -304,7 +304,12 @@ def test_exact_date():
     ## other expressions in document body
     assert find_date(load_mock_page("http://www.stuttgart.de/")) == "2017-10-09"
     ## in document body
-    # assert find_date(load_mock_page('https://github.com/adbar/htmldate')) == '2019-01-01'
+    assert (
+        find_date(
+            load_mock_page("https://github.com/adbar/htmldate"), original_date=False
+        )
+        == "2017-11-28"
+    )  # was '2019-01-01'
     assert (
         find_date(
             load_mock_page("https://github.com/adbar/htmldate"), original_date=True
@@ -601,7 +606,7 @@ def test_approximate_date():
             load_mock_page("https://bayern.de/"),
         )
         == "2017-10-06"
-    )  # most probably 2017-10-06
+    )
     assert (
         find_date(
             load_mock_page("https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/")
@@ -685,16 +690,22 @@ def test_readme_examples():
         '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
     )
     assert find_date(mytree) == "2016-07-12"
-    # print(find_date(load_mock_page('https://www.gnu.org/licenses/gpl-3.0.en.html'), outputformat='%d %B %Y', original_date=True)) # could also be: 29 June 2007
     assert (
         find_date(
             load_mock_page("https://www.gnu.org/licenses/gpl-3.0.en.html"),
             outputformat="%d %B %Y",
         )
         == "18 November 2016"
-    )
-    # print(find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/'), original_date=False))
-    # assert find_date(load_mock_page('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/')) == '2019-06-24'
+    )  # could also be: 29 June 2007
+    assert (
+        find_date(
+            load_mock_page(
+                "https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/"
+            ),
+            original_date=False,
+        )
+        == "2016-06-23"
+    )  # was '2019-06-24'
     assert (
         find_date(
             load_mock_page(
@@ -783,7 +794,6 @@ def test_cli():
 
 
 if __name__ == "__main__":
-
     # meta
     test_readme_examples()
     test_dependencies()

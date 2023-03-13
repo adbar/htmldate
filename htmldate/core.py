@@ -112,7 +112,6 @@ DATE_ATTRIBUTES = {
     "dcterms.created",
     "dcterms.date",
     "dcterms.issued",
-    "dc.date.issued",
     "dc:created",
     "dc:date",
     "displaydate",
@@ -122,13 +121,11 @@ DATE_ATTRIBUTES = {
     "mediator_published_time",
     "meta",  # too loose?
     # Open Graph: https://opengraphprotocol.org/
-    "og:publish_date",
-    "og:published_time",
-    "og:article:published_time",
     "og:article:published",
     "og:article:published_time",
     "og:datepublished",
     "og:pubdate",
+    "og:publish_date",
     "og:published_time",
     "og:question:published_time",
     "originalpublicationdate",

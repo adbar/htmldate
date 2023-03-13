@@ -53,8 +53,7 @@ def isutf8(data: bytes) -> bool:
         data.decode("UTF-8")
     except UnicodeDecodeError:
         return False
-    else:
-        return True
+    return True
 
 
 def detect_encoding(bytesobject: bytes) -> List[str]:
