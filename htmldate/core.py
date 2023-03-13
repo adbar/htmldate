@@ -1000,19 +1000,18 @@ def find_date(
     # find_date.extensive_search = extensive_search
 
     # URL
+    url_result = None
     if url is None:
         # probe for canonical links
-        for elem in tree.iterfind('.//link[@rel="canonical"]'):
-            url = elem.get("href")
-            if url is not None:
-                # break out of the loop
-                break
+        urlelem = tree.find('.//link[@rel="canonical"]')
+        if urlelem is not None:
+            url = urlelem.get("href")
 
     # direct processing of URL info
-    if not deferred_url_extractor and url is not None:
-        dateresult = extract_url_date(url, outputformat, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
+    if url is not None:
+        url_result = extract_url_date(url, outputformat, min_date, max_date)
+        if url_result is not None and not deferred_url_extractor:
+            return url_result
 
     # first, try header
     header_result = examine_header(
@@ -1026,20 +1025,9 @@ def find_date(
     if json_result is not None:
         return json_result
 
-    # URL
-    if url is None:
-        # probe for canonical links
-        for elem in tree.iterfind('.//link[@rel="canonical"]'):
-            url = elem.get("href")
-            if url is not None:
-                # break out of the loop
-                break
-
     # deferred processing of URL info (may be moved even further down if necessary)
-    if url is not None and deferred_url_extractor:
-        dateresult = extract_url_date(url, outputformat, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
+    if deferred_url_extractor and url_result is not None:
+        return url_result
 
     # try abbr elements
     abbr_result = examine_abbr_elements(

@@ -12,7 +12,7 @@ import re
 
 from datetime import datetime
 from functools import lru_cache
-from typing import List, Optional, Pattern, Tuple
+from typing import List, Optional, Tuple
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
@@ -611,50 +611,37 @@ def timestamp_search(
     return None
 
 
-def extract_idiosyncrasy(
-    idiosyncrasy: Pattern[str],
-    htmlstring: str,
-    outputformat: str,
-    min_date: datetime,
-    max_date: datetime,
-) -> Optional[str]:
-    """Look for a precise pattern throughout the web page"""
-    candidate = None
-    match = idiosyncrasy.search(htmlstring)
-    parts = [0, 1, 2, 3] if match and match[3] else []  # because len(None) has no len
-    try:
-        parts = [0, 4, 5, 6] if match and match[6] else parts
-    except IndexError:
-        LOGGER.debug("index error in idiosyncrasies: %s", match[0])  # type: ignore[index]
-    if match and parts:
-        if match[parts[1]] is not None and len(match[parts[1]]) == 4:
-            candidate = datetime(
-                int(match[parts[1]]), int(match[parts[2]]), int(match[parts[3]])
-            )
-        elif len(match[parts[3]]) in (2, 4):
-            # DD/MM/YY
-            day, month = try_swap_values(int(match[parts[1]]), int(match[parts[2]]))
-            year = correct_year(int(match[parts[3]]))
-            try:
-                candidate = datetime(year, month, day)
-            except ValueError:
-                LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-    if (
-        date_validator(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date)
-        is True
-    ):
-        LOGGER.debug("idiosyncratic pattern found: %s", match[0])  # type: ignore[index]
-        return candidate.strftime(outputformat)  # type: ignore
-    return None
-
-
 def idiosyncrasies_search(
     htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
-    result = None
     # EN+DE+TR
-    result = extract_idiosyncrasy(
-        TEXT_PATTERNS, htmlstring, outputformat, min_date, max_date
-    )
-    return result
+    match = TEXT_PATTERNS.search(htmlstring)
+    if not match:
+        return None
+
+    parts = list(filter(None, match.groups()))
+    if len(parts) != 3:
+        return None
+
+    candidate = None
+
+    if len(parts[0]) == 4:
+        candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+    elif len(parts[2]) in (2, 4):
+        # DD/MM/YY
+        day, month = try_swap_values(int(parts[0]), int(parts[1]))
+        year = correct_year(int(parts[2]))
+        try:
+            candidate = datetime(year, month, day)
+        except ValueError:
+            LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+
+    if (
+        date_validator(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date)
+        is True
+    ):
+        LOGGER.debug("idiosyncratic pattern found: %s", match[0])
+        return candidate.strftime(outputformat)  # type: ignore[union-attr]
+
+    return None
