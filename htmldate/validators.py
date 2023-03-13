@@ -196,7 +196,7 @@ def check_extracted_reference(
 
 def _get_date(
     date_str: Optional[Union[datetime, str]],
-    default: Optional[datetime]=None,
+    default: Optional[datetime] = None,
 ) -> datetime:
     if date_str is None:
         return default
@@ -205,7 +205,7 @@ def _get_date(
     try:
         return datetime.fromisoformat(date_str)
     except (ValueError, TypeError):
-        LOGGER.warning('Invalid datetime %r. Should be isoformat. Ignoring.', date_str)
+        LOGGER.warning("Invalid datetime %r. Should be isoformat. Ignoring.", date_str)
         return default
 
 
