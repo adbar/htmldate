@@ -194,10 +194,7 @@ def check_extracted_reference(
     return None
 
 
-def _get_date(
-    date_str: Optional[Union[datetime, str]],
-    default: Optional[datetime] = None,
-) -> datetime:
+def _get_date(date_str: Optional[Union[datetime, str]], default: datetime) -> datetime:
     if date_str is None:
         return default
     if isinstance(date_str, datetime):
