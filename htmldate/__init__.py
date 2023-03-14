@@ -12,6 +12,13 @@ __version__ = "1.4.1"
 
 import logging
 
+try:
+    datetime.fromisoformat  # type: ignore[attr-defined]
+except AttributeError:  # Python 3.6
+    from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
+
+    MonkeyPatch.patch_fromisoformat()
+
 from .core import find_date
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
