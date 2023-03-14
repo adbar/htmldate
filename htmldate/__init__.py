@@ -11,6 +11,7 @@ __version__ = "1.4.1"
 
 
 import logging
+from datetime import datetime
 
 try:
     datetime.fromisoformat  # type: ignore[attr-defined]
