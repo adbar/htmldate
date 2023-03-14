@@ -194,23 +194,25 @@ def check_extracted_reference(
     return None
 
 
-def _get_date(date_str: Optional[Union[datetime, str]], default: datetime) -> datetime:
-    if date_str is None:
-        return default
-    if isinstance(date_str, datetime):
-        return date_str
-    try:
-        return datetime.fromisoformat(date_str)  # type: ignore
-    except (ValueError, TypeError):
-        LOGGER.warning("Invalid datetime %r. Should be isoformat. Ignoring.", date_str)
-        return default
+def check_date_input(
+    date_object: Optional[Union[datetime, str]], default: datetime
+) -> datetime:
+    "Check if the input is a usable datetime or ISO date string, return default otherwise"
+    if isinstance(date_object, datetime):
+        return date_object
+    elif isinstance(date_object, str):
+        try:
+            return datetime.fromisoformat(date_object)  # type: ignore
+        except ValueError:
+            LOGGER.warning("invalid datetime string: %s", date_object)
+    return default  # no input or error thrown
 
 
 def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
     """Validates the minimum date and/or defaults to earliest plausible date"""
-    return _get_date(min_date, MIN_DATE)
+    return check_date_input(min_date, MIN_DATE)
 
 
 def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
     """Validates the maximum date and/or defaults to latest plausible date"""
-    return _get_date(max_date, datetime.now())
+    return check_date_input(max_date, datetime.now())
