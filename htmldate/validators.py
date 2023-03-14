@@ -200,7 +200,7 @@ def _get_date(date_str: Optional[Union[datetime, str]], default: datetime) -> da
     if isinstance(date_str, datetime):
         return date_str
     try:
-        return datetime.fromisoformat(date_str)
+        return datetime.fromisoformat(date_str)  # type: ignore
     except (ValueError, TypeError):
         LOGGER.warning("Invalid datetime %r. Should be isoformat. Ignoring.", date_str)
         return default
