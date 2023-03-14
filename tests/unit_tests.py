@@ -616,6 +616,14 @@ def test_exact_date():
         )
         == "1991-01-02"
     )
+    assert (
+        find_date(
+            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+01:00"></meta><body></body></html>',
+            min_date=datetime.datetime(1990, 1, 1),
+        )
+        == "1991-01-02"
+    )
+    
 
     # wild text in body
     assert (
