@@ -200,7 +200,7 @@ def check_date_input(
     "Check if the input is a usable datetime or ISO date string, return default otherwise"
     if isinstance(date_object, datetime):
         return date_object
-    elif isinstance(date_object, str):
+    if isinstance(date_object, str):
         try:
             return datetime.fromisoformat(date_object)  # type: ignore
         except ValueError:
