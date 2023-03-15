@@ -63,10 +63,10 @@ def parse_args(args: Any) -> Any:
         "--original", help="original date prioritized", action="store_true"
     )
     argsparser.add_argument(
-        "-min", "--mindate", help="earliest acceptable date (YYYY-MM-DD)", type=str
+        "-min", "--mindate", help="earliest acceptable date (ISO 8601 YMD)", type=str
     )
     argsparser.add_argument(
-        "-max", "--maxdate", help="latest acceptable date (YYYY-MM-DD)", type=str
+        "-max", "--maxdate", help="latest acceptable date (ISO 8601 YMD)", type=str
     )
     argsparser.add_argument("-u", "--URL", help="custom URL download", type=str)
     argsparser.add_argument(

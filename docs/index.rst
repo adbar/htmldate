@@ -220,9 +220,9 @@ For usage instructions see ``htmldate -h``:
                               name of input file for batch processing (similar to wget -i)
         --original            original date prioritized
         -min MINDATE, --mindate MINDATE
-                              earliest acceptable date (YYYY-MM-DD)
+                              earliest acceptable date (ISO 8601 YMD)
         -max MAXDATE, --maxdate MAXDATE
-                              latest acceptable date (YYYY-MM-DD)
+                              latest acceptable date (ISO 8601 YMD)
         -u URL, --URL URL     custom URL download
         -v, --verbose         increase output verbosity
         --version             show version information and exit

@@ -14,7 +14,7 @@ from collections import Counter
 from copy import deepcopy
 from datetime import datetime
 from functools import lru_cache, partial
-from typing import Match, Optional, Pattern, Tuple, Counter as Counter_Type
+from typing import Match, Optional, Pattern, Tuple, Union, Counter as Counter_Type
 
 from lxml.html import HtmlElement, tostring  # type: ignore
 
@@ -263,11 +263,11 @@ def examine_header(
         one (e.g. last modified, updated time)
     :type original_date: boolean
     :param min_date:
-        Set the earliest acceptable date manually (YYYY-MM-DD format)
-    :type min_date: string
+        Set the earliest acceptable date manually (ISO 8601 YMD format)
+    :type min_date: datetime
     :param max_date:
-        Set the latest acceptable date manually (YYYY-MM-DD format)
-    :type max_date: string
+        Set the latest acceptable date manually (ISO 8601 YMD format)
+    :type max_date: datetime
     :return: Returns a valid date expression as a string, or None
 
     """
@@ -673,6 +673,12 @@ def search_page(
         Look for original date (e.g. publication date) instead of most recent
         one (e.g. last modified, updated time)
     :type original_date: boolean
+    :param min_date:
+        Set the earliest acceptable date manually (ISO 8601 YMD format)
+    :type min_date: datetime
+    :param max_date:
+        Set the latest acceptable date manually (ISO 8601 YMD format)
+    :type max_date: datetime
     :return: Returns a valid date expression as a string, or None
 
     """
@@ -941,8 +947,8 @@ def find_date(
     outputformat: str = "%Y-%m-%d",
     url: Optional[str] = None,
     verbose: bool = False,
-    min_date: Optional[datetime] = None,
-    max_date: Optional[datetime] = None,
+    min_date: Optional[Union[datetime, str]] = None,
+    max_date: Optional[Union[datetime, str]] = None,
     deferred_url_extractor: bool = False,
 ) -> Optional[str]:
     """
@@ -971,11 +977,11 @@ def find_date(
         Set verbosity level for debugging
     :type verbose: boolean
     :param min_date:
-        Set the earliest acceptable date manually (YYYY-MM-DD format)
-    :type min_date: string
+        Set the earliest acceptable date manually (ISO 8601 YMD format)
+    :type min_date: datetime, string
     :param max_date:
-        Set the latest acceptable date manually (YYYY-MM-DD format)
-    :type max_date: string
+        Set the latest acceptable date manually (ISO 8601 YMD format)
+    :type max_date: datetime, string
     :param deferred_url_extractor:
         Use url extractor as backup only to prioritize full expressions,
         e.g. of the type `%Y-%m-%d %H:%M:%S`

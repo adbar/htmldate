@@ -22,13 +22,6 @@ from dateutil.parser import parse as dateutil_parse
 
 from lxml.html import HtmlElement  # type: ignore
 
-try:
-    datetime.fromisoformat  # type: ignore[attr-defined]
-except AttributeError:  # Python 3.6
-    from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
-
-    MonkeyPatch.patch_fromisoformat()
-
 # own
 from .settings import CACHE_SIZE
 from .validators import convert_date, date_validator

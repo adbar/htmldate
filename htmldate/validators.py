@@ -194,31 +194,25 @@ def check_extracted_reference(
     return None
 
 
+def check_date_input(
+    date_object: Optional[Union[datetime, str]], default: datetime
+) -> datetime:
+    "Check if the input is a usable datetime or ISO date string, return default otherwise"
+    if isinstance(date_object, datetime):
+        return date_object
+    if isinstance(date_object, str):
+        try:
+            return datetime.fromisoformat(date_object)  # type: ignore
+        except ValueError:
+            LOGGER.warning("invalid datetime string: %s", date_object)
+    return default  # no input or error thrown
+
+
 def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
     """Validates the minimum date and/or defaults to earliest plausible date"""
-    if min_date is not None and isinstance(min_date, str):
-        try:
-            # internal conversion from Y-M-D format
-            min_date = datetime(
-                int(min_date[:4]), int(min_date[5:7]), int(min_date[8:10])
-            )
-        except ValueError:
-            min_date = MIN_DATE
-    else:
-        min_date = MIN_DATE
-    return min_date
+    return check_date_input(min_date, MIN_DATE)
 
 
 def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
     """Validates the maximum date and/or defaults to latest plausible date"""
-    if max_date is not None and isinstance(max_date, str):
-        try:
-            # internal conversion from Y-M-D format
-            max_date = datetime(
-                int(max_date[:4]), int(max_date[5:7]), int(max_date[8:10])
-            )
-        except ValueError:
-            max_date = datetime.now()
-    else:
-        max_date = datetime.now()
-    return max_date
+    return check_date_input(max_date, datetime.now())
