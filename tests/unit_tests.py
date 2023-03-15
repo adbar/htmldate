@@ -125,13 +125,13 @@ def test_input():
     assert get_min_date(None).date() == datetime.date(1995, 1, 1)
     assert get_min_date("3030-30-50").date() == datetime.date(1995, 1, 1)
     assert get_min_date(datetime.datetime(1990, 1, 1)) == datetime.datetime(1990, 1, 1)
-    assert get_min_date("2020-02-20 13:30:00") == datetime.datetime(2020, 2, 20, 13, 30)
+    assert get_min_date("2020-02-20T13:30:00") == datetime.datetime(2020, 2, 20, 13, 30)
 
     assert get_max_date("2020-02-20").date() == datetime.date(2020, 2, 20)
     assert get_max_date(None).date() == datetime.date.today()
     assert get_max_date("3030-30-50").date() == datetime.date.today()
     assert get_max_date(datetime.datetime(3000, 1, 1)) == datetime.datetime(3000, 1, 1)
-    assert get_max_date("2020-02-20 13:30:00") == datetime.datetime(2020, 2, 20, 13, 30)
+    assert get_max_date("2020-02-20T13:30:00") == datetime.datetime(2020, 2, 20, 13, 30)
 
 
 def test_sanity():
@@ -637,15 +637,15 @@ def test_exact_date():
     )
     assert (
         find_date(
-            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+01:00"></meta><body></body></html>',
-            min_date="1991-01-02 01:02:00",
+            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+00:00"></meta><body></body></html>',
+            min_date="1991-01-02T01:02:00+00:00",
         )
         is None
     )
     assert (
         find_date(
-            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+01:00"></meta><body></body></html>',
-            min_date="1991-01-02 01:00:00",
+            '<html><meta><meta property="article:published_time" content="1991-01-02T01:01:00+00:00"></meta><body></body></html>',
+            min_date="1991-01-02T01:00:00+00:00",
         )
         == "1991-01-02"
     )
