@@ -14,8 +14,7 @@ from setuptools import setup
 extras = {
     "speed": [
         "cchardet >= 2.1.7; python_version < '3.11'",  # build issue
-        "dateparser == 1.1.2",  # 1.1.3+ slower
-        "faust-cchardet >= 2.1.14; python_version >= '3.11'",  # fix for build
+        "faust-cchardet >= 2.1.18; python_version >= '3.11'",  # fix for build
         "urllib3[brotli]",
     ],
 }
@@ -115,7 +114,8 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "backports-datetime-fromisoformat; python_version < '3.7'",
-        "charset_normalizer >= 3.0.1",
+        "charset_normalizer >= 3.0.1; python_version < '3.7'",
+        "charset_normalizer >= 3.1.0; python_version >= '3.7'",
         "dateparser >= 1.1.2",  # 1.1.3+ slower
         "lxml >= 4.9.2",
         "python-dateutil >= 2.8.2",

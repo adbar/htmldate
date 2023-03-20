@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.4.2
+- support min_date/max_date as datetimes or datetime strings with @kernc (#73)
+- add date attributes to HTML extraction with @kernc (#74)
+- fix for extraction of updated and original dates in time elements
+- code refactoring and maintenance
 
 ## 1.4.1
 - better coverage of relevant HTML attributes
