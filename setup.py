@@ -119,7 +119,8 @@ setup(
         "dateparser >= 1.1.2",  # 1.1.3+ slower
         "lxml >= 4.9.2",
         "python-dateutil >= 2.8.2",
-        "urllib3 >= 1.26, <2",
+        "urllib3 >= 1.26, < 2; python_version < '3.7'",
+        "urllib3 >= 2.0.1, < 3; python_version >= '3.7'",
     ],
     extras_require=extras,
     entry_points={
