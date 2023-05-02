@@ -1,1 +1,1 @@
-https://httpbin.org/html
+https://httpbun.org/html

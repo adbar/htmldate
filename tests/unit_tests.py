@@ -99,7 +99,7 @@ def test_input():
         load_html("<html><body>\x2f\x2e\x9f</body></html>".encode("latin-1"))
         is not None
     )
-    assert load_html("https://httpbin.org/html") is not None
+    assert load_html("https://httpbun.org/html") is not None
     # encoding declaration
     assert (
         load_html(
@@ -1705,7 +1705,7 @@ def test_cli():
         process_args(args)
     assert err.type == SystemExit
     # meaningful test
-    testargs = ["", "-u", "https://httpbin.org/html"]
+    testargs = ["", "-u", "https://httpbun.org/html"]
     with patch.object(sys, "argv", testargs):
         args = parse_args(testargs)
     f = io.StringIO()
@@ -1718,7 +1718,7 @@ def test_cli():
     f = io.StringIO()
     with redirect_stdout(f):
         process_args(args)
-    assert f.getvalue() == "https://httpbin.org/html\tNone\n"
+    assert f.getvalue() == "https://httpbun.org/html\tNone\n"
 
 
 def test_download():
@@ -1730,11 +1730,11 @@ def test_download():
     teststring = fetch_url(url)
     assert teststring is None
     assert examine(teststring) is None
-    url = "https://httpbin.org/links/2/2"
+    url = "https://httpbun.org/links/2/2"
     teststring = fetch_url(url)
     assert teststring is not None
     assert examine(teststring) is None
-    url = "https://httpbin.org/html"
+    url = "https://httpbun.org/html"
     teststring = fetch_url(url)
     assert teststring is not None
     assert examine(teststring, False) is None
