@@ -1,5 +1,8 @@
 ## Changelog
 
+## 1.4.3
+- maintenance release: upgrade `urllib3` dependency
+
 ## 1.4.2
 - support min_date/max_date as datetimes or datetime strings with @kernc (#73)
 - add date attributes to HTML extraction with @kernc (#74)
