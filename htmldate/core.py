@@ -408,8 +408,9 @@ def select_candidate(
         year_match = yearpat.search(pattern)
         if year_match:
             years[i] = year_match[1]
+            dateobject = datetime(int(year_match[1]), 1, 1)
             validation[i] = date_validator(
-                year_match[1], "%Y", earliest=min_date, latest=max_date
+                dateobject, "%Y", earliest=min_date, latest=max_date
             )
 
     # safety net: plausibility
@@ -694,12 +695,13 @@ def search_page(
     )
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
+        dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
             date_validator(bestmatch[0], "%Y", earliest=min_date, latest=max_date)
             is True
         ):
             LOGGER.debug("copyright year/footer pattern found: %s", bestmatch[0])
-            copyear = int(bestmatch[0])
+            copyear = dateobject.year
 
     # 3 components
     LOGGER.debug("3 components")
@@ -850,12 +852,17 @@ def search_page(
         max_date,
     )
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[1], bestmatch[2], "01"])
+        dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
         if date_validator(
-            pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date
-        ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
-            LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
-            return convert_date(pagedate, "%Y-%m-%d", outputformat)
+            dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date
+        ) is True and (copyear == 0 or dateobject.year >= copyear):
+            LOGGER.debug(
+                'date found for pattern "%s": %s, %s',
+                YYYYMM_PATTERN,
+                bestmatch[1],
+                bestmatch[2],
+            )
+            return dateobject.strftime(outputformat)
 
     # 2 components, second option
     candidates = plausible_year_filter(
@@ -893,7 +900,7 @@ def search_page(
         return result
 
     # try full-blown text regex on all HTML?
-    dateobject = regex_parse(htmlstring)
+    dateobject = regex_parse(htmlstring)  # type: ignore[assignment]
     # todo: find all candidates and disambiguate?
     if date_validator(
         dateobject, outputformat, earliest=min_date, latest=max_date
@@ -925,14 +932,16 @@ def search_page(
         max_date,
     )
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[0], "01", "01"])
+        dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
-            date_validator(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date)
+            date_validator(dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date)
             is True
-            and int(bestmatch[0]) >= copyear
+            and int(dateobject.year) >= copyear
         ):
-            LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
-            return convert_date(pagedate, "%Y-%m-%d", outputformat)
+            LOGGER.debug(
+                'date found for pattern "%s": %s', SIMPLE_PATTERN, bestmatch[0]
+            )
+            return dateobject.strftime(outputformat)
 
     return None
 
