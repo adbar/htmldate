@@ -393,8 +393,8 @@ def select_candidate(
         if match:
             return match
 
-    # select among most frequent
-    firstselect = occurrences.most_common(10)  # MAX_POSSIBLE_CANDIDATES ?
+    # select among most frequent: more than 10? more than 2 candidates?
+    firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
     bestones = sorted(firstselect, reverse=not original_date)[:2]
@@ -402,8 +402,8 @@ def select_candidate(
 
     # plausibility heuristics
     patterns, counts = zip(*bestones)
-    years = ["", ""]
-    validation = [False, False]
+    years = [""]*len(bestones)
+    validation = [False]*len(bestones)
     for i, pattern in enumerate(patterns):
         year_match = yearpat.search(pattern)
         if year_match:
