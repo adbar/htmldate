@@ -282,8 +282,10 @@ def examine_header(
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
         # safeguard
-        if not elem.attrib or (
-            not "content" in elem.attrib and not "datetime" in elem.attrib
+        if (
+            not elem.attrib
+            or "content" not in elem.attrib
+            and "datetime" not in elem.attrib
         ):
             continue
         # name attribute, most frequent
@@ -383,54 +385,49 @@ def select_candidate(
     max_date: datetime,
 ) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
-    match, year1, year2 = None, None, None
-    # LOGGER.debug('occurrences: %s', occurrences)
-    if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
+    if not occurrences or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
         return None
+
     if len(occurrences) == 1:
-        match = catch.search(list(occurrences.keys())[0])
+        match = catch.search(next(iter(occurrences)))
         if match:
             return match
+
     # select among most frequent
-    firstselect = occurrences.most_common(10)
+    firstselect = occurrences.most_common(10)  # MAX_POSSIBLE_CANDIDATES ?
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    if original_date:
-        bestones = sorted(firstselect)[:2]
-    else:
-        bestones = sorted(firstselect, reverse=True)[:2]
-
-    first_pattern, first_count = bestones[0][0], bestones[0][1]
-    second_pattern, second_count = bestones[1][0], bestones[1][1]
+    bestones = sorted(firstselect, reverse=not original_date)[:2]
     LOGGER.debug("bestones: %s", bestones)
+
     # plausibility heuristics
-    validation1, validation2 = False, False
-    match1 = yearpat.search(first_pattern)
-    if match1 is not None:
-        year1 = match1[1]
-        validation1 = date_validator(year1, "%Y", earliest=min_date, latest=max_date)
-    match2 = yearpat.search(second_pattern)
-    if match2 is not None:
-        year2 = match2[1]
-        validation2 = date_validator(year2, "%Y", earliest=min_date, latest=max_date)
+    patterns, counts = zip(*bestones)
+    years = ["", ""]
+    validation = [False, False]
+    for i, pattern in enumerate(patterns):
+        year_match = yearpat.search(pattern)
+        if year_match:
+            years[i] = year_match[1]
+            validation[i] = date_validator(
+                year_match[1], "%Y", earliest=min_date, latest=max_date
+            )
+
     # safety net: plausibility
-    if validation1 is True and validation2 is True:
+    match = None
+    if all(validation):
         # same number of occurrences: always take top of the pile?
-        if first_count == second_count:
-            match = catch.search(first_pattern)
+        if counts[0] == counts[1]:
+            match = catch.search(patterns[0])
         # safety net: newer date but up to 50% less frequent
-        elif year2 != year1 and second_count / first_count > 0.5:
-            match = catch.search(second_pattern)
+        elif years[1] != years[0] and counts[1] / counts[0] > 0.5:
+            match = catch.search(patterns[1])
         # not newer or hopefully not significant
         else:
-            match = catch.search(first_pattern)
-    elif validation1 is False and validation2 is True:
-        match = catch.search(second_pattern)
-    elif validation1 is True and validation2 is False:
-        match = catch.search(first_pattern)
+            match = catch.search(patterns[0])
+    elif any(validation):
+        match = catch.search(patterns[validation.index(True)])
     else:
-        LOGGER.debug("no suitable candidate: %s %s", year1, year2)
-        return None
+        LOGGER.debug("no suitable candidate: %s %s", years[0], years[1])
     return match
 
 

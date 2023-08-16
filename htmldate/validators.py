@@ -94,7 +94,7 @@ def plausible_year_filter(
     toremove = set()
     # LOGGER.debug('occurrences: %s', occurrences)
     # look for implausible dates
-    for item in occurrences.keys():
+    for item in occurrences:
         # scrap implausible dates
         year_match = yearpat.search(item)
         if year_match is not None:
