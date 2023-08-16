@@ -282,8 +282,10 @@ def examine_header(
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
         # safeguard
-        if not elem.attrib or (
-            not "content" in elem.attrib and not "datetime" in elem.attrib
+        if (
+            not elem.attrib
+            or "content" not in elem.attrib
+            and "datetime" not in elem.attrib
         ):
             continue
         # name attribute, most frequent
@@ -644,10 +646,10 @@ def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
     """Normalize string output by adding "0" if necessary."""
     day = match[1]  # type: ignore[index]
     if len(day) == 1:
-        day = "0" + day
+        day = f"0{day}"
     month = match[2]  # type: ignore[index]
     if len(month) == 1:
-        month = "0" + month
+        month = f"0{month}"
     return day, month
 
 
@@ -818,10 +820,7 @@ def search_page(
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
         day, month = normalize_match(match)
-        if match[3][0] == "9":  # type: ignore[index]
-            year = "19" + match[3]  # type: ignore[index]
-        else:
-            year = "20" + match[3]  # type: ignore[index]
+        year = f"19{match[3]}" if match[3][0] == "9" else f"20{match[3]}"
         candidate = "-".join([year, month, day])
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -875,7 +874,7 @@ def search_page(
         match = TWO_COMP_REGEX.match(item)
         month = match[1]  # type: ignore[index]
         if len(month) == 1:
-            month = "0" + month
+            month = f"0{month}"
         candidate = "-".join([match[2], month, "01"])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
