@@ -402,8 +402,8 @@ def select_candidate(
 
     # plausibility heuristics
     patterns, counts = zip(*bestones)
-    years = [""]*len(bestones)
-    validation = [False]*len(bestones)
+    years = [""] * len(bestones)
+    validation = [False] * len(bestones)
     for i, pattern in enumerate(patterns):
         year_match = yearpat.search(pattern)
         if year_match:
