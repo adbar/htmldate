@@ -14,7 +14,7 @@ import logging
 from datetime import datetime
 
 try:
-    datetime.fromisoformat
+    datetime.fromisoformat  # type: ignore[attr-defined]
 except AttributeError:  # Python 3.6
     from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
 
