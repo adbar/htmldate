@@ -48,12 +48,9 @@ def date_validator(
             return False
     else:
         dateobject = date_input
-    # basic year validation
-    year = int(datetime.strftime(dateobject, "%Y"))
-    min_year, max_year = earliest.year, latest.year
-    # full validation: not newer than today or stored variable
+    # year first, then full validation: not newer than today or stored variable
     if (
-        min_year <= year <= max_year
+        earliest.year <= dateobject.year <= latest.year
         and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
     ):
         return True
@@ -89,34 +86,26 @@ def plausible_year_filter(
     incomplete: bool = False,
 ) -> Counter_Type[str]:
     """Filter the date patterns to find plausible years only"""
-    # slow!
-    occurrences = Counter(pattern.findall(htmlstring))
-    toremove = set()
-    # LOGGER.debug('occurrences: %s', occurrences)
-    # look for implausible dates
-    for item in occurrences.keys():
-        # scrap implausible dates
+    occurrences = Counter(pattern.findall(htmlstring))  # slow!
+
+    for item in list(occurrences):
         year_match = yearpat.search(item)
-        if year_match is not None:
-            if not incomplete:
-                potential_year = int(year_match[1])
-            else:
-                lastdigits = year_match[1]
-                if lastdigits[0] == "9":
-                    potential_year = int("19" + lastdigits)
-                else:
-                    potential_year = int("20" + lastdigits)
-            if not earliest.year <= potential_year <= latest.year:
-                LOGGER.debug("no potential year: %s", item)
-                toremove.add(item)
-            # occurrences.remove(item)
-            # continue
-        else:
+        if year_match is None:
             LOGGER.debug("not a year pattern: %s", item)
-            toremove.add(item)
-    # remove candidates
-    for item in toremove:
-        del occurrences[item]
+            del occurrences[item]
+            continue
+
+        lastdigits = year_match[1]
+        if not incomplete:
+            potential_year = int(lastdigits)
+        else:
+            century = "19" if lastdigits[0] == "9" else "20"
+            potential_year = int(century + lastdigits)
+
+        if not earliest.year <= potential_year <= latest.year:
+            LOGGER.debug("no potential year: %s", item)
+            del occurrences[item]
+
     return occurrences
 
 
@@ -202,7 +191,7 @@ def check_date_input(
         return date_object
     if isinstance(date_object, str):
         try:
-            return datetime.fromisoformat(date_object)  # type: ignore
+            return datetime.fromisoformat(date_object)  # type: ignore[attr-defined]
         except ValueError:
             LOGGER.warning("invalid datetime string: %s", date_object)
     return default  # no input or error thrown

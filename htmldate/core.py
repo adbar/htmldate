@@ -205,8 +205,7 @@ def examine_date_elements(
     elements = tree.xpath(expression)
     if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
         return None
-    # loop through the elements to analyze
-    attempt = None
+
     for elem in elements:
         # trim
         text = elem.text_content().strip()
@@ -222,19 +221,19 @@ def examine_date_elements(
             attempt = try_date_expr(
                 text, outputformat, extensive_search, min_date, max_date
             )
-            if attempt is not None:
-                break
+            if attempt:
+                return attempt
         # try link title (Blogspot)
         title_attr = elem.get("title", "").strip()
-        if title_attr is not None and len(title_attr) > 0:
+        if len(title_attr) > 0:
             title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
             attempt = try_date_expr(
                 title_attr, outputformat, extensive_search, min_date, max_date
             )
-            if attempt is not None:
-                break
-    # catchall
-    return attempt
+            if attempt:
+                return attempt
+
+    return None
 
 
 def examine_header(
@@ -282,8 +281,10 @@ def examine_header(
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
         # safeguard
-        if not elem.attrib or (
-            not "content" in elem.attrib and not "datetime" in elem.attrib
+        if (
+            not elem.attrib
+            or "content" not in elem.attrib
+            and "datetime" not in elem.attrib
         ):
             continue
         # name attribute, most frequent
@@ -383,54 +384,50 @@ def select_candidate(
     max_date: datetime,
 ) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
-    match, year1, year2 = None, None, None
-    # LOGGER.debug('occurrences: %s', occurrences)
-    if len(occurrences) == 0 or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
+    if not occurrences or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
         return None
+
     if len(occurrences) == 1:
-        match = catch.search(list(occurrences.keys())[0])
+        match = catch.search(next(iter(occurrences)))
         if match:
             return match
-    # select among most frequent
+
+    # select among most frequent: more than 10? more than 2 candidates?
     firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    if original_date:
-        bestones = sorted(firstselect)[:2]
-    else:
-        bestones = sorted(firstselect, reverse=True)[:2]
-
-    first_pattern, first_count = bestones[0][0], bestones[0][1]
-    second_pattern, second_count = bestones[1][0], bestones[1][1]
+    bestones = sorted(firstselect, reverse=not original_date)[:2]
     LOGGER.debug("bestones: %s", bestones)
+
     # plausibility heuristics
-    validation1, validation2 = False, False
-    match1 = yearpat.search(first_pattern)
-    if match1 is not None:
-        year1 = match1[1]
-        validation1 = date_validator(year1, "%Y", earliest=min_date, latest=max_date)
-    match2 = yearpat.search(second_pattern)
-    if match2 is not None:
-        year2 = match2[1]
-        validation2 = date_validator(year2, "%Y", earliest=min_date, latest=max_date)
+    patterns, counts = zip(*bestones)
+    years = [""] * len(bestones)
+    validation = [False] * len(bestones)
+    for i, pattern in enumerate(patterns):
+        year_match = yearpat.search(pattern)
+        if year_match:
+            years[i] = year_match[1]
+            dateobject = datetime(int(year_match[1]), 1, 1)
+            validation[i] = date_validator(
+                dateobject, "%Y", earliest=min_date, latest=max_date
+            )
+
     # safety net: plausibility
-    if validation1 is True and validation2 is True:
+    match = None
+    if all(validation):
         # same number of occurrences: always take top of the pile?
-        if first_count == second_count:
-            match = catch.search(first_pattern)
+        if counts[0] == counts[1]:
+            match = catch.search(patterns[0])
         # safety net: newer date but up to 50% less frequent
-        elif year2 != year1 and second_count / first_count > 0.5:
-            match = catch.search(second_pattern)
+        elif years[1] != years[0] and counts[1] / counts[0] > 0.5:
+            match = catch.search(patterns[1])
         # not newer or hopefully not significant
         else:
-            match = catch.search(first_pattern)
-    elif validation1 is False and validation2 is True:
-        match = catch.search(second_pattern)
-    elif validation1 is True and validation2 is False:
-        match = catch.search(first_pattern)
+            match = catch.search(patterns[0])
+    elif any(validation):
+        match = catch.search(patterns[validation.index(True)])
     else:
-        LOGGER.debug("no suitable candidate: %s %s", year1, year2)
-        return None
+        LOGGER.debug("no suitable candidate: %s %s", years[0], years[1])
     return match
 
 
@@ -697,12 +694,13 @@ def search_page(
     )
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
+        dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
             date_validator(bestmatch[0], "%Y", earliest=min_date, latest=max_date)
             is True
         ):
             LOGGER.debug("copyright year/footer pattern found: %s", bestmatch[0])
-            copyear = int(bestmatch[0])
+            copyear = dateobject.year
 
     # 3 components
     LOGGER.debug("3 components")
@@ -853,12 +851,17 @@ def search_page(
         max_date,
     )
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[1], bestmatch[2], "01"])
+        dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
         if date_validator(
-            pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date
-        ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
-            LOGGER.debug('date found for pattern "%s": %s', YYYYMM_PATTERN, pagedate)
-            return convert_date(pagedate, "%Y-%m-%d", outputformat)
+            dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date
+        ) is True and (copyear == 0 or dateobject.year >= copyear):
+            LOGGER.debug(
+                'date found for pattern "%s": %s, %s',
+                YYYYMM_PATTERN,
+                bestmatch[1],
+                bestmatch[2],
+            )
+            return dateobject.strftime(outputformat)
 
     # 2 components, second option
     candidates = plausible_year_filter(
@@ -896,16 +899,14 @@ def search_page(
         return result
 
     # try full-blown text regex on all HTML?
-    dateobject = regex_parse(htmlstring)
+    dateobject = regex_parse(htmlstring)  # type: ignore[assignment]
     # todo: find all candidates and disambiguate?
     if date_validator(
         dateobject, outputformat, earliest=min_date, latest=max_date
-    ) is True and (
-        copyear == 0 or dateobject.year >= copyear  # type: ignore[union-attr]
-    ):
+    ) is True and (copyear == 0 or dateobject.year >= copyear):
         try:
             LOGGER.debug("regex result on HTML: %s", dateobject)
-            return dateobject.strftime(outputformat)  # type: ignore
+            return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.error("value error during conversion: %s %s", dateobject, err)
 
@@ -928,14 +929,16 @@ def search_page(
         max_date,
     )
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[0], "01", "01"])
+        dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
-            date_validator(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date)
+            date_validator(dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date)
             is True
-            and int(bestmatch[0]) >= copyear
+            and int(dateobject.year) >= copyear
         ):
-            LOGGER.debug('date found for pattern "%s": %s', SIMPLE_PATTERN, pagedate)
-            return convert_date(pagedate, "%Y-%m-%d", outputformat)
+            LOGGER.debug(
+                'date found for pattern "%s": %s', SIMPLE_PATTERN, bestmatch[0]
+            )
+            return dateobject.strftime(outputformat)
 
     return None
 

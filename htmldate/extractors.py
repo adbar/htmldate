@@ -53,32 +53,36 @@ FAST_PREPEND = ".//*[(self::div or self::li or self::p or self::span)]"
 SLOW_PREPEND = ".//*"
 
 DATE_EXPRESSIONS = """
-    [contains(translate(@id, "D", "d"), 'date')
-    or contains(translate(@class, "D", "d"), 'date')
-    or contains(translate(@itemprop, "D", "d"), 'date')
-    or contains(translate(@id, "D", "d"), 'datum')
-    or contains(translate(@class, "D", "d"), 'datum')
-    or contains(@id, 'time') or contains(@class, 'time')
-    or @class='meta' or contains(translate(@id, "M", "m"), 'metadata')
-    or contains(translate(@class, "M", "m"), 'meta-')
-    or contains(translate(@class, "M", "m"), '-meta')
-    or contains(translate(@id, "M", "m"), '-meta')
-    or contains(translate(@class, "M", "m"), '_meta')
-    or contains(translate(@class, "M", "m"), 'postmeta')
-    or contains(@class, 'info') or contains(@class, 'post_detail')
-    or contains(@class, 'block-content')
-    or contains(@class, 'byline') or contains(@class, 'subline')
-    or contains(@class, 'posted') or contains(@class, 'submitted')
-    or contains(@class, 'created-post')
-    or contains(@id, 'publish') or contains(@class, 'publish')
-    or contains(@class, 'publication')
-    or contains(@class, 'author') or contains(@class, 'autor')
-    or contains(@class, 'field-content')
-    or contains(@class, 'fa-clock-o') or contains(@class, 'fa-calendar')
-    or contains(@class, 'fecha') or contains(@class, 'parution')
-    or contains(@class, 'footer') or contains(@id, 'footer')]
-    |
-    .//footer|.//small
+[
+    contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
+    contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
+    contains(@id|@class, 'time') or
+    @class='meta' or
+    contains(translate(@id|@class, "M", "m"), 'metadata') or
+    contains(translate(@id|@class, "M", "m"), 'meta-') or
+    contains(translate(@id|@class, "M", "m"), '-meta') or
+    contains(translate(@id|@class, "M", "m"), '_meta') or
+    contains(translate(@id|@class, "M", "m"), 'postmeta') or
+    contains(@id|@class, 'publish') or
+    contains(@id|@class, 'footer') or
+    contains(@class, 'info') or
+    contains(@class, 'post_detail') or
+    contains(@class, 'block-content') or
+    contains(@class, 'byline') or
+    contains(@class, 'subline') or
+    contains(@class, 'posted') or
+    contains(@class, 'submitted') or
+    contains(@class, 'created-post') or
+    contains(@class, 'publication') or
+    contains(@class, 'author') or
+    contains(@class, 'autor') or
+    contains(@class, 'field-content') or
+    contains(@class, 'fa-clock-o') or
+    contains(@class, 'fa-calendar') or
+    contains(@class, 'fecha') or
+    contains(@class, 'parution')
+] |
+.//footer | .//small
     """
 # further tests needed:
 # or contains(@class, 'article')
@@ -97,12 +101,12 @@ DISCARD_EXPRESSIONS = """.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""
 # regex cache
 YMD_NO_SEP_PATTERN = re.compile(r"\b(\d{8})\b")
 YMD_PATTERN = re.compile(
-    r"(?:\D|^)(?P<year>\d{4})[\-/.](?P<month>\d{1,2})[\-/.](?P<day>\d{1,2})(?:\D|$)|"
-    r"(?:\D|^)(?P<day2>\d{1,2})[\-/.](?P<month2>\d{1,2})[\-/.](?P<year2>\d{2,4})(?:\D|$)"
+    r"(?:\D|^)(?:(?P<year>\d{4})[\-/.](?P<month>\d{1,2})[\-/.](?P<day>\d{1,2})|"
+    r"(?P<day2>\d{1,2})[\-/.](?P<month2>\d{1,2})[\-/.](?P<year2>\d{2,4}))(?:\D|$)"
 )
 YM_PATTERN = re.compile(
-    r"(?:\D|^)(?P<year>\d{4})[\-/.](?P<month>\d{1,2})(?:\D|$)|"
-    r"(?:\D|^)(?P<month2>\d{1,2})[\-/.](?P<year2>\d{4})(?:\D|$)"
+    r"(?:\D|^)(?:(?P<year>\d{4})[\-/.](?P<month>\d{1,2})|"
+    r"(?P<month2>\d{1,2})[\-/.](?P<year2>\d{4}))(?:\D|$)"
 )
 
 REGEX_MONTHS = """
@@ -116,7 +120,8 @@ Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 """  # todo: check "août"
 LONG_TEXT_PATTERN = re.compile(
     rf"""(?P<month>{REGEX_MONTHS})\s
-(?P<day>[0-9]{{1,2}})(?:st|nd|rd|th)?,? (?P<year>[0-9]{{4}})|(?P<day2>[0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
+(?P<day>[0-9]{{1,2}})(?:st|nd|rd|th)?,? (?P<year>[0-9]{{4}})|
+(?P<day2>[0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
 (?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>[0-9]{{4}})""".replace(
         "\n", ""
     ),
@@ -133,95 +138,23 @@ TIMESTAMP_PATTERN = re.compile(
 )
 
 # English, French, German, Indonesian and Turkish dates cache
+MONTHS = [
+    ("jan", "januar", "jänner", "january", "januari", "janvier", "ocak", "oca"),
+    ("feb", "februar", "feber", "february", "februari", "février", "şubat", "şub"),
+    ("mar", "märz", "march", "maret", "mart", "mars"),
+    ("apr", "april", "avril", "nisan", "nis"),
+    ("may", "mai", "mei", "mayıs"),
+    ("jun", "juni", "june", "juin", "haziran", "haz"),
+    ("jul", "juli", "july", "juillet", "temmuz", "tem"),
+    ("aug", "august", "agustus", "ağustos", "ağu", "aout"),
+    ("sep", "september", "septembre", "eylül", "eyl"),
+    ("oct", "oktober", "october", "octobre", "okt", "ekim", "eki"),
+    ("nov", "november", "kasım", "kas", "novembre"),
+    ("dec", "dezember", "december", "desember", "décembre", "aralık", "ara"),
+]
+
 TEXT_MONTHS = {
-    # January
-    "januar": "01",
-    "jänner": "01",
-    "january": "01",
-    "januari": "01",
-    "janvier": "01",
-    "jan": "01",
-    "ocak": "01",
-    "oca": "01",
-    # February
-    "februar": "02",
-    "feber": "02",
-    "february": "02",
-    "februari": "02",
-    "février": "02",
-    "feb": "02",
-    "şubat": "02",
-    "şub": "02",
-    # March
-    "märz": "03",
-    "march": "03",
-    "maret": "03",
-    "mar": "03",
-    "mär": "03",
-    "mart": "03",
-    "mars": "03",
-    # April
-    "april": "04",
-    "apr": "04",
-    "avril": "04",
-    "nisan": "04",
-    "nis": "04",
-    # May
-    "mai": "05",
-    "may": "05",
-    "mei": "05",
-    "mayıs": "05",
-    # June
-    "juni": "06",
-    "june": "06",
-    "juin": "06",
-    "jun": "06",
-    "haziran": "06",
-    "haz": "06",
-    # July
-    "juli": "07",
-    "july": "07",
-    "juillet": "07",
-    "jul": "07",
-    "temmuz": "07",
-    "tem": "07",
-    # August
-    "august": "08",
-    "agustus": "08",
-    "aug": "08",
-    "ağustos": "08",
-    "ağu": "08",
-    "aout": "08",
-    # "août": "08",
-    # September
-    "september": "09",
-    "septembre": "09",
-    "sep": "09",
-    "eylül": "09",
-    "eyl": "09",
-    # October
-    "oktober": "10",
-    "october": "10",
-    "octobre": "10",
-    "oct": "10",
-    "okt": "10",
-    "ekim": "10",
-    "eki": "10",
-    # November
-    "november": "11",
-    "nov": "11",
-    "kasım": "11",
-    "kas": "11",
-    "novembre": "11",
-    # December
-    "dezember": "12",
-    "december": "12",
-    "desember": "12",
-    "décembre": "12",
-    "dec": "12",
-    "dez": "12",
-    "aralık": "12",
-    "ara": "12",
+    month: mnum for mnum, mlist in enumerate(MONTHS, start=1) for month in mlist
 }
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
@@ -231,7 +164,12 @@ NO_TEXT_DATE_PATTERN = re.compile(
 # leads to errors: \D+\d{3,}\D+
 
 DISCARD_PATTERNS = re.compile(
-    r"[$€¥Ұ£¢₽₱฿#]|CNY|EUR|GBP|JPY|USD|http|\.(com|net|org)|IBAN|\+\d{2}\b"
+    r"[$€¥Ұ£¢₽₱฿#]|"  # currency symbols
+    r"CNY|EUR|GBP|JPY|USD|"  # currency codes
+    r"http|"  # protocols
+    r"\.(com|net|org)|"  # TLDs
+    r"IBAN|"  # bank accountrs
+    r"\+\d{2}\b"  # amounts/telephone numbers
 )
 # further testing required:
 # \d[,.]\d+  # currency amounts
@@ -353,18 +291,16 @@ def regex_parse(string: str) -> Optional[datetime]:
         return None
     # process and return
     try:
-        if match.lastgroup == "year":
-            day, month, year = (
-                int(match.group("day")),
-                int(TEXT_MONTHS[match.group("month").lower().strip(".")]),
-                int(match.group("year")),
-            )
-        else:
-            day, month, year = (
-                int(match.group("day2")),
-                int(TEXT_MONTHS[match.group("month2").lower().strip(".")]),
-                int(match.group("year2")),
-            )
+        groups = (
+            ("day", "month", "year")
+            if match.lastgroup == "year"
+            else ("day2", "month2", "year2")
+        )
+        day, month, year = (
+            int(match.group(groups[0])),
+            int(TEXT_MONTHS[match.group(groups[1]).lower().strip(".")]),
+            int(match.group(groups[2])),
+        )
         year = correct_year(year)
         day, month = try_swap_values(day, month)
         dateobject = datetime(year, month, day)
@@ -431,14 +367,12 @@ def custom_parse(
     match = YMD_PATTERN.search(string)
     if match:
         try:
-            # YMD
             if match.lastgroup == "day":
-                candidate = datetime(
+                year, month, day = (
                     int(match.group("year")),
                     int(match.group("month")),
                     int(match.group("day")),
                 )
-            # DMY
             else:
                 day, month, year = (
                     int(match.group("day2")),
@@ -447,15 +381,13 @@ def custom_parse(
                 )
                 year = correct_year(year)
                 day, month = try_swap_values(day, month)
-                candidate = datetime(year, month, day)
+
+            candidate = datetime(year, month, day)
         except ValueError:
             LOGGER.debug("regex value error: %s", match[0])
         else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
+            if date_validator(
+                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
             ):
                 LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
@@ -608,33 +540,23 @@ def idiosyncrasies_search(
     htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
-    # EN+DE+TR
-    match = TEXT_PATTERNS.search(htmlstring)
-    if not match:
-        return None
-
-    parts = list(filter(None, match.groups()))
-    if len(parts) != 3:
-        return None
-
-    candidate = None
-
-    if len(parts[0]) == 4:
-        candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
-    elif len(parts[2]) in (2, 4):
-        # DD/MM/YY
-        day, month = try_swap_values(int(parts[0]), int(parts[1]))
-        year = correct_year(int(parts[2]))
-        try:
-            candidate = datetime(year, month, day)
-        except ValueError:
-            LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-
-    if (
-        date_validator(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date)
-        is True
-    ):
-        LOGGER.debug("idiosyncratic pattern found: %s", match[0])
-        return candidate.strftime(outputformat)  # type: ignore[union-attr]
-
+    match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
+    if match:
+        parts = list(filter(None, match.groups()))
+        if len(parts) == 3:
+            candidate = None
+            if len(parts[0]) == 4:
+                candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+            elif len(parts[2]) in (2, 4):
+                # DD/MM/YY
+                day, month = try_swap_values(int(parts[0]), int(parts[1]))
+                year = correct_year(int(parts[2]))
+                try:
+                    candidate = datetime(year, month, day)
+                except ValueError:
+                    LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+            if date_validator(
+                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
+            ):
+                return candidate.strftime(outputformat)  # type: ignore[union-attr]
     return None
