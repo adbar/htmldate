@@ -330,7 +330,7 @@ def custom_parse(
         # b. much faster than extensive parsing
         else:
             try:
-                candidate = datetime.fromisoformat(string)  # type: ignore[attr-defined]
+                candidate = datetime.fromisoformat(string)
             except ValueError:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
@@ -540,33 +540,23 @@ def idiosyncrasies_search(
     htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
-    # EN+DE+TR
-    match = TEXT_PATTERNS.search(htmlstring)
-    if not match:
-        return None
-
-    parts = list(filter(None, match.groups()))
-    if len(parts) != 3:
-        return None
-
-    candidate = None
-
-    if len(parts[0]) == 4:
-        candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
-    elif len(parts[2]) in (2, 4):
-        # DD/MM/YY
-        day, month = try_swap_values(int(parts[0]), int(parts[1]))
-        year = correct_year(int(parts[2]))
-        try:
-            candidate = datetime(year, month, day)
-        except ValueError:
-            LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-
-    if (
-        date_validator(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date)
-        is True
-    ):
-        LOGGER.debug("idiosyncratic pattern found: %s", match[0])
-        return candidate.strftime(outputformat)  # type: ignore[union-attr]
-
+    match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
+    if match:
+        parts = list(filter(None, match.groups()))
+        if len(parts) == 3:
+            candidate = None
+            if len(parts[0]) == 4:
+                candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+            elif len(parts[2]) in (2, 4):
+                # DD/MM/YY
+                day, month = try_swap_values(int(parts[0]), int(parts[1]))
+                year = correct_year(int(parts[2]))
+                try:
+                    candidate = datetime(year, month, day)
+                except ValueError:
+                    LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+            if date_validator(
+                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
+            ):
+                return candidate.strftime(outputformat)  # type: ignore[union-attr]
     return None

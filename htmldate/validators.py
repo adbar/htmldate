@@ -191,7 +191,7 @@ def check_date_input(
         return date_object
     if isinstance(date_object, str):
         try:
-            return datetime.fromisoformat(date_object)  # type: ignore
+            return datetime.fromisoformat(date_object)
         except ValueError:
             LOGGER.warning("invalid datetime string: %s", date_object)
     return default  # no input or error thrown

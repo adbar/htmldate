@@ -205,8 +205,7 @@ def examine_date_elements(
     elements = tree.xpath(expression)
     if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
         return None
-    # loop through the elements to analyze
-    attempt = None
+
     for elem in elements:
         # trim
         text = elem.text_content().strip()
@@ -222,19 +221,19 @@ def examine_date_elements(
             attempt = try_date_expr(
                 text, outputformat, extensive_search, min_date, max_date
             )
-            if attempt is not None:
-                break
+            if attempt:
+                return attempt
         # try link title (Blogspot)
         title_attr = elem.get("title", "").strip()
-        if title_attr is not None and len(title_attr) > 0:
+        if len(title_attr) > 0:
             title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
             attempt = try_date_expr(
                 title_attr, outputformat, extensive_search, min_date, max_date
             )
-            if attempt is not None:
-                break
-    # catchall
-    return attempt
+            if attempt:
+                return attempt
+
+    return None
 
 
 def examine_header(
@@ -905,11 +904,11 @@ def search_page(
     if date_validator(
         dateobject, outputformat, earliest=min_date, latest=max_date
     ) is True and (
-        copyear == 0 or dateobject.year >= copyear  # type: ignore[union-attr]
+        copyear == 0 or dateobject.year >= copyear
     ):
         try:
             LOGGER.debug("regex result on HTML: %s", dateobject)
-            return dateobject.strftime(outputformat)  # type: ignore
+            return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.error("value error during conversion: %s %s", dateobject, err)
 
