@@ -903,9 +903,7 @@ def search_page(
     # todo: find all candidates and disambiguate?
     if date_validator(
         dateobject, outputformat, earliest=min_date, latest=max_date
-    ) is True and (
-        copyear == 0 or dateobject.year >= copyear
-    ):
+    ) is True and (copyear == 0 or dateobject.year >= copyear):
         try:
             LOGGER.debug("regex result on HTML: %s", dateobject)
             return dateobject.strftime(outputformat)
