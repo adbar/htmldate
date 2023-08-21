@@ -330,7 +330,7 @@ def custom_parse(
         # b. much faster than extensive parsing
         else:
             try:
-                candidate = datetime.fromisoformat(string)
+                candidate = datetime.fromisoformat(string)  # type: ignore[attr-defined]
             except ValueError:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
