@@ -164,16 +164,15 @@ NO_TEXT_DATE_PATTERN = re.compile(
 # leads to errors: \D+\d{3,}\D+
 
 DISCARD_PATTERNS = re.compile(
-    r"[$€¥Ұ£¢₽₱฿#]|"  # currency symbols
-    r"CNY|EUR|GBP|JPY|USD|"  # currency codes
-    r"http|"  # protocols
-    r"\.(com|net|org)|"  # TLDs
-    r"IBAN|"  # bank accountrs
-    r"\+\d{2}\b"  # amounts/telephone numbers
+    r"[$€¥Ұ£¢₽₱฿#₹]|"  # currency symbols and special characters
+    r"AUD|CAD|CHF|CNY|EUR|GBP|JPY|INR|USD|"  # currency codes
+    r"\b(\d{3}|\d{5})\b|\D\+\d{2}\b|"  # IPs/postal codes/telephone
+    r"ftps?|https?|sftp|"  # protocols
+    r"\.(com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
+    r"IBAN"  # bank accounts
 )
 # further testing required:
 # \d[,.]\d+  # currency amounts
-# \b\d{5}\s  # postal codes
 
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
