@@ -158,21 +158,22 @@ TEXT_MONTHS = {
 }
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
-NO_TEXT_DATE_PATTERN = re.compile(
-    r"\d{3,}\D+\d{3,}|\d{2}:\d{2}(:| )|\+\d{2}\D+|\D*\d{4}\D*$"
-)
-# leads to errors: \D+\d{3,}\D+
+
 
 DISCARD_PATTERNS = re.compile(
+    r"^\d{2}:\d{2}(?: |:|$)|"
+    r"^\D*\d{4}\D*$|"
     r"[$€¥Ұ£¢₽₱฿#₹]|"  # currency symbols and special characters
-    r"AUD|CAD|CHF|CNY|EUR|GBP|JPY|INR|USD|"  # currency codes
-    r"\b(\d{3}|\d{5})\b|\D\+\d{2}\b|"  # IPs/postal codes/telephone
+    r"[A-Z]{3}[^A-Z]|"  # currency codes
+    r"(?:^|\D)(?:\+\d{2}|\d{3}|\d{5})\D|"  # tel./IPs/postal codes
     r"ftps?|https?|sftp|"  # protocols
     r"\.(com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
-    r"IBAN"  # bank accounts
+    r"IBAN|[A-Z]{2}[0-9]{2}|"  # bank accounts
+    r"®"  # ©
 )
 # further testing required:
 # \d[,.]\d+  # currency amounts
+# leads to errors: ^\D+\d{3,}\D+
 
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
@@ -460,7 +461,7 @@ def try_date_expr(
         return None
 
     # check if string only contains time/single year or digits and not a date
-    if NO_TEXT_DATE_PATTERN.match(string):
+    if DISCARD_PATTERNS.search(string):
         return None
 
     # try to parse using the faster method
@@ -471,7 +472,7 @@ def try_date_expr(
     # use slow but extensive search
     if extensive_search:
         # additional filters to prevent computational cost
-        if not TEXT_DATE_PATTERN.search(string) or DISCARD_PATTERNS.search(string):
+        if not TEXT_DATE_PATTERN.search(string):
             return None
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
