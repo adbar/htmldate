@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.5.0
+- slightly higher accuracy with revised heuristics
+- simplified code structure for better performance
+- setup: support for 3.12, fromisoformat backport if applicable
+- HTML parsing fixes: more lenient parsing, pinned LXML version for MacOS
+
 ## 1.4.3
 - maintenance release: upgrade `urllib3` dependency
 
