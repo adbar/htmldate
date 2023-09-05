@@ -14,14 +14,13 @@ import logging
 
 from sys import version_info
 
-from .core import find_date
-
-
 try:
+    datetime.fromisoformat  # type: ignore[attr-defined]
+except AttributeError:  # Python 3.6
     from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
 
     MonkeyPatch.patch_fromisoformat()
-except ImportError:
-    pass
+
+from .core import find_date
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
