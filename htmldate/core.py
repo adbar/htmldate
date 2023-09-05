@@ -208,7 +208,7 @@ def examine_date_elements(
 
     for elem in elements:
         # trim
-        text = elem.text_content().strip()
+        text = " ".join(elem.text_content().split()).strip()
         # simple length heuristic
         if len(text) > 6:  # could be 8 or 9
             # shorten and try the beginning of the string
