@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.5.1
+- fix regression for fast extraction introduced in e8b3538 (#96)
+- fix setup by making backports-datetime-fromisoformat optional (#95)
+
 ## 1.5.0
 - slightly higher accuracy with revised heuristics
 - simplified code structure for better performance
