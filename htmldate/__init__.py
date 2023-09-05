@@ -12,7 +12,7 @@ __version__ = "1.5.0"
 
 import logging
 
-from sys import version_info
+from datetime import datetime
 
 try:
     datetime.fromisoformat  # type: ignore[attr-defined]
