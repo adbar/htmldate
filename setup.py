@@ -115,6 +115,7 @@ setup(
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=[
+        "backports-datetime-fromisoformat; python_version < '3.7'",
         "charset_normalizer >= 3.0.1; python_version < '3.7'",
         "charset_normalizer >= 3.2.0; python_version >= '3.7'",
         "dateparser >= 1.1.2",  # 1.1.3+ slower
