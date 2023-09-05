@@ -17,9 +17,11 @@ from sys import version_info
 from .core import find_date
 
 
-if version_info.minor < 11:
+try:
     from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
 
     MonkeyPatch.patch_fromisoformat()
+except ImportError:
+    pass
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
