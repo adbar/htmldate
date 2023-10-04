@@ -141,7 +141,7 @@ TIMESTAMP_PATTERN = re.compile(
 MONTHS = [
     ("jan", "januar", "jänner", "january", "januari", "janvier", "ocak", "oca"),
     ("feb", "februar", "feber", "february", "februari", "février", "şubat", "şub"),
-    ("mar", "märz", "march", "maret", "mart", "mars"),
+    ("mar", "mär", "märz", "march", "maret", "mart", "mars"),
     ("apr", "april", "avril", "nisan", "nis"),
     ("may", "mai", "mei", "mayıs"),
     ("jun", "juni", "june", "juin", "haziran", "haz"),
@@ -150,7 +150,7 @@ MONTHS = [
     ("sep", "september", "septembre", "eylül", "eyl"),
     ("oct", "oktober", "october", "octobre", "okt", "ekim", "eki"),
     ("nov", "november", "kasım", "kas", "novembre"),
-    ("dec", "dezember", "december", "desember", "décembre", "aralık", "ara"),
+    ("dec", "dez", "dezember", "december", "desember", "décembre", "aralık", "ara"),
 ]
 
 TEXT_MONTHS = {
