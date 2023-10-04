@@ -758,6 +758,8 @@ def test_convert_date():
 
 def test_try_date_expr():
     """test date extraction via external package"""
+    assert try_date_expr(None, OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
+
     find_date.extensive_search = False
     assert (
         try_date_expr(
@@ -765,6 +767,7 @@ def test_try_date_expr():
         )
         is None
     )
+
     find_date.extensive_search = True
     assert (
         try_date_expr(
