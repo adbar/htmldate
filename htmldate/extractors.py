@@ -446,13 +446,16 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
 
 @lru_cache(maxsize=CACHE_SIZE)
 def try_date_expr(
-    string: str,
+    string: Optional[str],
     outputformat: str,
     extensive_search: bool,
     min_date: datetime,
     max_date: datetime,
 ) -> Optional[str]:
     """Use a series of heuristics and rules to parse a potential date expression"""
+    if not string:
+        return None
+
     # trim
     string = " ".join(string.strip()[:MAX_TEXT_SIZE].split())
 
