@@ -141,7 +141,7 @@ TIMESTAMP_PATTERN = re.compile(
 MONTHS = [
     ("jan", "januar", "jänner", "january", "januari", "janvier", "ocak", "oca"),
     ("feb", "februar", "feber", "february", "februari", "février", "şubat", "şub"),
-    ("mar", "märz", "march", "maret", "mart", "mars"),
+    ("mar", "mär", "märz", "march", "maret", "mart", "mars"),
     ("apr", "april", "avril", "nisan", "nis"),
     ("may", "mai", "mei", "mayıs"),
     ("jun", "juni", "june", "juin", "haziran", "haz"),
