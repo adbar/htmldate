@@ -150,7 +150,7 @@ MONTHS = [
     ("sep", "september", "septembre", "eylül", "eyl"),
     ("oct", "oktober", "october", "octobre", "okt", "ekim", "eki"),
     ("nov", "november", "kasım", "kas", "novembre"),
-    ("dec", "dezember", "december", "desember", "décembre", "aralık", "ara"),
+    ("dec", "dez", "dezember", "december", "desember", "décembre", "aralık", "ara"),
 ]
 
 TEXT_MONTHS = {

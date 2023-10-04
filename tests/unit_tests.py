@@ -972,6 +972,8 @@ def test_regex_parse():
     """test date extraction using rules and regular expressions"""
     assert regex_parse("3. Dezember 2008") is not None
     assert regex_parse("33. Dezember 2008") is None
+    assert regex_parse("3. Dez 2008") is not None
+    assert regex_parse("3 dez 2008") is not None
     assert regex_parse("3 Aralık 2008 Çarşamba") is not None
     assert regex_parse("3 Aralık 2008") is not None
     assert regex_parse("Tuesday, March 26th, 2019") is not None
