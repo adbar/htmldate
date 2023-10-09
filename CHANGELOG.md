@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.5.2
+- fix for missing months keys in custom extractor (#100)
+- fix for None in `try_date_expr()` (#101)
+
 ## 1.5.1
 - fix regression for fast extraction introduced in e8b3538 (#96)
 - fix setup by making backports-datetime-fromisoformat optional (#95)

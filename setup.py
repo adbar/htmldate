@@ -117,7 +117,7 @@ setup(
     install_requires=[
         "backports-datetime-fromisoformat; python_version < '3.7'",
         "charset_normalizer >= 3.0.1; python_version < '3.7'",
-        "charset_normalizer >= 3.2.0; python_version >= '3.7'",
+        "charset_normalizer >= 3.3.0; python_version >= '3.7'",
         "dateparser >= 1.1.2",  # 1.1.3+ slower
         "lxml >= 4.9.3 ; platform_system != 'Darwin'",
         "lxml == 4.9.2 ; platform_system == 'Darwin'",
