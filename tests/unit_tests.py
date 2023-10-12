@@ -1529,6 +1529,16 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
         )
         == "2019-01-01"
     )
+    assert (
+        search_page(
+            '<html><head><link xmlns="http://www.w3.org/1999/xhtml"/></head></html>',
+            OUTPUTFORMAT,
+            original_date,
+            min_date,
+            max_date,
+        )
+        is None
+    )
 
 
 def test_idiosyncrasies():

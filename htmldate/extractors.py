@@ -211,7 +211,7 @@ YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
 YYYYMM_CATCH = re.compile(r"([12][0-9]{3})[/.-]([01][0-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 MMYYYY_YEAR = re.compile(r"([12][0-9]{3})\D?$")
-SIMPLE_PATTERN = re.compile(r"\D(199[0-9]|20[0-9]{2})\D")
+SIMPLE_PATTERN = re.compile(r"(?<!w3.org)\D(199[0-9]|20[0-9]{2})\D")
 
 
 def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
