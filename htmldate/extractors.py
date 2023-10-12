@@ -186,7 +186,9 @@ TEXT_PATTERNS = re.compile(
 
 # core patterns
 THREE_COMP_REGEX_A = re.compile(r"([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})")
-THREE_COMP_REGEX_B = re.compile(r"([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{2})")
+THREE_COMP_REGEX_B = re.compile(
+    r"([0-3]?[0-9])/([01]?[0-9])/([0-9]{2})|([0-3][0-9])[.-]([01][0-9])[.-]([0-9]{2})"
+)
 TWO_COMP_REGEX = re.compile(r"([0-3]?[0-9])[/.-]([0-9]{4})")
 
 # extensive search patterns
@@ -205,7 +207,9 @@ DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
 DATESTRINGS_CATCH = re.compile(r"([12][0-9]{3})([01][0-9])([0-3][0-9])")
-SLASHES_PATTERN = re.compile(r"\D([0-3]?[0-9][/.][01]?[0-9][/.][0129][0-9])\D")
+SLASHES_PATTERN = re.compile(
+    r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
+)
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
 YYYYMM_CATCH = re.compile(r"([12][0-9]{3})[/.-]([01][0-9])")

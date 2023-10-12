@@ -1539,6 +1539,16 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
         )
         is None
     )
+    assert (
+        search_page(
+            '<html><body><link href="//homepagedesigner.telekom.de/.cm4all/res/static/beng-editor/5.1.98/css/deploy.css"/></body></html>',
+            OUTPUTFORMAT,
+            original_date,
+            min_date,
+            max_date,
+        )
+        is None
+    )
 
 
 def test_idiosyncrasies():
