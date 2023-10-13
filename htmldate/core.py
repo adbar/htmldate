@@ -14,7 +14,7 @@ from collections import Counter
 from copy import deepcopy
 from datetime import datetime
 from functools import lru_cache, partial
-from typing import Match, Optional, Pattern, Tuple, Union, Counter as Counter_Type
+from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from lxml.html import HtmlElement, tostring  # type: ignore
 
@@ -637,15 +637,13 @@ def examine_time_elements(
     return None
 
 
-def normalize_match(match: Optional[Match[str]]) -> Tuple[str, str]:
-    """Normalize string output by adding "0" if necessary."""
-    day = match[1]  # type: ignore[index]
-    if len(day) == 1:
-        day = "0" + day
-    month = match[2]  # type: ignore[index]
-    if len(month) == 1:
-        month = "0" + month
-    return day, month
+def normalize_match(match: Optional[Match[str]]) -> str:
+    """Normalize string output by adding "0" if necessary,
+    and optionally expand the year from two to four digits."""
+    day, month, year = (g.zfill(2) for g in match.groups() if g)  # type: ignore[union-attr]
+    if len(year) == 2:
+        year = "19" + year if year[0] == "9" else "20" + year
+    return f"{year}-{month}-{day}"
 
 
 def search_page(
@@ -760,8 +758,7 @@ def search_page(
     replacement = {}
     for item in candidates:
         match = THREE_COMP_REGEX_A.match(item)
-        day, month = normalize_match(match)
-        candidate = "-".join([match[3], month, day])  # type: ignore[index]
+        candidate = normalize_match(match)
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
@@ -815,12 +812,7 @@ def search_page(
     replacement = {}
     for item in candidates:
         match = THREE_COMP_REGEX_B.match(item)
-        day, month = normalize_match(match)
-        if match[3][0] == "9":  # type: ignore[index]
-            year = "19" + match[3]  # type: ignore[index]
-        else:
-            year = "20" + match[3]  # type: ignore[index]
-        candidate = "-".join([year, month, day])
+        candidate = normalize_match(match)
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     bestmatch = select_candidate(

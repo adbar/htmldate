@@ -178,7 +178,7 @@ DISCARD_PATTERNS = re.compile(
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
     r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
-    r"(?:Datum|Stand): ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
+    r"(?:Datum|Stand|[Vv]eröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
     r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
@@ -186,7 +186,9 @@ TEXT_PATTERNS = re.compile(
 
 # core patterns
 THREE_COMP_REGEX_A = re.compile(r"([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})")
-THREE_COMP_REGEX_B = re.compile(r"([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{2})")
+THREE_COMP_REGEX_B = re.compile(
+    r"([0-3]?[0-9])/([01]?[0-9])/([0-9]{2})|([0-3][0-9])[.-]([01][0-9])[.-]([0-9]{2})"
+)
 TWO_COMP_REGEX = re.compile(r"([0-3]?[0-9])[/.-]([0-9]{4})")
 
 # extensive search patterns
@@ -205,13 +207,15 @@ DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
 DATESTRINGS_CATCH = re.compile(r"([12][0-9]{3})([01][0-9])([0-3][0-9])")
-SLASHES_PATTERN = re.compile(r"\D([0-3]?[0-9][/.][01]?[0-9][/.][0129][0-9])\D")
+SLASHES_PATTERN = re.compile(
+    r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
+)
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
 YYYYMM_CATCH = re.compile(r"([12][0-9]{3})[/.-]([01][0-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 MMYYYY_YEAR = re.compile(r"([12][0-9]{3})\D?$")
-SIMPLE_PATTERN = re.compile(r"\D(199[0-9]|20[0-9]{2})\D")
+SIMPLE_PATTERN = re.compile(r"(?<!w3.org)\D(199[0-9]|20[0-9]{2})\D")
 
 
 def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
