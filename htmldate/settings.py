@@ -25,7 +25,23 @@ MIN_DATE: datetime = datetime(1995, 1, 1)
 # set an upper limit to the number of candidates
 MAX_POSSIBLE_CANDIDATES: int = 1000
 
-CLEANING_LIST = ["applet", "audio", "canvas", "datalist", "embed",
-                 "frame", "frameset", "figure", "label", "map", "math",
-                 "noframes", "object", "picture", "rdf", "svg", "video"]
-                 # "iframe", "param",
+CLEANING_LIST = [
+    "applet",
+    "audio",
+    "canvas",
+    "datalist",
+    "embed",
+    "frame",
+    "frameset",
+    "figure",
+    "label",
+    "map",
+    "math",
+    "noframes",
+    "object",
+    "picture",
+    "rdf",
+    "svg",
+    "video",
+]
+# "iframe", "param",

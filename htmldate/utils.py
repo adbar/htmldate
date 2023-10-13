@@ -23,7 +23,7 @@ except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
 
-from lxml.etree import strip_tags
+# from lxml.etree import strip_tags
 from lxml.html import HtmlElement, HTMLParser, fromstring  # type: ignore
 
 from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
@@ -221,17 +221,17 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
 
 def clean_html(tree, elemlist):
     "Delete selected elements."
-    #return tree
+    # return tree
     for element in tree.iter(elemlist):
         try:
             element.drop_tree()
         except AttributeError:
             element.getparent().remove(element)
-    #for element in tree.xpath(".//*[@src]"):
+    # for element in tree.xpath(".//*[@src]"):
     #    try:
     #        element.drop_tree()
     #    except AttributeError:
     #        element.getparent().remove(element)
-    #for element in tree.iter("head", "html", "title"):
+    # for element in tree.iter("head", "html", "title"):
     #    element.drop_tag()
     return tree
