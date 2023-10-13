@@ -1549,16 +1549,6 @@ def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POS
         )
         is None
     )
-    assert (
-        search_page(
-            "<html><body><p>veröffentlicht am 6.12.06</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
-        == "2006-12-06"
-    )
 
 
 def test_idiosyncrasies():
@@ -1645,6 +1635,12 @@ def test_idiosyncrasies():
             "<html><body><p><em>05.05.2020 tarihinde yayınlandı.</em></p></body></html>"
         )
         == "2020-05-05"
+    )
+    assert (
+        find_date(
+            "<html><body><p>veröffentlicht am 6.12.06</p></body></html>",
+        )
+        == "2006-12-06"
     )
 
 
