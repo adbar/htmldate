@@ -8,9 +8,6 @@ Listing a series of settings that are applied module-wide.
 
 from datetime import datetime
 
-from lxml.html.clean import Cleaner  # type: ignore
-
-
 # Function cache
 CACHE_SIZE: int = 8192
 
@@ -44,4 +41,4 @@ CLEANING_LIST = [
     "svg",
     "video",
 ]
-# "iframe", "param",
+# "iframe", "layer", "param"
