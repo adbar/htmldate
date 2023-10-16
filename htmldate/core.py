@@ -57,8 +57,8 @@ from .extractors import (
     THREE_COMP_REGEX_B,
     TWO_COMP_REGEX,
 )
-from .settings import CACHE_SIZE, HTML_CLEANER, MAX_POSSIBLE_CANDIDATES
-from .utils import load_html
+from .settings import CACHE_SIZE, CLEANING_LIST, MAX_POSSIBLE_CANDIDATES
+from .utils import clean_html, load_html
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -1068,7 +1068,7 @@ def find_date(
 
     # clean before string search
     try:
-        cleaned_html = HTML_CLEANER.clean_html(tree)
+        cleaned_html = clean_html(tree, CLEANING_LIST)
     # rare LXML error: no NULL bytes or control characters
     except ValueError:  # pragma: no cover
         cleaned_html = tree

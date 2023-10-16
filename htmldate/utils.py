@@ -216,3 +216,13 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
         )
         tree = None
     return tree
+
+
+def clean_html(tree: HtmlElement, elemlist: List[str]) -> HtmlElement:
+    "Delete selected elements."
+    for element in tree.iter(elemlist):
+        try:
+            element.drop_tree()
+        except AttributeError:  # pragma: no cover
+            element.getparent().remove(element)
+    return tree
