@@ -129,12 +129,11 @@ LONG_TEXT_PATTERN = re.compile(
 )
 
 COMPLETE_URL = re.compile(r"\D([0-9]{4})[/_-]([0-9]{1,2})[/_-]([0-9]{1,2})(?:\D|$)")
-PARTIAL_URL = re.compile(r"\D([0-9]{4})[/_-]([0-9]{2})(?:\D|$)")
 
 JSON_MODIFIED = re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 JSON_PUBLISHED = re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 TIMESTAMP_PATTERN = re.compile(
-    r"([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}"
 )
 
 # English, French, German, Indonesian and Turkish dates cache
@@ -245,28 +244,6 @@ def extract_url_date(
                 return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug("conversion error: %s %s", match[0], err)
-    return None
-
-
-def extract_partial_url_date(
-    testurl: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
-    """Extract an approximate date out of an URL string in Y-M format"""
-    match = PARTIAL_URL.search(testurl)
-    if match:
-        dateresult = match[0] + "/01"
-        LOGGER.debug("found partial date in URL: %s", dateresult)
-        try:
-            dateobject = datetime(int(match[1]), int(match[2]), 1)
-            if (
-                date_validator(
-                    dateobject, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
-            ):
-                return dateobject.strftime(outputformat)
-        except ValueError as err:
-            LOGGER.debug("conversion error: %s %s", dateresult, err)
     return None
 
 

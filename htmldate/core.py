@@ -22,7 +22,6 @@ from lxml.html import HtmlElement, tostring  # type: ignore
 from .extractors import (
     discard_unwanted,
     extract_url_date,
-    extract_partial_url_date,
     idiosyncrasies_search,
     img_search,
     json_search,
@@ -1081,13 +1080,16 @@ def find_date(
         htmlstring = tostring(cleaned_html, pretty_print=False).decode(
             "utf-8", "ignore"
         )
-    # remove comments by hand as faulty in lxml?
-    # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
 
     # date regex timestamp rescue
     timestamp_result = timestamp_search(htmlstring, outputformat, min_date, max_date)
     if timestamp_result is not None:
         return timestamp_result
+
+    # try image elements
+    img_result = img_search(tree, outputformat, min_date, max_date)
+    if img_result is not None:
+        return img_result
 
     # precise patterns and idiosyncrasies
     text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
@@ -1106,16 +1108,10 @@ def find_date(
         if attempt is not None:
             return attempt
 
-    # last try: URL 2
-    if url is not None:
-        dateresult = extract_partial_url_date(url, outputformat, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
-
     # try image elements
-    img_result = img_search(tree, outputformat, min_date, max_date)
-    if img_result is not None:
-        return img_result
+    # img_result = img_search(tree, outputformat, min_date, max_date)
+    # if img_result is not None:
+    #    return img_result
 
     # last resort
     if extensive_search:
