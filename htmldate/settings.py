@@ -39,6 +39,7 @@ CLEANING_LIST = [
     "picture",
     "rdf",
     "svg",
+    "track",
     "video",
 ]
-# "iframe", "layer", "param"
+# "iframe", "input", "layer", "param", "source"
