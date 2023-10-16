@@ -1043,7 +1043,16 @@ def find_date(
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
 
     # first try in pruned tree
-    search_tree, discarded = discard_unwanted(deepcopy(tree))
+    try:
+        search_tree, discarded = discard_unwanted(
+            clean_html(deepcopy(tree), CLEANING_LIST)
+        )
+    # rare LXML error: no NULL bytes or control characters
+    except ValueError:  # pragma: no cover
+        search_tree = tree
+        LOGGER.error("lxml cleaner error")
+
+    # look for expressions
     dateresult = examine_date_elements(
         search_tree, date_expr, outputformat, extensive_search, min_date, max_date
     )
@@ -1065,21 +1074,11 @@ def find_date(
     if time_result is not None:
         return time_result
 
-    # clean before string search
-    try:
-        cleaned_html = clean_html(tree, CLEANING_LIST)
-    # rare LXML error: no NULL bytes or control characters
-    except ValueError:  # pragma: no cover
-        cleaned_html = tree
-        LOGGER.error("lxml cleaner error")
-
     # robust conversion to string
     try:
-        htmlstring = tostring(cleaned_html, pretty_print=False, encoding="unicode")
+        htmlstring = tostring(search_tree, pretty_print=False, encoding="unicode")
     except UnicodeDecodeError:
-        htmlstring = tostring(cleaned_html, pretty_print=False).decode(
-            "utf-8", "ignore"
-        )
+        htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
 
     # date regex timestamp rescue
     timestamp_result = timestamp_search(htmlstring, outputformat, min_date, max_date)
@@ -1087,7 +1086,7 @@ def find_date(
         return timestamp_result
 
     # try image elements
-    img_result = img_search(tree, outputformat, min_date, max_date)
+    img_result = img_search(search_tree, outputformat, min_date, max_date)
     if img_result is not None:
         return img_result
 
@@ -1097,7 +1096,7 @@ def find_date(
         return text_result
 
     # title
-    for title_elem in tree.iter("title", "h1"):
+    for title_elem in search_tree.iter("title", "h1"):
         attempt = try_date_expr(
             title_elem.text_content(),
             outputformat,
@@ -1108,17 +1107,12 @@ def find_date(
         if attempt is not None:
             return attempt
 
-    # try image elements
-    # img_result = img_search(tree, outputformat, min_date, max_date)
-    # if img_result is not None:
-    #    return img_result
-
     # last resort
     if extensive_search:
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
-        for segment in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS):
+        for segment in search_tree.xpath(FREE_TEXT_EXPRESSIONS):
             segment = segment.strip()
             # basic filter: minimum could be 8 or 9
             if not 6 < len(segment) < MAX_TEXT_SIZE:

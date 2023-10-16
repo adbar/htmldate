@@ -30,7 +30,7 @@ CLEANING_LIST = [
     "embed",
     "frame",
     "frameset",
-    "figure",
+    "iframe",
     "label",
     "map",
     "math",
@@ -42,4 +42,4 @@ CLEANING_LIST = [
     "track",
     "video",
 ]
-# "iframe", "input", "layer", "param", "source"
+# "figure", "input", "layer", "param", "source"
