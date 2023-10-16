@@ -8,9 +8,6 @@ Listing a series of settings that are applied module-wide.
 
 from datetime import datetime
 
-from lxml.html.clean import Cleaner  # type: ignore
-
-
 # Function cache
 CACHE_SIZE: int = 8192
 
@@ -25,38 +22,24 @@ MIN_DATE: datetime = datetime(1995, 1, 1)
 # set an upper limit to the number of candidates
 MAX_POSSIBLE_CANDIDATES: int = 1000
 
-# HTML_CLEANER config
-# https://lxml.de/api/lxml.html.clean.Cleaner-class.html
-# https://lxml.de/apidoc/lxml.html.clean.html
-HTML_CLEANER: Cleaner = Cleaner(
-    annoying_tags=False,
-    comments=False,
-    embedded=True,  # affects recall?
-    forms=False,
-    frames=True,
-    javascript=False,
-    links=False,
-    meta=False,
-    page_structure=True,
-    processing_instructions=False,
-    remove_unknown_tags=False,
-    safe_attrs_only=False,
-    scripts=False,
-    style=False,
-    kill_tags=[
-        "applet",
-        "audio",
-        "canvas",
-        "datalist",
-        "embed",
-        "figure",
-        "label",
-        "map",
-        "math",
-        "object",
-        "picture",
-        "rdf",
-        "svg",
-        "video",
-    ],
-)
+CLEANING_LIST = [
+    "applet",
+    "audio",
+    "canvas",
+    "datalist",
+    "embed",
+    "frame",
+    "frameset",
+    "figure",
+    "label",
+    "map",
+    "math",
+    "noframes",
+    "object",
+    "picture",
+    "rdf",
+    "svg",
+    "track",
+    "video",
+]
+# "iframe", "input", "layer", "param", "source"
