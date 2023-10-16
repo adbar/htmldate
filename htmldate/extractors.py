@@ -24,6 +24,7 @@ from lxml.html import HtmlElement  # type: ignore
 
 # own
 from .settings import CACHE_SIZE
+from .utils import trim_text
 from .validators import convert_date, date_validator
 
 
@@ -89,7 +90,8 @@ DATE_EXPRESSIONS = """
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
 FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
-MAX_TEXT_SIZE = 48
+MIN_SEGMENT_LEN = 6
+MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
@@ -438,7 +440,7 @@ def try_date_expr(
         return None
 
     # trim
-    string = " ".join(string.strip()[:MAX_TEXT_SIZE].split())
+    string = trim_text(string)[:MAX_SEGMENT_LEN]
 
     # formal constraint: 4 to 18 digits
     if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:

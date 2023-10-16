@@ -226,3 +226,8 @@ def clean_html(tree: HtmlElement, elemlist: List[str]) -> HtmlElement:
         except AttributeError:  # pragma: no cover
             element.getparent().remove(element)
     return tree
+
+
+def trim_text(string: str) -> str:
+    "Remove superfluous space and normalize remaining space."
+    return " ".join(string.split()).strip()

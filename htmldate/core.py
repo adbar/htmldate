@@ -32,7 +32,8 @@ from .extractors import (
     FAST_PREPEND,
     SLOW_PREPEND,
     FREE_TEXT_EXPRESSIONS,
-    MAX_TEXT_SIZE,
+    MAX_SEGMENT_LEN,
+    MIN_SEGMENT_LEN,
     YEAR_PATTERN,
     YMD_PATTERN,
     COPYRIGHT_PATTERN,
@@ -57,7 +58,7 @@ from .extractors import (
     TWO_COMP_REGEX,
 )
 from .settings import CACHE_SIZE, CLEANING_LIST, MAX_POSSIBLE_CANDIDATES
-from .utils import clean_html, load_html
+from .utils import clean_html, load_html, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -207,12 +208,12 @@ def examine_date_elements(
 
     for elem in elements:
         # trim
-        text = " ".join(elem.text_content().split()).strip()
+        text = trim_text(elem.text_content())
         # simple length heuristic
-        if len(text) > 6:  # could be 8 or 9
+        if len(text) > MIN_SEGMENT_LEN:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            text = NON_DIGITS_REGEX.sub("", text[:MAX_TEXT_SIZE])
+            text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
             LOGGER.debug(
                 "analyzing (HTML): %s",
                 " ".join(logstring(elem).split())[:100],
@@ -223,9 +224,9 @@ def examine_date_elements(
             if attempt:
                 return attempt
         # try link title (Blogspot)
-        title_attr = elem.get("title", "").strip()
-        if len(title_attr) > 0:
-            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
+        title_attr = trim_text(elem.get("title", ""))
+        if len(title_attr) > MIN_SEGMENT_LEN:
+            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_SEGMENT_LEN])
             attempt = try_date_expr(
                 title_attr, outputformat, extensive_search, min_date, max_date
             )
@@ -1114,8 +1115,7 @@ def find_date(
         reference = 0
         for segment in search_tree.xpath(FREE_TEXT_EXPRESSIONS):
             segment = segment.strip()
-            # basic filter: minimum could be 8 or 9
-            if not 6 < len(segment) < MAX_TEXT_SIZE:
+            if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
             reference = compare_reference(
                 reference,
