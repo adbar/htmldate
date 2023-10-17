@@ -1037,13 +1037,7 @@ def find_date(
     if abbr_result is not None:
         return abbr_result
 
-    # expressions + text_content
-    if extensive_search:
-        date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
-    else:
-        date_expr = FAST_PREPEND + DATE_EXPRESSIONS
-
-    # first try in pruned tree
+    # first, prune tree
     try:
         search_tree, discarded = discard_unwanted(
             clean_html(deepcopy(tree), CLEANING_LIST)
@@ -1053,12 +1047,38 @@ def find_date(
         search_tree = tree
         LOGGER.error("lxml cleaner error")
 
-    # look for expressions
+    # define expressions + text_content
+    if extensive_search:
+        date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
+    else:
+        date_expr = FAST_PREPEND + DATE_EXPRESSIONS
+    # date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
+
+    # then look for expressions
     dateresult = examine_date_elements(
         search_tree, date_expr, outputformat, extensive_search, min_date, max_date
     )
     if dateresult is not None:
         return dateresult
+
+    # look for expressions
+    dateresult = examine_date_elements(
+        search_tree,
+        ".//title|.//h1",
+        outputformat,
+        extensive_search,
+        min_date,
+        max_date,
+    )
+    if dateresult is not None:
+        return dateresult
+
+    # try time elements
+    time_result = examine_time_elements(
+        search_tree, outputformat, extensive_search, original_date, min_date, max_date
+    )
+    if time_result is not None:
+        return time_result
 
     # TODO: decide on this
     # search in discarded parts (e.g. archive.org-banner)
@@ -1067,13 +1087,6 @@ def find_date(
     #        outputformat, extensive_search, min_date, max_date)
     #    if dateresult is not None:
     #        return dateresult
-
-    # try time elements
-    time_result = examine_time_elements(
-        search_tree, outputformat, extensive_search, original_date, min_date, max_date
-    )
-    if time_result is not None:
-        return time_result
 
     # robust conversion to string
     try:
@@ -1095,18 +1108,6 @@ def find_date(
     text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
     if text_result is not None:
         return text_result
-
-    # title
-    for title_elem in search_tree.iter("title", "h1"):
-        attempt = try_date_expr(
-            title_elem.text_content(),
-            outputformat,
-            extensive_search,
-            min_date,
-            max_date,
-        )
-        if attempt is not None:
-            return attempt
 
     # last resort
     if extensive_search:

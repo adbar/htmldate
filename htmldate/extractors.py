@@ -49,7 +49,7 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
-FAST_PREPEND = ".//*[(self::div or self::li or self::p or self::span)]"
+FAST_PREPEND = ".//*[(self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul)]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
 
@@ -57,13 +57,8 @@ DATE_EXPRESSIONS = """
 [
     contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
     contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
+    contains(translate(@id|@class, "M", "m"), 'meta') or
     contains(@id|@class, 'time') or
-    @class='meta' or
-    contains(translate(@id|@class, "M", "m"), 'metadata') or
-    contains(translate(@id|@class, "M", "m"), 'meta-') or
-    contains(translate(@id|@class, "M", "m"), '-meta') or
-    contains(translate(@id|@class, "M", "m"), '_meta') or
-    contains(translate(@id|@class, "M", "m"), 'postmeta') or
     contains(@id|@class, 'publish') or
     contains(@id|@class, 'footer') or
     contains(@class, 'info') or
@@ -84,7 +79,8 @@ DATE_EXPRESSIONS = """
     contains(@class, 'parution')
 ] |
 .//footer | .//small
-    """
+"""
+
 # further tests needed:
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
