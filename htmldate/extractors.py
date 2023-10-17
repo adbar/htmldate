@@ -160,7 +160,6 @@ TEXT_MONTHS = {
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
 
-
 DISCARD_PATTERNS = re.compile(
     r"^\d{2}:\d{2}(?: |:|$)|"
     r"^\D*\d{4}\D*$|"
@@ -168,18 +167,15 @@ DISCARD_PATTERNS = re.compile(
     r"[A-Z]{3}[^A-Z]|"  # currency codes
     r"(?:^|\D)(?:\+\d{2}|\d{3}|\d{5})\D|"  # tel./IPs/postal codes
     r"ftps?|https?|sftp|"  # protocols
-    r"\.(com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
+    r"\.(?:com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
     r"IBAN|[A-Z]{2}[0-9]{2}|"  # bank accounts
     r"®"  # ©
 )
-# further testing required:
-# \d[,.]\d+  # currency amounts
-# leads to errors: ^\D+\d{3,}\D+
 
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
-    r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
-    r"(?:Datum|Stand|[Vv]eröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
+    r'(?:date[^0-9"]{,20}|updated|published|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
+    r"(?:Datum|Stand|Veröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
     r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
