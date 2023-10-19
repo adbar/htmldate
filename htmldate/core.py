@@ -22,7 +22,6 @@ from lxml.html import HtmlElement, tostring  # type: ignore
 from .extractors import (
     discard_unwanted,
     extract_url_date,
-    extract_partial_url_date,
     idiosyncrasies_search,
     img_search,
     json_search,
@@ -33,7 +32,8 @@ from .extractors import (
     FAST_PREPEND,
     SLOW_PREPEND,
     FREE_TEXT_EXPRESSIONS,
-    MAX_TEXT_SIZE,
+    MAX_SEGMENT_LEN,
+    MIN_SEGMENT_LEN,
     YEAR_PATTERN,
     YMD_PATTERN,
     COPYRIGHT_PATTERN,
@@ -58,7 +58,7 @@ from .extractors import (
     TWO_COMP_REGEX,
 )
 from .settings import CACHE_SIZE, CLEANING_LIST, MAX_POSSIBLE_CANDIDATES
-from .utils import clean_html, load_html
+from .utils import clean_html, load_html, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -208,12 +208,12 @@ def examine_date_elements(
 
     for elem in elements:
         # trim
-        text = " ".join(elem.text_content().split()).strip()
+        text = trim_text(elem.text_content())
         # simple length heuristic
-        if len(text) > 6:  # could be 8 or 9
+        if len(text) > MIN_SEGMENT_LEN:
             # shorten and try the beginning of the string
             # trim non-digits at the end of the string
-            text = NON_DIGITS_REGEX.sub("", text[:MAX_TEXT_SIZE])
+            text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
             LOGGER.debug(
                 "analyzing (HTML): %s",
                 " ".join(logstring(elem).split())[:100],
@@ -224,9 +224,9 @@ def examine_date_elements(
             if attempt:
                 return attempt
         # try link title (Blogspot)
-        title_attr = elem.get("title", "").strip()
-        if len(title_attr) > 0:
-            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_TEXT_SIZE])
+        title_attr = trim_text(elem.get("title", ""))
+        if len(title_attr) > MIN_SEGMENT_LEN:
+            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_SEGMENT_LEN])
             attempt = try_date_expr(
                 title_attr, outputformat, extensive_search, min_date, max_date
             )
@@ -1037,19 +1037,47 @@ def find_date(
     if abbr_result is not None:
         return abbr_result
 
-    # expressions + text_content
+    # first, prune tree
+    try:
+        search_tree, discarded = discard_unwanted(
+            clean_html(deepcopy(tree), CLEANING_LIST)
+        )
+    # rare LXML error: no NULL bytes or control characters
+    except ValueError:  # pragma: no cover
+        search_tree = tree
+        LOGGER.error("lxml cleaner error")
+
+    # define expressions + text_content
     if extensive_search:
         date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
     else:
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
 
-    # first try in pruned tree
-    search_tree, discarded = discard_unwanted(deepcopy(tree))
+    # then look for expressions
     dateresult = examine_date_elements(
         search_tree, date_expr, outputformat, extensive_search, min_date, max_date
     )
     if dateresult is not None:
         return dateresult
+
+    # look for expressions
+    dateresult = examine_date_elements(
+        search_tree,
+        ".//title|.//h1",
+        outputformat,
+        extensive_search,
+        min_date,
+        max_date,
+    )
+    if dateresult is not None:
+        return dateresult
+
+    # try time elements
+    time_result = examine_time_elements(
+        search_tree, outputformat, extensive_search, original_date, min_date, max_date
+    )
+    if time_result is not None:
+        return time_result
 
     # TODO: decide on this
     # search in discarded parts (e.g. archive.org-banner)
@@ -1059,73 +1087,35 @@ def find_date(
     #    if dateresult is not None:
     #        return dateresult
 
-    # try time elements
-    time_result = examine_time_elements(
-        search_tree, outputformat, extensive_search, original_date, min_date, max_date
-    )
-    if time_result is not None:
-        return time_result
-
-    # clean before string search
-    try:
-        cleaned_html = clean_html(tree, CLEANING_LIST)
-    # rare LXML error: no NULL bytes or control characters
-    except ValueError:  # pragma: no cover
-        cleaned_html = tree
-        LOGGER.error("lxml cleaner error")
-
     # robust conversion to string
     try:
-        htmlstring = tostring(cleaned_html, pretty_print=False, encoding="unicode")
+        htmlstring = tostring(search_tree, pretty_print=False, encoding="unicode")
     except UnicodeDecodeError:
-        htmlstring = tostring(cleaned_html, pretty_print=False).decode(
-            "utf-8", "ignore"
-        )
-    # remove comments by hand as faulty in lxml?
-    # htmlstring = re.sub(r'<!--.+?-->', '', htmlstring, flags=re.DOTALL)
+        htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
 
     # date regex timestamp rescue
     timestamp_result = timestamp_search(htmlstring, outputformat, min_date, max_date)
     if timestamp_result is not None:
         return timestamp_result
 
+    # try image elements
+    img_result = img_search(search_tree, outputformat, min_date, max_date)
+    if img_result is not None:
+        return img_result
+
     # precise patterns and idiosyncrasies
     text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
     if text_result is not None:
         return text_result
-
-    # title
-    for title_elem in tree.iter("title", "h1"):
-        attempt = try_date_expr(
-            title_elem.text_content(),
-            outputformat,
-            extensive_search,
-            min_date,
-            max_date,
-        )
-        if attempt is not None:
-            return attempt
-
-    # last try: URL 2
-    if url is not None:
-        dateresult = extract_partial_url_date(url, outputformat, min_date, max_date)
-        if dateresult is not None:
-            return dateresult
-
-    # try image elements
-    img_result = img_search(tree, outputformat, min_date, max_date)
-    if img_result is not None:
-        return img_result
 
     # last resort
     if extensive_search:
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
-        for segment in cleaned_html.xpath(FREE_TEXT_EXPRESSIONS):
+        for segment in search_tree.xpath(FREE_TEXT_EXPRESSIONS):
             segment = segment.strip()
-            # basic filter: minimum could be 8 or 9
-            if not 6 < len(segment) < MAX_TEXT_SIZE:
+            if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
             reference = compare_reference(
                 reference,

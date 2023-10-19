@@ -24,6 +24,7 @@ from lxml.html import HtmlElement  # type: ignore
 
 # own
 from .settings import CACHE_SIZE
+from .utils import trim_text
 from .validators import convert_date, date_validator
 
 
@@ -48,7 +49,7 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
-FAST_PREPEND = ".//*[(self::div or self::li or self::p or self::span)]"
+FAST_PREPEND = ".//*[(self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul)]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
 
@@ -56,13 +57,8 @@ DATE_EXPRESSIONS = """
 [
     contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
     contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
+    contains(translate(@id|@class, "M", "m"), 'meta') or
     contains(@id|@class, 'time') or
-    @class='meta' or
-    contains(translate(@id|@class, "M", "m"), 'metadata') or
-    contains(translate(@id|@class, "M", "m"), 'meta-') or
-    contains(translate(@id|@class, "M", "m"), '-meta') or
-    contains(translate(@id|@class, "M", "m"), '_meta') or
-    contains(translate(@id|@class, "M", "m"), 'postmeta') or
     contains(@id|@class, 'publish') or
     contains(@id|@class, 'footer') or
     contains(@class, 'info') or
@@ -83,13 +79,15 @@ DATE_EXPRESSIONS = """
     contains(@class, 'parution')
 ] |
 .//footer | .//small
-    """
+"""
+
 # further tests needed:
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
 FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
-MAX_TEXT_SIZE = 48
+MIN_SEGMENT_LEN = 6
+MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
@@ -129,12 +127,11 @@ LONG_TEXT_PATTERN = re.compile(
 )
 
 COMPLETE_URL = re.compile(r"\D([0-9]{4})[/_-]([0-9]{1,2})[/_-]([0-9]{1,2})(?:\D|$)")
-PARTIAL_URL = re.compile(r"\D([0-9]{4})[/_-]([0-9]{2})(?:\D|$)")
 
 JSON_MODIFIED = re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 JSON_PUBLISHED = re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
 TIMESTAMP_PATTERN = re.compile(
-    r"([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}).[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}"
 )
 
 # English, French, German, Indonesian and Turkish dates cache
@@ -159,7 +156,6 @@ TEXT_MONTHS = {
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
 
-
 DISCARD_PATTERNS = re.compile(
     r"^\d{2}:\d{2}(?: |:|$)|"
     r"^\D*\d{4}\D*$|"
@@ -167,18 +163,15 @@ DISCARD_PATTERNS = re.compile(
     r"[A-Z]{3}[^A-Z]|"  # currency codes
     r"(?:^|\D)(?:\+\d{2}|\d{3}|\d{5})\D|"  # tel./IPs/postal codes
     r"ftps?|https?|sftp|"  # protocols
-    r"\.(com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
+    r"\.(?:com|net|org|info|gov|edu|de|fr|io)\b|"  # TLDs
     r"IBAN|[A-Z]{2}[0-9]{2}|"  # bank accounts
     r"®"  # ©
 )
-# further testing required:
-# \d[,.]\d+  # currency amounts
-# leads to errors: ^\D+\d{3,}\D+
 
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
-    r'(?:date[^0-9"]{,20}|updated|published) *?(?:in)? *?:? *?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
-    r"(?:Datum|Stand|[Vv]eröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
+    r'(?:date[^0-9"]{,20}|updated|published|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
+    r"(?:Datum|Stand|Veröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
     r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
@@ -245,28 +238,6 @@ def extract_url_date(
                 return dateobject.strftime(outputformat)
         except ValueError as err:
             LOGGER.debug("conversion error: %s %s", match[0], err)
-    return None
-
-
-def extract_partial_url_date(
-    testurl: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
-    """Extract an approximate date out of an URL string in Y-M format"""
-    match = PARTIAL_URL.search(testurl)
-    if match:
-        dateresult = match[0] + "/01"
-        LOGGER.debug("found partial date in URL: %s", dateresult)
-        try:
-            dateobject = datetime(int(match[1]), int(match[2]), 1)
-            if (
-                date_validator(
-                    dateobject, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
-            ):
-                return dateobject.strftime(outputformat)
-        except ValueError as err:
-            LOGGER.debug("conversion error: %s %s", dateresult, err)
     return None
 
 
@@ -461,7 +432,7 @@ def try_date_expr(
         return None
 
     # trim
-    string = " ".join(string.strip()[:MAX_TEXT_SIZE].split())
+    string = trim_text(string)[:MAX_SEGMENT_LEN]
 
     # formal constraint: 4 to 18 digits
     if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:

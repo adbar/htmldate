@@ -48,7 +48,6 @@ from htmldate.extractors import (
     custom_parse,
     discard_unwanted,
     external_date_parser,
-    extract_partial_url_date,
     regex_parse,
     try_date_expr,
 )
@@ -1232,13 +1231,6 @@ def test_url():
     assert (
         find_date(
             "<html><body><p>Aaa, bbb.</p></body></html>",
-            url="http://www.kreditwesen.org/widerstand-berlin/2012-11/keine-kurzung-bei-der-jugend-klubs-konnen-vorerst-aufatmen-bvv-beschliest-haushaltsplan/",
-        )
-        == "2012-11-01"
-    )
-    assert (
-        find_date(
-            "<html><body><p>Aaa, bbb.</p></body></html>",
             url="http://www.kreditwesen.org/widerstand-berlin/6666-42-87/",
         )
         is None
@@ -1250,29 +1242,10 @@ def test_url():
         )
         == "2019-06-26"
     )
-    assert (
-        extract_partial_url_date(
-            "https://testsite.org/2018/01/test", "%Y-%m-%d", MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2018-01-01"
-    )
-    assert (
-        extract_partial_url_date(
-            "https://testsite.org/2018/33/test", "%Y-%m-%d", MIN_DATE, LATEST_POSSIBLE
-        )
-        is None
-    )
 
 
 def test_approximate_url():
     """test url parameter"""
-    assert (
-        find_date(
-            "<html><body><p>Aaa, bbb.</p></body></html>",
-            url="http://example.com/blog/2016/07/key-words",
-        )
-        == "2016-07-01"
-    )
     assert (
         find_date(
             "<html><body><p>Aaa, bbb.</p></body></html>",
