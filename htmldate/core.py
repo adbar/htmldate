@@ -1052,7 +1052,6 @@ def find_date(
         date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
     else:
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
-    # date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
 
     # then look for expressions
     dateresult = examine_date_elements(
