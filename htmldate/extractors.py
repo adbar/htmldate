@@ -96,15 +96,19 @@ DISCARD_EXPRESSIONS = """.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
 
+DAY_RE = "[0-3]?[0-9]"
+MONTH_RE = "[0-1]?[0-9]"
+YEAR_RE = "199[0-9]|20[0-3][0-9]"
+
 # regex cache
 YMD_NO_SEP_PATTERN = re.compile(r"\b(\d{8})\b")
 YMD_PATTERN = re.compile(
-    r"(?:\D|^)(?:(?P<year>\d{4})[\-/.](?P<month>\d{1,2})[\-/.](?P<day>\d{1,2})|"
-    r"(?P<day2>\d{1,2})[\-/.](?P<month2>\d{1,2})[\-/.](?P<year2>\d{2,4}))(?:\D|$)"
+    rf"(?:\D|^)(?:(?P<year>{YEAR_RE})[\-/.](?P<month>{MONTH_RE})[\-/.](?P<day>{DAY_RE})|"
+    rf"(?P<day2>{DAY_RE})[\-/.](?P<month2>{MONTH_RE})[\-/.](?P<year2>\d{{2,4}}))(?:\D|$)"
 )
 YM_PATTERN = re.compile(
-    r"(?:\D|^)(?:(?P<year>\d{4})[\-/.](?P<month>\d{1,2})|"
-    r"(?P<month2>\d{1,2})[\-/.](?P<year2>\d{4}))(?:\D|$)"
+    rf"(?:\D|^)(?:(?P<year>{YEAR_RE})[\-/.](?P<month>{MONTH_RE})|"
+    rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
 
 REGEX_MONTHS = """
@@ -118,20 +122,22 @@ Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
 """  # todo: check "août"
 LONG_TEXT_PATTERN = re.compile(
     rf"""(?P<month>{REGEX_MONTHS})\s
-(?P<day>[0-9]{{1,2}})(?:st|nd|rd|th)?,? (?P<year>[0-9]{{4}})|
-(?P<day2>[0-9]{{1,2}})(?:st|nd|rd|th|\.)? (?:of )?
-(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>[0-9]{{4}})""".replace(
+(?P<day>{DAY_RE})(?:st|nd|rd|th)?,? (?P<year>{YEAR_RE})|
+(?P<day2>{DAY_RE})(?:st|nd|rd|th|\.)? (?:of )?
+(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>{YEAR_RE})""".replace(
         "\n", ""
     ),
     re.I,
 )
 
-COMPLETE_URL = re.compile(r"\D([0-9]{4})[/_-]([0-9]{1,2})[/_-]([0-9]{1,2})(?:\D|$)")
+COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|$)")
 
-JSON_MODIFIED = re.compile(r'"dateModified": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
-JSON_PUBLISHED = re.compile(r'"datePublished": ?"([0-9]{4}-[0-9]{2}-[0-9]{2})', re.I)
+JSON_MODIFIED = re.compile(rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I)
+JSON_PUBLISHED = re.compile(
+    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I
+)
 TIMESTAMP_PATTERN = re.compile(
-    r"([0-9]{4}-[0-9]{2}-[0-9]{2}).[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE}).[0-9]{{2}}:[0-9]{{2}}:[0-9]{{2}}"
 )
 
 # English, French, German, Indonesian and Turkish dates cache
@@ -178,37 +184,37 @@ TEXT_PATTERNS = re.compile(
 )
 
 # core patterns
-THREE_COMP_REGEX_A = re.compile(r"([0-3]?[0-9])[/.-]([01]?[0-9])[/.-]([0-9]{4})")
+THREE_COMP_REGEX_A = re.compile(rf"({DAY_RE})[/.-]({MONTH_RE})[/.-]({YEAR_RE})")
 THREE_COMP_REGEX_B = re.compile(
-    r"([0-3]?[0-9])/([01]?[0-9])/([0-9]{2})|([0-3][0-9])[.-]([01][0-9])[.-]([0-9]{2})"
+    rf"({DAY_RE})/({MONTH_RE})/([0-9]{{2}})|({DAY_RE})[.-]({MONTH_RE})[.-]([0-9]{{2}})"
 )
-TWO_COMP_REGEX = re.compile(r"([0-3]?[0-9])[/.-]([0-9]{4})")
+TWO_COMP_REGEX = re.compile(rf"({MONTH_RE})[/.-]({YEAR_RE})")
 
 # extensive search patterns
-YEAR_PATTERN = re.compile(r"^\D?(199[0-9]|20[0-9]{2})")
+YEAR_PATTERN = re.compile(rf"^\D?({YEAR_RE})")
 COPYRIGHT_PATTERN = re.compile(
-    r"(?:©|\&copy;|Copyright|\(c\))\D*(?:[12][0-9]{3}-)?([12][0-9]{3})\D"
+    rf"(?:©|\&copy;|Copyright|\(c\))\D*(?:{YEAR_RE}-)?({YEAR_RE})\D"
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
 THREE_CATCH = re.compile(r"([0-9]{4})/([0-9]{2})/([0-9]{2})")
 THREE_LOOSE_PATTERN = re.compile(r"\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D")
 THREE_LOOSE_CATCH = re.compile(r"([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})")
 SELECT_YMD_PATTERN = re.compile(r"\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D")
-SELECT_YMD_YEAR = re.compile(r"(19[0-9]{2}|20[0-9]{2})\D?$")
-YMD_YEAR = re.compile(r"^([0-9]{4})")
+SELECT_YMD_YEAR = re.compile(rf"({YEAR_RE})\D?$")
+YMD_YEAR = re.compile(rf"^({YEAR_RE})")
 DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
-DATESTRINGS_CATCH = re.compile(r"([12][0-9]{3})([01][0-9])([0-3][0-9])")
+DATESTRINGS_CATCH = re.compile(rf"({YEAR_RE})([01][0-9])([0-3][0-9])")
 SLASHES_PATTERN = re.compile(
     r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
 )
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
-YYYYMM_CATCH = re.compile(r"([12][0-9]{3})[/.-]([01][0-9])")
+YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-]([01][0-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
-MMYYYY_YEAR = re.compile(r"([12][0-9]{3})\D?$")
-SIMPLE_PATTERN = re.compile(r"(?<!w3.org)\D(199[0-9]|20[0-9]{2})\D")
+MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
+SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
 
 def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
