@@ -16,7 +16,8 @@ from datetime import datetime
 
 try:
     datetime.fromisoformat  # type: ignore[attr-defined]
-except AttributeError:  # Python 3.6
+# Python 3.6
+except AttributeError:  # pragma: no cover
     from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
 
     MonkeyPatch.patch_fromisoformat()

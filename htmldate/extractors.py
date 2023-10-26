@@ -242,7 +242,7 @@ def extract_url_date(
                 is True
             ):
                 return dateobject.strftime(outputformat)
-        except ValueError as err:
+        except ValueError as err:  # pragma: no cover
             LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
 
@@ -364,7 +364,7 @@ def custom_parse(
                 day, month = try_swap_values(day, month)
 
             candidate = datetime(year, month, day)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
         else:
             if date_validator(
@@ -385,7 +385,7 @@ def custom_parse(
                 candidate = datetime(
                     int(match.group("year2")), int(match.group("month2")), 1
                 )
-        except ValueError:
+        except ValueError:  # pragma: no cover
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
             if (
