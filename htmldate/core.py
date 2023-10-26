@@ -63,11 +63,11 @@ from .validators import (
     check_extracted_reference,
     compare_values,
     convert_date,
-    date_validator,
     filter_ymd_candidate,
     get_min_date,
     get_max_date,
-    output_format_validator,
+    is_valid_date,
+    is_valid_format,
     plausible_year_filter,
 )
 
@@ -193,6 +193,24 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
 
+def examine_text(
+    text: str,
+    outputformat: str,
+    extensive_search: bool,
+    min_date: datetime,
+    max_date: datetime,
+) -> Optional[str]:
+    "Prepare text and try to extract a date."
+    attempt = None
+    text = trim_text(text)
+    if len(text) > MIN_SEGMENT_LEN:
+        text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
+        attempt = try_date_expr(
+            text, outputformat, extensive_search, min_date, max_date
+        )
+    return attempt
+
+
 def examine_date_elements(
     tree: HtmlElement,
     expression: str,
@@ -207,31 +225,17 @@ def examine_date_elements(
         return None
 
     for elem in elements:
-        # trim
-        text = trim_text(elem.text_content())
-        # simple length heuristic
-        if len(text) > MIN_SEGMENT_LEN:
-            # shorten and try the beginning of the string
-            # trim non-digits at the end of the string
-            text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
-            LOGGER.debug(
-                "analyzing (HTML): %s",
-                " ".join(logstring(elem).split())[:100],
-            )
-            attempt = try_date_expr(
-                text, outputformat, extensive_search, min_date, max_date
-            )
-            if attempt:
-                return attempt
+        attempt = examine_text(
+            elem.text_content(), outputformat, extensive_search, min_date, max_date
+        )
+        if attempt:
+            return attempt
         # try link title (Blogspot)
-        title_attr = trim_text(elem.get("title", ""))
-        if len(title_attr) > MIN_SEGMENT_LEN:
-            title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_SEGMENT_LEN])
-            attempt = try_date_expr(
-                title_attr, outputformat, extensive_search, min_date, max_date
-            )
-            if attempt:
-                return attempt
+        attempt = examine_text(
+            elem.get("title", ""), outputformat, extensive_search, min_date, max_date
+        )
+        if attempt:
+            return attempt
 
     return None
 
@@ -337,11 +341,8 @@ def examine_header(
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
                 if "content" in elem.attrib:
                     attempt = "-".join([elem.get("content"), "01", "01"])
-                    if (
-                        date_validator(
-                            attempt, "%Y-%m-%d", earliest=min_date, latest=max_date
-                        )
-                        is True
+                    if is_valid_date(
+                        attempt, "%Y-%m-%d", earliest=min_date, latest=max_date
                     ):
                         reserve = attempt
         # pubdate, relatively rare
@@ -408,7 +409,7 @@ def select_candidate(
         if year_match:
             years[i] = year_match[1]
             dateobject = datetime(int(year_match[1]), 1, 1)
-            validation[i] = date_validator(
+            validation[i] = is_valid_date(
                 dateobject, "%Y", earliest=min_date, latest=max_date
             )
 
@@ -642,7 +643,7 @@ def normalize_match(match: Optional[Match[str]]) -> str:
     and optionally expand the year from two to four digits."""
     day, month, year = (g.zfill(2) for g in match.groups() if g)  # type: ignore[union-attr]
     if len(year) == 2:
-        year = "19" + year if year[0] == "9" else "20" + year
+        year = f"19{year}" if year[0] == "9" else f"20{year}"
     return f"{year}-{month}-{day}"
 
 
@@ -693,10 +694,7 @@ def search_page(
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
         dateobject = datetime(int(bestmatch[0]), 1, 1)
-        if (
-            date_validator(bestmatch[0], "%Y", earliest=min_date, latest=max_date)
-            is True
-        ):
+        if is_valid_date(bestmatch[0], "%Y", earliest=min_date, latest=max_date):
             LOGGER.debug("copyright year/footer pattern found: %s", bestmatch[0])
             copyear = dateobject.year
 
@@ -844,9 +842,9 @@ def search_page(
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
-        if date_validator(
+        if is_valid_date(
             dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date
-        ) is True and (copyear == 0 or dateobject.year >= copyear):
+        ) and (copyear == 0 or dateobject.year >= copyear):
             LOGGER.debug(
                 'date found for pattern "%s": %s, %s',
                 YYYYMM_PATTERN,
@@ -870,7 +868,7 @@ def search_page(
         match = TWO_COMP_REGEX.match(item)
         month = match[1]  # type: ignore[index]
         if len(month) == 1:
-            month = "0" + month
+            month = f"0{month}"
         candidate = "-".join([match[2], month, "01"])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -893,9 +891,9 @@ def search_page(
     # try full-blown text regex on all HTML?
     dateobject = regex_parse(htmlstring)  # type: ignore[assignment]
     # todo: find all candidates and disambiguate?
-    if date_validator(
-        dateobject, outputformat, earliest=min_date, latest=max_date
-    ) is True and (copyear == 0 or dateobject.year >= copyear):
+    if is_valid_date(dateobject, outputformat, earliest=min_date, latest=max_date) and (
+        copyear == 0 or dateobject.year >= copyear
+    ):
         try:
             LOGGER.debug("regex result on HTML: %s", dateobject)
             return dateobject.strftime(outputformat)
@@ -923,9 +921,8 @@ def search_page(
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
-            date_validator(dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date)
-            is True
-            and int(dateobject.year) >= copyear
+            is_valid_date(dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date)
+            and dateobject.year >= copyear
         ):
             LOGGER.debug(
                 'date found for pattern "%s": %s', SIMPLE_PATTERN, bestmatch[0]
@@ -992,7 +989,7 @@ def find_date(
     # safeguards
     if tree is None:
         return None
-    if outputformat != "%Y-%m-%d" and not output_format_validator(outputformat):
+    if outputformat != "%Y-%m-%d" and not is_valid_format(outputformat):
         return None
 
     # define time boundaries

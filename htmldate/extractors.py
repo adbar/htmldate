@@ -25,7 +25,7 @@ from lxml.html import HtmlElement  # type: ignore
 # own
 from .settings import CACHE_SIZE
 from .utils import trim_text
-from .validators import convert_date, date_validator
+from .validators import convert_date, is_valid_date
 
 
 LOGGER = logging.getLogger(__name__)
@@ -235,11 +235,8 @@ def extract_url_date(
         LOGGER.debug("found date in URL: %s", match[0])
         try:
             dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
-            if (
-                date_validator(
-                    dateobject, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
+            if is_valid_date(
+                dateobject, outputformat, earliest=min_date, latest=max_date
             ):
                 return dateobject.strftime(outputformat)
         except ValueError as err:  # pragma: no cover
@@ -320,8 +317,7 @@ def custom_parse(
                     LOGGER.debug("dateutil parsing error: %s", string)
         # c. plausibility test
         if candidate is not None and (
-            date_validator(candidate, outputformat, earliest=min_date, latest=max_date)
-            is True
+            is_valid_date(candidate, outputformat, earliest=min_date, latest=max_date)
         ):
             LOGGER.debug("parsing result: %s", candidate)
             return candidate.strftime(outputformat)
@@ -335,12 +331,7 @@ def custom_parse(
         except ValueError:
             LOGGER.debug("YYYYMMDD value error: %s", match[0])
         else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
@@ -367,9 +358,7 @@ def custom_parse(
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
         else:
-            if date_validator(
-                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
 
@@ -388,21 +377,13 @@ def custom_parse(
         except ValueError:  # pragma: no cover
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("Y-M match: %s", candidate)
                 return candidate.strftime(outputformat)
 
     # 5. Try the other regex pattern
     dateobject = regex_parse(string)
-    if (
-        date_validator(dateobject, outputformat, earliest=min_date, latest=max_date)
-        is True
-    ):
+    if is_valid_date(dateobject, outputformat, earliest=min_date, latest=max_date):
         try:
             LOGGER.debug("custom parse result: %s", dateobject)
             return dateobject.strftime(outputformat)  # type: ignore
@@ -460,7 +441,7 @@ def try_date_expr(
             return None
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
-        if date_validator(
+        if is_valid_date(
             dateparser_result, outputformat, earliest=min_date, latest=max_date
         ):
             return dateparser_result
@@ -499,7 +480,7 @@ def json_search(
         if not elem.text or '"date' not in elem.text:
             continue
         json_match = json_pattern.search(elem.text)
-        if json_match and date_validator(
+        if json_match and is_valid_date(
             json_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
         ):
             LOGGER.debug("JSON time found: %s", json_match[0])
@@ -512,7 +493,7 @@ def timestamp_search(
 ) -> Optional[str]:
     """Look for timestamps throughout the web page"""
     tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if tstamp_match and date_validator(
+    if tstamp_match and is_valid_date(
         tstamp_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
     ):
         LOGGER.debug("time regex found: %s", tstamp_match[0])
@@ -539,8 +520,6 @@ def idiosyncrasies_search(
                     candidate = datetime(year, month, day)
                 except ValueError:
                     LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-            if date_validator(
-                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 return candidate.strftime(outputformat)  # type: ignore[union-attr]
     return None

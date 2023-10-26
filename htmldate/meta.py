@@ -6,7 +6,7 @@ import logging
 
 from .core import compare_reference
 from .extractors import try_date_expr
-from .validators import date_validator, filter_ymd_candidate, output_format_validator
+from .validators import filter_ymd_candidate, is_valid_date, is_valid_format
 
 
 LOGGER = logging.getLogger(__name__)
@@ -26,9 +26,9 @@ def reset_caches() -> None:
     This may release some memory."""
     # htmldate
     compare_reference.cache_clear()
-    date_validator.cache_clear()
     filter_ymd_candidate.cache_clear()
-    output_format_validator.cache_clear()
+    is_valid_date.cache_clear()
+    is_valid_format.cache_clear()
     try_date_expr.cache_clear()
     # charset_normalizer
     try:

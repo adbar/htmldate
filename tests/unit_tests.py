@@ -62,10 +62,10 @@ from htmldate.utils import (
 )
 from htmldate.validators import (
     convert_date,
-    date_validator,
     get_max_date,
     get_min_date,
-    output_format_validator,
+    is_valid_date,
+    is_valid_format,
 )
 
 
@@ -151,12 +151,12 @@ def test_sanity():
     )
     assert result is not None
     # wrong field values in output format
-    assert output_format_validator("%Y-%m-%d") is True
-    assert output_format_validator("%M-%Y") is True
-    assert output_format_validator("ABC") is False
-    assert output_format_validator(123) is False
-    assert output_format_validator(("a", "b")) is False
-    # assert output_format_validator('%\xaa') is False
+    assert is_valid_format("%Y-%m-%d") is True
+    assert is_valid_format("%M-%Y") is True
+    assert is_valid_format("ABC") is False
+    assert is_valid_format(123) is False
+    assert is_valid_format(("a", "b")) is False
+    # assert is_valid_format('%\xaa') is False
     _, discarded = discard_unwanted(
         html.fromstring(
             '<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'
@@ -656,52 +656,50 @@ def test_exact_date():
     )
 
 
-def test_date_validator():
+def test_is_valid_date():
     """test internal date validation"""
     assert (
-        date_validator(
+        is_valid_date(
             "2016-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1998-08-08", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "2001-12-31", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1992-07-30", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1901-13-98", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is False
     )
     assert (
-        date_validator(
-            "202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
+        is_valid_date("202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
         is False
     )
     assert (
-        date_validator("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
+        is_valid_date("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
     )
     assert (
-        date_validator("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
+        is_valid_date("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -710,7 +708,7 @@ def test_date_validator():
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1992, 1, 1),
@@ -719,7 +717,7 @@ def test_date_validator():
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=MIN_DATE,
@@ -728,7 +726,7 @@ def test_date_validator():
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -737,7 +735,7 @@ def test_date_validator():
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -1763,7 +1761,7 @@ if __name__ == "__main__":
     # function-level
     test_input()
     test_sanity()
-    test_date_validator()
+    test_is_valid_date()
     test_search_pattern()
     test_try_date_expr()
     test_convert_date()
