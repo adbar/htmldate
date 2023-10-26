@@ -193,7 +193,7 @@ TWO_COMP_REGEX = re.compile(rf"({MONTH_RE})[/.-]({YEAR_RE})")
 # extensive search patterns
 YEAR_PATTERN = re.compile(rf"^\D?({YEAR_RE})")
 COPYRIGHT_PATTERN = re.compile(
-    r"(?:©|\&copy;|Copyright|\(c\))\D*(?:[12][0-9]{3}-)?([12][0-9]{3})\D"
+    rf"(?:©|\&copy;|Copyright|\(c\))\D*(?:{YEAR_RE}-)?({YEAR_RE})\D"
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
 THREE_CATCH = re.compile(r"([0-9]{4})/([0-9]{2})/([0-9]{2})")
@@ -205,15 +205,15 @@ YMD_YEAR = re.compile(rf"^({YEAR_RE})")
 DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
-DATESTRINGS_CATCH = re.compile(r"([12][0-9]{3})([01][0-9])([0-3][0-9])")
+DATESTRINGS_CATCH = re.compile(rf"({YEAR_RE})([01][0-9])([0-3][0-9])")
 SLASHES_PATTERN = re.compile(
     r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
 )
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
-YYYYMM_CATCH = re.compile(r"([12][0-9]{3})[/.-]([01][0-9])")
+YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-]([01][0-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
-MMYYYY_YEAR = re.compile(r"([12][0-9]{3})\D?$")
+MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
 
