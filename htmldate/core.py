@@ -26,7 +26,7 @@ from .extractors import (
     img_search,
     json_search,
     regex_parse,
-    timestamp_search,
+    pattern_search,
     try_date_expr,
     DATE_EXPRESSIONS,
     FAST_PREPEND,
@@ -37,6 +37,7 @@ from .extractors import (
     YEAR_PATTERN,
     YMD_PATTERN,
     COPYRIGHT_PATTERN,
+    TIMESTAMP_PATTERN,
     THREE_PATTERN,
     THREE_CATCH,
     THREE_LOOSE_PATTERN,
@@ -201,14 +202,13 @@ def examine_text(
     max_date: datetime,
 ) -> Optional[str]:
     "Prepare text and try to extract a date."
-    attempt = None
     text = trim_text(text)
-    if len(text) > MIN_SEGMENT_LEN:
-        text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
-        attempt = try_date_expr(
-            text, outputformat, extensive_search, min_date, max_date
-        )
-    return attempt
+
+    if len(text) <= MIN_SEGMENT_LEN:
+        return None
+
+    text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
+    return try_date_expr(text, outputformat, extensive_search, min_date, max_date)
 
 
 def examine_date_elements(
@@ -225,17 +225,13 @@ def examine_date_elements(
         return None
 
     for elem in elements:
-        attempt = examine_text(
-            elem.text_content(), outputformat, extensive_search, min_date, max_date
-        )
-        if attempt:
-            return attempt
-        # try link title (Blogspot)
-        attempt = examine_text(
-            elem.get("title", ""), outputformat, extensive_search, min_date, max_date
-        )
-        if attempt:
-            return attempt
+        # try element text and link title (Blogspot)
+        for text in [elem.text_content(), elem.get("title", "")]:
+            attempt = examine_text(
+                text, outputformat, extensive_search, min_date, max_date
+            )
+            if attempt:
+                return attempt
 
     return None
 
@@ -1091,7 +1087,9 @@ def find_date(
         htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
 
     # date regex timestamp rescue
-    timestamp_result = timestamp_search(htmlstring, outputformat, min_date, max_date)
+    timestamp_result = pattern_search(
+        htmlstring, TIMESTAMP_PATTERN, outputformat, min_date, max_date
+    )
     if timestamp_result is not None:
         return timestamp_result
 

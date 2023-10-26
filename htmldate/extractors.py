@@ -12,7 +12,7 @@ import re
 
 from datetime import datetime
 from functools import lru_cache
-from typing import List, Optional, Tuple
+from typing import List, Optional, Pattern, Tuple
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
@@ -463,6 +463,23 @@ def img_search(
     return None
 
 
+def pattern_search(
+    text: str,
+    date_pattern: Pattern[str],
+    outputformat: str,
+    min_date: datetime,
+    max_date: datetime,
+) -> Optional[str]:
+    "Look for date expressions using a regular expression on a string of text."
+    match = date_pattern.search(text)
+    if match and is_valid_date(
+        match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
+    ):
+        LOGGER.debug("regex found: %s %s", date_pattern, match[0])
+        return convert_date(match[1], "%Y-%m-%d", outputformat)
+    return None
+
+
 def json_search(
     tree: HtmlElement,
     outputformat: str,
@@ -479,25 +496,7 @@ def json_search(
     ):
         if not elem.text or '"date' not in elem.text:
             continue
-        json_match = json_pattern.search(elem.text)
-        if json_match and is_valid_date(
-            json_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
-        ):
-            LOGGER.debug("JSON time found: %s", json_match[0])
-            return convert_date(json_match[1], "%Y-%m-%d", outputformat)
-    return None
-
-
-def timestamp_search(
-    htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
-    """Look for timestamps throughout the web page"""
-    tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if tstamp_match and is_valid_date(
-        tstamp_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
-    ):
-        LOGGER.debug("time regex found: %s", tstamp_match[0])
-        return convert_date(tstamp_match[1], "%Y-%m-%d", outputformat)
+        return pattern_search(elem.text, json_pattern, outputformat, min_date, max_date)
     return None
 
 
