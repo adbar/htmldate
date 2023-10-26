@@ -218,19 +218,17 @@ def examine_date_elements(
                 "analyzing (HTML): %s",
                 " ".join(logstring(elem).split())[:100],
             )
-            attempt = try_date_expr(
+            if attempt := try_date_expr(
                 text, outputformat, extensive_search, min_date, max_date
-            )
-            if attempt:
+            ):
                 return attempt
         # try link title (Blogspot)
         title_attr = trim_text(elem.get("title", ""))
         if len(title_attr) > MIN_SEGMENT_LEN:
             title_attr = NON_DIGITS_REGEX.sub("", title_attr[:MAX_SEGMENT_LEN])
-            attempt = try_date_expr(
+            if attempt := try_date_expr(
                 title_attr, outputformat, extensive_search, min_date, max_date
-            )
-            if attempt:
+            ):
                 return attempt
 
     return None
@@ -404,8 +402,7 @@ def select_candidate(
     years = [""] * len(bestones)
     validation = [False] * len(bestones)
     for i, pattern in enumerate(patterns):
-        year_match = yearpat.search(pattern)
-        if year_match:
+        if year_match := yearpat.search(pattern):
             years[i] = year_match[1]
             dateobject = datetime(int(year_match[1]), 1, 1)
             validation[i] = date_validator(
@@ -642,7 +639,7 @@ def normalize_match(match: Optional[Match[str]]) -> str:
     and optionally expand the year from two to four digits."""
     day, month, year = (g.zfill(2) for g in match.groups() if g)  # type: ignore[union-attr]
     if len(year) == 2:
-        year = "19" + year if year[0] == "9" else "20" + year
+        year = f"19{year}" if year[0] == "9" else f"20{year}"
     return f"{year}-{month}-{day}"
 
 
@@ -870,7 +867,7 @@ def search_page(
         match = TWO_COMP_REGEX.match(item)
         month = match[1]  # type: ignore[index]
         if len(month) == 1:
-            month = "0" + month
+            month = f"0{month}"
         candidate = "-".join([match[2], month, "01"])  # type: ignore[index]
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
@@ -923,9 +920,11 @@ def search_page(
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[0]), 1, 1)
         if (
-            date_validator(dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date)
+            date_validator(
+                dateobject, "%Y-%m-%d", earliest=min_date, latest=max_date
+            )
             is True
-            and int(dateobject.year) >= copyear
+            and dateobject.year >= copyear
         ):
             LOGGER.debug(
                 'date found for pattern "%s": %s', SIMPLE_PATTERN, bestmatch[0]
