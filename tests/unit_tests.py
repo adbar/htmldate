@@ -54,6 +54,7 @@ from htmldate.extractors import (
 from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
 from htmldate.utils import (
+    Extractor,
     decode_response,
     fetch_url,
     is_dubious_html,
@@ -73,6 +74,8 @@ TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = "%Y-%m-%d"
 
 LATEST_POSSIBLE = datetime.datetime.now()
+
+OPTIONS = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -138,17 +141,11 @@ def test_sanity():
     # XPath looking for date elements
     mytree = html.fromstring("<html><body><p>Test.</p></body></html>")
     with pytest.raises(XPathEvalError):
-        examine_date_elements(
-            mytree, ".//[Error", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-    result = examine_date_elements(
-        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-    )
+        examine_date_elements(mytree, ".//[Error", OPTIONS)
+    result = examine_date_elements(mytree, ".//p", OPTIONS)
     assert result is None
     mytree = html.fromstring("<html><body><p>1999/03/05</p></body></html>")
-    result = examine_date_elements(
-        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-    )
+    result = examine_date_elements(mytree, ".//p", OPTIONS)
     assert result is not None
     # wrong field values in output format
     assert is_valid_format("%Y-%m-%d") is True
@@ -844,7 +841,7 @@ def test_try_date_expr():
 
 
 # def test_header():
-#    assert examine_header(tree, OUTPUTFORMAT, PARSER)
+#    assert examine_header(tree, options)
 
 
 def test_compare_reference(

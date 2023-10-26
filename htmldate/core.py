@@ -59,7 +59,7 @@ from .extractors import (
     TWO_COMP_REGEX,
 )
 from .settings import CACHE_SIZE, CLEANING_LIST, MAX_POSSIBLE_CANDIDATES
-from .utils import clean_html, load_html, trim_text
+from .utils import Extractor, clean_html, load_html, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -79,22 +79,6 @@ LOGGER = logging.getLogger(__name__)
 def logstring(element: HtmlElement) -> str:
     """Format the element to be logged to a string."""
     return tostring(element, pretty_print=False, encoding="unicode").strip()  # type: ignore
-
-
-# class Extractor:
-#    "Defines a class to store all extraction options."
-#    __slots__ = [
-#    "extensive", "original", "outputformat",
-#    "min", "max"
-#    ]
-#    # consider dataclasses for Python 3.7+
-#    def __init__(self, extensive_search, original_date, outputformat,
-#                 min_date, max_date):
-#        self.extensive = extensive_search
-#        self.original = original_date
-#        self.outputformat = precision
-#        self.min = min_date
-#        self.max = max_date
 
 
 DATE_ATTRIBUTES = {
@@ -230,10 +214,7 @@ def examine_text(
 def examine_date_elements(
     tree: HtmlElement,
     expression: str,
-    outputformat: str,
-    extensive_search: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     """Check HTML elements one by one for date expressions"""
     elements = tree.xpath(expression)
@@ -244,7 +225,7 @@ def examine_date_elements(
         # try element text and link title (Blogspot)
         for text in [elem.text_content(), elem.get("title", "")]:
             attempt = examine_text(
-                text, outputformat, extensive_search, min_date, max_date
+                text, options.format, options.extensive, options.min, options.max
             )
             if attempt:
                 return attempt
@@ -254,45 +235,27 @@ def examine_date_elements(
 
 def examine_header(
     tree: HtmlElement,
-    outputformat: str,
-    extensive_search: bool,
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     """
     Parse header elements to find date cues
 
     :param tree:
         LXML parsed tree object
-    :type htmlstring: LXML tree
-    :param outputformat:
-        Provide a valid datetime format for the returned string
-        (see datetime.strftime())
-    :type outputformat: string
-    :param extensive_search:
-        Activate pattern-based opportunistic text search
-    :type extensive_search: boolean
-    :param original_date:
-        Look for original date (e.g. publication date) instead of most recent
-        one (e.g. last modified, updated time)
-    :type original_date: boolean
-    :param min_date:
-        Set the earliest acceptable date manually (ISO 8601 YMD format)
-    :type min_date: datetime
-    :param max_date:
-        Set the latest acceptable date manually (ISO 8601 YMD format)
-    :type max_date: datetime
+    :type tree: LXML tree
+    :param options:
+        Options for extraction
+    :type options: Extractor
     :return: Returns a valid date expression as a string, or None
 
     """
     headerdate, reserve = None, None
     tryfunc = partial(
         try_date_expr,
-        outputformat=outputformat,
-        extensive_search=extensive_search,
-        min_date=min_date,
-        max_date=max_date,
+        outputformat=options.format,
+        extensive_search=options.extensive,
+        min_date=options.min,
+        max_date=options.max,
     )
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
@@ -308,9 +271,7 @@ def examine_header(
             attribute = elem.get("name").lower()
             # url
             if attribute == "og:url":
-                reserve = extract_url_date(
-                    elem.get("content"), outputformat, min_date, max_date
-                )
+                reserve = extract_url_date(elem.get("content"), options)
             # date
             elif attribute in DATE_ATTRIBUTES:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
@@ -318,7 +279,7 @@ def examine_header(
             # modified
             elif attribute in NAME_MODIFIED:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
-                if not original_date:
+                if not options.original:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -326,8 +287,8 @@ def examine_header(
         elif "property" in elem.attrib:
             attribute = elem.get("property").lower()
             # original date or modified date: override published_time
-            if (original_date and attribute in DATE_ATTRIBUTES) or (
-                not original_date
+            if (options.original and attribute in DATE_ATTRIBUTES) or (
+                not options.original
                 and (attribute in PROPERTY_MODIFIED or attribute in DATE_ATTRIBUTES)
             ):
                 LOGGER.debug("examining meta property: %s", logstring(elem))
@@ -341,8 +302,8 @@ def examine_header(
                 attempt = tryfunc(elem.get("datetime") or elem.get("content"))
                 # store value
                 if attempt is not None:
-                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and original_date) or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED and not original_date
+                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and options.original) or (
+                        attribute in ITEMPROP_ATTRS_MODIFIED and not options.original
                     ):
                         headerdate = attempt
                     # put on hold: hurts precision
@@ -354,7 +315,7 @@ def examine_header(
                 if "content" in elem.attrib:
                     attempt = "-".join([elem.get("content"), "01", "01"])
                     if is_valid_date(
-                        attempt, "%Y-%m-%d", earliest=min_date, latest=max_date
+                        attempt, "%Y-%m-%d", earliest=options.min, latest=options.max
                     ):
                         reserve = attempt
         # pubdate, relatively rare
@@ -367,13 +328,13 @@ def examine_header(
             attribute = elem.get("http-equiv").lower()
             if attribute == "date":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if original_date:
+                if options.original:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
             elif attribute == "last-modified":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
-                if not original_date:
+                if not options.original:
                     headerdate = tryfunc(elem.get("content"))
                 else:
                     reserve = tryfunc(elem.get("content"))
@@ -483,11 +444,7 @@ def compare_reference(
 
 def examine_abbr_elements(
     tree: HtmlElement,
-    outputformat: str,
-    extensive_search: bool,
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     """Scan the page for abbr elements and check if their content contains an eligible date"""
     elements = tree.findall(".//abbr")
@@ -502,10 +459,10 @@ def examine_abbr_elements(
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
                 # look for original date
-                if original_date and (reference == 0 or candidate < reference):
+                if options.original and (reference == 0 or candidate < reference):
                     reference = candidate
                 # look for newest (i.e. largest time delta)
-                elif not original_date and candidate > reference:
+                elif not options.original and candidate > reference:
                     reference = candidate
             # class
             elif elem.get("class") in CLASS_ATTRS:
@@ -514,9 +471,13 @@ def examine_abbr_elements(
                     trytext = elem.get("title")
                     LOGGER.debug("abbr published-title found: %s", trytext)
                     # shortcut
-                    if original_date:
+                    if options.original:
                         attempt = try_date_expr(
-                            trytext, outputformat, extensive_search, min_date, max_date
+                            trytext,
+                            options.format,
+                            options.extensive,
+                            options.min,
+                            options.max,
                         )
                         if attempt is not None:
                             return attempt
@@ -524,11 +485,11 @@ def examine_abbr_elements(
                         reference = compare_reference(
                             reference,
                             trytext,
-                            outputformat,
-                            extensive_search,
-                            original_date,
-                            min_date,
-                            max_date,
+                            options.format,
+                            options.extensive,
+                            options.original,
+                            options.min,
+                            options.max,
                         )
                         # faster execution
                         if reference > 0:
@@ -539,21 +500,23 @@ def examine_abbr_elements(
                     reference = compare_reference(
                         reference,
                         elem.text,
-                        outputformat,
-                        extensive_search,
-                        original_date,
-                        min_date,
-                        max_date,
+                        options.format,
+                        options.extensive,
+                        options.original,
+                        options.min,
+                        options.max,
                     )
         # convert and return
         converted = check_extracted_reference(
-            reference, outputformat, min_date, max_date
+            reference, options.format, options.min, options.max
         )
         if converted is not None:
             return converted
         # try rescue in abbr content
         dateresult = examine_date_elements(
-            tree, ".//abbr", outputformat, extensive_search, min_date, max_date
+            tree,
+            ".//abbr",
+            options,
         )
         if dateresult is not None:
             return dateresult
@@ -1006,8 +969,9 @@ def find_date(
 
     # define options and time boundaries
     min_date, max_date = get_min_date(min_date), get_max_date(max_date)
-    # options = Extractor(extensive_search, original_date, outputformat,
-    #                    get_min_date(min_date), get_max_date(max_date))
+    options = Extractor(
+        extensive_search, max_date, min_date, original_date, outputformat
+    )
     # unclear what this line is for and it impedes type checking:
     # find_date.extensive_search = extensive_search
 
@@ -1021,7 +985,7 @@ def find_date(
 
     # direct processing of URL info
     if url is not None:
-        url_result = extract_url_date(url, outputformat, min_date, max_date)
+        url_result = extract_url_date(url, options)
         if url_result is not None and not deferred_url_extractor:
             return url_result
 
@@ -1029,10 +993,10 @@ def find_date(
         # first, try header
         (
             examine_header,
-            [tree, outputformat, extensive_search, original_date, min_date, max_date],
+            [tree, options],
         ),
         # try to use JSON data
-        (json_search, [tree, outputformat, original_date, min_date, max_date]),
+        (json_search, [tree, options]),
     ]
 
     for search_function, args in search_functions:
@@ -1046,7 +1010,8 @@ def find_date(
 
     # try abbr elements
     abbr_result = examine_abbr_elements(
-        tree, outputformat, extensive_search, original_date, min_date, max_date
+        tree,
+        options,
     )
     if abbr_result is not None:
         return abbr_result
@@ -1069,7 +1034,9 @@ def find_date(
 
     # then look for expressions
     dateresult = examine_date_elements(
-        search_tree, date_expr, outputformat, extensive_search, min_date, max_date
+        search_tree,
+        date_expr,
+        options,
     )
     if dateresult is not None:
         return dateresult
@@ -1078,10 +1045,7 @@ def find_date(
     dateresult = examine_date_elements(
         search_tree,
         ".//title|.//h1",
-        outputformat,
-        extensive_search,
-        min_date,
-        max_date,
+        options,
     )
     if dateresult is not None:
         return dateresult
@@ -1096,8 +1060,7 @@ def find_date(
     # TODO: decide on this
     # search in discarded parts (e.g. archive.org-banner)
     # for subtree in discarded:
-    #    dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS,
-    #        outputformat, extensive_search, min_date, max_date)
+    #    dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS, options)
     #    if dateresult is not None:
     #        return dateresult
 
@@ -1112,11 +1075,11 @@ def find_date(
         (
             pattern_search,
             [htmlstring, TIMESTAMP_PATTERN, outputformat, min_date, max_date],
-        ),
+        ),  # type: ignore[list-item]
         # try image elements
-        (img_search, [search_tree, outputformat, min_date, max_date]),
+        (img_search, [search_tree, options]),
         # precise patterns and idiosyncrasies
-        (idiosyncrasies_search, [htmlstring, outputformat, min_date, max_date]),
+        (idiosyncrasies_search, [htmlstring, outputformat, min_date, max_date]),  # type: ignore[list-item]
     ]
 
     for search_function, args in search_functions:

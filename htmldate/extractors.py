@@ -24,7 +24,7 @@ from lxml.html import HtmlElement  # type: ignore
 
 # own
 from .settings import CACHE_SIZE
-from .utils import trim_text
+from .utils import Extractor, trim_text
 from .validators import convert_date, is_valid_date
 
 
@@ -227,7 +227,8 @@ def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]
 
 
 def extract_url_date(
-    testurl: str, outputformat: str, min_date: datetime, max_date: datetime
+    testurl: str,
+    options: Extractor,
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
@@ -236,9 +237,9 @@ def extract_url_date(
         try:
             dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
             if is_valid_date(
-                dateobject, outputformat, earliest=min_date, latest=max_date
+                dateobject, options.format, earliest=options.min, latest=options.max
             ):
-                return dateobject.strftime(outputformat)
+                return dateobject.strftime(options.format)
         except ValueError as err:  # pragma: no cover
             LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
@@ -450,13 +451,15 @@ def try_date_expr(
 
 
 def img_search(
-    tree: HtmlElement, outputformat: str, min_date: datetime, max_date: datetime
+    tree: HtmlElement,
+    options: Extractor,
 ) -> Optional[str]:
     """Skim through image elements"""
     element = tree.find('.//meta[@property="og:image"][@content]')
     if element is not None:
         result = extract_url_date(
-            element.get("content"), outputformat, min_date, max_date
+            element.get("content"),
+            options,
         )
         if result is not None:
             return result
@@ -482,21 +485,20 @@ def pattern_search(
 
 def json_search(
     tree: HtmlElement,
-    outputformat: str,
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
-    json_pattern = JSON_PUBLISHED if original_date else JSON_MODIFIED
+    json_pattern = JSON_PUBLISHED if options.original else JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath(
         './/script[@type="application/ld+json" or @type="application/settings+json"]'
     ):
         if not elem.text or '"date' not in elem.text:
             continue
-        return pattern_search(elem.text, json_pattern, outputformat, min_date, max_date)
+        return pattern_search(
+            elem.text, json_pattern, options.format, options.min, options.max
+        )
     return None
 
 
