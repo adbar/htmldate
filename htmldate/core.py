@@ -81,6 +81,22 @@ def logstring(element: HtmlElement) -> str:
     return tostring(element, pretty_print=False, encoding="unicode").strip()  # type: ignore
 
 
+# class Extractor:
+#    "Defines a class to store all extraction options."
+#    __slots__ = [
+#    "extensive", "original", "outputformat",
+#    "min", "max"
+#    ]
+#    # consider dataclasses for Python 3.7+
+#    def __init__(self, extensive_search, original_date, outputformat,
+#                 min_date, max_date):
+#        self.extensive = extensive_search
+#        self.original = original_date
+#        self.outputformat = precision
+#        self.min = min_date
+#        self.max = max_date
+
+
 DATE_ATTRIBUTES = {
     "analyticsattributes.articledate",
     "article.created",
@@ -988,8 +1004,10 @@ def find_date(
     if outputformat != "%Y-%m-%d" and not is_valid_format(outputformat):
         return None
 
-    # define time boundaries
+    # define options and time boundaries
     min_date, max_date = get_min_date(min_date), get_max_date(max_date)
+    # options = Extractor(extensive_search, original_date, outputformat,
+    #                    get_min_date(min_date), get_max_date(max_date))
     # unclear what this line is for and it impedes type checking:
     # find_date.extensive_search = extensive_search
 
@@ -1007,17 +1025,20 @@ def find_date(
         if url_result is not None and not deferred_url_extractor:
             return url_result
 
-    # first, try header
-    header_result = examine_header(
-        tree, outputformat, extensive_search, original_date, min_date, max_date
-    )
-    if header_result is not None:
-        return header_result
+    search_functions = [
+        # first, try header
+        (
+            examine_header,
+            [tree, outputformat, extensive_search, original_date, min_date, max_date],
+        ),
+        # try to use JSON data
+        (json_search, [tree, outputformat, original_date, min_date, max_date]),
+    ]
 
-    # try to use JSON data
-    json_result = json_search(tree, outputformat, original_date, min_date, max_date)
-    if json_result is not None:
-        return json_result
+    for search_function, args in search_functions:
+        result = search_function(*args)
+        if result is not None:
+            return result
 
     # deferred processing of URL info (may be moved even further down if necessary)
     if deferred_url_extractor and url_result is not None:
@@ -1086,22 +1107,22 @@ def find_date(
     except UnicodeDecodeError:
         htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
 
-    # date regex timestamp rescue
-    timestamp_result = pattern_search(
-        htmlstring, TIMESTAMP_PATTERN, outputformat, min_date, max_date
-    )
-    if timestamp_result is not None:
-        return timestamp_result
+    search_functions = [
+        # date regex timestamp rescue
+        (
+            pattern_search,
+            [htmlstring, TIMESTAMP_PATTERN, outputformat, min_date, max_date],
+        ),
+        # try image elements
+        (img_search, [search_tree, outputformat, min_date, max_date]),
+        # precise patterns and idiosyncrasies
+        (idiosyncrasies_search, [htmlstring, outputformat, min_date, max_date]),
+    ]
 
-    # try image elements
-    img_result = img_search(search_tree, outputformat, min_date, max_date)
-    if img_result is not None:
-        return img_result
-
-    # precise patterns and idiosyncrasies
-    text_result = idiosyncrasies_search(htmlstring, outputformat, min_date, max_date)
-    if text_result is not None:
-        return text_result
+    for search_function, args in search_functions:
+        result = search_function(*args)
+        if result is not None:
+            return result
 
     # last resort
     if extensive_search:
