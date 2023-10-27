@@ -469,17 +469,15 @@ def img_search(
 def pattern_search(
     text: str,
     date_pattern: Pattern[str],
-    outputformat: str,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
     if match and is_valid_date(
-        match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
+        match[1], "%Y-%m-%d", earliest=options.min, latest=options.max
     ):
         LOGGER.debug("regex found: %s %s", date_pattern, match[0])
-        return convert_date(match[1], "%Y-%m-%d", outputformat)
+        return convert_date(match[1], "%Y-%m-%d", options.format)
     return None
 
 
@@ -496,14 +494,13 @@ def json_search(
     ):
         if not elem.text or '"date' not in elem.text:
             continue
-        return pattern_search(
-            elem.text, json_pattern, options.format, options.min, options.max
-        )
+        return pattern_search(elem.text, json_pattern, options)
     return None
 
 
 def idiosyncrasies_search(
-    htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
+    htmlstring: str,
+    options: Extractor,
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
@@ -521,6 +518,8 @@ def idiosyncrasies_search(
                     candidate = datetime(year, month, day)
                 except ValueError:
                     LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
-                return candidate.strftime(outputformat)  # type: ignore[union-attr]
+            if is_valid_date(
+                candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
+            ):
+                return candidate.strftime(options.format)  # type: ignore[union-attr]
     return None

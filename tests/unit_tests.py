@@ -844,56 +844,13 @@ def test_try_date_expr():
 #    assert examine_header(tree, options)
 
 
-def test_compare_reference(
-    extensive_search=False,
-    original_date=False,
-    min_date=MIN_DATE,
-    max_date=LATEST_POSSIBLE,
-):
+def test_compare_reference():
     """test comparison function"""
-    assert (
-        compare_reference(
-            0, "AAAA", OUTPUTFORMAT, extensive_search, original_date, min_date, max_date
-        )
-        == 0
-    )
-    assert (
-        compare_reference(
-            1517500000,
-            "2018-33-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        == 1517500000
-    )
-    assert (
-        1517400000
-        < compare_reference(
-            0,
-            "2018-02-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        < 1517500000
-    )
-    assert (
-        compare_reference(
-            1517500000,
-            "2018-02-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        == 1517500000
-    )
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
+    assert compare_reference(0, "AAAA", options) == 0
+    assert compare_reference(1517500000, "2018-33-01", options) == 1517500000
+    assert 1517400000 < compare_reference(0, "2018-02-01", options) < 1517500000
+    assert compare_reference(1517500000, "2018-02-01", options) == 1517500000
 
 
 def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
@@ -1364,156 +1321,91 @@ def test_search_pattern(
     )
 
 
-def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
+def test_search_html():
     "Test the pattern search in raw HTML"
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     # tree input
     assert (
-        search_page(
-            "<html><body><p>The date is 5/2010</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 5/2010</p></body></html>", options)
         == "2010-05-01"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 5.5.2010</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 5.5.2010</p></body></html>", options)
         == "2010-05-05"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 11/10/99</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 11/10/99</p></body></html>", options)
         == "1999-10-11"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 3/3/11</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 3/3/11</p></body></html>", options)
         == "2011-03-03"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 06.12.06</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 06.12.06</p></body></html>", options)
         == "2006-12-06"
     )
     assert (
         search_page(
-            "<html><body><p>The timestamp is 20140915D15:23H</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            "<html><body><p>The timestamp is 20140915D15:23H</p></body></html>", options
         )
         == "2014-09-15"
     )
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
     assert (
         search_page(
             "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            OUTPUTFORMAT,
-            True,
-            min_date,
-            max_date,
+            options,
         )
         == "2003-11-24"
     )
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     assert (
         search_page(
             "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            OUTPUTFORMAT,
-            False,
-            min_date,
-            max_date,
+            options,
         )
         == "2015-04-30"
     )
     assert (
         search_page(
             "<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         == "2013-03-03"
     )
     assert (
         search_page(
             "<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
     assert (
         search_page(
-            "<html><body><p>© The Web Association 2013.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            "<html><body><p>© The Web Association 2013.</p></body></html>", options
         )
         == "2013-01-01"
     )
     assert (
-        search_page(
-            "<html><body><p>Next © Copyright 2018</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>Next © Copyright 2018</p></body></html>", options)
         == "2018-01-01"
     )
     assert (
-        search_page(
-            "<html><body><p> © Company 2014-2019 </p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p> © Company 2014-2019 </p></body></html>", options)
         == "2019-01-01"
     )
     assert (
         search_page(
             '<html><head><link xmlns="http://www.w3.org/1999/xhtml"/></head></html>',
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
     assert (
         search_page(
             '<html><body><link href="//homepagedesigner.telekom.de/.cm4all/res/static/beng-editor/5.1.98/css/deploy.css"/></body></html>',
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )

@@ -34,7 +34,7 @@ from lxml import html
 from htmldate.cli import parse_args, process_args
 from htmldate.core import find_date, search_page
 from htmldate.settings import MIN_DATE
-from htmldate.utils import detect_encoding
+from htmldate.utils import Extractor, detect_encoding
 
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -649,17 +649,13 @@ def test_approximate_date():
     )  # probably newer
 
 
-def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
+def test_search_html():
     "Test the pattern search in raw HTML"
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, "%d %B %Y")
     # file input + output format
     fileinput = load_mock_page("http://www.heimicke.de/chronik/zahlen-und-daten/")
     encoding = detect_encoding(fileinput)[0]
-    assert (
-        search_page(
-            fileinput.decode(encoding), "%d %B %Y", original_date, min_date, max_date
-        )
-        == "06 April 2019"
-    )
+    assert search_page(fileinput.decode(encoding), options) == "06 April 2019"
 
 
 def test_readme_examples():

@@ -16,6 +16,7 @@ from time import mktime
 from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from .settings import CACHE_SIZE, MIN_DATE
+from .utils import Extractor
 
 
 LOGGER = logging.getLogger(__name__)
@@ -170,14 +171,14 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(
-    reference: int, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
+def check_extracted_reference(reference: int, options: Extractor) -> Optional[str]:
     """Test if the extracted reference date can be returned"""
     if reference > 0:
         dateobject = datetime.fromtimestamp(reference)
-        converted = dateobject.strftime(outputformat)
-        if is_valid_date(converted, outputformat, earliest=min_date, latest=max_date):
+        converted = dateobject.strftime(options.format)
+        if is_valid_date(
+            converted, options.format, earliest=options.min, latest=options.max
+        ):
             return converted
     return None
 
