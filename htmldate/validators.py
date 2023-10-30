@@ -112,18 +112,16 @@ def plausible_year_filter(
     return occurrences
 
 
-def compare_values(
-    reference: int, attempt: str, outputformat: str, original_date: bool
-) -> int:
+def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = int(mktime(datetime.strptime(attempt, outputformat).timetuple()))
+        timestamp = int(mktime(datetime.strptime(attempt, options.format).timetuple()))
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if original_date and (reference == 0 or timestamp < reference):
+    if options.original and (reference == 0 or timestamp < reference):
         reference = timestamp
-    elif not original_date and timestamp > reference:
+    elif not options.original and timestamp > reference:
         reference = timestamp
     return reference
 

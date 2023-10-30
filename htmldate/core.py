@@ -196,10 +196,7 @@ NON_DIGITS_REGEX = re.compile(r"\D+$")
 
 def examine_text(
     text: str,
-    outputformat: str,
-    extensive_search: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     "Prepare text and try to extract a date."
     text = trim_text(text)
@@ -208,7 +205,9 @@ def examine_text(
         return None
 
     text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
-    return try_date_expr(text, outputformat, extensive_search, min_date, max_date)
+    return try_date_expr(
+        text, options.format, options.extensive, options.min, options.max
+    )
 
 
 def examine_date_elements(
@@ -224,9 +223,7 @@ def examine_date_elements(
     for elem in elements:
         # try element text and link title (Blogspot)
         for text in [elem.text_content(), elem.get("title", "")]:
-            attempt = examine_text(
-                text, options.format, options.extensive, options.min, options.max
-            )
+            attempt = examine_text(text, options)
             if attempt:
                 return attempt
 
@@ -434,7 +431,7 @@ def compare_reference(
         expression, options.format, options.extensive, options.min, options.max
     )
     if attempt is not None:
-        return compare_values(reference, attempt, options.format, options.original)
+        return compare_values(reference, attempt, options)
     return reference
 
 
