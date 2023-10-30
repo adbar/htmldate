@@ -855,7 +855,7 @@ def find_date(
     extensive_search: bool = True,
     original_date: bool = False,
     outputformat: str = "%Y-%m-%d",
-    url: Optional[str] = None,
+    url: str = "",
     verbose: bool = False,
     min_date: Optional[Union[datetime, str]] = None,
     max_date: Optional[Union[datetime, str]] = None,
@@ -902,6 +902,7 @@ def find_date(
     # init
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
+
     tree = load_html(htmlobject)
 
     # safeguards
@@ -923,32 +924,22 @@ def find_date(
 
     # URL
     url_result = None
-    if url is None:
+    if not url:
         # probe for canonical links
         urlelem = tree.find('.//link[@rel="canonical"]')
         if urlelem is not None:
             url = urlelem.get("href")
 
     # direct processing of URL info
-    if url is not None:
-        url_result = extract_url_date(url, options)
-        if url_result is not None and not deferred_url_extractor:
-            return url_result
+    url_result = extract_url_date(url, options)
+    if url_result is not None and not deferred_url_extractor:
+        return url_result
 
-    search_functions = [
-        # first, try header
-        (
-            examine_header,
-            [tree, options],
-        ),
-        # try to use JSON data
-        (json_search, [tree, options]),
-    ]
-
-    for search_function, args in search_functions:
-        result = search_function(*args)
-        if result is not None:
-            return result
+    # first try header
+    # then try to use JSON data
+    result = examine_header(tree, options) or json_search(tree, options)
+    if result is not None:
+        return result
 
     # deferred processing of URL info (may be moved even further down if necessary)
     if deferred_url_extractor and url_result is not None:
@@ -1014,19 +1005,16 @@ def find_date(
     except UnicodeDecodeError:
         htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
 
-    search_functions = [
-        # date regex timestamp rescue
-        (pattern_search, [htmlstring, TIMESTAMP_PATTERN, options]),  # type: ignore[list-item]
-        # try image elements
-        (img_search, [search_tree, options]),
-        # precise patterns and idiosyncrasies
-        (idiosyncrasies_search, [htmlstring, options]),  # type: ignore[list-item]
-    ]
-
-    for search_function, args in search_functions:
-        result = search_function(*args)
-        if result is not None:
-            return result
+    # date regex timestamp rescue
+    # try image elements
+    # precise patterns and idiosyncrasies
+    result = (
+        pattern_search(htmlstring, TIMESTAMP_PATTERN, options)
+        or img_search(search_tree, options)
+        or idiosyncrasies_search(htmlstring, options)
+    )
+    if result is not None:
+        return result
 
     # last resort
     if extensive_search:
