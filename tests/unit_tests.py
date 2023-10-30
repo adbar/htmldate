@@ -54,6 +54,7 @@ from htmldate.extractors import (
 from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
 from htmldate.utils import (
+    Extractor,
     decode_response,
     fetch_url,
     is_dubious_html,
@@ -62,10 +63,10 @@ from htmldate.utils import (
 )
 from htmldate.validators import (
     convert_date,
-    date_validator,
     get_max_date,
     get_min_date,
-    output_format_validator,
+    is_valid_date,
+    is_valid_format,
 )
 
 
@@ -73,6 +74,8 @@ TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = "%Y-%m-%d"
 
 LATEST_POSSIBLE = datetime.datetime.now()
+
+OPTIONS = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -138,25 +141,19 @@ def test_sanity():
     # XPath looking for date elements
     mytree = html.fromstring("<html><body><p>Test.</p></body></html>")
     with pytest.raises(XPathEvalError):
-        examine_date_elements(
-            mytree, ".//[Error", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-    result = examine_date_elements(
-        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-    )
+        examine_date_elements(mytree, ".//[Error", OPTIONS)
+    result = examine_date_elements(mytree, ".//p", OPTIONS)
     assert result is None
     mytree = html.fromstring("<html><body><p>1999/03/05</p></body></html>")
-    result = examine_date_elements(
-        mytree, ".//p", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-    )
+    result = examine_date_elements(mytree, ".//p", OPTIONS)
     assert result is not None
     # wrong field values in output format
-    assert output_format_validator("%Y-%m-%d") is True
-    assert output_format_validator("%M-%Y") is True
-    assert output_format_validator("ABC") is False
-    assert output_format_validator(123) is False
-    assert output_format_validator(("a", "b")) is False
-    # assert output_format_validator('%\xaa') is False
+    assert is_valid_format("%Y-%m-%d") is True
+    assert is_valid_format("%M-%Y") is True
+    assert is_valid_format("ABC") is False
+    assert is_valid_format(123) is False
+    assert is_valid_format(("a", "b")) is False
+    # assert is_valid_format('%\xaa') is False
     _, discarded = discard_unwanted(
         html.fromstring(
             '<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'
@@ -656,52 +653,50 @@ def test_exact_date():
     )
 
 
-def test_date_validator():
+def test_is_valid_date():
     """test internal date validation"""
     assert (
-        date_validator(
+        is_valid_date(
             "2016-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1998-08-08", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "2001-12-31", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1992-07-30", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1901-13-98", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is False
     )
     assert (
-        date_validator(
-            "202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
+        is_valid_date("202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
         is False
     )
     assert (
-        date_validator("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
+        is_valid_date("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
     )
     assert (
-        date_validator("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
+        is_valid_date("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -710,7 +705,7 @@ def test_date_validator():
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1992, 1, 1),
@@ -719,7 +714,7 @@ def test_date_validator():
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=MIN_DATE,
@@ -728,7 +723,7 @@ def test_date_validator():
         is False
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -737,7 +732,7 @@ def test_date_validator():
         is True
     )
     assert (
-        date_validator(
+        is_valid_date(
             "1991-01-02",
             OUTPUTFORMAT,
             earliest=datetime.datetime(1990, 1, 1),
@@ -846,59 +841,16 @@ def test_try_date_expr():
 
 
 # def test_header():
-#    assert examine_header(tree, OUTPUTFORMAT, PARSER)
+#    assert examine_header(tree, options)
 
 
-def test_compare_reference(
-    extensive_search=False,
-    original_date=False,
-    min_date=MIN_DATE,
-    max_date=LATEST_POSSIBLE,
-):
+def test_compare_reference():
     """test comparison function"""
-    assert (
-        compare_reference(
-            0, "AAAA", OUTPUTFORMAT, extensive_search, original_date, min_date, max_date
-        )
-        == 0
-    )
-    assert (
-        compare_reference(
-            1517500000,
-            "2018-33-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        == 1517500000
-    )
-    assert (
-        1517400000
-        < compare_reference(
-            0,
-            "2018-02-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        < 1517500000
-    )
-    assert (
-        compare_reference(
-            1517500000,
-            "2018-02-01",
-            OUTPUTFORMAT,
-            extensive_search,
-            original_date,
-            min_date,
-            max_date,
-        )
-        == 1517500000
-    )
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
+    assert compare_reference(0, "AAAA", options) == 0
+    assert compare_reference(1517500000, "2018-33-01", options) == 1517500000
+    assert 1517400000 < compare_reference(0, "2018-02-01", options) < 1517500000
+    assert compare_reference(1517500000, "2018-02-01", options) == 1517500000
 
 
 def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
@@ -1369,156 +1321,91 @@ def test_search_pattern(
     )
 
 
-def test_search_html(original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
+def test_search_html():
     "Test the pattern search in raw HTML"
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     # tree input
     assert (
-        search_page(
-            "<html><body><p>The date is 5/2010</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 5/2010</p></body></html>", options)
         == "2010-05-01"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 5.5.2010</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 5.5.2010</p></body></html>", options)
         == "2010-05-05"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 11/10/99</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 11/10/99</p></body></html>", options)
         == "1999-10-11"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 3/3/11</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 3/3/11</p></body></html>", options)
         == "2011-03-03"
     )
     assert (
-        search_page(
-            "<html><body><p>The date is 06.12.06</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>The date is 06.12.06</p></body></html>", options)
         == "2006-12-06"
     )
     assert (
         search_page(
-            "<html><body><p>The timestamp is 20140915D15:23H</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            "<html><body><p>The timestamp is 20140915D15:23H</p></body></html>", options
         )
         == "2014-09-15"
     )
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
     assert (
         search_page(
             "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            OUTPUTFORMAT,
-            True,
-            min_date,
-            max_date,
+            options,
         )
         == "2003-11-24"
     )
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     assert (
         search_page(
             "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            OUTPUTFORMAT,
-            False,
-            min_date,
-            max_date,
+            options,
         )
         == "2015-04-30"
     )
     assert (
         search_page(
             "<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         == "2013-03-03"
     )
     assert (
         search_page(
             "<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
     assert (
         search_page(
-            "<html><body><p>© The Web Association 2013.</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            "<html><body><p>© The Web Association 2013.</p></body></html>", options
         )
         == "2013-01-01"
     )
     assert (
-        search_page(
-            "<html><body><p>Next © Copyright 2018</p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p>Next © Copyright 2018</p></body></html>", options)
         == "2018-01-01"
     )
     assert (
-        search_page(
-            "<html><body><p> © Company 2014-2019 </p></body></html>",
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
-        )
+        search_page("<html><body><p> © Company 2014-2019 </p></body></html>", options)
         == "2019-01-01"
     )
     assert (
         search_page(
             '<html><head><link xmlns="http://www.w3.org/1999/xhtml"/></head></html>',
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
     assert (
         search_page(
             '<html><body><link href="//homepagedesigner.telekom.de/.cm4all/res/static/beng-editor/5.1.98/css/deploy.css"/></body></html>',
-            OUTPUTFORMAT,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1763,7 +1650,7 @@ if __name__ == "__main__":
     # function-level
     test_input()
     test_sanity()
-    test_date_validator()
+    test_is_valid_date()
     test_search_pattern()
     test_try_date_expr()
     test_convert_date()

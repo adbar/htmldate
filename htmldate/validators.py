@@ -16,6 +16,7 @@ from time import mktime
 from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from .settings import CACHE_SIZE, MIN_DATE
+from .utils import Extractor
 
 
 LOGGER = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def date_validator(
+def is_valid_date(
     date_input: Optional[Union[datetime, str]],
     outputformat: str,
     earliest: datetime,
@@ -33,8 +34,11 @@ def date_validator(
     # safety check
     if date_input is None:
         return False
+
     # try if date can be parsed using chosen outputformat
-    if not isinstance(date_input, datetime):
+    if isinstance(date_input, datetime):
+        dateobject = date_input
+    else:
         # speed-up
         try:
             if outputformat == "%Y-%m-%d":
@@ -46,8 +50,7 @@ def date_validator(
                 dateobject = datetime.strptime(date_input, outputformat)
         except ValueError:
             return False
-    else:
-        dateobject = date_input
+
     # year first, then full validation: not newer than today or stored variable
     if (
         earliest.year <= dateobject.year <= latest.year
@@ -59,7 +62,7 @@ def date_validator(
 
 
 @lru_cache(maxsize=16)
-def output_format_validator(outputformat: str) -> bool:
+def is_valid_format(outputformat: str) -> bool:
     """Validate the output format in the settings"""
     # test with date object
     dateobject = datetime(2017, 9, 1, 0, 0)
@@ -109,18 +112,16 @@ def plausible_year_filter(
     return occurrences
 
 
-def compare_values(
-    reference: int, attempt: str, outputformat: str, original_date: bool
-) -> int:
+def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = int(mktime(datetime.strptime(attempt, outputformat).timetuple()))
+        timestamp = int(mktime(datetime.strptime(attempt, options.format).timetuple()))
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if original_date and (reference == 0 or timestamp < reference):
+    if options.original and (reference == 0 or timestamp < reference):
         reference = timestamp
-    elif not original_date and timestamp > reference:
+    elif not options.original and timestamp > reference:
         reference = timestamp
     return reference
 
@@ -138,9 +139,9 @@ def filter_ymd_candidate(
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = "-".join([bestmatch[1], bestmatch[2], bestmatch[3]])
-        if date_validator(
-            pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date
-        ) is True and (copyear == 0 or int(bestmatch[1]) >= copyear):
+        if is_valid_date(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date) and (
+            copyear == 0 or int(bestmatch[1]) >= copyear
+        ):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
             ## TODO: test and improve
@@ -168,16 +169,13 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(
-    reference: int, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
+def check_extracted_reference(reference: int, options: Extractor) -> Optional[str]:
     """Test if the extracted reference date can be returned"""
     if reference > 0:
         dateobject = datetime.fromtimestamp(reference)
-        converted = dateobject.strftime(outputformat)
-        if (
-            date_validator(converted, outputformat, earliest=min_date, latest=max_date)
-            is True
+        converted = dateobject.strftime(options.format)
+        if is_valid_date(
+            converted, options.format, earliest=options.min, latest=options.max
         ):
             return converted
     return None

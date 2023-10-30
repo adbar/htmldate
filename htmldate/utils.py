@@ -11,6 +11,7 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 
+from datetime import datetime
 from typing import Any, List, Optional, Set, Union
 
 import urllib3
@@ -45,6 +46,26 @@ HTML_PARSER = HTMLParser(
 )
 
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
+
+
+class Extractor:
+    "Defines a class to store all extraction options."
+    __slots__ = ["extensive", "format", "max", "min", "original"]
+
+    # consider dataclasses for Python 3.7+
+    def __init__(
+        self,
+        extensive_search: bool,
+        max_date: datetime,
+        min_date: datetime,
+        original_date: bool,
+        outputformat: str,
+    ) -> None:
+        self.extensive: bool = extensive_search
+        self.format: str = outputformat
+        self.max: datetime = max_date
+        self.min: datetime = min_date
+        self.original: bool = original_date
 
 
 def isutf8(data: bytes) -> bool:

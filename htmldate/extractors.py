@@ -12,7 +12,7 @@ import re
 
 from datetime import datetime
 from functools import lru_cache
-from typing import List, Optional, Tuple
+from typing import List, Optional, Pattern, Tuple
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
@@ -24,8 +24,8 @@ from lxml.html import HtmlElement  # type: ignore
 
 # own
 from .settings import CACHE_SIZE
-from .utils import trim_text
-from .validators import convert_date, date_validator
+from .utils import Extractor, trim_text
+from .validators import convert_date, is_valid_date
 
 
 LOGGER = logging.getLogger(__name__)
@@ -227,7 +227,8 @@ def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]
 
 
 def extract_url_date(
-    testurl: str, outputformat: str, min_date: datetime, max_date: datetime
+    testurl: str,
+    options: Extractor,
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     match = COMPLETE_URL.search(testurl)
@@ -235,13 +236,10 @@ def extract_url_date(
         LOGGER.debug("found date in URL: %s", match[0])
         try:
             dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
-            if (
-                date_validator(
-                    dateobject, outputformat, earliest=min_date, latest=max_date
-                )
-                is True
+            if is_valid_date(
+                dateobject, options.format, earliest=options.min, latest=options.max
             ):
-                return dateobject.strftime(outputformat)
+                return dateobject.strftime(options.format)
         except ValueError as err:  # pragma: no cover
             LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
@@ -320,8 +318,7 @@ def custom_parse(
                     LOGGER.debug("dateutil parsing error: %s", string)
         # c. plausibility test
         if candidate is not None and (
-            date_validator(candidate, outputformat, earliest=min_date, latest=max_date)
-            is True
+            is_valid_date(candidate, outputformat, earliest=min_date, latest=max_date)
         ):
             LOGGER.debug("parsing result: %s", candidate)
             return candidate.strftime(outputformat)
@@ -335,12 +332,7 @@ def custom_parse(
         except ValueError:
             LOGGER.debug("YYYYMMDD value error: %s", match[0])
         else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
@@ -367,9 +359,7 @@ def custom_parse(
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
         else:
-            if date_validator(
-                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
 
@@ -388,21 +378,13 @@ def custom_parse(
         except ValueError:  # pragma: no cover
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
-            if (
-                date_validator(
-                    candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
-                )
-                is True
-            ):
+            if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
                 LOGGER.debug("Y-M match: %s", candidate)
                 return candidate.strftime(outputformat)
 
     # 5. Try the other regex pattern
     dateobject = regex_parse(string)
-    if (
-        date_validator(dateobject, outputformat, earliest=min_date, latest=max_date)
-        is True
-    ):
+    if is_valid_date(dateobject, outputformat, earliest=min_date, latest=max_date):
         try:
             LOGGER.debug("custom parse result: %s", dateobject)
             return dateobject.strftime(outputformat)  # type: ignore
@@ -460,7 +442,7 @@ def try_date_expr(
             return None
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
-        if date_validator(
+        if is_valid_date(
             dateparser_result, outputformat, earliest=min_date, latest=max_date
         ):
             return dateparser_result
@@ -469,59 +451,56 @@ def try_date_expr(
 
 
 def img_search(
-    tree: HtmlElement, outputformat: str, min_date: datetime, max_date: datetime
+    tree: HtmlElement,
+    options: Extractor,
 ) -> Optional[str]:
     """Skim through image elements"""
     element = tree.find('.//meta[@property="og:image"][@content]')
     if element is not None:
         result = extract_url_date(
-            element.get("content"), outputformat, min_date, max_date
+            element.get("content"),
+            options,
         )
         if result is not None:
             return result
     return None
 
 
+def pattern_search(
+    text: str,
+    date_pattern: Pattern[str],
+    options: Extractor,
+) -> Optional[str]:
+    "Look for date expressions using a regular expression on a string of text."
+    match = date_pattern.search(text)
+    if match and is_valid_date(
+        match[1], "%Y-%m-%d", earliest=options.min, latest=options.max
+    ):
+        LOGGER.debug("regex found: %s %s", date_pattern, match[0])
+        return convert_date(match[1], "%Y-%m-%d", options.format)
+    return None
+
+
 def json_search(
     tree: HtmlElement,
-    outputformat: str,
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[str]:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
-    json_pattern = JSON_PUBLISHED if original_date else JSON_MODIFIED
+    json_pattern = JSON_PUBLISHED if options.original else JSON_MODIFIED
     # look throughout the HTML tree
     for elem in tree.xpath(
         './/script[@type="application/ld+json" or @type="application/settings+json"]'
     ):
         if not elem.text or '"date' not in elem.text:
             continue
-        json_match = json_pattern.search(elem.text)
-        if json_match and date_validator(
-            json_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
-        ):
-            LOGGER.debug("JSON time found: %s", json_match[0])
-            return convert_date(json_match[1], "%Y-%m-%d", outputformat)
-    return None
-
-
-def timestamp_search(
-    htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
-    """Look for timestamps throughout the web page"""
-    tstamp_match = TIMESTAMP_PATTERN.search(htmlstring)
-    if tstamp_match and date_validator(
-        tstamp_match[1], "%Y-%m-%d", earliest=min_date, latest=max_date
-    ):
-        LOGGER.debug("time regex found: %s", tstamp_match[0])
-        return convert_date(tstamp_match[1], "%Y-%m-%d", outputformat)
+        return pattern_search(elem.text, json_pattern, options)
     return None
 
 
 def idiosyncrasies_search(
-    htmlstring: str, outputformat: str, min_date: datetime, max_date: datetime
+    htmlstring: str,
+    options: Extractor,
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
@@ -539,8 +518,8 @@ def idiosyncrasies_search(
                     candidate = datetime(year, month, day)
                 except ValueError:
                     LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-            if date_validator(
-                candidate, "%Y-%m-%d", earliest=min_date, latest=max_date
+            if is_valid_date(
+                candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
             ):
-                return candidate.strftime(outputformat)  # type: ignore[union-attr]
+                return candidate.strftime(options.format)  # type: ignore[union-attr]
     return None
