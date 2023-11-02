@@ -1207,11 +1207,9 @@ def test_approximate_url():
     )
 
 
-def test_search_pattern(
-    original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE
-):
+def test_search_pattern():
     """test pattern search in strings"""
-    #
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     pattern = re.compile(r"\D([0-9]{4}[/.-][0-9]{2})\D")
     catch = re.compile(r"([0-9]{4})[/.-]([0-9]{2})")
     yearpat = re.compile(r"^([12][0-9]{3})")
@@ -1221,9 +1219,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1233,9 +1229,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1245,9 +1239,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1257,9 +1249,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1273,9 +1263,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1285,9 +1273,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1301,9 +1287,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1313,9 +1297,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )

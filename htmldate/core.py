@@ -193,6 +193,11 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
+THREE_COMP_PATTERNS = (
+    (THREE_PATTERN, THREE_CATCH),
+    (THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH),
+)
+
 
 def examine_text(
     text: str,
@@ -407,16 +412,18 @@ def search_pattern(
     pattern: Pattern[str],
     catch: Pattern[str],
     yearpat: Pattern[str],
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[Match[str]]:
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(
-        htmlstring, pattern=pattern, yearpat=yearpat, earliest=min_date, latest=max_date
+        htmlstring,
+        pattern=pattern,
+        yearpat=yearpat,
+        earliest=options.min,
+        latest=options.max,
     )
     return select_candidate(
-        candidates, catch, yearpat, original_date, min_date, max_date
+        candidates, catch, yearpat, options.original, options.min, options.max
     )
 
 
@@ -483,18 +490,13 @@ def examine_abbr_elements(
                 elif elem.text and len(elem.text) > 10:
                     LOGGER.debug("abbr published found: %s", elem.text)
                     reference = compare_reference(reference, elem.text, options)
-        # convert and return
         converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
-        # try rescue in abbr content
-        dateresult = examine_date_elements(
+        # return or try rescue in abbr content
+        return converted or examine_date_elements(
             tree,
             ".//abbr",
             options,
         )
-        if dateresult is not None:
-            return dateresult
     return None
 
 
@@ -562,9 +564,7 @@ def examine_time_elements(
                 reference = compare_reference(reference, elem.text, options)
             # else...?
         # return
-        converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
+        return check_extracted_reference(reference, options)
     return None
 
 
@@ -600,9 +600,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         COPYRIGHT_PATTERN,
         YEAR_PATTERN,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
@@ -614,48 +612,26 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
     # 3 components
     LOGGER.debug("3 components")
     # target URL characteristics
-    bestmatch = search_pattern(
-        htmlstring,
-        THREE_PATTERN,
-        THREE_CATCH,
-        YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
-    )
-    result = filter_ymd_candidate(
-        bestmatch,
-        THREE_PATTERN,
-        options.original,
-        copyear,
-        options.format,
-        options.min,
-        options.max,
-    )
-    if result is not None:
-        return result
-
-    # more loosely structured data
-    bestmatch = search_pattern(
-        htmlstring,
-        THREE_LOOSE_PATTERN,
-        THREE_LOOSE_CATCH,
-        YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
-    )
-    result = filter_ymd_candidate(
-        bestmatch,
-        THREE_LOOSE_PATTERN,
-        options.original,
-        copyear,
-        options.format,
-        options.min,
-        options.max,
-    )
-    if result is not None:
-        return result
+    # then more loosely structured data
+    for patterns in THREE_COMP_PATTERNS:
+        bestmatch = search_pattern(
+            htmlstring,
+            patterns[0],
+            patterns[1],
+            YEAR_PATTERN,
+            options,
+        )
+        result = filter_ymd_candidate(
+            bestmatch,
+            patterns[0],
+            options.original,
+            copyear,
+            options.format,
+            options.min,
+            options.max,
+        )
+        if result is not None:
+            return result
 
     # YYYY-MM-DD/DD-MM-YYYY
     candidates = plausible_year_filter(
@@ -694,9 +670,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         DATESTRINGS_PATTERN,
         DATESTRINGS_CATCH,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     result = filter_ymd_candidate(
         bestmatch,
@@ -749,9 +723,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         YYYYMM_PATTERN,
         YYYYMM_CATCH,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
@@ -827,9 +799,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         SIMPLE_PATTERN,
         YEAR_PATTERN,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[0]), 1, 1)
@@ -967,27 +937,22 @@ def find_date(
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
 
     # then look for expressions
-    dateresult = examine_date_elements(
-        search_tree,
-        date_expr,
-        options,
+    # and try time elements
+    result = (
+        examine_date_elements(
+            search_tree,
+            date_expr,
+            options,
+        )
+        or examine_date_elements(
+            search_tree,
+            ".//title|.//h1",
+            options,
+        )
+        or examine_time_elements(search_tree, options)
     )
-    if dateresult is not None:
-        return dateresult
-
-    # look for expressions
-    dateresult = examine_date_elements(
-        search_tree,
-        ".//title|.//h1",
-        options,
-    )
-    if dateresult is not None:
-        return dateresult
-
-    # try time elements
-    time_result = examine_time_elements(search_tree, options)
-    if time_result is not None:
-        return time_result
+    if result is not None:
+        return result
 
     # TODO: decide on this
     # search in discarded parts (e.g. archive.org-banner)
@@ -1023,11 +988,8 @@ def find_date(
             if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
             reference = compare_reference(reference, segment, options)
-        # return
         converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
-        # search page HTML
-        return search_page(htmlstring, options)
+        # return or search page HTML
+        return converted or search_page(htmlstring, options)
 
     return None
