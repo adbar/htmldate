@@ -447,6 +447,7 @@ def examine_abbr_elements(
     options: Extractor,
 ) -> Optional[str]:
     """Scan the page for abbr elements and check if their content contains an eligible date"""
+    result = None
     elements = tree.findall(".//abbr")
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         reference = 0
@@ -492,12 +493,12 @@ def examine_abbr_elements(
                     reference = compare_reference(reference, elem.text, options)
         converted = check_extracted_reference(reference, options)
         # return or try rescue in abbr content
-        return converted or examine_date_elements(
+        result = converted or examine_date_elements(
             tree,
             ".//abbr",
             options,
         )
-    return None
+    return result
 
 
 def examine_time_elements(
@@ -505,6 +506,7 @@ def examine_time_elements(
     options: Extractor,
 ) -> Optional[str]:
     """Scan the page for time elements and check if their content contains an eligible date"""
+    result = None
     elements = tree.findall(".//time")
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         # scan all the tags and look for the newest one
@@ -564,8 +566,8 @@ def examine_time_elements(
                 reference = compare_reference(reference, elem.text, options)
             # else...?
         # return
-        return check_extracted_reference(reference, options)
-    return None
+        result = check_extracted_reference(reference, options)
+    return result
 
 
 def normalize_match(match: Optional[Match[str]]) -> str:

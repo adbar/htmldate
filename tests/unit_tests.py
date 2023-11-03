@@ -175,6 +175,13 @@ def test_no_date():
         )
         is None
     )
+    assert find_date("<html><body><time></time></body></html>") is None
+    assert (
+        find_date(
+            '<html><body><abbr class="published"></abbr></body></html>',
+        )
+        is None
+    )
 
 
 def test_exact_date():
