@@ -355,9 +355,7 @@ def select_candidate(
     occurrences: Counter_Type[str],
     catch: Pattern[str],
     yearpat: Pattern[str],
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
     if not occurrences or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
@@ -372,7 +370,7 @@ def select_candidate(
     firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    bestones = sorted(firstselect, reverse=not original_date)[:2]
+    bestones = sorted(firstselect, reverse=not options.original)[:2]
     LOGGER.debug("bestones: %s", bestones)
 
     # plausibility heuristics
@@ -385,7 +383,7 @@ def select_candidate(
             years[i] = year_match[1]
             dateobject = datetime(int(year_match[1]), 1, 1)
             validation[i] = is_valid_date(
-                dateobject, "%Y", earliest=min_date, latest=max_date
+                dateobject, "%Y", earliest=options.min, latest=options.max
             )
 
     # safety net: plausibility
@@ -422,9 +420,7 @@ def search_pattern(
         earliest=options.min,
         latest=options.max,
     )
-    return select_candidate(
-        candidates, catch, yearpat, options.original, options.min, options.max
-    )
+    return select_candidate(candidates, catch, yearpat, options)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -651,9 +647,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         SELECT_YMD_PATTERN,
@@ -702,9 +696,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         candidate = normalize_match(match)
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         SLASHES_PATTERN,
@@ -760,9 +752,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         MMYYYY_PATTERN,
