@@ -175,6 +175,13 @@ def test_no_date():
         )
         is None
     )
+    assert find_date("<html><body><time></time></body></html>") is None
+    assert (
+        find_date(
+            '<html><body><abbr class="published"></abbr></body></html>',
+        )
+        is None
+    )
 
 
 def test_exact_date():
@@ -853,9 +860,9 @@ def test_compare_reference():
     assert compare_reference(1517500000, "2018-02-01", options) == 1517500000
 
 
-def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
+def test_candidate_selection():
     """test the algorithm for several candidates"""
-    original_date = False
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     # patterns
     catch = re.compile(r"([0-9]{4})-([0-9]{2})-([0-9]{2})")
     yearpat = re.compile(r"^([0-9]{4})")
@@ -871,9 +878,7 @@ def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
             "2-28",
         ]
     )
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result is None
     # plausible
     occurrences = Counter(
@@ -887,38 +892,30 @@ def test_candidate_selection(min_date=MIN_DATE, max_date=LATEST_POSSIBLE):
             "2017-11-28",
         ]
     )
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result.group(0) == "2017-11-28"
-    original_date = True
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result.group(0) == "2016-07-12"
     # mix plausible/implausible
     occurrences = Counter(
         ["2116-12-23", "2116-12-23", "2116-12-23", "2017-08-11", "2017-08-11"]
     )
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result.group(0) == "2017-08-11"
-    original_date = False
+
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     occurrences = Counter(
         ["2116-12-23", "2116-12-23", "2116-12-23", "2017-08-11", "2017-08-11"]
     )
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result.group(0) == "2017-08-11"
     # taking date present twice, corner case
     occurrences = Counter(
         ["2016-12-23", "2016-12-23", "2017-08-11", "2017-08-11", "2017-08-11"]
     )
-    result = select_candidate(
-        occurrences, catch, yearpat, original_date, min_date, max_date
-    )
+    result = select_candidate(occurrences, catch, yearpat, options)
     assert result.group(0) == "2016-12-23"
 
 
@@ -1207,11 +1204,9 @@ def test_approximate_url():
     )
 
 
-def test_search_pattern(
-    original_date=False, min_date=MIN_DATE, max_date=LATEST_POSSIBLE
-):
+def test_search_pattern():
     """test pattern search in strings"""
-    #
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
     pattern = re.compile(r"\D([0-9]{4}[/.-][0-9]{2})\D")
     catch = re.compile(r"([0-9]{4})[/.-]([0-9]{2})")
     yearpat = re.compile(r"^([12][0-9]{3})")
@@ -1221,9 +1216,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1233,9 +1226,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1245,9 +1236,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1257,9 +1246,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1273,9 +1260,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1285,9 +1270,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )
@@ -1301,9 +1284,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is None
     )
@@ -1313,9 +1294,7 @@ def test_search_pattern(
             pattern,
             catch,
             yearpat,
-            original_date,
-            min_date,
-            max_date,
+            options,
         )
         is not None
     )

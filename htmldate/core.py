@@ -193,6 +193,11 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
+THREE_COMP_PATTERNS = (
+    (THREE_PATTERN, THREE_CATCH),
+    (THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH),
+)
+
 
 def examine_text(
     text: str,
@@ -350,9 +355,7 @@ def select_candidate(
     occurrences: Counter_Type[str],
     catch: Pattern[str],
     yearpat: Pattern[str],
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[Match[str]]:
     """Select a candidate among the most frequent matches"""
     if not occurrences or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
@@ -367,7 +370,7 @@ def select_candidate(
     firstselect = occurrences.most_common(10)
     LOGGER.debug("firstselect: %s", firstselect)
     # sort and find probable candidates
-    bestones = sorted(firstselect, reverse=not original_date)[:2]
+    bestones = sorted(firstselect, reverse=not options.original)[:2]
     LOGGER.debug("bestones: %s", bestones)
 
     # plausibility heuristics
@@ -380,7 +383,7 @@ def select_candidate(
             years[i] = year_match[1]
             dateobject = datetime(int(year_match[1]), 1, 1)
             validation[i] = is_valid_date(
-                dateobject, "%Y", earliest=min_date, latest=max_date
+                dateobject, "%Y", earliest=options.min, latest=options.max
             )
 
     # safety net: plausibility
@@ -407,17 +410,17 @@ def search_pattern(
     pattern: Pattern[str],
     catch: Pattern[str],
     yearpat: Pattern[str],
-    original_date: bool,
-    min_date: datetime,
-    max_date: datetime,
+    options: Extractor,
 ) -> Optional[Match[str]]:
     """Chained candidate filtering and selection"""
     candidates = plausible_year_filter(
-        htmlstring, pattern=pattern, yearpat=yearpat, earliest=min_date, latest=max_date
+        htmlstring,
+        pattern=pattern,
+        yearpat=yearpat,
+        earliest=options.min,
+        latest=options.max,
     )
-    return select_candidate(
-        candidates, catch, yearpat, original_date, min_date, max_date
-    )
+    return select_candidate(candidates, catch, yearpat, options)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -440,6 +443,7 @@ def examine_abbr_elements(
     options: Extractor,
 ) -> Optional[str]:
     """Scan the page for abbr elements and check if their content contains an eligible date"""
+    result = None
     elements = tree.findall(".//abbr")
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         reference = 0
@@ -483,19 +487,14 @@ def examine_abbr_elements(
                 elif elem.text and len(elem.text) > 10:
                     LOGGER.debug("abbr published found: %s", elem.text)
                     reference = compare_reference(reference, elem.text, options)
-        # convert and return
         converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
-        # try rescue in abbr content
-        dateresult = examine_date_elements(
+        # return or try rescue in abbr content
+        result = converted or examine_date_elements(
             tree,
             ".//abbr",
             options,
         )
-        if dateresult is not None:
-            return dateresult
-    return None
+    return result
 
 
 def examine_time_elements(
@@ -503,6 +502,7 @@ def examine_time_elements(
     options: Extractor,
 ) -> Optional[str]:
     """Scan the page for time elements and check if their content contains an eligible date"""
+    result = None
     elements = tree.findall(".//time")
     if elements is not None and len(elements) < MAX_POSSIBLE_CANDIDATES:
         # scan all the tags and look for the newest one
@@ -562,10 +562,8 @@ def examine_time_elements(
                 reference = compare_reference(reference, elem.text, options)
             # else...?
         # return
-        converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
-    return None
+        result = check_extracted_reference(reference, options)
+    return result
 
 
 def normalize_match(match: Optional[Match[str]]) -> str:
@@ -600,9 +598,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         COPYRIGHT_PATTERN,
         YEAR_PATTERN,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         LOGGER.debug("Copyright detected: %s", bestmatch[0])
@@ -614,48 +610,26 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
     # 3 components
     LOGGER.debug("3 components")
     # target URL characteristics
-    bestmatch = search_pattern(
-        htmlstring,
-        THREE_PATTERN,
-        THREE_CATCH,
-        YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
-    )
-    result = filter_ymd_candidate(
-        bestmatch,
-        THREE_PATTERN,
-        options.original,
-        copyear,
-        options.format,
-        options.min,
-        options.max,
-    )
-    if result is not None:
-        return result
-
-    # more loosely structured data
-    bestmatch = search_pattern(
-        htmlstring,
-        THREE_LOOSE_PATTERN,
-        THREE_LOOSE_CATCH,
-        YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
-    )
-    result = filter_ymd_candidate(
-        bestmatch,
-        THREE_LOOSE_PATTERN,
-        options.original,
-        copyear,
-        options.format,
-        options.min,
-        options.max,
-    )
-    if result is not None:
-        return result
+    # then more loosely structured data
+    for patterns in THREE_COMP_PATTERNS:
+        bestmatch = search_pattern(
+            htmlstring,
+            patterns[0],
+            patterns[1],
+            YEAR_PATTERN,
+            options,
+        )
+        result = filter_ymd_candidate(
+            bestmatch,
+            patterns[0],
+            options.original,
+            copyear,
+            options.format,
+            options.min,
+            options.max,
+        )
+        if result is not None:
+            return result
 
     # YYYY-MM-DD/DD-MM-YYYY
     candidates = plausible_year_filter(
@@ -673,9 +647,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         SELECT_YMD_PATTERN,
@@ -694,9 +666,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         DATESTRINGS_PATTERN,
         DATESTRINGS_CATCH,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     result = filter_ymd_candidate(
         bestmatch,
@@ -726,9 +696,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         candidate = normalize_match(match)
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         SLASHES_PATTERN,
@@ -749,9 +717,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         YYYYMM_PATTERN,
         YYYYMM_CATCH,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
@@ -786,9 +752,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         replacement[candidate] = candidates[item]
     candidates = Counter(replacement)
     # select
-    bestmatch = select_candidate(
-        candidates, YMD_PATTERN, YMD_YEAR, options.original, options.min, options.max
-    )
+    bestmatch = select_candidate(candidates, YMD_PATTERN, YMD_YEAR, options)
     result = filter_ymd_candidate(
         bestmatch,
         MMYYYY_PATTERN,
@@ -827,9 +791,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
         SIMPLE_PATTERN,
         YEAR_PATTERN,
         YEAR_PATTERN,
-        options.original,
-        options.min,
-        options.max,
+        options,
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[0]), 1, 1)
@@ -967,27 +929,22 @@ def find_date(
         date_expr = FAST_PREPEND + DATE_EXPRESSIONS
 
     # then look for expressions
-    dateresult = examine_date_elements(
-        search_tree,
-        date_expr,
-        options,
+    # and try time elements
+    result = (
+        examine_date_elements(
+            search_tree,
+            date_expr,
+            options,
+        )
+        or examine_date_elements(
+            search_tree,
+            ".//title|.//h1",
+            options,
+        )
+        or examine_time_elements(search_tree, options)
     )
-    if dateresult is not None:
-        return dateresult
-
-    # look for expressions
-    dateresult = examine_date_elements(
-        search_tree,
-        ".//title|.//h1",
-        options,
-    )
-    if dateresult is not None:
-        return dateresult
-
-    # try time elements
-    time_result = examine_time_elements(search_tree, options)
-    if time_result is not None:
-        return time_result
+    if result is not None:
+        return result
 
     # TODO: decide on this
     # search in discarded parts (e.g. archive.org-banner)
@@ -1023,11 +980,8 @@ def find_date(
             if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
             reference = compare_reference(reference, segment, options)
-        # return
         converted = check_extracted_reference(reference, options)
-        if converted is not None:
-            return converted
-        # search page HTML
-        return search_page(htmlstring, options)
+        # return or search page HTML
+        return converted or search_page(htmlstring, options)
 
     return None
