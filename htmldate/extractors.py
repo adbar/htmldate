@@ -227,21 +227,22 @@ def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]
 
 
 def extract_url_date(
-    testurl: str,
+    testurl: Optional[str],
     options: Extractor,
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
-    match = COMPLETE_URL.search(testurl)
-    if match:
-        LOGGER.debug("found date in URL: %s", match[0])
-        try:
-            dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
-            if is_valid_date(
-                dateobject, options.format, earliest=options.min, latest=options.max
-            ):
-                return dateobject.strftime(options.format)
-        except ValueError as err:  # pragma: no cover
-            LOGGER.debug("conversion error: %s %s", match[0], err)
+    if testurl is not None:
+        match = COMPLETE_URL.search(testurl)
+        if match:
+            LOGGER.debug("found date in URL: %s", match[0])
+            try:
+                dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
+                if is_valid_date(
+                    dateobject, options.format, earliest=options.min, latest=options.max
+                ):
+                    return dateobject.strftime(options.format)
+            except ValueError as err:  # pragma: no cover
+                LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
 
 

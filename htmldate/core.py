@@ -814,7 +814,7 @@ def find_date(
     extensive_search: bool = True,
     original_date: bool = False,
     outputformat: str = "%Y-%m-%d",
-    url: str = "",
+    url: Optional[str] = None,
     verbose: bool = False,
     min_date: Optional[Union[datetime, str]] = None,
     max_date: Optional[Union[datetime, str]] = None,
@@ -883,7 +883,7 @@ def find_date(
 
     # URL
     url_result = None
-    if not url:
+    if url is None:
         # probe for canonical links
         urlelem = tree.find('.//link[@rel="canonical"]')
         if urlelem is not None:
