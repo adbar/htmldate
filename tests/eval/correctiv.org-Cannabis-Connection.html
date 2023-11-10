@@ -1,0 +1,2278 @@
+
+<!DOCTYPE html>
+<html lang="de-DE">
+
+<!-- ECHO publish -->
+<head>
+    <meta charset="UTF-8">
+<script type="text/javascript">
+//----------------------------------------------------------
+//------ JAVASCRIPT HOOK FUNCTIONS FOR GRAVITY FORMS -------
+//----------------------------------------------------------
+
+if ( ! gform ) {
+	document.addEventListener( 'gform_main_scripts_loaded', function() { gform.scriptsLoaded = true; } );
+	window.addEventListener( 'DOMContentLoaded', function() { gform.domLoaded = true; } );
+
+	var gform = {
+		domLoaded: false,
+		scriptsLoaded: false,
+		initializeOnLoaded: function( fn ) {
+			if ( gform.domLoaded && gform.scriptsLoaded ) {
+				fn();
+			} else if( ! gform.domLoaded && gform.scriptsLoaded ) {
+				window.addEventListener( 'DOMContentLoaded', fn );
+			} else {
+				document.addEventListener( 'gform_main_scripts_loaded', fn );
+			}
+		},
+		hooks: { action: {}, filter: {} },
+		addAction: function( action, callable, priority, tag ) {
+			gform.addHook( 'action', action, callable, priority, tag );
+		},
+		addFilter: function( action, callable, priority, tag ) {
+			gform.addHook( 'filter', action, callable, priority, tag );
+		},
+		doAction: function( action ) {
+			gform.doHook( 'action', action, arguments );
+		},
+		applyFilters: function( action ) {
+			return gform.doHook( 'filter', action, arguments );
+		},
+		removeAction: function( action, tag ) {
+			gform.removeHook( 'action', action, tag );
+		},
+		removeFilter: function( action, priority, tag ) {
+			gform.removeHook( 'filter', action, priority, tag );
+		},
+		addHook: function( hookType, action, callable, priority, tag ) {
+			if ( undefined == gform.hooks[hookType][action] ) {
+				gform.hooks[hookType][action] = [];
+			}
+			var hooks = gform.hooks[hookType][action];
+			if ( undefined == tag ) {
+				tag = action + '_' + hooks.length;
+			}
+			if( priority == undefined ){
+				priority = 10;
+			}
+
+			gform.hooks[hookType][action].push( { tag:tag, callable:callable, priority:priority } );
+		},
+		doHook: function( hookType, action, args ) {
+
+			// splice args from object into array and remove first index which is the hook name
+			args = Array.prototype.slice.call(args, 1);
+
+			if ( undefined != gform.hooks[hookType][action] ) {
+				var hooks = gform.hooks[hookType][action], hook;
+				//sort by priority
+				hooks.sort(function(a,b){return a["priority"]-b["priority"]});
+
+				hooks.forEach( function( hookItem ) {
+					hook = hookItem.callable;
+
+					if(typeof hook != 'function')
+						hook = window[hook];
+					if ( 'action' == hookType ) {
+						hook.apply(null, args);
+					} else {
+						args[0] = hook.apply(null, args);
+					}
+				} );
+			}
+			if ( 'filter'==hookType ) {
+				return args[0];
+			}
+		},
+		removeHook: function( hookType, action, priority, tag ) {
+			if ( undefined != gform.hooks[hookType][action] ) {
+				var hooks = gform.hooks[hookType][action];
+				hooks = hooks.filter( function(hook, index, arr) {
+					var removeHook = (undefined==tag||tag==hook.tag) && (undefined==priority||priority==hook.priority);
+					return !removeHook;
+				} );
+				gform.hooks[hookType][action] = hooks;
+			}
+		}
+	};
+}
+</script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="PMfFfKB_ydInoxjV-aM_qbM6ThfCszTBJ0Dla9Hw3hU" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <meta name="keywords" content="Aktuelles, Wirtschaft">            <link rel="pingback" href="https://correctiv.org/xmlrpc.php">
+    
+    <link rel="icon" href="https://correctiv.org/wp-content/themes/correctiv-theme/img/favicon.png">
+    
+
+
+            <script type="application/ld+json">
+            {
+                "@context": "http://schema.org",
+                "@type": "NewsArticle",
+                 "headline": "Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag",
+                "url": "https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/",
+                "mainEntityOfPage": "https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/",
+
+                                 "thumbnailUrl": "https://correctiv.org/wp-content/uploads/2023/10/cannabis-220x220.jpg",
+                    "image": {
+                        "@type": "ImageObject",
+                        "url": "https://correctiv.org/wp-content/uploads/2023/10/cannabis.jpg",
+                        "width": 2000,
+                        "height": 1299                    },
+                
+                "dateCreated": "2023-10-25T10:08:55+02:00",
+                "datePublished": "2023-10-25T10:08:55+02:00",
+                "dateModified": "2023-10-25T10:21:31+02:00",
+
+                 "articleSection": "Aktuelles",
+
+                                     "author": [
+                                                                                 {
+                                "@type": "Person",
+                                "name": "Gabriela Keller",
+                                "url": "https://correctiv.org/team/gabriela-keller/"
+                            }
+                                            ],
+                
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "correctiv.org",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://correctiv.org/wp-content/themes/correctiv-theme/img/logo-correctiv.png",
+                        "width": 176,
+                        "height": 59
+                    }
+                }
+            }
+        </script>
+
+            
+            <script type="text/javascript" src="https://cdn.consentmanager.net/delivery/autoblocking/d97d355e3ef0.js" data-cmp-ab="1"
+                data-cmp-host="delivery.consentmanager.net"
+                data-cmp-cdn="cdn.consentmanager.net"
+                data-cmp-codesrc="10" ></script>
+        <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="alternate" hreflang="de" href="https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/" />
+<link rel="alternate" hreflang="x-default" href="https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/" />
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v18.1 (Yoast SEO v18.2) - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag - correctiv.org</title>
+	<meta name="description" content="Die Firma Cansativa agiert bei medizinischem Cannabis als Großhändler im Auftrag des Staates. Dahinter stehen zum Teil Offshore-Firmen. Ein Investor ist der Rapper Snoop Dogg." />
+	<link rel="canonical" href="https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/" />
+	<meta property="og:locale" content="de_DE" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag" />
+	<meta property="og:description" content="Die Firma Cansativa agiert bei medizinischem Cannabis als Großhändler im Auftrag des Staates. Dahinter stehen zum Teil Offshore-Firmen. Ein Investor ist der Rapper Snoop Dogg." />
+	<meta property="og:url" content="https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/" />
+	<meta property="og:site_name" content="correctiv.org" />
+	<meta property="article:publisher" content="https://www.facebook.com/correctiv.org" />
+	<meta property="article:published_time" content="2023-10-25T08:08:55+00:00" />
+	<meta property="article:modified_time" content="2023-10-25T08:21:31+00:00" />
+	<meta property="og:image" content="https://correctiv.org/wp-content/uploads/2023/10/cannabis.jpg" />
+	<meta property="og:image:width" content="2000" />
+	<meta property="og:image:height" content="1299" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@gabrielakeller" />
+	<meta name="twitter:site" content="@correctiv_org" />
+	<meta name="twitter:label1" content="Verfasst von" />
+	<meta name="twitter:data1" content="Gabriela Keller" />
+	<meta name="twitter:label2" content="Geschätzte Lesezeit" />
+	<meta name="twitter:data2" content="8 Minuten" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://correctiv.org/#organization","name":"CORRECTIV","url":"https://correctiv.org/","sameAs":["https://www.facebook.com/correctiv.org","https://www.instagram.com/correctiv_org","https://de.linkedin.com/company/correctiv","https://www.youtube.com/channel/UCZ-tUoJJV-18Xtcij_tOgGQ","https://de.wikipedia.org/wiki/Correctiv","https://twitter.com/correctiv_org"],"logo":{"@type":"ImageObject","@id":"https://correctiv.org/#logo","inLanguage":"de-DE","url":"https://correctiv.org/wp-content/uploads/2022/01/Logo-without-claim.svg","contentUrl":"https://correctiv.org/wp-content/uploads/2022/01/Logo-without-claim.svg","caption":"CORRECTIV"},"image":{"@id":"https://correctiv.org/#logo"}},{"@type":"WebSite","@id":"https://correctiv.org/#website","url":"https://correctiv.org/","name":"correctiv.org","description":"Recherchen für die Gesellschaft","publisher":{"@id":"https://correctiv.org/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://correctiv.org/?s={search_term_string}"},"query-input":"required name=search_term_string"}],"inLanguage":"de-DE"},{"@type":"ImageObject","@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#primaryimage","inLanguage":"de-DE","url":"https://correctiv.org/wp-content/uploads/2023/10/cannabis.jpg","contentUrl":"https://correctiv.org/wp-content/uploads/2023/10/cannabis.jpg","width":2000,"height":1299,"caption":"Der Markt mit medizinischem Cannabis wächst rapide. Das lockt auch internationale Investoren. Foto: Annette Riedl / picture alliance"},{"@type":"WebPage","@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#webpage","url":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/","name":"Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag - correctiv.org","isPartOf":{"@id":"https://correctiv.org/#website"},"primaryImageOfPage":{"@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#primaryimage"},"datePublished":"2023-10-25T08:08:55+00:00","dateModified":"2023-10-25T08:21:31+00:00","description":"Die Firma Cansativa agiert bei medizinischem Cannabis als Großhändler im Auftrag des Staates. Dahinter stehen zum Teil Offshore-Firmen. Ein Investor ist der Rapper Snoop Dogg.","breadcrumb":{"@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#breadcrumb"},"inLanguage":"de-DE","potentialAction":[{"@type":"ReadAction","target":["https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/"]}]},{"@type":"BreadcrumbList","@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://correctiv.org/"},{"@type":"ListItem","position":2,"name":"Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag"}]},{"@type":"Article","@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#article","isPartOf":{"@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#webpage"},"author":{"@id":"https://correctiv.org/#/schema/person/f5cf0c3376b137b5d4d612ce648772d6"},"headline":"Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag","datePublished":"2023-10-25T08:08:55+00:00","dateModified":"2023-10-25T08:21:31+00:00","mainEntityOfPage":{"@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#webpage"},"wordCount":1392,"publisher":{"@id":"https://correctiv.org/#organization"},"image":{"@id":"https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/#primaryimage"},"thumbnailUrl":"https://correctiv.org/wp-content/uploads/2023/10/cannabis.jpg","keywords":["Cannabis","Featured-auf-Startseite","Intransparenz","Legalisierung","Medizinisches Cannabis","Offshore","Schattenfinanzplätze","Steueroasen","Steuerparadiese"],"articleSection":["Aktuelles","Wirtschaft"],"inLanguage":"de-DE","copyrightYear":"2023","copyrightHolder":{"@id":"https://correctiv.org/#organization"}},{"@type":"Person","@id":"https://correctiv.org/#/schema/person/f5cf0c3376b137b5d4d612ce648772d6","name":"Gabriela Keller","image":{"@type":"ImageObject","@id":"https://correctiv.org/#personlogo","inLanguage":"de-DE","url":"https://secure.gravatar.com/avatar/92f3fa5af2b135412d15d63ad8a17304?s=96&d=mm&r=g","contentUrl":"https://secure.gravatar.com/avatar/92f3fa5af2b135412d15d63ad8a17304?s=96&d=mm&r=g","caption":"Gabriela Keller"},"sameAs":["https://twitter.com/gabrielakeller"],"url":"https://correctiv.org/team/gabriela-keller/"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link href="https://datawrapper.dwcdn.net/8aegZ/20" rel="preload" as="document"><link href="https://datawrapper.dwcdn.net/lTD9k/12/" rel="preload" as="document"><link href="https://datawrapper.dwcdn.net/op061/5/" rel="preload" as="document"><link href="https://datawrapper.dwcdn.net/8aegZ/20/" rel="preload" as="document"><link href="https://datawrapper.dwcdn.net/08Hfb/19/" rel="preload" as="document"><link href="https://datawrapper.dwcdn.net" rel="preconnect"><link href="https://correctiv.github.io" rel="preconnect"><!-- correctiv.org is managing ads with Advanced Ads 1.44.0 – https://wpadvancedads.com/ --><script id="corre-ready">
+			/**
+ * Wait for the page to be ready before firing JS.
+ *
+ * @param {function} callback - A callable function to be executed.
+ * @param {string} [requestedState=complete] - document.readyState to wait for. Defaults to 'complete', can be 'interactive'.
+ */
+window.advanced_ads_ready = function ( callback, requestedState ) {
+	requestedState = requestedState || 'complete';
+	var checkState = function ( state ) {
+		return requestedState === 'interactive' ? state !== 'loading' : state === 'complete';
+	};
+
+	// If we have reached the correct state, fire the callback.
+	if ( checkState( document.readyState ) ) {
+		callback();
+		return;
+	}
+	// We are not yet in the correct state, attach an event handler, only fire once if the requested state is 'interactive'.
+	document.addEventListener( 'readystatechange', function ( event ) {
+		if ( checkState( event.target.readyState ) ) {
+			callback();
+		}
+	}, {once: requestedState === 'interactive'} );
+};
+
+window.advanced_ads_ready_queue = window.advanced_ads_ready_queue || [];
+		</script>
+		<link rel='stylesheet' id='wp-block-library-css'  href='https://correctiv.org/wp-includes/css/dist/block-library/style.css?ver=5.8.8' type='text/css' media='all' />
+<link rel='stylesheet' id='gutenberg-examples-dynamic-block-style-css'  href='https://correctiv.org/wp-content/plugins/findock/build/blocks-jsx/10-dynamic-block/./style-index.css?ver=0.1.0' type='text/css' media='all' />
+<link rel='stylesheet' id='wpel-font-awesome-css'  href='https://correctiv.org/wp-content/plugins/wp-external-links/public/css/font-awesome.min.css?ver=2.58' type='text/css' media='all' />
+<link rel='stylesheet' id='wpel-style-css'  href='https://correctiv.org/wp-content/plugins/wp-external-links/public/css/wpel.css?ver=2.58' type='text/css' media='all' />
+<link rel='stylesheet' id='main-style-css'  href='https://correctiv.org/wp-content/themes/correctiv-theme/css/main.css?v=5.1&#038;ver=5.8.8' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-icons-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.css?ver=5.18.0' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-frontend-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/css/frontend.css?ver=3.11.5' type='text/css' media='all' />
+<link rel='stylesheet' id='swiper-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/swiper/css/swiper.css?ver=5.3.6' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-post-59229-css'  href='https://correctiv.org/wp-content/uploads/elementor/css/post-59229.css?ver=1691663323' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-pro-css'  href='https://correctiv.org/wp-content/plugins/elementor-pro/assets/css/frontend.css?ver=3.11.3' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-5-all-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/all.css?ver=3.11.5' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-4-shim-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/v4-shims.css?ver=3.11.5' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-post-99744-css'  href='https://correctiv.org/wp-content/uploads/elementor/css/post-99744.css?ver=1691663323' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-post-97564-css'  href='https://correctiv.org/wp-content/uploads/elementor/css/post-97564.css?ver=1691663323' type='text/css' media='all' />
+<script type='text/javascript' src='https://correctiv.org/wp-content/themes/correctiv-theme/js/jquery.js?ver=5.8.8' id='jquery-js'></script>
+<script type='text/javascript' id='advanced-ads-advanced-js-js-extra'>
+/* <![CDATA[ */
+var advads_options = {"blog_id":"1","privacy":{"consent-method":"custom","custom-cookie-name":"allow_ads","custom-cookie-value":"true","enabled":false,"state":"not_needed"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/129/public/assets/js/advanced.js?ver=1.44.0' id='advanced-ads-advanced-js-js'></script>
+<script type='text/javascript' id='advanced_ads_pro/visitor_conditions-js-extra'>
+/* <![CDATA[ */
+var advanced_ads_pro_visitor_conditions = {"referrer_cookie_name":"advanced_ads_pro_visitor_referrer","referrer_exdays":"365","page_impr_cookie_name":"advanced_ads_page_impressions","page_impr_exdays":"3650"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/50/451/237/580/484.js?ver=2.22.0' id='advanced_ads_pro/visitor_conditions-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/js/v4-shims.js?ver=3.11.5' id='font-awesome-4-shim-js'></script>
+<link rel="https://api.w.org/" href="https://correctiv.org/wp-json/" /><link rel="alternate" type="application/json" href="https://correctiv.org/wp-json/wp/v2/posts/167069" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://correctiv.org/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://correctiv.org/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 5.8.8" />
+<link rel='shortlink' href='https://correctiv.org/?p=167069' />
+<link rel="alternate" type="application/json+oembed" href="https://correctiv.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://correctiv.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F&#038;format=xml" />
+<meta name="generator" content="WPML ver:4.5.14 stt:1,3;" />
+<!-- FAVHERO FAVICON START --><!-- For iPad with high-resolution Retina display running iOS ≥ 7: --><link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-152.png"><!-- Standard: --><link rel="icon" sizes="152x152" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-152.png"><meta name="msapplication-TileColor" content="#FFFFFF"><meta name="msapplication-TileImage" content="https://correctiv.org/wp-content/uploads/2018/11/favicon-144.png"><!-- For iPad with high-resolution Retina display running iOS ≤ 6: --><link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-144.png"><!-- For iPhone with high-resolution Retina display running iOS ≥ 7: --><link rel="apple-touch-icon-precomposed" sizes="120x120" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-120.png"><!-- For first- and second-generation iPad: --><link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-72.png"><!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: --><link rel="apple-touch-icon-precomposed" href="https://correctiv.org/wp-content/uploads/2018/11/favicon-57.png"><!-- FAVHERO FAVICON END --><script>advads_items = { conditions: {}, display_callbacks: {}, display_effect_callbacks: {}, hide_callbacks: {}, backgrounds: {}, effect_durations: {}, close_functions: {}, showed: [] };</script><style type="text/css" id="corre-layer-custom-css"></style><script type="text/javascript">
+		var advadsCfpQueue = [];
+		var advadsCfpAd = function( adID ){
+			if ( 'undefined' == typeof advadsProCfp ) { advadsCfpQueue.push( adID ) } else { advadsProCfp.addElement( adID ) }
+		};
+		</script>
+		<meta name="generator" content="Elementor 3.11.5; features: e_dom_optimization; settings: css_print_method-external, google_font-disabled, font_display-block">
+<link rel="stylesheet" id="styles-redesign" href="/assets/css/cds.min.css" type="text/css" media="all">
+<style>
+
+.st-content__wrap a.related__item {
+    border-bottom: 1px solid var(--250) !important;
+}
+	
+/* ---------------------------------
+   story accordion
+   --------------------------------- */
+
+.st-content__wrap .accordion__content {;
+		font: 17px/1.5 'Source Sans Pro', sans-serif;
+}
+	
+@media only screen and (max-width: 767px) {
+	.st-content__wrap .accordion__content {;
+		font-size: 15px;
+	}
+}
+	
+.accordion__content .st-content__wrap {
+		padding: 0;
+    background: unset;
+    margin: 0;
+}
+	
+.accordion__content .st-content__wrap:not(:last-child) {
+    margin-bottom: 30px;
+}
+	
+.st-content__wrap:has(.accordion--detail.is--active) .accordion__content {
+	  display: block;
+	  background: var(--200);
+    padding: 15px;
+}
+	
+.accordion--detail .accordion__title, .accordion--small .accordion__title {
+    padding-right: 15px !important;
+}
+	
+	
+.accordion__content .figure {
+    background: var(--200);
+}
+	
+/* ---------------------------------
+   story accordion english
+   --------------------------------- */
+	
+.st-content__wrap .accordion--detail,
+.detail__content .accordion--detail {
+    background: #f8f8f8;
+	  padding: 15px;
+	  font: 17px/24px Source Sans Pro,sans !important;
+	  font-weight: 700;
+	  border: none;
+}
+	
+.st-content__wrap .accordion--detail .accordion__title,
+.detail__content .accordion--detail .accordion__title{
+	  font: 17px/24px Source Sans Pro,sans !important;
+	  font-weight: 700 !important;
+	  padding-left: 40px;
+}	
+	
+/* ---------------------------------
+   category lists, related articles
+   --------------------------------- */
+/* item */
+.list .list__item {
+    margin-bottom: 20px;
+}
+	
+/* text color */
+.list__item .title, .list-item p, .more__text {
+	  color: #333;	
+}
+
+/* topline */
+.list__item .topline {
+    color: var(--emphasis);
+    text-transform: none;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.4px;
+}
+	
+/* title */
+.list__item h2{
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--700);
+}
+	
+/* title - mobile */	
+@media only screen and (max-width: 767px) {
+article.list__item h2{
+    font-size: 23px;
+    line-height: 1.3;
+}
+}
+	
+/* paragraph */
+.list-item p {
+  	line-height: 1.5;	
+}
+
+/* more */
+.list__item .more__text{
+    border-bottom: 1px solid var(--700);
+    padding-bottom: 1px;
+}
+	
+/* ---------------------------------
+   fix
+   --------------------------------- */
+	
+/* fix logo */
+.logo--header a {
+    border: 0px solid !important;
+}
+
+/* social external */	
+.share__item .wpel-icon {
+    display: none;	
+}	
+
+/* author, standard template */
+p.detail__authors, time.detail__date {
+    line-height: 1.5;
+}
+
+/* links */
+.elementor-section .elementor-section p a,
+.elementor-section .elementor-section span a {
+    border-bottom: 1px solid var(--emphasis);
+}
+
+/* scroller */
+@media only screen and (max-width: 767px) {
+  div.carousel__container {
+    display: none !important;
+  }
+}
+	
+/* hero slider */
+.elementor-ken-burns--active {
+    transition-duration: 0s !important;
+}
+	
+/* title */
+.gform_heading {
+    display: none;
+}
+	
+/* ---------------------------------
+   forms
+   --------------------------------- */
+
+/* container */
+div.gform_wrapper.gravity-theme .gform_fields {
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+}
+
+@media only screen and (max-width: 641px){
+	div.gform_wrapper.gravity-theme .gform_fields {
+			grid-column-gap: 8px;
+			grid-row-gap: 8px;
+	}
+}
+
+/* input */
+.ginput_container input {
+    min-height: 48px; 
+    border: 1px solid var(--300);
+    border-radius: 2px;
+	  padding: 8px 15px !important;
+		font-size: 16px !important;
+}
+	
+/* campaign input */
+.campaign .ginput_container input {
+    border: none;
+}
+	
+.gform_wrapper.gravity-theme input[type="text"] {
+    padding: 8px 20px !important;
+}
+
+@media only screen and (max-width: 641px){
+	.gform_wrapper.gravity-theme input[type="text"] {
+			padding: 6px 20px !important;
+	}
+}
+
+/* button */
+.gform-button,
+.gform_button {
+    background-color: var(--alternative);
+    color: var(--700);
+    cursor: pointer;
+    padding: 0 25px;
+    line-height: 1.5;
+    border-radius: 2px;
+    text-transform: none;
+    min-width: unset;
+    min-height: 48px !important;
+}
+	
+@media only screen and (max-width: 641px){
+  .gform-button,
+  .gform_button  {
+		  min-height: 42px !important;		
+	}	
+}
+
+/* campaign button */
+.campaign .gform-button,
+.campaign .gform_button {
+    background-color: var(--emphasis);
+    color: var(--100);
+}
+
+/* label */
+.gfield {
+    text-align: left;
+}
+	
+.gfield_required {
+		color: var(--emphasis) !important;
+		font-style: normal !important;
+}
+
+/* footer */
+.gform_footer, 
+.gform_page_footer {
+    display: none !important;
+}
+	
+/* placeholder */	
+.gform-body input::placeholder {
+    color: var(--600) !important;
+}
+</style>
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+ fbq('init', '196824970083832'); 
+fbq('track', 'PageView');
+</script>
+<noscript>
+ <img height="1" width="1" 
+src="https://www.facebook.com/tr?id=196824970083832&ev=PageView
+&noscript=1"/>
+</noscript>
+            <style>
+            /* adjust donate button header navigation*/
+@media only screen and (min-width: 1200px) {
+.navigation--header .navigation__item.is--donate .navigation__link {
+    background-color: #FDE162;
+    border: 1px solid #FDE162;
+    padding: 0 25px;
+    line-height: 40px;
+    font-weight: 700;
+    border-radius: 2px;
+    text-transform: none;
+    color: #333;
+    font-size: 16px;
+    letter-spacing: 0.1px;
+}
+.navigation--header .navigation__link--login {
+    color: #333; }
+}
+
+/* fix: gap between body and header - pages */
+body.page{
+    padding-top: 78px;
+}
+
+@media only screen and (max-width: 1200px){
+/* fix: gap between body and header - pages */
+    body.page {
+        padding-top: 55px;
+    }
+
+/* fix: gap between body and header - posts */
+    body.single-post {
+        padding-top: 67px;
+    }
+}
+
+/* Misuse blockquote as a infobox style element*/
+
+@media only screen and (max-width: 767px){
+blockquote {
+    padding: 25px !important;
+    font-size: 15.5px !important;
+    line-height: 27px !important;
+}}
+
+blockquote {
+    font-size: 17.5px;
+    line-height: 31px;
+    font-weight: 400;
+    padding: 40px 40px;
+    text-align: left;
+    background: #f8f8f8;
+    font-style: italic;
+    }
+
+blockquote p {
+    quotes: none;
+}
+
+blockquote:after, blockquote:before {
+    height: 0px;
+}
+
+
+/* Adjust mobile navigation menu*/
+
+@media only screen and (max-width: 1199px){
+.navigation--header .navigation__link {
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+    line-height: 50px;
+    letter-spacing: -0.1px;
+}
+
+.search-form__text {
+    border: 1px solid #f5f5f5;
+    padding: 7px 40px 7px 10px;
+}
+
+.search-form__submit {
+    padding: 5px 15px 5px 5px;
+}
+
+.navigation--header .language {
+    left: 25px;
+}
+
+.navigation--header .navigation__item.is--donate .navigation__link {
+    font-weight: 700;
+}
+
+.navigation--header .navigation__link--login {
+    display:none}
+
+.header__navigation--mobile {
+    padding: 20px 30px 70px;
+    }
+}
+
+
+body {
+    background-color: #F8F8F8;
+}
+
+/* Hide comments*/
+.ccmvp-comments--expanded .ccmvp-comment-form {
+display:none
+}
+
+
+
+/* Adjust padding for resuable article box*/
+.block-box {
+    margin: 30px 0px 30px 0px;
+}
+
+/* Adjust line height for article widget excerp*/
+.widget-post__excerpt {
+line-height:27px}
+
+/* Adjust line height for article widget excerp on mobile*/
+@media screen and (max-width: 782px) {
+.widget-post__excerpt {
+line-height:24px}
+}
+
+/* Adjust color of fact checking claim box footer*/
+.detail__box-footer {
+    color: #707070;
+    font-size: 15px;
+    line-height: 18px;
+}
+
+/* Adjust global line height*/
+body {
+    font: 17px/27px  Source Sans Pro, sans-serif;
+}
+
+/* Adjust mobile top story title font size*/
+@media only screen and (max-width: 767px){
+.detail__title {
+    font-size: 24px;
+    line-height: 30px;
+}}
+
+/* Adjust mobile top story leadin font size*/
+@media only screen and (max-width: 767px){
+.detail--single .detail__excerpt {
+ 	font-size: 16px;
+        line-height: 24px;
+}
+.detail--post .detail__excerpt {
+    font-size: 17px !important;
+    line-height: 25px !important;
+}
+}
+
+/* Remove top padding space on top stories*/
+.detail__header {
+margin-top: -60px;
+}
+
+/* Remove "Quelle" Fact Checking Claim Box */
+.detail__box-footer a {
+    display: none;
+}
+
+/* Hide fixed bottom donate button*/
+.donate-button {
+display:none;
+}
+
+/* Hide all donate & newsletter breaker global*/
+
+.newsletter--inline {
+display:none;
+}
+
+/* Display Advanced Ads inline block*/
+.corre-target {
+    display: inline;
+}
+
+/* Adjust page padding on mobile*/
+@media only screen and (max-width: 767px){
+.detail--post {
+    padding: 40px 20px 40px;
+}}
+
+/* Adjust page padding on desktop*/
+.detail--post {
+    padding: 75px 24px 80px;
+}
+
+/* Adjust mobile article font size*/
+@media only screen and (max-width: 767px){
+.detail__content {
+    font-size: 15.5px !important;
+    line-height: 27px !important;
+letter-spacing: 0.1px !important;
+}}
+
+/* Adjust desktop article font size*/
+.detail__content {
+font-size: 17.5px;
+    line-height: 31px;
+    letter-spacing: 0.1px;
+word-spacing: 0.1em;
+color: #333333;}
+
+/* Adjust mobile article title font size*/
+@media only screen and (max-width: 767px){
+.list__header h2 {
+    font-size: 28px;
+    line-height: 32px;
+}}
+
+.list__header {
+    margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 767px) {
+h1.secondary-title, h2 {
+    font-size: 28px;
+    line-height: 32px;
+}}
+
+/* Adjust factchecking box line height*/
+@media only screen and (max-width: 767px){
+.detail__box-content {
+    line-height: 1.5em;
+}
+.detail__box {
+    line-height: 1.5em;
+}
+}
+
+/* Adjust leadin font-size desktop*/
+.detail--post .detail__excerpt {
+    font-size: 20px;
+}
+
+/* Adjust article headline on desktop*/
+.secondary-title {
+    font-size: 40px;
+    line-height: 44px;
+}
+
+/* Adjust height of widget navigation, before it was -2px*/
+.widget__navitem {
+margin-bottom: 0px;
+}
+
+/* Blog Categories width*/
+.news__tab a {
+    min-width: 116px;}
+
+/* Style Borlabs Banner*/
+#BorlabsCookieBox ._brlbs-bar, #BorlabsCookieBox ._brlbs-box {
+    border-radius: 0px;
+}
+#BorlabsCookieBox ._brlbs-box-wrap {
+    max-width: 450px;
+}
+
+#BorlabsCookieBox ._brlbs-box, #BorlabsCookieBox ._brlbs-bar {
+    padding: 40px 30px;
+}
+
+@media only screen and (max-width: 767px) {
+#BorlabsCookieBox ._brlbs-box, #BorlabsCookieBox ._brlbs-bar {
+    padding: 40px 20px;
+}
+}
+
+#BorlabsCookieBox h3, #BorlabsCookieBox ._brlbs-h3 {
+    font-size: 1.3em;
+    font-weight: 700;}
+
+    #BorlabsCookieBox ._brlbs-flex-center {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
+#BorlabsCookieBox ._brlbs-btn-accept-all {
+    background: #333333;
+    border-radius: 0px;
+    color: #fff;
+}
+
+/* Adjust mobile related article title font size*/
+@media only screen and (max-width: 767px){
+h2.tertiary-title {
+    font-size: 22px;
+    line-height: 26px;
+}}
+
+/* Adjust newsletter success message*/
+.mc4wp-success {
+    color: white;
+    font-weight: 400;
+    background: #3D9970;
+    padding: 20px;
+    margin-top: 15px;
+    line-height: 1.3;
+    font-size: 15px;
+}
+
+/* Style Article Accordion*/
+.accordion--detail {
+    background: #f8f8f8;
+}
+
+.accordion--detail .accordion__title {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 700;
+}
+
+
+@media only screen and (max-width: 767px){
+.accordion__title:before {
+    margin-top: 0px;
+}}
+
+.accordion--detail .accordion__title, .accordion--small .accordion__title {
+    padding: 0 0 0 45px;
+}
+
+.accordion--detail {
+    font: 17px/24px Source Sans Pro,sans;
+}
+
+.accordion--detail .accordion__content {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.accordion--detail .accordion__title:before {
+    left: 15px;
+top: 4px;
+}
+
+/* Adjust article text width desktop*/
+.detail__inner {
+    max-width: 620px;
+}
+
+.detail__authors-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid #cecece;
+}
+
+.detail__authors, .detail__date {
+    font-size: 15px;
+    line-height: 15px;
+    color: #707070;
+}
+
+    @media only screen and (max-width: 767px){
+.detail__date {
+    margin-bottom: 30px;
+}}
+
+@media only screen and (min-width: 861px){
+.detail__box {
+    padding: 30px 40px 40px 40px;
+}}
+
+@media only screen and (max-width: 767px){
+.detail__box-content, .detail__box {
+    line-height: 1.5em;
+    font-size: 15px;
+}}
+
+.detail__list {
+    background-color: #f8f8f8;
+}
+
+.secondary-title, h2 {
+    margin-bottom: 25px;
+}
+
+.footer {
+    background-color: #f8f8f8;}
+
+/* Adjust link font color*/
+.detail__content a {
+    color: #333333;
+}
+        </style>
+    
+    <!-- upscore template -->
+<!-- Cat-Name:Aktuelles Parent-ID: 0 -->
+<!-- Cat-Name:Wirtschaft Parent-ID: 1 -->
+<script>
+            (function(u, p, s, c, r) {
+                u[r] = u[r] || function(p) {
+                    (u[r].q = u[r].q || []).push(p)
+                }, u[r].ls = 1 * new Date();
+                var a = p.createElement(s),
+                    m = p.getElementsByTagName(s)[0];
+                a.async = 1;
+                a.src = c;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//files.upscore.com/async/upScore.js', 'upScore');
+
+        upScore({
+            config: {
+                domain: 'correctiv.org',
+                article: '#main',
+                track_positions: false
+            },
+
+            data: {
+                section: 'Artikel',
+                taxonomy: 'Recherchen',
+                object_id: '167069',
+                pubdate: '2023-10-25T10:10:55+02:00',
+                author: 'Gabriela Keller',
+                object_type: 'article'
+            }
+        });
+    </script>
+
+        
+    <!-- Matomo Tag Manager -->
+        <script data-cmp-ab="1">       
+        var _mtm = window._mtm = window._mtm || [];
+        _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+        (function() {
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.async=true; g.src="https://matomo.correctiv.org/js/container_FITs055J.js"; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
+    <!-- End Matomo Tag Manager -->
+
+</head>
+
+<body class="post-template-default single single-post postid-167069 single-format-standard elementor-default elementor-kit-59229 aa-prefix-corre- aa-disabled-bots">
+
+    <div class="body-wrapper">
+        <header id="masthead" class="header" role="banner">
+
+            <p class="logo logo--header">
+            <a href="https://correctiv.org/" rel="home" class="logo__link" data-wpel-link="internal">
+                correctiv.org            </a>
+        </p>
+    
+    <div class="header__navigation header__navigation--desktop">
+        
+    <div class="navigation navigation--header">
+
+        
+    <div class="language">
+                                </div>
+
+
+
+        <ul class="navigation__list">
+                            <li class="navigation__item ">
+                                        <a href="/" class="navigation__link" data-wpel-link="internal">
+                        Startseite                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/themen" class="navigation__link" data-wpel-link="internal">
+                        Themen                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/faktencheck" class="navigation__link" data-wpel-link="internal">
+                        Faktencheck                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/projekte" class="navigation__link" data-wpel-link="internal">
+                        Projekte                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/ueber-uns" class="navigation__link" data-wpel-link="internal">
+                        Über uns                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/newsletter" class="navigation__link" data-wpel-link="internal">
+                        Newsletter                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item is--donate">
+                    <div data-upscore-conversion="1">                    <a href="/unterstuetzen/?utm_source=navigation" class="navigation__link" data-wpel-link="internal">
+                        Unterstützen                    </a>
+                    </div>                </li>
+
+
+                                    <li class="navigation__item">
+                <a href="https://correctiv.org/login" class="navigation__link navigation__link--login js-navigation-login" data-wpel-link="internal">
+                    <i class="fas fa-user"></i>
+                </a>
+            </li>
+            
+        </ul>
+        <div class="navigation__search">
+            <a href="/?s=" data-wpel-link="internal"><i class="fa fa-search"></i></a>
+        </div>
+        <form role="search" method="get" class="search-form" action="/">
+    <input type="text" class="search-form__text" placeholder="Suchbegriff" value='' name="s" id="s" autocomplete="off"/>
+    <button type="submit" class="search-form__submit">
+        <i class="fa fa-search"></i>
+    </button>
+</form>
+        
+    </div>
+    </div>
+
+
+            <span class="header__progress"></span>
+    
+</header><!-- .site-header -->
+<button class="hamburger hamburger--squeeze" type="button">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+</button>
+<div class="header__navigation header__navigation--mobile">
+    
+    <div class="navigation navigation--header">
+
+        
+    <div class="language">
+                                </div>
+
+
+
+        <ul class="navigation__list">
+                            <li class="navigation__item ">
+                                        <a href="/" class="navigation__link" data-wpel-link="internal">
+                        Startseite                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/themen" class="navigation__link" data-wpel-link="internal">
+                        Themen                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/faktencheck" class="navigation__link" data-wpel-link="internal">
+                        Faktencheck                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/projekte" class="navigation__link" data-wpel-link="internal">
+                        Projekte                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/ueber-uns" class="navigation__link" data-wpel-link="internal">
+                        Über uns                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item ">
+                                        <a href="/newsletter" class="navigation__link" data-wpel-link="internal">
+                        Newsletter                    </a>
+                                    </li>
+
+
+                            <li class="navigation__item is--donate">
+                    <div data-upscore-conversion="1">                    <a href="/unterstuetzen/?utm_source=navigation" class="navigation__link" data-wpel-link="internal">
+                        Unterstützen                    </a>
+                    </div>                </li>
+
+
+                                    <li class="navigation__item">
+                <a href="https://correctiv.org/login" class="navigation__link navigation__link--login js-navigation-login" data-wpel-link="internal">
+                    <i class="fas fa-user"></i>
+                </a>
+            </li>
+            
+        </ul>
+        <div class="navigation__search">
+            <a href="/?s=" data-wpel-link="internal"><i class="fa fa-search"></i></a>
+        </div>
+        <form role="search" method="get" class="search-form" action="/">
+    <input type="text" class="search-form__text" placeholder="Suchbegriff" value='' name="s" id="s" autocomplete="off"/>
+    <button type="submit" class="search-form__submit">
+        <i class="fa fa-search"></i>
+    </button>
+</form>
+        
+    </div>
+</div>
+
+
+<div class="header header--print">
+    <img src="https://correctiv.org/wp-content/themes/correctiv-theme/img/logo.svg">
+</div>
+        <main id="main" class="site-main " role="main">
+            
+
+    
+
+    <div class="container-outer">
+        <article class="detail detail--post">
+            <div class="detail__inner">
+
+                <header class="list__header">
+
+
+                    <span class="topline">
+                    <a href="https://correctiv.org/thema/aktuelles/" class="topline__link" data-wpel-link="internal">Aktuelles</a>
+    </span>                    <h1 class="secondary-title">Die Cannabis-Connection der Bundesrepublik: Snoop Dogg und Staatsauftrag</h1>
+
+                        <p class="detail__excerpt">
+        Die Firma Cansativa agiert praktisch als Großhändler für medizinisches Cannabis im Auftrag des Staates. Dahinter stehen auch Offshore-Firmen, zum Teil in Steueroasen. Finanzexperten halten die Auftragsvergabe für fragwürdig.    </p>
+
+                </header>
+
+
+                    <p class="detail__authors">
+                von                                <a href="https://correctiv.org/team/gabriela-keller/" class="detail__authors-link" data-wpel-link="internal">Gabriela Keller</a>
+            </p>
+
+                <time class="detail__date" datetime="2023-10-25T10:08:55+02:00">25. Oktober 2023</time>
+
+                                    <figure class="figure">
+                        
+            <picture
+                style="padding-top: 54.674220963173%"                 class="picture list__image"
+            >
+                <!--[if IE 9]><video style="display: none;"><![endif]-->
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/10/cannabis-750x412.jpg"
+                        media="(max-width: 700px)"
+                />
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/10/cannabis-1412x772.jpg"
+                        media="(max-width: 860px)"
+                />
+                <!--[if IE 9]></video><![endif]-->
+                                <img
+                        src=""
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/10/cannabis-706x386.jpg 1x,
+                        https://correctiv.org/wp-content/uploads/2023/10/cannabis-1412x772.jpg 2x"
+                        class="lazyload picture__image"
+                        alt="US-NEWS-MD-MARIJUANA-POLL-BZ" />
+
+                <noscript>
+                    <img src="https://correctiv.org/wp-content/uploads/2023/10/cannabis-1412x772.jpg" alt="US-NEWS-MD-MARIJUANA-POLL-BZ" />
+                </noscript>
+            </picture>
+
+            
+                                                    <figcaption class="figure__caption">
+                                Der Markt mit medizinischem Cannabis wächst rapide. Das lockt auch internationale Investoren. Foto: Annette Riedl / picture alliance                            </figcaption>
+                                            </figure>
+                                <div class="detail__wrapper">
+
+                    
+
+
+
+<div class="detail__content">
+        <p><span style="font-weight: 400;">Es geht um 10,4 Tonnen Cannabis, um Blüten, die Schmerzen, Krämpfe oder Übelkeit lindern, und um die Frage, wie der Stoff vom Anbau in die Apotheken kommt. </span></p>
+<p><span style="font-weight: 400;">Seit 2017 dürfen Ärztinnen und Ärzte in Deutschland </span><a href="https://www.bfarm.de/DE/Bundesopiumstelle/Cannabis-als-Medizin/_node.html" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;">medizinisches Cannabis</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;"> verschreiben. Das Gesetz sieht vor, dass der Staat sich bei einheimischen Pflanzen um Vertrieb und Handel kümmern muss. Diese Aufgaben – Lagerung, Lieferung, Bestellwesen, Transport – wurden an eine Privatfirma vergeben: Das Startup </span><a href="https://www.cansativa-group.de/" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;">Cansativa</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;"> agiert als Cannabis-Großhändler im Auftrag der Bundesrepublik – eine GmbH mit zum Teil undurchsichtigen Offshore-Strukturen; darunter Hedgefonds, Investmentgesellschaftern und Kapitalfirmen in Steuerparadiesen. </span></p>
+<p><span style="font-weight: 400;">Der öffentliche Auftrag an die hessische Firma eröffnet einen Blick in die unübersichtliche Gemengelage des Cannabismarktes. Unklar ist, ob die Behörden wissen, wer sich hinter den Offshore-Firmen verbirgt – oder wie gründlich die Firmenstruktur des staatlichen Dienstleisters durchleuchtet wurde. Der Finanzexperte Markus Meinzer von </span><a href="https://taxjustice.net/" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;">Tax Justice Network</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;"> hält das für ein Problem – besonders bei Vertragspartnern des Staates Deutschland: „Ohne eine verpflichtende Offenlegung der Offshore-Investoren deutscher GmbHs und AGs lädt die Bundesregierung zu Interessenkonflikten, Marktmanipulation und anderen Unregelmäßigkeiten ein.“ </span></p><div class="corre-aktuelles-3-absatz" id="corre-476000043"><div data-corre-trackid="101191" data-corre-trackbid="1" class="corre-target" id="corre-1573645913"><!-- [elementor-template id="101184"] -->
+
+<div class="related__container">
+  <h2>Mehr von CORRECTIV</h2>
+    <a class="related__item" href="https://correctiv.org/aktuelles/2023/10/19/schwarzmarkt-droht-weiter-zu-bestehen/" data-wpel-link="internal">
+      <img width="706" height="386" src="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-706x386.png" class="related__image wp-post-image" alt="Kurzmeldung von CORRECTIV: Nach Urteil zur Mitarbeiterkontrolle bei Amazon legt Datenschutzbeauftragte Berufung ein" loading="lazy" srcset="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-706x386.png 706w, https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-768x420.png 768w, https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-970x530.png 970w, https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-400x219.png 400w, https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-1445x790.png 1445w, https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon.png 1412w" sizes="(max-width: 706px) 100vw, 706px" />      <span class="related__title">Schwarzmarkt droht, weiter zu bestehen</span>
+    </a>
+    <a class="related__item" href="https://correctiv.org/aktuelles/gesundheit/2023/09/15/weisses-gold-profite-mit-legalem-heroin/" data-wpel-link="internal">
+      <img width="706" height="386" src="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-706x386.jpg" class="related__image wp-post-image" alt="Foto: Diana Eine Spritze mit Drogen. Polekhina / unsplash.com" loading="lazy" srcset="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-706x386.jpg 706w, https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-970x530.jpg 970w, https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-1445x790.jpg 1445w, https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-1412x772.jpg 1412w" sizes="(max-width: 706px) 100vw, 706px" />      <span class="related__title">Weißes Gold – Profite mit legalem Heroin</span>
+    </a>
+    <a class="related__item" href="https://correctiv.org/aktuelles/wirtschaft/2023/09/12/nyonic-berliner-ki-startup-steueroase-kuenstliche-intelligenz/" data-wpel-link="internal">
+      <img width="706" height="386" src="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-706x386.jpg" class="related__image wp-post-image" alt="Foto:unsplash.com / kommers" loading="lazy" srcset="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-706x386.jpg 706w, https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-970x530.jpg 970w, https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-1445x790.jpg 1445w, https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-1412x772.jpg 1412w" sizes="(max-width: 706px) 100vw, 706px" />      <span class="related__title">Eine Hoffnung für den KI-Standort Deutschland – mit Sitz im Steuerparadies</span>
+    </a>
+</div>
+</div></div>
+<h2><b>Snoop Doggs Firma als mittelbarer Geschäftspartner der Bundesregierung</b></h2>
+<p><span style="font-weight: 400;">Während die Bundesregierung eine </span><a href="https://correctiv.org/aktuelles/2023/10/19/schwarzmarkt-droht-weiter-zu-bestehen/" data-wpel-link="internal"><span style="font-weight: 400;">teilweise Legalisierung von Cannabis</span></a><span style="font-weight: 400;"> als Genussdroge vorbereitet, wirft schon der Umgang der Behörden mit medizinischen Cannabis Zweifel auf; Brancheninsider sprechen von fehlendem Wissen und geringem Einsatz. Die Frage ist also, inwiefern die Behörden die Branche einschätzen können – ob Sie wissen, mit wem sie es zu tun haben, und wie gründlich sie geprüft haben.</span></p>
+<p><span style="font-weight: 400;">Das zuständige Bundesinstitut für Arzneimittel und Medizinprodukte BfArM teilt dazu mit: „Im Rahmen des europäischen Vergabeverfahrens wurden die vorgesehenen Prüfungen der Teilnehmenden durchgeführt.“ Konkreter wird das Institut nicht.</span></p>
+<p><span style="font-weight: 400;">Die  Cansativa GmbH geht auf Anfrage nicht detailliert auf den Vorwurf der teilweisen Intransparenz ein. Nur so viel: Bei den Offshore-Teilhabern handele es sich nur „um Minderheitsgesellschafter.“ Bei Fragen zu den „Vergabe- und Zuschlagskriterien“ für den öffentlichen Auftrag solle man sich an Vergabestelle wenden – also den Staat. </span></p>
+<p><span style="font-weight: 400;">Ein prominenter Investor im Netzwerk von Cansativa wurde bereits</span><a href="https://www.handelsblatt.com/unternehmen/mittelstand/familienunternehmer/arzneimittel-cannabis-start-up-cansativa-bekommt-frisches-geld-von-rapper-snoop-dogg/28070490.html" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;"> vermeldet</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;">: Calvin Broadus, besser bekannt als: Snoop Dogg. Der Rapper und bekennende Kiffer steht hinter einer Kapitalgesellschaft, die 2022 einen Millionenbetrag in das hessische Startup investiert hat: Drei Fonds, die sich dessen Firma Casa Verde zuordnen lassen, gehören insgesamt knapp 20 Prozent von Cansativa. Damit ist Snoop Doggs Firma zumindest mittelbar Geschäftspartner der Bundesrepublik Deutschland.</span></p>
+<p><span style="font-weight: 400;">Die Cansativa GmbH nahe Frankfurt am Main erhielt im August 2020 als einziges Unternehmen den Zuschlag für Logistik und Vertrieb von einheimischem Cannabis für therapeutische Zwecke und setzte sich gegen 18 weitere Bewerber durch. Der Vertrag läuft über vier Jahre und umfasst insgesamt ein Volumen von 10,4 Tonnen. </span></p>
+<p><span style="font-weight: 400;">Die Stelle, die im BfArM den Anbau von Cannabis steuert und kontrolliert, nennt sich Cannabisagentur. Fachgebiet 44, Abteilung Zulassung 4. Gibt man im Internet </span><a href="http://www.cannabisagentur.de/" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;">www.cannabisagentur.de</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;"> ein, landet man aber nicht bei dem Bundesinstitut, sondern auf einer von Cansativa betriebenen Seite, auf einer Art Bestellportal. Dort können Apotheken das einheimische Cannabis kaufen – oder werden über einen Link gleich weitergeführt auf  Unternehmenswebsite von Cansativa mit weiteren, internationalen Sorten.</span></p>
+<p><span style="font-weight: 400;">Denn die Firma agiert nicht nur als Vertragspartner der Bundesregierung, sondern zählt selbst zu den großen Importeuren von medizinischem Cannabis in Deutschland. </span></p>
+<h2><b>Vorwürfe von Wettbewerbsverzerrung und Interessenkonflikten</b></h2>
+<p><span style="font-weight: 400;">Die Doppelrolle der Firma sorgt in der Branche für Skepsis; manche sprechen von Wettbewerbsverzerrung. „Sie verwalten das Cannabis für die Cannabisagentur. Die Apotheken bestellen es über die Website,  und nur einen Klick entfernt findet sich das, was sie selbst als Privatfirma importieren“, sagt Cannabis-Autor und -Experte Michael Knodt. „Das verschafft denen einen ziemlich großen Wettbewerbsvorteil.”</span></p>
+<p><span style="font-weight: 400;">Anders als der Handel mit einheimischem Cannabis ist der Import-Markt nicht vom Staat gesteuert – und sehr viel größer: Während in Deutschland pro Jahr 2,6 Tonnen vertrieben werden, beliefen sich die Einfuhren 2022 auf fast 25 Tonnen. Cansativa hat nach eigenen Angaben seit 2020 fünf Tonnen Importware abgesetzt.</span></p>
+<p><span style="font-weight: 400;">Auch Maximilian Plenert, selbst Cannabis-Patient und Geschäftsführer einer Cannabis-Beratungsagentur in Berlin, stört sich an der unübersichtlichen Lage. Er sagt, die zuständigen Behörden machten auf ihn den Eindruck von Ahnungslosigkeit und fehlendem Engagement: „Sie machen es sich ganz einfach, indem sie alles an einen Dienstleister auslagern – sogar die Website.“ Dies laufe in anderen Ländern anders: In den Niederlanden oder in Kanada etwa trete der Staat selbst als Akteur auf dem Markt auf und stelle zudem offizielle Informationen zu medizinischen Cannabis für Ärtzinnen und Patienten bereit. In Deutschland hielten sich die Behörden weitgehend raus und überließen einem privaten Großhändler das Feld. </span></p>
+<p><span style="font-weight: 400;">„Es wirkt nicht ganz sauber, wegen der Interessenkonflikte“, sagt Plenert. Der Markt für medizinisches Cannabis beläuft sich auf geschätzt 300 Millionen Euro und wächst rapide. Auch dank des öffentlichen Auftrags wurde Cansativa zu einem dominanten Akteur. Die Firma nutzt dies für Eigenwerbung: Als „Marktführer“ und „exklusiver Partner der Bundesrepublik Deutschland“ habe seine Firma die Branche geprägt, schreibt einer der Geschäftsführer Jakob Sons auf der Unternehmenswebsite. </span></p>
+<h2><b>Hedgefonds in Kanada, eine Firma auf den Cayman Islands</b></h2>
+<p><span style="font-weight: 400;">Cansativa teilt auf Anfrage von CORRECTIV dazu mit, man nutze „die positive Referenz als Auftragnehmer eines öffentlichen Auftraggebers“, dies diene „der öffentlichen Darstellung unseres Dienstleistungsportfolios.“ </span></p>
+<p><span style="font-weight: 400;">Gegründet wurde die Firma von den Brüdern Jakob und Benedikt Sons. Zu den Anteilseignern zählen Privatleute, darunter die Brüder Sons selbst und ihr Vater, Hedgefonds in Kanada, eine Investmentfirma auf den Cayman Islands und mehrere Firmen mit Sitz in der amerikanischen Steueroase Delaware, die zu Casa Verde gehören – einer auf Cannabisunternehmen spezialisierte Kapitalfirma – der Fonds wurde mitgegründet von Snoop Dogg. Der Fonds des Rappers investiert weltweit in Cannabisfirmen und sieht offenbar Potenzial auf dem deutschen Markt.</span></p>
+<p><span style="font-weight: 400;">Zwar machen </span><a href="https://correctiv.org/aktuelles/wirtschaft/2023/09/12/nyonic-berliner-ki-startup-steueroase-kuenstliche-intelligenz/" data-wpel-link="internal"><span style="font-weight: 400;">Offshore-Strukturen</span></a><span style="font-weight: 400;"> nur einen Teil der Gesellschafter von Cansativa aus, auch sind solche Konstrukte nicht rechtswidrig und auch </span><a href="https://correctiv.org/aktuelles/wem-gehoert-hamburg/2019/02/05/mieten-unter-palmen/" data-wpel-link="internal"><span style="font-weight: 400;">nicht unüblich</span></a><span style="font-weight: 400;">. Dennoch verweisen Finanz- und Steuerexperten auf die Risiken, vor allem, wenn eine Firma mit Verbindungen in Steueroasen als Partner der Bundesregierung Aufträge erhält. Generell müsse der Staat sicherstellen, dass die Eigentümerstruktur seiner Auftragnehmer auch öffentlich in deutschen Registern einsehbar sei, fordert der Experte von Tax Justice Network Markus Meinzer: „Diese Transparenz darf man von den Empfängern öffentlicher Aufträge durchaus verlangen.”</span></p>
+<h2><b>Keine Auskunft zur Höhe der Gebühren für Cansativa</b></h2>
+<p><span style="font-weight: 400;">Ähnlich sieht es Konrad Duffy, Finanzexperte bei der </span><a href="https://www.finanzwende.de/" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right"><span style="font-weight: 400;">Bürgerbewegung Finanzwende</span><i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a><span style="font-weight: 400;">: „Da kommen auf jeden Fall Fragen auf, vor allem wenn es um eine Firma mit Quasi-Monopolstellung geht“, sagt er. „Der Fall zeigt, dass es generell kein Bewusstsein dafür gibt, welche Folgen es hat, wenn Firmen mit intransparenten Eigentümerstrukturen in Schattenfinanzplätzen Geschäfte machen.“ Die Behörden müssten sich die wirtschaftlich Berechtigten offenlegen lassen, meint Duffy. Denn letztlich laufe der Staat Gefahr, mit seinen Aufträgen das Konstrukt Schattenfinanzplätze zu fördern.</span></p>
+<p><span style="font-weight: 400;">Auch, wie viel Geld Cansativa als Cannabis-Dienstleister des Staates verdient, bleibt unklar: Die Firma erhält für ihre Dienstleistungen eine Verwaltungsgebühr; finanziert wird diese bei ärztlich verschriebenem Cannabis von den Krankenkassen. </span></p>
+<p><span style="font-weight: 400;">Auf die Frage nach der Höhe verweisen die Firma und das BfArM aufeinander: „Die Angebotskonditionen unterliegen der Geheimhaltung“, teilt Canativa mit. „Hierzu können wir leider keine Angaben machen.“ Beim BfArM indessen heißt es, man könne dazu nichts sagen und beruft sich auf das Betriebs- und Geschäftsgeheimnis der Privatfirma. Allerdings würden alle Kosten in den Abgabepreis des Cannabis einkalkuliert und seien für den Steuerzahler „kostenneutral“. </span></p>
+<h2><b>Der Markt für medizinisches Cannabis boomt</b></h2>
+<p><span style="font-weight: 400;">Derzeit dürften die Einkünfte aus dem öffentlichen Auftrag bei Cansativa nur einen kleineren Teil des Umsatzes ausmachen. Der Markt mit medizinischem Cannabis wächst rapide, und die Branche rechnet damit, dass der Boom mit der geplanten Lockerung der Regeln erst richtig losgeht.  Ob sich Cansativa in einer ähnlichen Rolle als Partner des Staates beim Genuss-Cannabis engagieren wird, ist offen; die Firma selbst teilt dazu mit, dazu sei derzeit „keine Einschätzung möglich“. </span></p>
+<p><span style="font-weight: 400;">In der Branche aber wisse jeder, dass der Freizeitkonsum der große Kuchen ist, auf den jede Cannabis-Firma schielt, sagt Cannabis-Experte Michael Knodt: „Das wollen alle Anbieter.“ Auf der Website von Cansativa ergibt sich der Eindruck, dass sich die Firma von den geplanten Gesetzesänderungen viel erhofft: Bei der anstehenden Legalisierung, heißt es dort, sehe sich Cansativa als „Vorreiter bei der Demokratisierung des Cannabismarktes“.</span></p>
+<p><br style="font-weight: 400;" /><br style="font-weight: 400;" /></p>
+<div class="corre-after-content_2 corre-target" id="corre-1983884110" data-corre-trackid="70849" data-corre-trackbid="1">		<div data-elementor-type="section" data-elementor-id="163332" class="elementor elementor-163332">
+								<section class="elementor-section elementor-top-section elementor-element elementor-element-952e10d section__item more-space elementor-section-height-min-height elementor-section-content-middle elementor-section-full_width elementor-section-height-default elementor-section-items-middle" data-id="952e10d" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+						<div class="elementor-container elementor-column-gap-no">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-0a711d0 section__content-container" data-id="0a711d0" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<section class="elementor-section elementor-inner-section elementor-element elementor-element-2423397 accordions-no-underline elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="2423397" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-inner-column elementor-element elementor-element-ff831da no-underline" data-id="ff831da" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-dd28b95 elementor-widget elementor-widget-html" data-id="dd28b95" data-element_type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+			<h3 class="breaker__title">Ihre Spende
+    <span class="breaker__claim is--active">für unabhängigen Journalismus.</span>
+    <span class="breaker__claim">für CORRECTIV.</span>
+    <span class="breaker__claim">für die nächste Recherche.</span>
+</h3>
+
+<style>
+    
+/*  -----------------------------------------------------  
+    title 
+    -----------------------------------------------------  */
+
+.breaker__title{
+    min-height: 66px;
+    font-size: 34px !important;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    text-align: left;
+    margin-bottom: 24px;
+	margin-top: 0;
+}
+
+@media only screen and (max-width: 767px) {
+.breaker__title{
+            font-size: 28px !important;
+            margin-bottom: 5px;
+    }
+}
+
+/*  -----------------------------------------------------  
+    claim
+    -----------------------------------------------------  */
+.breaker__claim {
+    display: none;
+    font-size: 24px !important;
+    letter-spacing: -0.1px;
+    margin-top: 12px;
+}
+
+@media only screen and (max-width: 767px) {
+.breaker__claim {
+        font-size: 17px !important;
+        margin-top: 4px;
+    }
+}
+.breaker__claim.is--active {
+    display: flex;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    let i = 1;
+    let $claim = $('.breaker__claim'); //get claims
+    let length = $claim.length; //count claims
+
+    setInterval(function () {
+        $claim
+            .removeClass('is--active')
+            .eq(i++ % length)
+                .addClass('is--active')
+                .css('opacity', 0).animate({'opacity': 1})
+    }, 2000);
+});
+</script>		</div>
+				</div>
+				<div class="elementor-element elementor-element-a2607cd elementor-widget elementor-widget-text-editor" data-id="a2607cd" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							Dieser Artikel wird von Spenden unserer Leserinnen und Lesern finanziert. Investigativer Journalismus und die Eindämmung von Desinformation sind für unsere Demokratie wichtiger denn je. Unterstützen Sie unsere gemeinnützige Arbeit mit Ihrer Spende.						</div>
+				</div>
+				<div class="elementor-section elementor-inner-section elementor-element elementor-element-99ea981 row elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="99ea981" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-no">
+					<div class="elementor-column elementor-col-100 elementor-inner-column elementor-element elementor-element-67b10ab" data-id="67b10ab" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-3d3f058 buttons alternative elementor-widget elementor-widget-button" data-id="3d3f058" data-element_type="widget" data-upscore-conversion="" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-button-wrapper">
+			<a href="/unterstuetzen/?utm_source=abbinder" class="elementor-button-link elementor-button elementor-size-sm" role="button">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-text">Jetzt spenden</span>
+		</span>
+					</a>
+		</div>
+				</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</div>
+					</div>
+		</div>
+							</div>
+		</section>
+					</div>
+		</div>
+							</div>
+		</section>
+						</div>
+		</div></div>
+
+
+
+
+
+
+
+                    <div class="detail__share">
+                        <div class="share">
+    <ul class="share__list">
+<!--        <li class="share__item">-->
+<!--            <a class="share__link share__link--print" href="javascript:window.print()" target="_blank" data-wpel-link="internal">-->
+<!--                <i class="fas fa-print"></i>-->
+<!--            </a>-->
+<!--        </li>-->
+        <li class="share__item">
+            <a class="share__link share__link--facebook external-link wpel-icon-right" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F" target="_blank" data-wpel-link="external" rel="external noopener noreferrer">
+                <i class="fab fa-facebook-f"></i>
+            <i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a>
+        </li>
+        <li class="share__item">
+            <a class="share__link share__link--twitter external-link wpel-icon-right" href="https://twitter.com/intent/tweet?text=Die%20Cannabis-Connection%20der%20Bundesrepublik%3A%20Snoop%20Dogg%20und%20Staatsauftrag&amp;url=https%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F" target="_blank" data-wpel-link="external" rel="external noopener noreferrer">
+                <i class="fab fa-twitter"></i>
+            <i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a>
+        </li>
+        <li class="share__item">
+            <a class="share__link share__link--mail" href="mailto:?subject=Die%20Cannabis-Connection%20der%20Bundesrepublik%3A%20Snoop%20Dogg%20und%20Staatsauftrag&amp;body=Es%20geht%20um%2010%2C4%20Tonnen%20Cannabis%2C%20um%20Bl%C3%BCten%2C%20die%20Schmerzen%2C%20Kr%C3%A4mpfe%20oder%20%C3%9Cbelkeit%20lindern%2C%20und%20um%20die%20Frage%2C%20wie%20der%20Stoff%20vom%20Anbau%20in%20die%20Apotheken%20kommt.%C2%A0%20Seit%202017%20d%C3%BCrfen%20%C3%84rztinnen%20und%20%C3%84rzte%20in%20Deutschland%20medizinisches%20Cannabis%20verschreiben.%20Das%20Gesetz%20sieht%20vor%2C%20dass%20der%20Staat%20sich%20bei%20einheimischen%20Pflanzen%20um%20Vertrieb%20und%20Handel%20k%C3%BCmmern%20muss.%20%5B%26amp%3Bhellip%3B%5D%0A%0Ahttps%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F">
+                <i class="far fa-envelope"></i>
+            </a>
+        </li>
+        <li class="share__item">
+            <a class="share__link share__link--whatsapp" href="whatsapp://send?text=Die%20Cannabis-Connection%20der%20Bundesrepublik%3A%20Snoop%20Dogg%20und%20Staatsauftrag Es%20geht%20um%2010%2C4%20Tonnen%20Cannabis%2C%20um%20Bl%C3%BCten%2C%20die%20Schmerzen%2C%20Kr%C3%A4mpfe%20oder%20%C3%9Cbelkeit%20lindern%2C%20und%20um%20die%20Frage%2C%20wie%20der%20Stoff%20vom%20Anbau%20in%20die%20Apotheken%20kommt.%C2%A0%20Seit%202017%20d%C3%BCrfen%20%C3%84rztinnen%20und%20%C3%84rzte%20in%20Deutschland%20medizinisches%20Cannabis%20verschreiben.%20Das%20Gesetz%20sieht%20vor%2C%20dass%20der%20Staat%20sich%20bei%20einheimischen%20Pflanzen%20um%20Vertrieb%20und%20Handel%20k%C3%BCmmern%20muss.%20%5B%26amp%3Bhellip%3B%5D%0A%0Ahttps%3A%2F%2Fcorrectiv.org%2Faktuelles%2F2023%2F10%2F25%2Fcannabis-connection-snoop-dogg-und-staatsauftrag%2F" data-wpel-link="internal">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </li>
+        <li class="share__item">
+            <a href="https://correctiv.org/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/" class="share__link share__link--copy" data-wpel-link="internal">
+                <i class="fas fa-link"></i>
+            </a>
+        </li>
+    </ul>
+</div>                    </div>
+                </div>
+
+            </div>
+
+        </article>
+
+            <div class="list list--related detail__list" data-page="1" data-post="post">
+        <div class="container">
+                            <div class="list__item list__item--list-check">
+                    <div class="list__box box">
+                        <header class="list__header">
+                            <div class="grid">
+                                <div class="size--8 size--m-12">
+                                    <span class="topline">
+                                                                                    Cannabis-Legalisierung                                                                            </span>
+                                    <h2 class="tertiary-title">Schwarzmarkt droht, weiter zu bestehen</h2>
+                                                                            <p>
+                                            Kommunale Drogenhilfen warnen: Die Pläne der Bundesregierung könnten zu einem „Cannabis-Einkaufstourismus“ führen.                                        </p>
+                                                                    </div>
+                                <div class="size--4 list__image-wrapper">
+                                    
+            <picture
+                style="padding-top: 54.674220963173%"                 class="picture list__image"
+            >
+                <!--[if IE 9]><video style="display: none;"><![endif]-->
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-750x412.png"
+                        media="(max-width: 700px)"
+                />
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-1412x772.png"
+                        media="(max-width: 860px)"
+                />
+                <!--[if IE 9]></video><![endif]-->
+                                <img
+                        src=""
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-706x386.png 1x,
+                        https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-1412x772.png 2x"
+                        class="lazyload picture__image"
+                        alt="kurzmeldung" />
+
+                <noscript>
+                    <img src="https://correctiv.org/wp-content/uploads/2023/04/kurzmeldung_amazon-1412x772.png" alt="kurzmeldung" />
+                </noscript>
+            </picture>
+
+                                            </div>
+                            </div>
+
+                        </header>
+
+                        <div class="list__bar">
+                            <a href="https://correctiv.org/aktuelles/2023/10/19/schwarzmarkt-droht-weiter-zu-bestehen/" class="list__more more" data-wpel-link="internal"><span class="more__text">weiterlesen</span></a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="list__item list__item--list-check">
+                    <div class="list__box box">
+                        <header class="list__header">
+                            <div class="grid">
+                                <div class="size--8 size--m-12">
+                                    <span class="topline">
+                                                                                    Gesundheit                                                                            </span>
+                                    <h2 class="tertiary-title">Weißes Gold – Profite mit legalem Heroin</h2>
+                                                                            <p>
+                                            Das Geschäft mit Diamorphin ist extrem lukrativ. Ein Arzt aus Nordrhein-Westfalen hat mit seinen Partnern ein Business daraus gemacht. Über seine Firma können sich Schwerstsüchtige schnellstmöglich…                                        </p>
+                                                                    </div>
+                                <div class="size--4 list__image-wrapper">
+                                    
+            <picture
+                style="padding-top: 54.674220963173%"                 class="picture list__image"
+            >
+                <!--[if IE 9]><video style="display: none;"><![endif]-->
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-750x412.jpg"
+                        media="(max-width: 700px)"
+                />
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-1412x772.jpg"
+                        media="(max-width: 860px)"
+                />
+                <!--[if IE 9]></video><![endif]-->
+                                <img
+                        src=""
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-706x386.jpg 1x,
+                        https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-1412x772.jpg 2x"
+                        class="lazyload picture__image"
+                        alt="medikus_spritze1" />
+
+                <noscript>
+                    <img src="https://correctiv.org/wp-content/uploads/2023/09/medikus_spritze1-1412x772.jpg" alt="medikus_spritze1" />
+                </noscript>
+            </picture>
+
+                                            </div>
+                            </div>
+
+                        </header>
+
+                        <div class="list__bar">
+                            <a href="https://correctiv.org/aktuelles/gesundheit/2023/09/15/weisses-gold-profite-mit-legalem-heroin/" class="list__more more" data-wpel-link="internal"><span class="more__text">weiterlesen</span></a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="list__item list__item--list-check">
+                    <div class="list__box box">
+                        <header class="list__header">
+                            <div class="grid">
+                                <div class="size--8 size--m-12">
+                                    <span class="topline">
+                                                                                    Künstliche Intelligenz                                                                            </span>
+                                    <h2 class="tertiary-title">Eine Hoffnung für den KI-Standort Deutschland – mit Sitz im Steuerparadies</h2>
+                                                                            <p>
+                                            Der Bund möchte Deutschland als Standort für künstliche Intelligenz stärken. Doch eine Firma, die sich besonders als Vorreiter für KI in Deutschland hervortut, sitzt in Wahrheit…                                        </p>
+                                                                    </div>
+                                <div class="size--4 list__image-wrapper">
+                                    
+            <picture
+                style="padding-top: 54.674220963173%"                 class="picture list__image"
+            >
+                <!--[if IE 9]><video style="display: none;"><![endif]-->
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-750x412.jpg"
+                        media="(max-width: 700px)"
+                />
+                                <source
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-1412x772.jpg"
+                        media="(max-width: 860px)"
+                />
+                <!--[if IE 9]></video><![endif]-->
+                                <img
+                        src=""
+                        data-srcset="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-706x386.jpg 1x,
+                        https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-1412x772.jpg 2x"
+                        class="lazyload picture__image"
+                        alt="kommers-9A9TcXEsy6c-unsplash" />
+
+                <noscript>
+                    <img src="https://correctiv.org/wp-content/uploads/2023/09/kommers-9A9TcXEsy6c-unsplash-1412x772.jpg" alt="kommers-9A9TcXEsy6c-unsplash" />
+                </noscript>
+            </picture>
+
+                                            </div>
+                            </div>
+
+                        </header>
+
+                        <div class="list__bar">
+                            <a href="https://correctiv.org/aktuelles/wirtschaft/2023/09/12/nyonic-berliner-ki-startup-steueroase-kuenstliche-intelligenz/" class="list__more more" data-wpel-link="internal"><span class="more__text">weiterlesen</span></a>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+    </div>
+
+    </div>
+
+
+
+
+
+</main><!-- .site-main -->
+
+<footer class="footer" role="contentinfo">
+    <div class="container-outer">
+        
+    <div class="language">
+                                </div>
+
+
+
+        <form role="search" method="get" class="search-form" action="/">
+    <input type="text" class="search-form__text" placeholder="Suchbegriff" value='' name="s" id="s" autocomplete="off"/>
+    <button type="submit" class="search-form__submit">
+        <i class="fa fa-search"></i>
+    </button>
+</form>
+
+
+
+        
+        <div class="footer__content grid">
+            <div class="size--4 size--m-12">
+                <p><strong>Zentrale Essen</strong><br />
+Huyssenallee 11<br />
+45128 Essen</p>
+<p><strong>Redaktion Berlin</strong><br />
+Singerstraße 109<br />
+10179 Berlin<br />
+Fax: +49 (0) 30 – 555 780 2 20</p>
+<p><strong>Jugendredaktion Salon5</strong><br />
+Essener Straße 7<br />
+46236 Bottrop</p>
+<p><strong>Buchladen Essen</strong><br />
+Akazienallee 10<br />
+45127 Essen<br />
+<a href="https://shop.correctiv.org" data-wpel-link="external" target="_blank" rel="external noopener noreferrer" class="external-link wpel-icon-right">Online-Shop<i class="wpel-icon fa fa-external-link" aria-hidden="true"></i></a></p>
+            </div>
+            <div class="size--4 size--m-12">
+                <p><strong>Kontakt</strong><br />
+Allgemeine Anfragen: info[at]correctiv.org<br />
+Presseanfragen: presse[at]correctiv.org<br />
+Redaktion: hinweise[at]correctiv.org<br />
+Faktencheck: faktencheck[at]correctiv.org<br />
+Spenden: unterstuetzen[at]correctiv.org<br />
+Bewerbungen: siehe <a href="/stellenangebote/" data-wpel-link="internal">Stellenangebote</a></p>
+<p><strong>Hinweise geben</strong><br />
+<a href="https://correctiv.org/kontakt/hinweise/" data-wpel-link="internal">Hier</a> können Sie uns auf sichere und vertrauliche Weise Hinweise und Dokumente zukommen lassen.</p>
+            </div>
+            <div class="size--4 size--m-12">
+                <p><strong>Redaktion</strong><br />
+Ihre Ansprechpartner finden Sie <a href="/ueber-uns#team" data-wpel-link="internal">hier</a>.</p>
+<p><strong>Spendenkonto</strong><br />
+Kontoinhaber: CORRECTIV – Recherchen für die Gesellschaft gGmbH<br />
+IBAN DE57 3702 0500 0001 3702 01<br />
+Bank für Sozialwirtschaft</p>
+<p><a href="/kontakt/presse/" data-wpel-link="internal">Presse</a><br />
+<a href="/kontakt/impressum/" data-wpel-link="internal">Impressum</a><br />
+<a href="/kontakt/datenschutz/" data-wpel-link="internal">Datenschutz</a></p>
+
+            </div>
+        </div>
+    </div>
+
+
+</footer>
+
+    <a href="/unterstuetzen" class="donate-button" data-wpel-link="internal">Fördern Sie unabhängigen Journalismus</a>
+
+
+<script>(function(){var advanced_ads_ga_UID="benjamin.schubert@correctiv.org",advanced_ads_ga_anonymIP=!!1;/**
+ * Check if an ad blocker is enabled.
+ *
+ * @param {function} callback A callback function that is executed after the check has been done.
+ *                            The 'is_enabled' (bool) variable is passed as the callback's first argument.
+ */
+window.advanced_ads_check_adblocker = ( function ( callback ) {
+	var pending_callbacks = [];
+	var is_enabled        = null;
+
+	function RAF( RAF_callback ) {
+		var fn = window.requestAnimationFrame
+			|| window.mozRequestAnimationFrame
+			|| window.webkitRequestAnimationFrame
+			|| function ( RAF_callback ) {
+				return setTimeout( RAF_callback, 16 );
+			};
+
+		fn.call( window, RAF_callback );
+	}
+
+	RAF( function () {
+		// Create a bait.
+		var ad       = document.createElement( 'div' );
+		ad.innerHTML = '&nbsp;';
+		ad.setAttribute( 'class', 'ad_unit ad-unit text-ad text_ad pub_300x250' );
+		ad.setAttribute( 'style', 'width: 1px !important; height: 1px !important; position: absolute !important; left: 0px !important; top: 0px !important; overflow: hidden !important;' );
+		document.body.appendChild( ad );
+
+		RAF( function () {
+			var styles      = window.getComputedStyle && window.getComputedStyle( ad );
+			var moz_binding = styles && styles.getPropertyValue( '-moz-binding' );
+
+			is_enabled = ( styles && styles.getPropertyValue( 'display' ) === 'none' )
+				|| ( typeof moz_binding === 'string' && moz_binding.indexOf( 'about:' ) !== - 1 );
+
+			// Call pending callbacks.
+			for ( var i = 0, length = pending_callbacks.length; i < length; i ++ ) {
+				pending_callbacks[i]( is_enabled );
+			}
+			pending_callbacks = [];
+		} );
+	} );
+
+	return function ( callback ) {
+		if ( is_enabled === null ) {
+			pending_callbacks.push( callback );
+			return;
+		}
+		// Run the callback immediately
+		callback( is_enabled );
+	};
+}() );
+function AdvAdsAdBlockCounterGA( UID ) {
+	this.UID             = UID;
+	this.analyticsObject = typeof gtag === 'function';
+
+	var self = this;
+
+	this.count = function () {
+		gtag( 'event', 'AdBlock', {
+			'event_category':  'Advanced Ads',
+			'event_label':     'Yes',
+			'non_interaction': true,
+			'send_to':         self.UID
+		} );
+	};
+
+	// pseudo-constructor
+	( function () {
+		if ( ! self.analyticsObject ) {
+			// No one has requested gtag.js at this point, require it.
+			var script   = document.createElement( 'script' );
+			script.src   = 'https://www.googletagmanager.com/gtag/js?id=' + UID;
+			script.async = true;
+
+			document.body.appendChild( script );
+
+			window.dataLayer     = window.dataLayer || [];
+			window.gtag          = function () {
+				dataLayer.push( arguments );
+			};
+			self.analyticsObject = true;
+			gtag( 'js', new Date() );
+		}
+
+		var config = {'send_page_view': false, 'transport_type': 'beacon'};
+		if ( window.advanced_ads_ga_anonymIP ) {
+			config.anonymize_ip = true;
+		}
+		gtag( 'config', UID, config );
+	} )();
+
+	return this;
+}
+
+advanced_ads_check_adblocker( function ( is_enabled ) {
+	// Send data to Google Analytics if an ad blocker was detected.
+	if ( is_enabled ) {
+		new AdvAdsAdBlockCounterGA( advanced_ads_ga_UID ).count();
+	}
+} );
+})();</script><div class="corre-popup-recherche corre-layer corre-layer-delay is-sticky" data-advads-layer-delay="20000" data-position="bottomcenter" style="display: none; z-index: 9999; position: fixed; margin-left: -0px; bottom: 0; left: 50%; width: 100%; " id="corre-1947406772"><div class="popup__ad-container corre-target" id="corre-1243638495" data-corre-trackid="163047" data-corre-trackbid="1" data-corre-redirect="1" data-corre-impression="1" data-delayed="1"><section class="popup__section is--active">
+    <div class="popup__container">   
+        <div class="popup__header popup__trigger">
+		    <div href="%link%">Jetzt kostenlos abonnieren.</div>
+		</div>
+        <div class="popup__body is--active">
+			<div class="popup__close popup__trigger">
+				<img class="popup__xmark" src="https://correctiv.org/wp-content/uploads/2023/09/xmark-24.svg">
+			</div>
+			<picture class="popup__picture" >
+				<img src="/wp-content/uploads/2023/09/spotlight-web-980x980-compressed.gif">
+			</picture>
+            <div class="popup__text-container">
+                <h3 class="popup__title">CORRECTIV im Postfach</h3>
+                <p>Lesen Sie von Macht und Missbrauch. Aber auch von Menschen und Momenten, die zeigen, dass wir es als Gesellschaft besser können. Täglich im CORRECTIV Spotlight.</p>
+                <div>
+                	<script type="text/javascript"></script>
+                <div class='gf_browser_chrome gform_wrapper gravity-theme gform-theme--no-framework campaign_wrapper' data-form-theme='gravity-theme' data-form-index='0' id='gform_wrapper_8' >
+                        <div class='gform_heading'>
+                            <p class='gform_description'></p>
+                        </div><form method='post' enctype='multipart/form-data'  id='gform_8' class='campaign' action='/aktuelles/2023/10/25/cannabis-connection-snoop-dogg-und-staatsauftrag/' data-formid='8' novalidate>
+                        <div class='gform-body gform_body'><div id='gform_fields_8' class='gform_fields top_label form_sublabel_above description_above'><div id="field_8_8"  class="gfield gfield--type-text gfield--width-half gfield_contains_required field_sublabel_above gfield--no-description field_description_above hidden_label gfield_visibility_visible"  data-js-reload="field_8_8"><label class='gfield_label gform-field-label' for='input_8_8' >Vorname<span class="gfield_required"><span class="gfield_required gfield_required_text">(erforderlich)</span></span></label><div class='ginput_container ginput_container_text'><input name='input_8' id='input_8_8' type='text' value='' class='large'    placeholder='Vorname' aria-required="true" aria-invalid="false"   /> </div></div><div id="field_8_9"  class="gfield gfield--type-text gfield--width-half gfield_contains_required field_sublabel_above gfield--no-description field_description_above hidden_label gfield_visibility_visible"  data-js-reload="field_8_9"><label class='gfield_label gform-field-label' for='input_8_9' >Name<span class="gfield_required"><span class="gfield_required gfield_required_text">(erforderlich)</span></span></label><div class='ginput_container ginput_container_text'><input name='input_9' id='input_8_9' type='text' value='' class='large'    placeholder='Name' aria-required="true" aria-invalid="false"   /> </div></div><div id="field_8_7"  class="gfield gfield--type-text gfield--width-half email__input gfield_contains_required field_sublabel_above gfield--no-description field_description_above hidden_label gfield_visibility_visible"  data-js-reload="field_8_7"><label class='gfield_label gform-field-label' for='input_8_7' >E-Mail-Adresse<span class="gfield_required"><span class="gfield_required gfield_required_text">(erforderlich)</span></span></label><div class='ginput_container ginput_container_text'><input name='input_7' id='input_8_7' type='text' value='' class='large'    placeholder='E-Mail-Adresse' aria-required="true" aria-invalid="false"   /> </div></div><div id="field_submit"  class="gfield gfield--type-submit gfield--width-half field_sublabel_above gfield--no-description field_description_above gfield_visibility_visible"  data-field-class="gform_editor_submit_container" data-field-position="inline" data-js-reload="true"><input type='submit' id='gform_submit_button_8' class='gform-button gform-button--white  button gform-button--width-full' value='Jetzt abonnieren'  onclick='if(window["gf_submitting_8"]){return false;}  if( !jQuery("#gform_8")[0].checkValidity || jQuery("#gform_8")[0].checkValidity()){window["gf_submitting_8"]=true;}  ' onkeypress='if( event.keyCode == 13 ){ if(window["gf_submitting_8"]){return false;} if( !jQuery("#gform_8")[0].checkValidity || jQuery("#gform_8")[0].checkValidity()){window["gf_submitting_8"]=true;}  jQuery("#gform_8").trigger("submit",[true]); }' /></div></div></div>
+        <div class='gform_footer top_label'>  
+            <input type='hidden' class='gform_hidden' name='is_submit_8' value='1' />
+            <input type='hidden' class='gform_hidden' name='gform_submit' value='8' />
+            
+            <input type='hidden' class='gform_hidden' name='gform_unique_id' value='' />
+            <input type='hidden' class='gform_hidden' name='state_8' value='WyJbXSIsIjI3Nzc2MjY1YzU1OWZjNDNjZjc5ZDVlMTI4YzhlYmMyIl0=' />
+            <input type='hidden' class='gform_hidden' name='gform_target_page_number_8' id='gform_target_page_number_8' value='0' />
+            <input type='hidden' class='gform_hidden' name='gform_source_page_number_8' id='gform_source_page_number_8' value='1' />
+            <input type='hidden' name='gform_field_values' value='' />
+            
+        </div>
+                        </form>
+                        </div><script type="text/javascript">
+gform.initializeOnLoaded( function() {gformInitSpinner( 8, 'https://correctiv.org/wp-content/plugins/gravityforms/images/spinner.svg', true );jQuery('#gform_ajax_frame_8').on('load',function(){var contents = jQuery(this).contents().find('*').html();var is_postback = contents.indexOf('GF_AJAX_POSTBACK') >= 0;if(!is_postback){return;}var form_content = jQuery(this).contents().find('#gform_wrapper_8');var is_confirmation = jQuery(this).contents().find('#gform_confirmation_wrapper_8').length > 0;var is_redirect = contents.indexOf('gformRedirect(){') >= 0;var is_form = form_content.length > 0 && ! is_redirect && ! is_confirmation;var mt = parseInt(jQuery('html').css('margin-top'), 10) + parseInt(jQuery('body').css('margin-top'), 10) + 100;if(is_form){jQuery('#gform_wrapper_8').html(form_content.html());if(form_content.hasClass('gform_validation_error')){jQuery('#gform_wrapper_8').addClass('gform_validation_error');} else {jQuery('#gform_wrapper_8').removeClass('gform_validation_error');}setTimeout( function() { /* delay the scroll by 50 milliseconds to fix a bug in chrome */  }, 50 );if(window['gformInitDatepicker']) {gformInitDatepicker();}if(window['gformInitPriceFields']) {gformInitPriceFields();}var current_page = jQuery('#gform_source_page_number_8').val();gformInitSpinner( 8, 'https://correctiv.org/wp-content/plugins/gravityforms/images/spinner.svg', true );jQuery(document).trigger('gform_page_loaded', [8, current_page]);window['gf_submitting_8'] = false;}else if(!is_redirect){var confirmation_content = jQuery(this).contents().find('.GF_AJAX_POSTBACK').html();if(!confirmation_content){confirmation_content = contents;}setTimeout(function(){jQuery('#gform_wrapper_8').replaceWith(confirmation_content);jQuery(document).trigger('gform_confirmation_loaded', [8]);window['gf_submitting_8'] = false;wp.a11y.speak(jQuery('#gform_confirmation_message_8').text());}, 50);}else{jQuery('#gform_8').append(contents);if(window['gformRedirect']) {gformRedirect();}}jQuery(document).trigger('gform_post_render', [8, current_page]);gform.utils.trigger({ event: 'gform/postRender', native: false, data: { formId: 8, currentPage: current_page } });} );} );
+</script>
+
+                </div>
+		        <div class="popup__link popup__trigger">Ich habe CORRECTIV Spotlight bereits abonniert.</div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>  
+/*  remove cmp on mobile  */
+#cmpboxrecall {
+    display: none !important;
+}
+
+/*  popup wrapper  */
+.popup__ad-container {
+    width: 100%;
+}
+		
+/*  -----------------------------------------------------  
+    section  
+    -----------------------------------------------------  */
+
+.popup__section {
+	width: 100%;
+    line-height: 1.5;
+    text-align: left;
+    background: #2D64DB;
+    color: var(--100);
+    transition: background, .3s;
+}
+	
+@media only screen and (max-width: 767px) {
+.popup__section.is--active {
+    width: calc(100%);
+	  margin: 0;
+    }
+}
+	
+.popup__section.is--active{
+    background: #2D64DB;
+    box-shadow: 0 0 0 2000px hsl(0deg 0% 0% / 30%);
+    transition: background, .3s;
+}
+	
+@media only screen and (max-width: 767px) {
+.popup__section.is--active {
+    width: calc(100% - 24px);
+	  margin: 12px;
+	  transition: .3s;
+    }
+}
+
+/*  -----------------------------------------------------  
+    header 
+    -----------------------------------------------------  */
+
+.popup__header {
+    background: #2D64DB;
+    display: none;
+    cursor: pointer;
+	font-weight: 700;
+	width: 100%;
+	height: 56px;
+	cursor: pointer;
+}	
+
+@media only screen and (max-width: 767px) {
+.popup__header {
+	  height: 50px;
+}
+}
+	
+.popup__header div {
+	color: var(--100);
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+	align-content: center;
+    justify-content: center;
+}
+	
+.popup__header div::before {
+    content: "\f0e0";
+    font: 20px/1 FontAwesome;
+	margin-right: 12px;
+}
+
+
+@media only screen and (max-width: 767px) {
+.popup__header div {
+    height: 50px;
+}
+}
+
+@media only screen and (max-width: 767px) {
+    .popup__header.is__active a {
+        padding: 10px 33px;
+    }
+}
+
+/*  -----------------------------------------------------  
+    body  
+    -----------------------------------------------------  */
+
+.popup__body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 40px;
+	gap: 20px;
+}
+
+@media only screen and (max-width: 767px) {
+    .popup__body {  
+		max-height: calc(100svh - 24px);
+        flex-direction: column;
+        justify-content: end;
+        padding: 20px 20px 24px;
+        font-size: 15px;
+        gap: 0;
+		overflow: hidden;
+    }
+}
+
+/*  -----------------------------------------------------  
+    close 
+    -----------------------------------------------------  */
+
+
+.popup__close {
+	display: flex;
+	max-width: 50px;
+    height: 50px;
+    padding: 10px;
+    border-radius: 100px;
+	cursor: pointer;
+	position: absolute;
+    right: 40px;
+    top: 32px;
+    /* background: hsl(0deg 0% 100% / 10%);  */
+}
+
+@media only screen and (max-width: 767px) {
+	.popup__close {
+		max-width: 44px;
+		height: 44px;
+		right: 20px;
+		top: 20px;
+	}
+}
+
+/*  -----------------------------------------------------  
+    image  
+    -----------------------------------------------------  */
+
+.popup__picture {
+    max-width: 400px;
+
+}
+
+.popup__picture img{
+	display: block;
+}	
+	
+@media only screen and (max-width: 767px) {
+.popup__picture img{
+        max-height: 28vh;
+        margin: 0 auto;
+    }
+}
+
+/*  -----------------------------------------------------  
+    title 
+    -----------------------------------------------------  */
+
+.popup__title{
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    text-align: left;
+    margin-bottom: 18px;
+	margin-top: 0;
+}
+
+@media only screen and (max-width: 767px) {
+    .popup__title{
+    	font-size: 25px;
+		margin-bottom: 8px;
+    }
+}
+
+/*  -----------------------------------------------------  
+    text-conatiner
+    -----------------------------------------------------  */
+
+.popup__text-container p{
+    margin-bottom: 35px;  
+}
+
+.popup__text-container {
+    /* flex-shrink: 2; */
+}
+
+@media only screen and (max-width: 767px) {
+    .popup__text-container p {
+        margin-bottom: 18px;
+    }
+}
+
+.popup__text-container > span {
+    margin-top: 33px;
+    display: block;
+}
+
+@media only screen and (max-width: 767px) {
+	.popup__text-container > span {
+		margin-top: 18px;
+	}
+}
+
+.popup__text-container > span a{
+    color: #333;
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--emphasis);
+}
+	
+/* -----------------------------------------------------  
+   minimize anchor
+   ----------------------------------------------------- */
+
+.popup__link {
+    color: var(--100);
+    margin-top: 32px;
+	text-decoration: underline;
+    text-underline-offset: 4px;
+	text-decoration-color: hsl(0 100% 100% / 50%);
+    cursor: pointer;
+}
+	
+@media only screen and (max-width: 767px) {
+	.popup__link {
+		margin-top: 15px;
+	}
+}
+	
+@media only screen and (max-height: 625px) {
+	.popup__link {
+		display: none;
+	}
+}
+	
+/* -----------------------------------------------------  
+   form
+   ----------------------------------------------------- */
+
+@media only screen and (max-width: 767px) {
+	form div:nth-child(1) {
+		grid-column: 1 / -7 !important;
+	}
+
+	form div:nth-child(2) {
+		grid-column: 7 / -1 !important;
+	}
+}
+
+</style>
+<script>
+$(document).ready(function() {
+    $(".popup__trigger").click(function(){
+		$(".popup__ad-container").toggleClass("is--active");
+		$(".popup__section").toggleClass("is--active");
+	    $(".popup__header").toggleClass("is--active");
+		$(".popup__header").slideToggle(300, "swing");
+        $(".popup__body").slideToggle(300, "swing");
+    });
+});
+</script></div></div><script>( window.advanced_ads_ready || jQuery( document ).ready ).call( null, function() {advads_items.close_functions[ 'corre-1947406772' ] = function() {advads.close( '#corre-1947406772' ); if ( can_remove_background ( 'corre-1947406772' ) ) { jQuery( ".advads-background" ).remove(); }; };});</script>
+    <style type="text/css">
+              @media all and (max-width:1023px) {
+        #wpadminbar {
+        display: none!important;
+        }
+        html {margin-top: 0px !important;}
+       }
+    </style> 		<div data-elementor-type="popup" data-elementor-id="99744" class="elementor elementor-99744 elementor-location-popup" data-elementor-settings="{&quot;open_selector&quot;:&quot;a[href=\&quot;#faktencheck-artikel-teilen\&quot;]&quot;,&quot;a11y_navigation&quot;:&quot;yes&quot;,&quot;triggers&quot;:[],&quot;timing&quot;:[]}">
+								<section class="elementor-section elementor-top-section elementor-element elementor-element-17ef5d79 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="17ef5d79" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-36a2ee91" data-id="36a2ee91" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-7fa8fa2 elementor-share-buttons--view-icon elementor-share-buttons--skin-flat elementor-share-buttons--color-custom elementor-share-buttons--align-center elementor-share-buttons--shape-square elementor-grid-0 elementor-widget elementor-widget-share-buttons" data-id="7fa8fa2" data-element_type="widget" data-widget_type="share-buttons.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-grid">
+								<div class="elementor-grid-item">
+						<div
+							class="elementor-share-btn elementor-share-btn_twitter"
+							role="button"
+							tabindex="0"
+							aria-label="Share on twitter"
+						>
+															<span class="elementor-share-btn__icon">
+								<i class="fab fa-twitter" aria-hidden="true"></i>							</span>
+																				</div>
+					</div>
+									<div class="elementor-grid-item">
+						<div
+							class="elementor-share-btn elementor-share-btn_facebook"
+							role="button"
+							tabindex="0"
+							aria-label="Share on facebook"
+						>
+															<span class="elementor-share-btn__icon">
+								<i class="fab fa-facebook" aria-hidden="true"></i>							</span>
+																				</div>
+					</div>
+									<div class="elementor-grid-item">
+						<div
+							class="elementor-share-btn elementor-share-btn_whatsapp"
+							role="button"
+							tabindex="0"
+							aria-label="Share on whatsapp"
+						>
+															<span class="elementor-share-btn__icon">
+								<i class="fab fa-whatsapp" aria-hidden="true"></i>							</span>
+																				</div>
+					</div>
+									<div class="elementor-grid-item">
+						<div
+							class="elementor-share-btn elementor-share-btn_email"
+							role="button"
+							tabindex="0"
+							aria-label="Share on email"
+						>
+															<span class="elementor-share-btn__icon">
+								<i class="fas fa-envelope" aria-hidden="true"></i>							</span>
+																				</div>
+					</div>
+						</div>
+				</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</section>
+						</div>
+				<div data-elementor-type="popup" data-elementor-id="97564" class="elementor elementor-97564 elementor-location-popup" data-elementor-settings="{&quot;open_selector&quot;:&quot;a[href=\&quot;#spotlight-popup\&quot;]&quot;,&quot;a11y_navigation&quot;:&quot;yes&quot;,&quot;triggers&quot;:[],&quot;timing&quot;:[]}">
+								<section class="elementor-section elementor-top-section elementor-element elementor-element-0138c9c elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="0138c9c" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-18685e6" data-id="18685e6" data-element_type="column" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-6046e4f elementor-widget elementor-widget-heading" data-id="6046e4f" data-element_type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+			<h2 class="elementor-heading-title elementor-size-default">Newsletter</h2>		</div>
+				</div>
+				<div class="elementor-element elementor-element-ab797bf elementor-widget elementor-widget-text-editor" data-id="ab797bf" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p>Unsere Reporterinnen und Reporter senden Ihnen Recherchen, die uns bewegen. Sie zeigen Ihnen, was Journalismus für unsere Gesellschaft leisten kann – regelmäßig oder immer dann, wenn es wichtig ist.</p>						</div>
+				</div>
+				<div class="elementor-element elementor-element-fad7b7c elementor-widget elementor-widget-shortcode" data-id="fad7b7c" data-element_type="widget" data-widget_type="shortcode.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-shortcode"><script>(function() {
+	window.mc4wp = window.mc4wp || {
+		listeners: [],
+		forms: {
+			on: function(evt, cb) {
+				window.mc4wp.listeners.push(
+					{
+						event   : evt,
+						callback: cb
+					}
+				);
+			}
+		}
+	}
+})();
+</script></div>
+				</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</section>
+						</div>
+		<!-- Matomo Image Tracker-->
+<img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.correctiv.org/matomo.php?idsite=5&rec=1" style="border:0" alt="" />
+<!-- End Matomo --><link rel='stylesheet' id='elementor-post-163332-css'  href='https://correctiv.org/wp-content/uploads/elementor/css/post-163332.css?ver=1698324047' type='text/css' media='all' />
+<link rel='stylesheet' id='gform_basic-css'  href='https://correctiv.org/wp-content/plugins/gravityforms/assets/css/dist/basic.css?ver=2.7.9' type='text/css' media='all' />
+<link rel='stylesheet' id='gform_theme_components-css'  href='https://correctiv.org/wp-content/plugins/gravityforms/assets/css/dist/theme-components.css?ver=2.7.9' type='text/css' media='all' />
+<link rel='stylesheet' id='gform_theme_ie11-css'  href='https://correctiv.org/wp-content/plugins/gravityforms/assets/css/dist/theme-ie11.css?ver=2.7.9' type='text/css' media='all' />
+<link rel='stylesheet' id='gform_theme-css'  href='https://correctiv.org/wp-content/plugins/gravityforms/assets/css/dist/theme.css?ver=2.7.9' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-icons-shared-0-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.css?ver=5.15.3' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-icons-fa-solid-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.css?ver=5.15.3' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-icons-fa-brands-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.css?ver=5.15.3' type='text/css' media='all' />
+<link rel='stylesheet' id='e-animations-css'  href='https://correctiv.org/wp-content/plugins/elementor/assets/lib/animations/animations.min.css?ver=3.11.5' type='text/css' media='all' />
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/findock/js/frontend.js?ver=6.7' id='findock-js'></script>
+<script type='text/javascript' id='advanced-ads-layer-footer-js-js-extra'>
+/* <![CDATA[ */
+var advanced_ads_layer_settings = {"layer_class":"corre-layer","placements":["popup-faktencheck","popup-recherche","popup-startseite","popup-tests"]};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/835/public/assets/js/635.js?ver=1.7.7' id='advanced-ads-layer-footer-js-js'></script>
+<script type='text/javascript' id='advanced-ads-pro/front-js-extra'>
+/* <![CDATA[ */
+var advadsCfpInfo = {"cfpExpHours":"3","cfpClickLimit":"3","cfpBan":"7","cfpPath":"","cfpDomain":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/50/assets/js/900.js?ver=2.22.0' id='advanced-ads-pro/front-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/themes/correctiv-theme/js/main.js?v=5.5&#038;ver=5.8.8' id='main-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/59/public/assets/js/455/681.js?ver=2.4.6' id='advadsTrackingUtils-js'></script>
+<script type='text/javascript' id='advadsTrackingScript-js-extra'>
+/* <![CDATA[ */
+var advadsTracking = {"impressionActionName":"aatrack-records","clickActionName":"aatrack-click","targetClass":"corre-target","blogId":"1","frontendPrefix":"corre-"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/59/public/assets/js/455/899.js?ver=2.4.6' id='advadsTrackingScript-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/59/public/assets/js/455/88.js?ver=2.4.6' id='advadsClickTracking-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/uploads/812/59/public/assets/js/455/599.js?ver=2.4.6' id='advadsTrackingDelayed-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/vendor/regenerator-runtime.js?ver=0.13.7' id='regenerator-runtime-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/vendor/wp-polyfill.js?ver=3.15.0' id='wp-polyfill-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/dom-ready.js?ver=71883072590656bf22c74c7b887df3dd' id='wp-dom-ready-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/hooks.js?ver=a7edae857aab69d69fa10d5aef23a5de' id='wp-hooks-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/i18n.js?ver=5f1269854226b4dd90450db411a12b79' id='wp-i18n-js'></script>
+<script type='text/javascript' id='wp-i18n-js-after'>
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+</script>
+<script type='text/javascript' id='wp-a11y-js-translations'>
+( function( domain, translations ) {
+	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "default", {"translation-revision-date":"2023-08-29 18:37:40+0000","generator":"GlotPress\/4.0.0-alpha.9","domain":"messages","locale_data":{"messages":{"":{"domain":"messages","plural-forms":"nplurals=2; plural=n != 1;","lang":"de"},"Notifications":["Benachrichtigungen"]}},"comment":{"reference":"wp-includes\/js\/dist\/a11y.js"}} );
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/dist/a11y.js?ver=0ac8327cc1c40dcfdf29716affd7ac63' id='wp-a11y-js'></script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/js/jquery.json.js?ver=2.7.9' id='gform_json-js'></script>
+<script type='text/javascript' id='gform_gravityforms-js-extra'>
+/* <![CDATA[ */
+var gform_i18n = {"datepicker":{"days":{"monday":"Mo","tuesday":"Di","wednesday":"Mi","thursday":"Do","friday":"Fr","saturday":"Sa","sunday":"So"},"months":{"january":"Januar","february":"Februar","march":"M\u00e4rz","april":"April","may":"Mai","june":"Juni","july":"Juli","august":"August","september":"September","october":"Oktober","november":"November","december":"Dezember"},"firstDay":1,"iconText":"Datum ausw\u00e4hlen"}};
+var gf_legacy_multi = [];
+var gform_gravityforms = {"strings":{"invalid_file_extension":"Dieser Dateityp kann nicht hochgeladen werden. Zul\u00e4ssig sind die folgenden:","delete_file":"Diese Datei l\u00f6schen","in_progress":"In Bearbeitung","file_exceeds_limit":"Maximale Dateigr\u00f6\u00dfe \u00fcberschritten","illegal_extension":"Dateityp nicht zul\u00e4ssig.","max_reached":"Maximale Dateianzahl erreicht","unknown_error":"Ein Problem ist beim Speichern der Datei auf dem Server aufgetreten.","currently_uploading":"Bitte warte bis alle Dateien vollst\u00e4ndig hochgeladen wurden.","cancel":"Abbrechen","cancel_upload":"Upload abbrechen","cancelled":"Abgebrochen"},"vars":{"images_url":"https:\/\/correctiv.org\/wp-content\/plugins\/gravityforms\/images"}};
+var gf_global = {"gf_currency_config":{"name":"Euro","symbol_left":"","symbol_right":"&#8364;","symbol_padding":" ","thousand_separator":".","decimal_separator":",","decimals":2,"code":"EUR"},"base_url":"https:\/\/correctiv.org\/wp-content\/plugins\/gravityforms","number_formats":[],"spinnerUrl":"https:\/\/correctiv.org\/wp-content\/plugins\/gravityforms\/images\/spinner.svg","version_hash":"585eb56210435e6cbdcd725f2d1fc8d4","strings":{"newRowAdded":"Neue Zeile hinzugef\u00fcgt.","rowRemoved":"Zeile entfernt","formSaved":"Das Formular wurde gespeichert. Der Inhalt beinhaltet den Link zum Zur\u00fcckkehren und Vervollst\u00e4ndigen des Formulars."}};
+/* ]]> */
+</script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/js/gravityforms.js?ver=2.7.9' id='gform_gravityforms-js'></script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/js/placeholders.jquery.min.js?ver=2.7.9' id='gform_placeholder-js'></script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/assets/js/dist/utils.js?ver=f49ab4d25354cbd85856bf1de053bdb3' id='gform_gravityforms_utils-js'></script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/assets/js/dist/vendor-theme.js?ver=27ddf9b28be8e4df56b2f83fd6554950' id='gform_gravityforms_theme_vendors-js'></script>
+<script type='text/javascript' id='gform_gravityforms_theme-js-extra'>
+/* <![CDATA[ */
+var gform_theme_config = {"common":{"form":{"honeypot":{"version_hash":"585eb56210435e6cbdcd725f2d1fc8d4"}}},"hmr_dev":"","public_path":"https:\/\/correctiv.org\/wp-content\/plugins\/gravityforms\/assets\/js\/dist\/"};
+/* ]]> */
+</script>
+<script type='text/javascript' defer='defer' src='https://correctiv.org/wp-content/plugins/gravityforms/assets/js/dist/scripts-theme.js?ver=8a9ab63d339596a1b69789625a3dae34' id='gform_gravityforms_theme-js'></script>
+<script type='text/javascript' defer src='https://correctiv.org/wp-content/plugins/mailchimp-for-wp/assets/js/forms.js?ver=4.8.8' id='mc4wp-forms-api-js'></script>
+<script type='text/javascript' id='mc4wp-ajax-forms-js-extra'>
+/* <![CDATA[ */
+var mc4wp_ajax_vars = {"loading_character":"\u2022","ajax_url":"https:\/\/correctiv.org\/wp-admin\/admin-ajax.php?action=mc4wp-form","error_text":"Oops. Irgendwas ist schief gelaufen. Bitte versuche es sp\u00e4ter noch mal."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/mc4wp-premium/ajax-forms/assets/js/ajax-forms.js?ver=4.9' id='mc4wp-ajax-forms-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor-pro/assets/js/webpack-pro.runtime.js?ver=3.11.3' id='elementor-pro-webpack-runtime-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/js/webpack.runtime.js?ver=3.11.5' id='elementor-webpack-runtime-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/js/frontend-modules.js?ver=3.11.5' id='elementor-frontend-modules-js'></script>
+<script type='text/javascript' id='elementor-pro-frontend-js-translations'>
+( function( domain, translations ) {
+	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "elementor-pro", { "locale_data": { "messages": { "": {} } } } );
+</script>
+<script type='text/javascript' id='elementor-pro-frontend-js-before'>
+var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/correctiv.org\/wp-admin\/admin-ajax.php","nonce":"f4d51493a6","urls":{"assets":"https:\/\/correctiv.org\/wp-content\/plugins\/elementor-pro\/assets\/","rest":"https:\/\/correctiv.org\/wp-json\/"},"shareButtonsNetworks":{"facebook":{"title":"Facebook","has_counter":true},"twitter":{"title":"Twitter"},"linkedin":{"title":"LinkedIn","has_counter":true},"pinterest":{"title":"Pinterest","has_counter":true},"reddit":{"title":"Reddit","has_counter":true},"vk":{"title":"VK","has_counter":true},"odnoklassniki":{"title":"OK","has_counter":true},"tumblr":{"title":"Tumblr"},"digg":{"title":"Digg"},"skype":{"title":"Skype"},"stumbleupon":{"title":"StumbleUpon","has_counter":true},"mix":{"title":"Mix"},"telegram":{"title":"Telegram"},"pocket":{"title":"Pocket","has_counter":true},"xing":{"title":"XING","has_counter":true},"whatsapp":{"title":"WhatsApp"},"email":{"title":"Email"},"print":{"title":"Print"}},"facebook_sdk":{"lang":"de_DE","app_id":""},"lottie":{"defaultAnimationUrl":"https:\/\/correctiv.org\/wp-content\/plugins\/elementor-pro\/modules\/lottie\/assets\/animations\/default.json"}};
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor-pro/assets/js/frontend.js?ver=3.11.3' id='elementor-pro-frontend-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/lib/waypoints/waypoints.js?ver=4.0.2' id='elementor-waypoints-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-includes/js/jquery/ui/core.js?ver=1.12.1' id='jquery-ui-core-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/lib/swiper/swiper.js?ver=5.3.6' id='swiper-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/lib/share-link/share-link.js?ver=3.11.5' id='share-link-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/lib/dialog/dialog.js?ver=4.9.0' id='elementor-dialog-js'></script>
+<script type='text/javascript' id='elementor-frontend-js-before'>
+var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false,"isScriptDebug":true},"i18n":{"shareOnFacebook":"Auf Facebook teilen","shareOnTwitter":"Auf Twitter teilen","pinIt":"Anheften","download":"Download","downloadImage":"Bild downloaden","fullscreen":"Vollbild","zoom":"Zoom","share":"Teilen","playVideo":"Video abspielen","previous":"Zur\u00fcck","next":"Weiter","close":"Schlie\u00dfen"},"is_rtl":false,"breakpoints":{"xs":0,"sm":480,"md":768,"lg":1025,"xl":1440,"xxl":1600},"responsive":{"breakpoints":{"mobile":{"label":"Mobil","value":767,"default_value":767,"direction":"max","is_enabled":true},"mobile_extra":{"label":"Mobil Extra","value":880,"default_value":880,"direction":"max","is_enabled":false},"tablet":{"label":"Tablet","value":1024,"default_value":1024,"direction":"max","is_enabled":true},"tablet_extra":{"label":"Tablet Extra","value":1200,"default_value":1200,"direction":"max","is_enabled":false},"laptop":{"label":"Laptop","value":1366,"default_value":1366,"direction":"max","is_enabled":false},"widescreen":{"label":"Breitbild","value":2400,"default_value":2400,"direction":"min","is_enabled":false}}},"version":"3.11.5","is_static":false,"experimentalFeatures":{"e_dom_optimization":true,"theme_builder_v2":true,"landing-pages":true,"kit-elements-defaults":true,"page-transitions":true,"notes":true,"loop":true,"form-submissions":true,"e_scroll_snap":true},"urls":{"assets":"https:\/\/correctiv.org\/wp-content\/plugins\/elementor\/assets\/"},"swiperClass":"swiper-container","settings":{"page":[],"editorPreferences":[]},"kit":{"lightbox_description_src":"caption","active_breakpoints":["viewport_mobile","viewport_tablet"],"lightbox_enable_counter":"yes","lightbox_enable_zoom":"yes","lightbox_title_src":"title"},"post":{"id":162991,"title":"Die%20Cannabis-Connection%20der%20Bundesrepublik%3A%20Snoop%20Dogg%20und%20Staatsauftrag%20-%20correctiv.org","excerpt":"","featuredImage":"https:\/\/correctiv.org\/wp-content\/uploads\/2023\/09\/kommers-9A9TcXEsy6c-unsplash-scaled.jpg"}};
+</script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/js/frontend.js?ver=3.11.5' id='elementor-frontend-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor-pro/assets/js/preloaded-elements-handlers.js?ver=3.11.3' id='pro-preloaded-elements-handlers-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor/assets/js/preloaded-modules.js?ver=3.11.5' id='preloaded-modules-js'></script>
+<script type='text/javascript' src='https://correctiv.org/wp-content/plugins/elementor-pro/assets/lib/sticky/jquery.sticky.js?ver=3.11.3' id='e-sticky-js'></script>
+<script>window.advads_admin_bar_items = [{"title":"Related Articles - Recherche","type":"Anzeige"},{"title":"Related Articles - Recherche","type":"Gruppe"},{"title":"Aktuelles 3. Absatz","type":"Platzierung"},{"title":"Related Articles - Faktencheck","type":"Gruppe"},{"title":"Abbinder - Recherche - Unterst\u00fctzen","type":"Anzeige"},{"title":"After Content 2","type":"Platzierung"},{"title":"Popup - Faktencheck","type":"Gruppe"},{"title":"Popup - Spotlight Recherche A","type":"Anzeige"},{"title":"Popup - Recherche","type":"Gruppe"},{"title":"Popup - Recherche","type":"Platzierung"}];</script><script>( function () {
+	window.advanced_ads_ready_queue = window.advanced_ads_ready_queue || [];
+
+	// replace native push method with our advanced_ads_ready function; do this early to prevent race condition between pushing and the loop.
+	advanced_ads_ready_queue.push = window.advanced_ads_ready;
+
+	// handle all callbacks that have been added to the queue previously.
+	for ( var i = 0, length = advanced_ads_ready_queue.length; i < length; i ++ ) {
+		advanced_ads_ready( advanced_ads_ready_queue[i] );
+	}
+} )();
+</script><script type="text/javascript">
+gform.initializeOnLoaded( function() { jQuery(document).on('gform_post_render', function(event, formId, currentPage){if(formId == 8) {if(typeof Placeholders != 'undefined'){
+                        Placeholders.enable();
+                    }} } );jQuery(document).bind('gform_post_conditional_logic', function(event, formId, fields, isInit){} ) } );
+</script>
+<script type="text/javascript">
+gform.initializeOnLoaded( function() {jQuery(document).trigger('gform_post_render', [8, 1]);gform.utils.trigger({ event: 'gform/postRender', native: false, data: { formId: 8, currentPage: 1 } });} );
+</script>
+<script id="corre-tracking">var advads_tracking_ads = {"1":[101191,70849,163047]};var advads_tracking_urls = {"1":"https:\/\/correctiv.org\/wp-content\/ajax-handler.php"};var advads_tracking_methods = {"1":"frontend"};var advads_tracking_parallel = {"1":false};var advads_tracking_linkbases = {"1":"https:\/\/correctiv.org\/linkout\/"};</script></div>
+</body>
+
+</html>
