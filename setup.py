@@ -13,9 +13,8 @@ from setuptools import setup
 # some problems with installation solved this way
 extras = {
     "speed": [
-        "backports-datetime-fromisoformat; python_version < '3.11'",
-        "cchardet >= 2.1.7; python_version < '3.11'",  # build issue
-        "faust-cchardet >= 2.1.19; python_version >= '3.11'",  # fix for build
+        "backports-datetime-fromisoformat >= 2.0.1; python_version < '3.11'",
+        "faust-cchardet >= 2.1.19",
         "urllib3[brotli]",
     ],
 }
@@ -34,7 +33,7 @@ def get_long_description():
 
 def get_version(package):
     "Return package version as listed in `__version__` in `init.py`"
-    initfile = Path(package, "__init__.py").read_text()  # Python >= 3.5
+    initfile = Path(package, "__init__.py").read_text()
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", initfile)[1]
 
 
@@ -115,9 +114,9 @@ setup(
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=[
-        "backports-datetime-fromisoformat; python_version < '3.7'",
+        "backports-datetime-fromisoformat >= 2.0.1; python_version < '3.7'",
         "charset_normalizer >= 3.0.1; python_version < '3.7'",
-        "charset_normalizer >= 3.3.0; python_version >= '3.7'",
+        "charset_normalizer >= 3.3.2; python_version >= '3.7'",
         "dateparser >= 1.1.2",  # 1.1.3+ slower
         "lxml >= 4.9.3 ; platform_system != 'Darwin'",
         "lxml == 4.9.2 ; platform_system == 'Darwin'",
