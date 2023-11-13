@@ -129,11 +129,14 @@ def run_dateguesser(htmlstring):
 
 def run_goose(htmlstring):
     """try with the goose algorithm"""
-    article = G.extract(raw_html=htmlstring)
+    try:
+        article = G.extract(raw_html=htmlstring)
+    except (AttributeError, UnicodeDecodeError):
+        return None
     if article.publish_date is None:
         return None
-    datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
     try:
+        datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
         return datematch[0]
     # illogical result
     except TypeError:
