@@ -223,6 +223,13 @@ def test_exact_date():
     )
     assert (
         find_date(
+            '<html><head><meta property="og:regDate" content="20210820030646"></head><body></body></html>',
+            extensive_search=False,
+        )
+        == "2021-08-20"
+    )
+    assert (
+        find_date(
             '<html><head><meta name="created" content="2017-01-09"/></head><body></body></html>'
         )
         == "2017-01-09"
