@@ -129,6 +129,7 @@ DATE_ATTRIBUTES = {
     "og:publish_date",
     "og:published_time",
     "og:question:published_time",
+    "og:regdate",
     "originalpublicationdate",
     "parsely-pub-date",
     "pdate",
