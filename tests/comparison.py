@@ -86,17 +86,14 @@ def run_newspaper(htmlstring):
     # throws error on the eval_default dataset
     try:
         myarticle = Article(htmlstring)
-    except (TypeError, UnicodeDecodeError):
-        return None
-    myarticle.html = htmlstring
-    myarticle.download_state = ArticleDownloadState.SUCCESS
-    try:
+        myarticle.html = htmlstring
+        myarticle.download_state = ArticleDownloadState.SUCCESS
         myarticle.parse()
-    except UnicodeEncodeError:
+    except (UnicodeDecodeError, UnicodeEncodeError):
         return None
     if myarticle.publish_date is None or myarticle.publish_date == "":
         return None
-    return convert_date(myarticle.publish_date, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+    return str(myarticle.publish_date)[0:10]
 
 
 def run_newsplease(htmlstring):
@@ -129,11 +126,14 @@ def run_dateguesser(htmlstring):
 
 def run_goose(htmlstring):
     """try with the goose algorithm"""
-    article = G.extract(raw_html=htmlstring)
+    try:
+        article = G.extract(raw_html=htmlstring)
+    except (AttributeError, UnicodeDecodeError):
+        return None
     if article.publish_date is None:
         return None
-    datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
     try:
+        datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
         return datematch[0]
     # illogical result
     except TypeError:
