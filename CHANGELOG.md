@@ -2,9 +2,10 @@
 
 
 ## 1.6.0
-- focus on precision, stricter extraction patterns (#103, #105, #106)
+- focus on precision, stricter extraction patterns (#103, #105, #106, #112)
 - simplified code base (#108, #109)
 - replaced lxml.html.Cleaner (#104)
+- extended evaluation
 
 ## 1.5.2
 - fix for missing months keys in custom extractor (#100)

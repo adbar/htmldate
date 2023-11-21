@@ -86,17 +86,14 @@ def run_newspaper(htmlstring):
     # throws error on the eval_default dataset
     try:
         myarticle = Article(htmlstring)
-    except (TypeError, UnicodeDecodeError):
-        return None
-    myarticle.html = htmlstring
-    myarticle.download_state = ArticleDownloadState.SUCCESS
-    try:
+        myarticle.html = htmlstring
+        myarticle.download_state = ArticleDownloadState.SUCCESS
         myarticle.parse()
-    except UnicodeEncodeError:
+    except (UnicodeDecodeError, UnicodeEncodeError):
         return None
     if myarticle.publish_date is None or myarticle.publish_date == "":
         return None
-    return convert_date(myarticle.publish_date, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+    return str(myarticle.publish_date)[0:10]
 
 
 def run_newsplease(htmlstring):
