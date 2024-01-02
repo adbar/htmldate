@@ -1,7 +1,7 @@
 ## Changelog
 
 ## 1.6.1
-- update LXML version and add fix for MacOS
+- fix for MacOS: pin LXML dependency with @adamh-oai
 
 ## 1.6.0
 - focus on precision, stricter extraction patterns (#103, #105, #106, #112)
