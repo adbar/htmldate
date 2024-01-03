@@ -289,13 +289,17 @@ def examine_header(
         # property attribute
         elif "property" in elem.attrib:
             attribute = elem.get("property").lower()
-            # original date or modified date: override published_time
-            if (options.original and attribute in DATE_ATTRIBUTES) or (
-                not options.original
-                and (attribute in PROPERTY_MODIFIED or attribute in DATE_ATTRIBUTES)
-            ):
+            if attribute in DATE_ATTRIBUTES or attribute in PROPERTY_MODIFIED:
                 LOGGER.debug("examining meta property: %s", logstring(elem))
-                headerdate = tryfunc(elem.get("content"))
+                attempt = tryfunc(elem.get("content"))
+                if attempt is not None:
+                    if (attribute in DATE_ATTRIBUTES and options.original) or (
+                        attribute in PROPERTY_MODIFIED and not options.original
+                    ):
+                        headerdate = attempt
+                    # hurts precision
+                    else:
+                        reserve = attempt
         # itemprop
         elif "itemprop" in elem.attrib:
             attribute = elem.get("itemprop").lower()

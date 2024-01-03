@@ -242,20 +242,34 @@ def test_exact_date():
     )
 
     # original date
+    htmldoc = '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:DatePublished" content="2017-07-02"/></head><body/></html>'
     assert (
         find_date(
-            '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>',
+            htmldoc,
             original_date=True,
         )
         == "2017-07-02"
     )
     assert (
         find_date(
-            '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:Original_Time" content="2017-07-02"/></head><body></body></html>',
+            htmldoc,
             original_date=False,
         )
         == "2017-09-01"
     )
+    htmldoc = """<html><head>
+                 <meta property="article:modified_time" content="2021-04-06T06:32:14+00:00" />
+                 <meta property="article:published_time" content="2020-07-21T00:17:28+00:00" />
+                 </head><body/></html>"""
+    assert find_date(htmldoc, original_date=True) == "2020-07-21"
+    assert find_date(htmldoc, original_date=False) == "2021-04-06"
+
+    htmldoc = """<html><head>
+                 <meta property="article:published_time" content="2020-07-21T00:17:28+00:00" />
+                 <meta property="article:modified_time" content="2021-04-06T06:32:14+00:00" />
+                 </head><body/></html>"""
+    assert find_date(htmldoc, original_date=True) == "2020-07-21"
+    assert find_date(htmldoc, original_date=False) == "2021-04-06"
 
     ## meta in header
     assert find_date("<html><head><meta/></head><body></body></html>") is None
