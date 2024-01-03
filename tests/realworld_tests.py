@@ -700,8 +700,8 @@ def test_readme_examples():
             ),
             original_date=False,
         )
-        == "2016-06-23"
-    )  # was '2019-06-24'
+        == "2019-06-24"
+    )
     assert (
         find_date(
             load_mock_page(
