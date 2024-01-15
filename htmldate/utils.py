@@ -167,12 +167,23 @@ def is_dubious_html(beginning: str) -> bool:
     return "html" not in beginning
 
 
-def strip_faulty_doctypes(htmlstring: str, beginning: str) -> str:
-    "Repair faulty doctype strings to make then palatable for libxml2."
+def repair_faulty_html(htmlstring: str, beginning: str) -> str:
+    "Repair faulty HTML strings to make then palatable for libxml2."
     # libxml2/LXML issue: https://bugs.launchpad.net/lxml/+bug/1955915
     if "doctype" in beginning:
         firstline, _, rest = htmlstring.partition("\n")
-        return DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
+        htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
+    # other issue with malformed documents
+    i = 0
+    replace = False
+    for line in iter(htmlstring.splitlines()):
+        if line.startswith("<html") and line.endswith("/>"):
+            replace = True
+        i += 1
+        if i > 3:
+            break
+    if replace:
+        htmlstring = re.sub(r"(<html.+?)\s*/>", r"\1>", htmlstring, count=1)
     return htmlstring
 
 
@@ -215,7 +226,7 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     beginning = htmlobject[:50].lower()
     check_flag = is_dubious_html(beginning)
     # repair first
-    htmlobject = strip_faulty_doctypes(htmlobject, beginning)
+    htmlobject = repair_faulty_html(htmlobject, beginning)
     # first pass: use Unicode string
     fallback_parse = False
     try:
