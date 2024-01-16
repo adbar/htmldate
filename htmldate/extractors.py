@@ -3,6 +3,7 @@
 Custom parsers and XPath expressions for date extraction
 """
 
+
 ## This file is available from https://github.com/adbar/htmldate
 ## under GNU GPL v3 license
 
@@ -85,7 +86,7 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
-FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
+FREE_TEXT_EXPRESSIONS = f"{FAST_PREPEND}/text()"
 MIN_SEGMENT_LEN = 6
 MAX_SEGMENT_LEN = 52
 
@@ -232,8 +233,7 @@ def extract_url_date(
 ) -> Optional[str]:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     if testurl is not None:
-        match = COMPLETE_URL.search(testurl)
-        if match:
+        if match := COMPLETE_URL.search(testurl):
             LOGGER.debug("found date in URL: %s", match[0])
             try:
                 dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
@@ -324,9 +324,7 @@ def custom_parse(
             LOGGER.debug("parsing result: %s", candidate)
             return candidate.strftime(outputformat)
 
-    # 2. Try YYYYMMDD, use regex
-    match = YMD_NO_SEP_PATTERN.search(string)
-    if match:
+    if match := YMD_NO_SEP_PATTERN.search(string):
         try:
             year, month, day = int(match[1][:4]), int(match[1][4:6]), int(match[1][6:8])
             candidate = datetime(year, month, day)
@@ -337,9 +335,7 @@ def custom_parse(
                 LOGGER.debug("YYYYMMDD match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 3. Try the very common YMD, Y-M-D, and D-M-Y patterns
-    match = YMD_PATTERN.search(string)
-    if match:
+    if match := YMD_PATTERN.search(string):
         try:
             if match.lastgroup == "day":
                 year, month, day = (
@@ -364,9 +360,7 @@ def custom_parse(
                 LOGGER.debug("regex match: %s", candidate)
                 return candidate.strftime(outputformat)
 
-    # 4. Try the Y-M and M-Y patterns
-    match = YM_PATTERN.search(string)
-    if match:
+    if match := YM_PATTERN.search(string):
         try:
             if match.lastgroup == "month":
                 candidate = datetime(
@@ -489,14 +483,16 @@ def json_search(
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
     json_pattern = JSON_PUBLISHED if options.original else JSON_MODIFIED
-    # look throughout the HTML tree
-    for elem in tree.xpath(
-        './/script[@type="application/ld+json" or @type="application/settings+json"]'
-    ):
-        if not elem.text or '"date' not in elem.text:
-            continue
-        return pattern_search(elem.text, json_pattern, options)
-    return None
+    return next(
+        (
+            pattern_search(elem.text, json_pattern, options)
+            for elem in tree.xpath(
+                './/script[@type="application/ld+json" or @type="application/settings+json"]'
+            )
+            if elem.text and '"date' in elem.text
+        ),
+        None,
+    )
 
 
 def idiosyncrasies_search(
@@ -504,14 +500,13 @@ def idiosyncrasies_search(
     options: Extractor,
 ) -> Optional[str]:
     """Look for author-written dates throughout the web page"""
-    match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
-    if match:
+    if match := TEXT_PATTERNS.search(htmlstring):
         parts = list(filter(None, match.groups()))
         if len(parts) == 3:
             candidate = None
             if len(parts[0]) == 4:
                 candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
-            elif len(parts[2]) in (2, 4):
+            elif len(parts[2]) in {2, 4}:
                 # DD/MM/YY
                 day, month = try_swap_values(int(parts[0]), int(parts[1]))
                 year = correct_year(int(parts[2]))

@@ -229,8 +229,7 @@ def examine_date_elements(
     for elem in elements:
         # try element text and link title (Blogspot)
         for text in [elem.text_content(), elem.get("title", "")]:
-            attempt = examine_text(text, options)
-            if attempt:
+            if attempt := examine_text(text, options):
                 return attempt
 
     return None
@@ -383,8 +382,7 @@ def select_candidate(
     years = [""] * len(bestones)
     validation = [False] * len(bestones)
     for i, pattern in enumerate(patterns):
-        year_match = yearpat.search(pattern)
-        if year_match:
+        if year_match := yearpat.search(pattern):
             years[i] = year_match[1]
             dateobject = datetime(int(year_match[1]), 1, 1)
             validation[i] = is_valid_date(

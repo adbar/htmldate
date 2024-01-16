@@ -93,7 +93,7 @@ def run_newspaper(htmlstring):
         return None
     if myarticle.publish_date is None or myarticle.publish_date == "":
         return None
-    return str(myarticle.publish_date)[0:10]
+    return str(myarticle.publish_date)[:10]
 
 
 def run_newsplease(htmlstring):
