@@ -45,7 +45,7 @@ HTML_PARSER = HTMLParser(
 )
 
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
-FAULTY_HTML = re.compile(r"(<html.+?)\s*/>", re.I)
+FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
 
 class Extractor:

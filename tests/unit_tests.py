@@ -84,17 +84,24 @@ def test_input():
     """test if loaded strings/trees are handled properly"""
     assert is_dubious_html("This is a string.") is True
 
-    htmlstring = "<!DOCTYPE html PUBLIC />\n<html/>"
+    htmlstring = "<!DOCTYPE html PUBLIC />\n<html></html>"
     beginning = htmlstring[:50].lower()
-    assert repair_faulty_html(htmlstring, beginning) == "\n<html/>"
+    assert repair_faulty_html(htmlstring, beginning) == "\n<html></html>"
 
     htmlstring = "<html>\n</html>"
     beginning = htmlstring[:50].lower()
     assert repair_faulty_html(htmlstring, beginning) == htmlstring
 
-    #htmlstring = '<!DOCTYPE html>\n<html lang="en-US"/>\n<head/>\n<body/>\n</html>'
-    #beginning = htmlstring[:50].lower()
-    #assert repair_faulty_html("", beginning) == "\n<html/>"
+    htmlstring = "<html/>\n</html>"
+    beginning = htmlstring[:50].lower()
+    assert repair_faulty_html(htmlstring, beginning) == "<html>\n</html>"
+
+    htmlstring = '<!DOCTYPE html>\n<html lang="en-US"/>\n<head/>\n<body/>\n</html>'
+    beginning = htmlstring[:50].lower()
+    assert (
+        repair_faulty_html(htmlstring, beginning)
+        == '<!DOCTYPE html>\n<html lang="en-US">\n<head/>\n<body/>\n</html>'
+    )
 
     with pytest.raises(TypeError) as err:
         assert load_html(123) is None
