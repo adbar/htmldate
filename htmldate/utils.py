@@ -7,7 +7,6 @@ Module bundling functions related to HTML processing.
 ## under GNU GPL v3 license
 
 
-# standard
 import logging
 import re
 
@@ -46,6 +45,7 @@ HTML_PARSER = HTMLParser(
 )
 
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
+FAULTY_HTML = re.compile(r"(<html.+?)\s*/>", re.I)
 
 
 class Extractor:
@@ -173,17 +173,13 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
     if "doctype" in beginning:
         firstline, _, rest = htmlstring.partition("\n")
         htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
-    # other issue with malformed documents
-    i = 0
-    replace = False
-    for line in iter(htmlstring.splitlines()):
-        if line.startswith("<html") and line.endswith("/>"):
-            replace = True
-        i += 1
-        if i > 3:
+    # other issue with malformed documents: check first three lines
+    for i, line in enumerate(iter(htmlstring.splitlines())):
+        if "<html" in line and line.endswith("/>"):
+            htmlstring = FAULTY_HTML.sub(r"\1>", htmlstring, count=1)
             break
-    if replace:
-        htmlstring = re.sub(r"(<html.+?)\s*/>", r"\1>", htmlstring, count=1)
+        if i > 2:
+            break
     return htmlstring
 
 
