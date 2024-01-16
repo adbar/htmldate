@@ -59,7 +59,7 @@ from htmldate.utils import (
     fetch_url,
     is_dubious_html,
     load_html,
-    strip_faulty_doctypes,
+    repair_faulty_html,
 )
 from htmldate.validators import (
     convert_date,
@@ -83,12 +83,26 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 def test_input():
     """test if loaded strings/trees are handled properly"""
     assert is_dubious_html("This is a string.") is True
-    htmlstring = "<!DOCTYPE html PUBLIC />\n<html/>"
+
+    htmlstring = "<!DOCTYPE html PUBLIC />\n<html></html>"
     beginning = htmlstring[:50].lower()
-    assert strip_faulty_doctypes(htmlstring, beginning) == "\n<html/>"
+    assert repair_faulty_html(htmlstring, beginning) == "\n<html></html>"
+
     htmlstring = "<html>\n</html>"
     beginning = htmlstring[:50].lower()
-    assert strip_faulty_doctypes(htmlstring, beginning) == htmlstring
+    assert repair_faulty_html(htmlstring, beginning) == htmlstring
+
+    htmlstring = "<html/>\n</html>"
+    beginning = htmlstring[:50].lower()
+    assert repair_faulty_html(htmlstring, beginning) == "<html>\n</html>"
+
+    htmlstring = '<!DOCTYPE html>\n<html lang="en-US"/>\n<head/>\n<body/>\n</html>'
+    beginning = htmlstring[:50].lower()
+    assert (
+        repair_faulty_html(htmlstring, beginning)
+        == '<!DOCTYPE html>\n<html lang="en-US">\n<head/>\n<body/>\n</html>'
+    )
+
     with pytest.raises(TypeError) as err:
         assert load_html(123) is None
     assert "incompatible" in str(err.value)
