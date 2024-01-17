@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.7.0
+- fix meta property updated vs. original behavior (#121)
+- support for LXML version 5.0+ (#127)
+- fix image links in Readme
+
 ## 1.6.1
 - fix for MacOS: pin LXML dependency with @adamh-oai
 
