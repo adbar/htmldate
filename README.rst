@@ -33,7 +33,7 @@ htmldate: find the publication date of web pages
 |
 
 
-.. image:: docs/htmldate-logo.png
+.. image:: https://github.com/adbar/htmldate/blob/master/docs/htmldate-logo.png
     :alt: Logo as PNG image
     :align: center
     :width: 60%
@@ -47,7 +47,7 @@ In a nutshell
 
 |
 
-.. image:: docs/htmldate-demo.gif
+.. image:: https://github.com/adbar/htmldate/blob/master/docs/htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
     :width: 80%
