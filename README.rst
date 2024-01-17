@@ -26,14 +26,10 @@ htmldate: find the publication date of web pages
    :target: https://doi.org/10.21105/joss.02439
    :alt: JOSS article reference DOI: 10.21105/joss.02439
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: Code style: black
-
 |
 
 
-.. image:: https://github.com/adbar/htmldate/blob/master/docs/htmldate-logo.png
+.. image:: https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png
     :alt: Logo as PNG image
     :align: center
     :width: 60%
@@ -47,7 +43,7 @@ In a nutshell
 
 |
 
-.. image:: https://github.com/adbar/htmldate/blob/master/docs/htmldate-demo.gif
+.. image:: https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
     :width: 80%
