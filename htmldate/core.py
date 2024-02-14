@@ -980,7 +980,7 @@ def find_date(
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
-        for segment in search_tree.xpath(FREE_TEXT_EXPRESSIONS):
+        for segment in FREE_TEXT_EXPRESSIONS(search_tree):
             segment = segment.strip()
             if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
