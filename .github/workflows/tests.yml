@@ -99,7 +99,7 @@ jobs:
     # coverage
     - name: Upload coverage to Codecov
       if: ${{ matrix.env.MINIMAL == 'false'}}
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true
         files: ./coverage.xml
