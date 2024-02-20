@@ -20,7 +20,8 @@ from dateparser_data.settings import default_parsers
 
 from dateutil.parser import parse as dateutil_parse
 
-from lxml.html import HtmlElement  # type: ignore
+from lxml.etree import XPath
+from lxml.html import HtmlElement
 
 # own
 from .settings import CACHE_SIZE
@@ -85,13 +86,13 @@ DATE_EXPRESSIONS = """
 # or contains(@class, 'article')
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
-FREE_TEXT_EXPRESSIONS = FAST_PREPEND + "/text()"
+FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 MIN_SEGMENT_LEN = 6
 MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
-DISCARD_EXPRESSIONS = """.//div[@id="wm-ipp-base" or @id="wm-ipp"]"""
+DISCARD_EXPRESSIONS = XPath(""".//div[@id="wm-ipp-base" or @id="wm-ipp"]""")
 # not discarded for consistency (see above):
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
@@ -220,7 +221,7 @@ SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
     """Delete unwanted sections of an HTML document and return them as a list"""
     my_discarded = []
-    for subtree in tree.xpath(DISCARD_EXPRESSIONS):
+    for subtree in DISCARD_EXPRESSIONS(tree):
         my_discarded.append(subtree)
         subtree.getparent().remove(subtree)
     return tree, my_discarded

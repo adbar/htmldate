@@ -16,7 +16,7 @@ from datetime import datetime
 from functools import lru_cache, partial
 from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
-from lxml.html import HtmlElement, tostring  # type: ignore
+from lxml.html import HtmlElement, tostring
 
 # own
 from .extractors import (
@@ -78,7 +78,7 @@ LOGGER = logging.getLogger(__name__)
 
 def logstring(element: HtmlElement) -> str:
     """Format the element to be logged to a string."""
-    return tostring(element, pretty_print=False, encoding="unicode").strip()  # type: ignore
+    return tostring(element, pretty_print=False, encoding="unicode").strip()
 
 
 DATE_ATTRIBUTES = {
@@ -271,7 +271,7 @@ def examine_header(
             continue
         # name attribute, most frequent
         if "name" in elem.attrib:
-            attribute = elem.get("name").lower()
+            attribute = elem.get("name", "").lower()
             # url
             if attribute == "og:url":
                 reserve = extract_url_date(elem.get("content"), options)
@@ -288,7 +288,7 @@ def examine_header(
                     reserve = tryfunc(elem.get("content"))
         # property attribute
         elif "property" in elem.attrib:
-            attribute = elem.get("property").lower()
+            attribute = elem.get("property", "").lower()
             if attribute in DATE_ATTRIBUTES or attribute in PROPERTY_MODIFIED:
                 LOGGER.debug("examining meta property: %s", logstring(elem))
                 attempt = tryfunc(elem.get("content"))
@@ -302,7 +302,7 @@ def examine_header(
                         reserve = attempt
         # itemprop
         elif "itemprop" in elem.attrib:
-            attribute = elem.get("itemprop").lower()
+            attribute = elem.get("itemprop", "").lower()
             # original: store / updated: override date
             if attribute in ITEMPROP_ATTRS:
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
@@ -320,19 +320,19 @@ def examine_header(
             elif attribute == "copyrightyear":
                 LOGGER.debug("examining meta itemprop: %s", logstring(elem))
                 if "content" in elem.attrib:
-                    attempt = "-".join([elem.get("content"), "01", "01"])
+                    attempt = "-".join([elem.get("content", ""), "01", "01"])
                     if is_valid_date(
                         attempt, "%Y-%m-%d", earliest=options.min, latest=options.max
                     ):
                         reserve = attempt
         # pubdate, relatively rare
         elif "pubdate" in elem.attrib:
-            if elem.get("pubdate").lower() == "pubdate":
+            if elem.get("pubdate", "").lower() == "pubdate":
                 LOGGER.debug("examining meta pubdate: %s", logstring(elem))
                 headerdate = tryfunc(elem.get("content"))
         # http-equiv, rare
         elif "http-equiv" in elem.attrib:
-            attribute = elem.get("http-equiv").lower()
+            attribute = elem.get("http-equiv", "").lower()
             if attribute == "date":
                 LOGGER.debug("examining meta http-equiv: %s", logstring(elem))
                 if options.original:
@@ -456,7 +456,7 @@ def examine_abbr_elements(
             # data-utime (mostly Facebook)
             if "data-utime" in elem.attrib:
                 try:
-                    candidate = int(elem.get("data-utime"))
+                    candidate = int(elem.get("data-utime", ""))
                 except ValueError:
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
@@ -515,7 +515,7 @@ def examine_time_elements(
         for elem in elements:
             shortcut_flag = False
             # go for datetime
-            if "datetime" in elem.attrib and len(elem.get("datetime")) > 6:
+            if len(elem.get("datetime", "")) > 6:
                 # shortcut: time pubdate
                 if (
                     "pubdate" in elem.attrib
@@ -529,8 +529,8 @@ def examine_time_elements(
                 # shortcuts: class attribute
                 elif "class" in elem.attrib:
                     if options.original and (
-                        elem.get("class").startswith("entry-date")
-                        or elem.get("class").startswith("entry-time")
+                        elem.get("class", "").startswith("entry-date")
+                        or elem.get("class", "").startswith("entry-time")
                     ):
                         shortcut_flag = True
                         LOGGER.debug(
@@ -815,7 +815,7 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
 
 
 def find_date(
-    htmlobject: HtmlElement,
+    htmlobject: Union[bytes, str, HtmlElement],
     extensive_search: bool = True,
     original_date: bool = False,
     outputformat: str = "%Y-%m-%d",
@@ -980,7 +980,7 @@ def find_date(
         LOGGER.debug("extensive search started")
         # TODO: further tests & decide according to original_date
         reference = 0
-        for segment in search_tree.xpath(FREE_TEXT_EXPRESSIONS):
+        for segment in FREE_TEXT_EXPRESSIONS(search_tree):
             segment = segment.strip()
             if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
                 continue
