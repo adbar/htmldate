@@ -10,7 +10,9 @@ import logging
 import sys
 
 from platform import python_version
-from typing import Any, Optional
+from typing import Any, Optional, Union
+
+from lxml.html import HtmlElement
 
 from . import __version__
 from .core import find_date
@@ -19,7 +21,7 @@ from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
 
 
 def examine(
-    htmlstring: Optional[str],
+    htmlstring: Union[str, HtmlElement],
     extensive_bool: bool = True,
     original_date: bool = False,
     verbose_flag: bool = False,
@@ -116,7 +118,7 @@ def process_args(args: Any) -> None:
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
                 result = examine(
-                    htmltext,
+                    htmltext,  # type: ignore[arg-type]
                     extensive_bool=args.fast,
                     original_date=args.original,
                     verbose_flag=args.verbose,

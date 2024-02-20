@@ -21,7 +21,7 @@ from dateparser_data.settings import default_parsers
 from dateutil.parser import parse as dateutil_parse
 
 from lxml.etree import XPath
-from lxml.html import HtmlElement  # type: ignore
+from lxml.html import HtmlElement
 
 # own
 from .settings import CACHE_SIZE
