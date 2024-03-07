@@ -36,7 +36,7 @@ Htmldate: Find the Publication Date of Web Pages
 
 |
 
-Find **original and updated publication dates** of any web page. **On the command-line or with Python**, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included. Used in production on millions of documents and integrated by the following libraries: [list here] (among others).
+Find **original and updated publication dates** of any web page. **On the command-line or with Python**, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included. The package is used in production on millions of documents and integrated by `multiple libraries <https://github.com/adbar/htmldate/network/dependents>`_.
 
 
 In a nutshell
@@ -52,7 +52,8 @@ In a nutshell
 
 |
 
-With Python:
+With Python
+~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -60,14 +61,14 @@ With Python:
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
 
-On the command-line:
+On the command-line
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
     $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
     '2016-12-23'
 
-|
 
 Features
 --------
@@ -78,8 +79,9 @@ Features
 - Multilingual.
 - Compatible with all recent versions of Python.
 
+
 How it works
-------------
+~~~~~~~~~~~~
 
 Htmldate operates by sifting through HTML markup and if necessary text elements. It features the following heuristics:
 
@@ -92,7 +94,6 @@ Htmldate operates by sifting through HTML markup and if necessary text elements.
 
 Finally, the output is validated and converted to the chosen format.
 
-|
 
 Performance
 -----------
@@ -113,7 +114,6 @@ news-please 1.5.35              0.801     0.768     0.645     0.784     34x
 
 For the complete results and explanations see `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
 
-|
 
 Installation
 ------------
@@ -174,15 +174,11 @@ Extracting and pre-processing web texts to meet the exacting standards is a sign
 
 You can contact me via my `contact page <https://adrien.barbaresi.eu/>`_ or `GitHub <https://github.com/adbar>`_.
 
-|
-
 
 Contributing
 ------------
 
-`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome.
-
-Feel free to file issues on the `dedicated page <https://github.com/adbar/htmldate/issues>`_.
+`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome as well as issues filed on the `dedicated page <https://github.com/adbar/htmldate/issues>`_.
 
 Special thanks to the `contributors <https://github.com/adbar/htmldate/graphs/contributors>`_ who have submitted features and bugfixes!
 
