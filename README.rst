@@ -1,4 +1,4 @@
-htmldate: find the publication date of web pages
+Htmldate: Find the Publication Date of Web Pages
 ================================================
 
 
@@ -36,7 +36,8 @@ htmldate: find the publication date of web pages
 
 |
 
-Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
+Find **original and updated publication dates** of any web page. **On the command-line or with Python**, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included. The package is used in production on millions of documents and integrated by `multiple libraries <https://github.com/adbar/htmldate/network/dependents>`_.
+
 
 In a nutshell
 -------------
@@ -51,7 +52,8 @@ In a nutshell
 
 |
 
-With Python:
+With Python
+~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -59,7 +61,8 @@ With Python:
     >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
     '2016-12-23'
 
-On the command-line:
+On the command-line
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -70,23 +73,26 @@ On the command-line:
 Features
 --------
 
--  Multilingual, robust and efficient (used in production on millions of documents)
--  URLs, HTML files, or HTML trees are given as input (includes batch processing)
--  Output as string in any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_)
--  Detection of both original and updated dates
--  Compatible with all recent versions of Python
+- Flexible input: URLs, HTML files, or HTML trees can be used as input (including batch processing).
+- Customizable output: Any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_).
+- Detection of both original and updated dates.
+- Multilingual.
+- Compatible with all recent versions of Python.
 
 
-``htmldate`` can examine markup and text. It provides the following ways to date an HTML document:
+How it works
+~~~~~~~~~~~~
 
-1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes
-2. **HTML code**: The whole document is searched for structural markers: ``abbr`` or ``time`` elements and a series of attributes (e.g. ``postmetadata``)
+Htmldate operates by sifting through HTML markup and if necessary text elements. It features the following heuristics:
+
+1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes.
+2. **HTML code**: The whole document is searched for structural markers like ``abbr`` or ``time`` elements and a series of attributes (e.g. ``postmetadata``).
 3. **Bare HTML content**: Heuristics are run on text and markup:
+   - In ``fast`` mode the HTML page is cleaned and precise patterns are targeted.
+   - In ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one.
 
-  - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the best one
 
-Finally the output is validated and converted to the chosen format.
+Finally, the output is validated and converted to the chosen format.
 
 
 Performance
@@ -106,13 +112,16 @@ newspaper3k 0.2.8               0.769     0.667     0.556     0.715     15x
 news-please 1.5.35              0.801     0.768     0.645     0.784     34x
 =============================== ========= ========= ========= ========= =======
 
-For complete results and explanations see the `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
+For the complete results and explanations see `evaluation page <https://htmldate.readthedocs.io/en/latest/evaluation.html>`_.
 
 
 Installation
 ------------
 
-This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` (``pip3`` where applicable): ``pip install htmldate`` and optionally ``pip install htmldate[speed]``.
+Htmldate is tested on Linux, macOS and Windows systems, it is compatible with Python 3.6 upwards. It can notably be installed with ``pip`` (``pip3`` where applicable) from the PyPI package repository:  
+
+-  ``pip install htmldate`` 
+-  (optionally) ``pip install htmldate[speed]``
 
 
 Documentation
@@ -124,7 +133,7 @@ For more details on installation, Python & CLI usage, **please refer to the docu
 License
 -------
 
-*htmldate* is distributed under the `GNU General Public License v3.0 <https://github.com/adbar/htmldate/blob/master/LICENSE>`_. If you wish to redistribute this library but feel bounded by the license conditions please try interacting `at arms length <https://www.gnu.org/licenses/gpl-faq.html#GPLInProprietarySystem>`_, `multi-licensing <https://en.wikipedia.org/wiki/Multi-licensing>`_ with `compatible licenses <https://en.wikipedia.org/wiki/GNU_General_Public_License#Compatibility_and_multi-licensing>`_, or `contacting me <https://github.com/adbar/htmldate#author>`_.
+This package is distributed under the `GNU General Public License v3.0 <https://github.com/adbar/htmldate/blob/master/LICENSE>`_. If you wish to redistribute this library but feel bounded by the license conditions please try interacting `at arms length <https://www.gnu.org/licenses/gpl-faq.html#GPLInProprietarySystem>`_, `multi-licensing <https://en.wikipedia.org/wiki/Multi-licensing>`_ with `compatible licenses <https://en.wikipedia.org/wiki/GNU_General_Public_License#Compatibility_and_multi-licensing>`_, or `contacting me <https://github.com/adbar/htmldate#author>`_.
 
 See also `GPL and free software licensing: What's in it for business? <https://www.techrepublic.com/blog/cio-insights/gpl-and-free-software-licensing-whats-in-it-for-business/>`_
 
@@ -132,7 +141,9 @@ See also `GPL and free software licensing: What's in it for business? <https://w
 Author
 ------
 
-This effort is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing). Extracting and pre-processing web texts to the exacting standards of scientific research presents a substantial challenge for those who conduct such research. There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
+This project is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing).
+
+Extracting and pre-processing web texts to meet the exacting standards is a significant challenge. It is often not possible to reliably determine the date of publication or modification using either the URL or the server response. For more information:
 
 .. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
@@ -167,9 +178,13 @@ You can contact me via my `contact page <https://adrien.barbaresi.eu/>`_ or `Git
 Contributing
 ------------
 
-`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
+`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome as well as issues filed on the `dedicated page <https://github.com/adbar/htmldate/issues>`_.
 
-Feel free to file issues on the `dedicated page <https://github.com/adbar/htmldate/issues>`_. Thanks to the `contributors <https://github.com/adbar/htmldate/graphs/contributors>`_ who submitted features and bugfixes!
+Special thanks to the `contributors <https://github.com/adbar/htmldate/graphs/contributors>`_ who have submitted features and bugfixes!
+
+
+Acknowledgements
+----------------
 
 Kudos to the following software libraries:
 
