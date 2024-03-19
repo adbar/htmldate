@@ -5,7 +5,7 @@ Htmldate extracts original and updated publication dates from URLs and web pages
 # meta
 __title__ = "htmldate"
 __author__ = "Adrien Barbaresi"
-__license__ = "GNU GPL v3"
+__license__ = "Apache-2.0"
 __copyright__ = "Copyright 2017-2024, Adrien Barbaresi"
 __version__ = "1.7.0"
 

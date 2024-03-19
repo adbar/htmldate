@@ -3,10 +3,6 @@
 Module bundling functions related to HTML processing.
 """
 
-## This file is available from https://github.com/adbar/htmldate
-## under GNU GPL v3 license
-
-
 import logging
 import re
 
