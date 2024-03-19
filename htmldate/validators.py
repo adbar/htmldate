@@ -3,10 +3,6 @@
 Filters for date parsing and date validators.
 """
 
-## This file is available from https://github.com/adbar/htmldate
-## under GNU GPL v3 license
-
-# standard
 import logging
 
 from collections import Counter

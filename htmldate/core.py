@@ -3,10 +3,6 @@
 or LXML trees.
 """
 
-## This file is available from https://github.com/adbar/htmldate
-## under GNU GPL v3 license
-
-# standard
 import logging
 import re
 
