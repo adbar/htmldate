@@ -3,9 +3,6 @@
 Listing a series of settings that are applied module-wide.
 """
 
-## This file is available from https://github.com/adbar/htmldate
-## under GNU GPL v3 license
-
 from datetime import datetime
 
 # Function cache
