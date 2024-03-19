@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.8.0
+- change license to Apache 2.0 (#140)
+- compile XPath expressions (#136)
+- update docs with @EkaterineSheshelidze (#135)
+
 ## 1.7.0
 - fix meta property updated vs. original behavior (#121)
 - support for LXML version 5.0+ (#127)
