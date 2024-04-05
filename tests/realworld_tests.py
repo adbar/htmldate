@@ -113,6 +113,7 @@ MOCK_PAGES = {
     "https://www.hertie-school.org/en/debate/detail/content/whats-on-the-cards-for-von-der-leyen/": "hertie-school.org.leyen.html",
     "https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/": "adac.de.kindersitztest.html",
     "http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/": "archive.org.kath.ch.html",
+    "https://www.mozilla.org/en-US/security/advisories/mfsa2024-17/": "mozilla.org.mfsa2024-17.html",
 }
 
 MEDIACLOUD_PAGES = {"pagename": "thing.html"}
@@ -647,6 +648,15 @@ def test_approximate_date():
         find_date(load_mock_page("http://www.hundeverein-kreisunna.de/termine.html"))
         == "2017-03-29"
     )  # probably newer
+
+    assert (
+        find_date(
+            load_mock_page(
+                "https://www.mozilla.org/en-US/security/advisories/mfsa2024-17/"
+            )
+        )
+        == "1998-01-01"
+    )
 
 
 def test_search_html():
