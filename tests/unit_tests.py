@@ -69,7 +69,6 @@ from htmldate.validators import (
     is_valid_format,
 )
 
-
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 OUTPUTFORMAT = "%Y-%m-%d"
 
@@ -1422,6 +1421,11 @@ def test_search_html():
             options,
         )
         is None
+    )
+    # unreliable month
+    assert (
+        search_page("<html><body><p>The date is 2010/13</p></body></html>", options)
+        == "2010-01-01"
     )
 
 

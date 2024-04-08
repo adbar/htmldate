@@ -13,9 +13,7 @@ from typing import List, Optional, Pattern, Tuple
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
 from dateparser_data.settings import default_parsers
-
 from dateutil.parser import parse as dateutil_parse
-
 from lxml.etree import XPath
 from lxml.html import HtmlElement
 
@@ -23,7 +21,6 @@ from lxml.html import HtmlElement
 from .settings import CACHE_SIZE
 from .utils import Extractor, trim_text
 from .validators import convert_date, is_valid_date
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -207,7 +204,9 @@ SLASHES_PATTERN = re.compile(
     r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
 )
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
-YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-][01][0-9])\D")
+YYYYMM_PATTERN = re.compile(
+    r"\D([12][0-9]{3}[/.-][0]?[0-9]|[12][0-9]{3}[/.-][1][012])\D"
+)
 YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-]([01][0-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
