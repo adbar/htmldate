@@ -207,8 +207,8 @@ SLASHES_PATTERN = re.compile(
     r"\D([0-3]?[0-9]/[01]?[0-9]/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
 )
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
-YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-](?:1[0-2]|0?[1-9]))\D")
-YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0?[1-9]|)")
+YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-](?:1[0-2]|0[1-9]))\D")
+YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9]|)")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
