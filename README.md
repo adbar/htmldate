@@ -1,25 +1,16 @@
----
-title: "Htmldate: Find the Publication Date of Web Pages"
----
+# Htmldate: Find the Publication Date of Web Pages
 
 [![Python package](https://img.shields.io/pypi/v/htmldate.svg)](https://pypi.python.org/pypi/htmldate)
-
 [![Python versions](https://img.shields.io/pypi/pyversions/htmldate.svg)](https://pypi.python.org/pypi/htmldate)
-
 [![Documentation Status](https://readthedocs.org/projects/htmldate/badge/?version=latest)](https://htmldate.readthedocs.org/en/latest/?badge=latest)
-
 [![Code Coverage](https://img.shields.io/codecov/c/github/adbar/htmldate.svg)](https://codecov.io/gh/adbar/htmldate)
-
 [![Downloads](https://img.shields.io/pypi/dm/htmldate?color=informational)](https://pepy.tech/project/htmldate)
-
 [![JOSS article reference DOI: 10.21105/joss.02439](https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen)](https://doi.org/10.21105/joss.02439)
 
-|
 
 ![Logo as PNG image](https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png){.align-center
 width="60.0%"}
 
-|
 
 Find **original and updated publication dates** of any web page. **On
 the command-line or with Python**, all the steps needed from web page
@@ -28,16 +19,15 @@ package is used in production on millions of documents and integrated by
 [multiple
 libraries](https://github.com/adbar/htmldate/network/dependents).
 
-# In a nutshell
 
-|
+## In a nutshell
+
 
 [![Demo as GIF image](https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif){.align-center
 width="80.0%"}](https://htmldate.readthedocs.org/)
 
-|
 
-## With Python
+### With Python
 
 ``` python
 >>> from htmldate import find_date
@@ -45,14 +35,14 @@ width="80.0%"}](https://htmldate.readthedocs.org/)
 '2016-12-23'
 ```
 
-## On the command-line
+### On the command-line
 
 ``` bash
 $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
 '2016-12-23'
 ```
 
-# Features
+## Features
 
 -   Flexible input: URLs, HTML files, or HTML trees can be used as input
     (including batch processing).
@@ -62,7 +52,7 @@ $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
 -   Multilingual.
 -   Compatible with all recent versions of Python.
 
-## How it works
+### How it works
 
 Htmldate operates by sifting through HTML markup and if necessary text
 elements. It features the following heuristics:
@@ -81,24 +71,24 @@ elements. It features the following heuristics:
 
 Finally, the output is validated and converted to the chosen format.
 
-# Performance
+## Performance
 
-  1000 web pages containing identifiable dates (as of 2023-11-13 on Python 3.10)
-  ---------------------------------------------------------------------------------
-  Python Package Precision Recall Accuracy F-Score Time
-  =============================== ========= ========= ========= ========= =======
-  articleDateExtractor 0.20 0.803 0.734 0.622 0.767 5x
-  date_guesser 2.1.4 0.781 0.600 0.514 0.679 18x
-  goose3 3.1.17 0.869 0.532 0.493 0.660 15x
-  htmldate\[all\] 1.6.0 (fast) **0.883** 0.924 0.823 0.903 **1x**
-  htmldate\[all\] 1.6.0 (extensive) 0.870 **0.993** **0.865** **0.928** 1.7x
-  newspaper3k 0.2.8 0.769 0.667 0.556 0.715 15x
-  news-please 1.5.35 0.801 0.768 0.645 0.784 34x
+1000 web pages containing identifiable dates (as of 2023-11-13 on Python 3.10)
+
+| Python | Package | Precision | Recall | Accuracy | F-Score | Time |
+| ------ | ------- | --------- | ------ | -------- | ------- | ---- |
+| articleDateExtractor 0.20 | 0.803 | 0.734 | 0.622 | 0.767 | 5x |
+| date_guesser 2.1.4 | 0.781 | 0.600 | 0.514 | 0.679 | 18x |
+| goose3 3.1.17 | 0.869 | 0.532 | 0.493 | 0.660 | 15x |
+| htmldate\[all\] 1.6.0 (fast) | **0.883** | 0.924 | 0.823 | 0.903 | **1x** |
+| htmldate\[all\] 1.6.0 (extensive) | 0.870 | **0.993** | **0.865** | **0.928** | 1.7x |
+| newspaper3k 0.2.8 | 0.769 | 0.667 | 0.556 | 0.715 | 15x |
+| news-please 1.5.35 | 0.801 | 0.768 | 0.645 | 0.784 | 34x |
 
 For the complete results and explanations see [evaluation
 page](https://htmldate.readthedocs.io/en/latest/evaluation.html).
 
-# Installation
+## Installation
 
 Htmldate is tested on Linux, macOS and Windows systems, it is compatible
 with Python 3.6 upwards. It can notably be installed with `pip` (`pip3`
@@ -107,20 +97,20 @@ where applicable) from the PyPI package repository:
 -   `pip install htmldate`
 -   (optionally) `pip install htmldate[speed]`
 
-# Documentation
+## Documentation
 
 For more details on installation, Python & CLI usage, **please refer to
 the documentation**:
 [htmldate.readthedocs.io](https://htmldate.readthedocs.io/)
 
-# License
+## License
 
 This package is distributed under the [Apache 2.0
 license](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 Versions prior to v1.8.0 are under GPLv3+ license.
 
-# Author
+## Author
 
 This project is part of methods to derive information from web documents
 in order to build [text databases for
@@ -133,8 +123,8 @@ determine the date of publication or modification using either the URL
 or the server response. For more information:
 
 [![JOSS article reference DOI: 10.21105/joss.02439](https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen)](https://doi.org/10.21105/joss.02439)
-
 [![Zenodo archive DOI: 10.5281/zenodo.3459599](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.3459599-blue)](https://doi.org/10.5281/zenodo.3459599)
+
 
 ``` shell
 @article{barbaresi-2020-htmldate,
@@ -165,7 +155,7 @@ or the server response. For more information:
 You can contact me via my [contact page](https://adrien.barbaresi.eu/)
 or [GitHub](https://github.com/adbar).
 
-# Contributing
+## Contributing
 
 [Contributions](https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md)
 are welcome as well as issues filed on the [dedicated
@@ -175,7 +165,7 @@ Special thanks to the
 [contributors](https://github.com/adbar/htmldate/graphs/contributors)
 who have submitted features and bugfixes!
 
-# Acknowledgements
+## Acknowledgements
 
 Kudos to the following software libraries:
 
