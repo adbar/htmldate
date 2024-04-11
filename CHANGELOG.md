@@ -1,5 +1,10 @@
 ## Changelog
 
+
+## 1.8.1
+- fix: more restrictive YYYYMM pattern to prevent ValueError with @b3n4kh (#145)
+- maintenance: add pre-commit with checks with @nadasuhailAyesh12 (#142)
+
 ## 1.8.0
 - change license to Apache 2.0 (#140)
 - compile XPath expressions (#136)
