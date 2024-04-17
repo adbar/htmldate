@@ -7,9 +7,13 @@
 [![Downloads](https://img.shields.io/pypi/dm/htmldate?color=informational)](https://pepy.tech/project/htmldate)
 [![JOSS article reference DOI: 10.21105/joss.02439](https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen)](https://doi.org/10.21105/joss.02439)
 
+<br/>
+<br/>
 
 <img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png" alt="Logo as PNG image" width="60%"/>
 
+<br/>
+<br/>
 
 Find **original and updated publication dates** of any web page. **On
 the command-line or with Python**, all the steps needed from web page
@@ -21,9 +25,13 @@ libraries](https://github.com/adbar/htmldate/network/dependents).
 
 ## In a nutshell
 
+<br/>
+<br/>
 
 <img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif" alt="Demo as GIF image" width="80%"/>
 
+<br/>
+<br/>
 
 ### With Python
 
