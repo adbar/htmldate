@@ -23,7 +23,7 @@ extras["all"] = extras["speed"]
 
 def get_long_description():
     "Return the README"
-    with open("README.rst", "r", encoding="utf-8") as filehandle:
+    with open("README.md", "r", encoding="utf-8") as filehandle:
         long_description = filehandle.read()
     # long_description += "\n\n"
     # with open("CHANGELOG.md", encoding="utf8") as f:
@@ -64,6 +64,7 @@ setup(
     version=get_version("htmldate"),
     description="Fast and robust extraction of original and updated publication dates from URLs and web pages.",
     long_description=get_long_description(),
+    long_description_content_type="text/markdown",
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
