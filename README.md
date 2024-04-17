@@ -8,8 +8,7 @@
 [![JOSS article reference DOI: 10.21105/joss.02439](https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen)](https://doi.org/10.21105/joss.02439)
 
 
-![Logo as PNG image](https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png){.align-center
-width="60.0%"}
+<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png" alt="Logo as PNG image" width="60%"/>
 
 
 Find **original and updated publication dates** of any web page. **On
@@ -23,8 +22,7 @@ libraries](https://github.com/adbar/htmldate/network/dependents).
 ## In a nutshell
 
 
-[![Demo as GIF image](https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif){.align-center
-width="80.0%"}](https://htmldate.readthedocs.org/)
+<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif" alt="Demo as GIF image" width="80%"/>
 
 
 ### With Python
@@ -75,8 +73,8 @@ Finally, the output is validated and converted to the chosen format.
 
 1000 web pages containing identifiable dates (as of 2023-11-13 on Python 3.10)
 
-| Python | Package | Precision | Recall | Accuracy | F-Score | Time |
-| ------ | ------- | --------- | ------ | -------- | ------- | ---- |
+| Python Package | Precision | Recall | Accuracy | F-Score | Time |
+| -------------- | --------- | ------ | -------- | ------- | ---- |
 | articleDateExtractor 0.20 | 0.803 | 0.734 | 0.622 | 0.767 | 5x |
 | date_guesser 2.1.4 | 0.781 | 0.600 | 0.514 | 0.679 | 18x |
 | goose3 3.1.17 | 0.869 | 0.532 | 0.493 | 0.660 | 15x |
