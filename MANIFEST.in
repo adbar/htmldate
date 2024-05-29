@@ -1,4 +1,4 @@
-include README.rst LICENSE pytest.ini CHANGELOG.md CONTRIBUTING.md
+include README.md CHANGELOG.md CONTRIBUTING.md LICENSE pyproject.toml
 include htmldate/py.typed
 include tests/unit_tests.py
 include tests/testlist.txt

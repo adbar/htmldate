@@ -107,6 +107,7 @@ def test_input():
         assert load_html(123) is None
     assert "incompatible" in str(err.value)
     assert load_html("<" * 100) is None
+    assert load_html("<xml><body>ABC</body></xml>") is None
     assert load_html("<html><body>XYZ</body></html>") is not None
     assert load_html(b"<html><body>XYZ</body></html>") is not None
     assert load_html(b"<" * 100) is None
@@ -1660,6 +1661,14 @@ def test_dependencies():
         )
 
 
+def test_deferred():
+    "Test deferred extraction"
+    htmlstring = '<html><head><meta property="og:published_time" content="2017-09-01"/></head><body></body></html>'
+    url = "https://example.org/2017/08/30/this.html"
+    assert find_date(htmlstring, url=url, deferred_url_extractor=True) == "2017-09-01"
+    assert find_date(htmlstring, url=url, deferred_url_extractor=False) == "2017-08-30"
+
+
 if __name__ == "__main__":
     # function-level
     test_input()
@@ -1675,6 +1684,7 @@ if __name__ == "__main__":
     # test_header()
 
     # module-level
+    test_deferred()
     test_no_date()
     test_exact_date()
     test_search_html()
