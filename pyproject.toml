@@ -19,4 +19,4 @@ build-backend = "setuptools.build_meta:__legacy__"
 # ...
 
 [tool.pytest.ini_options]
-testpaths = "tests/*_tests.py"
+testpaths = "tests/*tests.py"
