@@ -2,27 +2,26 @@
 Compare extraction results with other libraries of the same kind.
 """
 
-# import logging
-import os
-import re
-import time
 import json
 
-try:
-    from cchardet import detect
-except ImportError:
-    from charset_normalizer import detect
+# import logging
+import os
+import time
+
 
 from tabulate import tabulate
 
-from articleDateExtractor import extractArticlePublishedDate
-from date_guesser import guess_date
-from goose3 import Goose
-from htmldate import find_date
-from htmldate.validators import convert_date
-from newspaper import Article
-from newspaper.article import ArticleDownloadState
-from newsplease import NewsPlease
+from evaluation import (
+    evaluate_result,
+    load_document,
+    run_htmldate_extensive,
+    run_htmldate_fast,
+    run_articledateextractor,
+    run_dateguesser,
+    run_newspaper,
+    run_newsplease,
+    run_goose,
+)
 
 
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -37,127 +36,6 @@ for each in eval_paths:
     with open(evalpath, "r", encoding="utf-8") as f:
         EVAL_PAGES.update(json.load(f))
 
-G = Goose()
-
-
-def load_document(filename):
-    """load mock page from samples"""
-    mypath = os.path.join(TEST_DIR, "test_set", filename)
-    if not os.path.isfile(mypath):
-        mypath = os.path.join(TEST_DIR, "cache", filename)
-        if not os.path.isfile(mypath):
-            mypath = os.path.join(TEST_DIR, "eval", filename)
-    try:
-        with open(mypath, "r", encoding="utf-8") as inputf:
-            htmlstring = inputf.read()
-    # encoding/windows fix for the tests
-    except UnicodeDecodeError:
-        # read as binary
-        with open(mypath, "rb") as inputf:
-            htmlbinary = inputf.read()
-        guessed_encoding = detect(htmlbinary)["encoding"]
-        if guessed_encoding is not None:
-            try:
-                htmlstring = htmlbinary.decode(guessed_encoding)
-            except UnicodeDecodeError:
-                htmlstring = htmlbinary
-        else:
-            print("Encoding error")
-    return htmlstring
-
-
-# bypass not possible: error by newspaper
-#    with open(mypath, 'rb') as inputf:
-#        return inputf.read()
-
-
-def run_htmldate_extensive(htmlstring):
-    """run htmldate on content"""
-    return find_date(htmlstring, original_date=True, extensive_search=True)
-
-
-def run_htmldate_fast(htmlstring):
-    """run htmldate on content"""
-    return find_date(htmlstring, original_date=True, extensive_search=False)
-
-
-def run_newspaper(htmlstring):
-    """try with the newspaper module"""
-    # throws error on the eval_default dataset
-    try:
-        myarticle = Article(htmlstring)
-        myarticle.html = htmlstring
-        myarticle.download_state = ArticleDownloadState.SUCCESS
-        myarticle.parse()
-    except (UnicodeDecodeError, UnicodeEncodeError):
-        return None
-    if myarticle.publish_date is None or myarticle.publish_date == "":
-        return None
-    return str(myarticle.publish_date)[0:10]
-
-
-def run_newsplease(htmlstring):
-    """try with newsplease"""
-    try:
-        article = NewsPlease.from_html(htmlstring, url=None)
-        if article.date_publish is None:
-            return None
-        return convert_date(article.date_publish, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
-    except Exception as err:
-        print("Exception:", err)
-        return None
-
-
-def run_articledateextractor(htmlstring):
-    """try with articleDateExtractor"""
-    dateresult = extractArticlePublishedDate("", html=htmlstring)
-    if dateresult is None:
-        return None
-    return convert_date(dateresult, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
-
-
-def run_dateguesser(htmlstring):
-    """try with date_guesser"""
-    guess = guess_date(url="https://www.example.org/test/", html=htmlstring)
-    if guess.date is None:
-        return None
-    return convert_date(guess.date, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
-
-
-def run_goose(htmlstring):
-    """try with the goose algorithm"""
-    try:
-        article = G.extract(raw_html=htmlstring)
-    except (AttributeError, UnicodeDecodeError):
-        return None
-    if article.publish_date is None:
-        return None
-    try:
-        datematch = re.match(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", article.publish_date)
-        return datematch[0]
-    # illogical result
-    except TypeError:
-        #    print(article.publish_date)
-        return None
-
-
-def evaluate_result(result, EVAL_PAGES, item):
-    """evaluate result contents"""
-    true_positives = 0
-    false_positives = 0
-    true_negatives = 0  # not in use (yet)
-    false_negatives = 0
-    datereference = EVAL_PAGES[item]["date"]
-    if result is None and datereference is None:
-        true_negatives += 1
-    elif result is None:
-        false_negatives += 1
-    elif result == datereference:
-        true_positives += 1
-    else:
-        false_positives += 1
-    return true_positives, false_positives, true_negatives, false_negatives
-
 
 def calculate_scores(name, mydict):
     """output weighted result score"""
@@ -168,9 +46,9 @@ def calculate_scores(name, mydict):
         mydict["true_negatives"],
     )
     time_num1 = mydict["time"] / htmldate_extensive_result["time"]
-    time1 = "{:.2f}x".format(time_num1)
+    time1 = f"{time_num1:.2f}x"
     time_num2 = mydict["time"] / htmldate_fast_result["time"]
-    time2 = "{:.2f}x".format(time_num2)
+    time2 = f"{time_num2:.2f}x"
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     accuracy = (tp + tn) / (tp + tn + fp + fn)
@@ -209,12 +87,12 @@ goose_result.update(template_dict)
 
 i = 0
 
-for item in EVAL_PAGES:
+for item, data in EVAL_PAGES.items():
     i += 1
     # print(item)
-    htmlstring = load_document(EVAL_PAGES[item]["file"])
+    htmlstring = load_document(data["file"])
     # null hypotheses
-    tp, fp, tn, fn = evaluate_result(None, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(None, data)
     nothing["true_positives"] += tp
     nothing["false_positives"] += fp
     nothing["true_negatives"] += tn
@@ -223,7 +101,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_htmldate_extensive(htmlstring)
     htmldate_extensive_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     htmldate_extensive_result["true_positives"] += tp
     htmldate_extensive_result["false_positives"] += fp
     htmldate_extensive_result["true_negatives"] += tn
@@ -232,7 +110,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_htmldate_fast(htmlstring)
     htmldate_fast_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     htmldate_fast_result["true_positives"] += tp
     htmldate_fast_result["false_positives"] += fp
     htmldate_fast_result["true_negatives"] += tn
@@ -241,7 +119,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_newspaper(htmlstring)
     newspaper_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     newspaper_result["true_positives"] += tp
     newspaper_result["false_positives"] += fp
     newspaper_result["true_negatives"] += tn
@@ -250,7 +128,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_newsplease(htmlstring)
     newsplease_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     newsplease_result["true_positives"] += tp
     newsplease_result["false_positives"] += fp
     newsplease_result["true_negatives"] += tn
@@ -259,7 +137,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_articledateextractor(htmlstring)
     articledateextractor_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     articledateextractor_result["true_positives"] += tp
     articledateextractor_result["false_positives"] += fp
     articledateextractor_result["true_negatives"] += tn
@@ -268,7 +146,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_dateguesser(htmlstring)
     dateguesser_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     dateguesser_result["true_positives"] += tp
     dateguesser_result["false_positives"] += fp
     dateguesser_result["true_negatives"] += tn
@@ -277,7 +155,7 @@ for item in EVAL_PAGES:
     start = time.time()
     result = run_goose(htmlstring)
     goose_result["time"] += time.time() - start
-    tp, fp, tn, fn = evaluate_result(result, EVAL_PAGES, item)
+    tp, fp, tn, fn = evaluate_result(result, data)
     goose_result["true_positives"] += tp
     goose_result["false_positives"] += fp
     goose_result["true_negatives"] += tn
@@ -312,7 +190,7 @@ print(
 )
 
 
-with open("comparison_results.txt", "w") as f:
+with open("comparison_results.txt", "w", encoding="utf-8") as f:
     print(
         tabulate(
             table,
