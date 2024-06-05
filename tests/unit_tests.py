@@ -17,21 +17,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-try:
-    import dateparser
-
-    EXT_PARSER = True
-    PARSER = dateparser.DateDataParser(
-        languages=["de", "en"],
-        settings={
-            "PREFER_DAY_OF_MONTH": "first",
-            "PREFER_DATES_FROM": "past",
-            "DATE_ORDER": "DMY",
-        },
-    )  # allow_redetect_language=False,
-except ImportError:
-    EXT_PARSER = False
-
 from lxml import html
 from lxml.etree import XPathEvalError
 
@@ -1648,17 +1633,16 @@ def test_download():
 
 def test_dependencies():
     "Test README examples for consistency"
-    if EXT_PARSER is True:
-        assert (
-            try_date_expr(
-                "Fri | September 1 | 2017",
-                OUTPUTFORMAT,
-                True,
-                MIN_DATE,
-                LATEST_POSSIBLE,
-            )
-            == "2017-09-01"
+    assert (
+        try_date_expr(
+            "Fri | September 1 | 2017",
+            OUTPUTFORMAT,
+            True,
+            MIN_DATE,
+            LATEST_POSSIBLE,
         )
+        == "2017-09-01"
+    )
 
 
 def test_deferred():

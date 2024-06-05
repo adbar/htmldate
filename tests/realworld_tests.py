@@ -14,21 +14,6 @@ from unittest.mock import patch
 
 import pytest
 
-try:
-    import dateparser
-
-    EXT_PARSER = True
-    PARSER = dateparser.DateDataParser(
-        languages=["de", "en"],
-        settings={
-            "PREFER_DAY_OF_MONTH": "first",
-            "PREFER_DATES_FROM": "past",
-            "DATE_ORDER": "DMY",
-        },
-    )  # allow_redetect_language=False,
-except ImportError:
-    EXT_PARSER = False
-
 from lxml import html
 
 from htmldate.cli import parse_args, process_args
@@ -752,32 +737,31 @@ def test_readme_examples():
 
 def test_dependencies():
     "Test README examples for consistency"
-    if EXT_PARSER is True:
-        assert (
-            find_date(
-                load_mock_page(
-                    "https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique"
-                ),
-                original_date=True,
-            )
-            == "2019-06-27"
+    assert (
+        find_date(
+            load_mock_page(
+                "https://blogs.mediapart.fr/elba/blog/260619/violences-policieres-bombe-retardement-mediatique"
+            ),
+            original_date=True,
         )
-        assert (
-            find_date(
-                load_mock_page(
-                    "https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany"
-                )
+        == "2019-06-27"
+    )
+    assert (
+        find_date(
+            load_mock_page(
+                "https://la-bas.org/la-bas-magazine/chroniques/Didier-Porte-souhaite-la-Sante-a-Balkany"
             )
-            == "2019-06-28"
         )
-        assert (
-            find_date(
-                load_mock_page(
-                    "https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme"
-                )
+        == "2019-06-28"
+    )
+    assert (
+        find_date(
+            load_mock_page(
+                "https://www.revolutionpermanente.fr/Antonin-Bernanos-en-prison-depuis-pres-de-deux-mois-en-raison-de-son-militantisme"
             )
-            == "2019-06-13"
         )
+        == "2019-06-13"
+    )
 
 
 def test_cli():
