@@ -41,11 +41,13 @@ G = Goose()
 
 def load_document(filename):
     """load mock page from samples"""
-    mypath = os.path.join(TEST_DIR, "test_set", filename)
-    if not os.path.isfile(mypath):
-        mypath = os.path.join(TEST_DIR, "cache", filename)
-        if not os.path.isfile(mypath):
-            mypath = os.path.join(TEST_DIR, "eval", filename)
+    htmlstring = ""
+    # look for the right directory
+    for directory in ("test_set", "cache", "eval"):
+        mypath = os.path.join(TEST_DIR, directory, filename)
+        if os.path.isfile(mypath):
+            break
+    # open and convert the file to str
     try:
         with open(mypath, "r", encoding="utf-8") as inputf:
             htmlstring = inputf.read()
@@ -55,19 +57,15 @@ def load_document(filename):
         with open(mypath, "rb") as inputf:
             htmlbinary = inputf.read()
         guessed_encoding = detect(htmlbinary)["encoding"]
-        if guessed_encoding is not None:
+        if guessed_encoding:
             try:
                 htmlstring = htmlbinary.decode(guessed_encoding)
             except UnicodeDecodeError:
-                htmlstring = htmlbinary
-        else:
-            print("Encoding error")
+                pass
+        if not htmlstring:
+            print("Encoding error, using binary:", mypath)
+            htmlstring = htmlbinary
     return htmlstring
-
-
-# bypass not possible: error by newspaper
-#    with open(mypath, 'rb') as inputf:
-#        return inputf.read()
 
 
 def run_htmldate_extensive(htmlstring):
