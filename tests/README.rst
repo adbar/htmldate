@@ -29,7 +29,7 @@ Reproducing the evaluation
 
 1. Install the packages specified in ``eval-requirements.txt``
 2. Run the script ``comparison.py``
-    - `python/python3 comparison.py --help`` for more options
+    - python or python3 ``comparison.py --help`` for more options
 
 
 Hints:
