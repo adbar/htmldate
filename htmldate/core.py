@@ -455,12 +455,12 @@ def examine_abbr_elements(
                 except ValueError:
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
-                # look for original date or newest (i.e. largest time delta)
-                reference = (
-                    min(candidate, reference)
-                    if options.original
-                    else max(candidate, reference)
-                )
+                # look for original date
+                if options.original and (reference == 0 or candidate < reference):
+                    reference = candidate
+                # look for newest (i.e. largest time delta)
+                elif not options.original and candidate > reference:
+                    reference = candidate
             # class
             elif elem.get("class") in CLASS_ATTRS:
                 # other attributes
