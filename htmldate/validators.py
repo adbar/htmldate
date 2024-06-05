@@ -60,10 +60,6 @@ def is_valid_date(
 @lru_cache(maxsize=16)
 def is_valid_format(outputformat: str) -> bool:
     """Validate the output format in the settings"""
-    # test in abstracto
-    if not isinstance(outputformat, str) or "%" not in outputformat:
-        LOGGER.error("malformed output format: %s", outputformat)
-        return False
     # test with date object
     dateobject = datetime(2017, 9, 1, 0, 0)
     try:
@@ -71,6 +67,10 @@ def is_valid_format(outputformat: str) -> bool:
     # other than ValueError: Python < 3.7 only
     except (NameError, TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
+        return False
+    # test in abstracto (could be the only test)
+    if not isinstance(outputformat, str) or "%" not in outputformat:
+        LOGGER.error("malformed output format: %s", outputformat)
         return False
     return True
 

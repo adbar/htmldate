@@ -153,7 +153,6 @@ def test_sanity():
     assert is_valid_format("ABC") is False
     assert is_valid_format(123) is False
     assert is_valid_format(("a", "b")) is False
-    # assert is_valid_format('%\xaa') is False
     _, discarded = discard_unwanted(
         html.fromstring(
             '<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'
