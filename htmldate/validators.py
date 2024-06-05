@@ -115,14 +115,10 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if options.original and (reference == 0 or timestamp < reference):
-        reference = timestamp
-    elif not options.original and timestamp > reference:
-        reference = timestamp
-    # if options.original:
-    #    reference = min(reference, timestamp) if reference else timestamp
-    # else:
-    #    reference = max(reference, timestamp) if reference else timestamp
+    if options.original:
+        reference = min(reference, timestamp) if reference else timestamp
+    else:
+        reference = max(reference, timestamp)
     return reference
 
 

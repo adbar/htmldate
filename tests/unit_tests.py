@@ -20,7 +20,7 @@ import pytest
 from lxml import html
 from lxml.etree import XPathEvalError
 
-from htmldate.cli import examine, main, parse_args, process_args
+from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
     compare_reference,
     examine_date_elements,
@@ -1543,51 +1543,61 @@ def test_parser():
 
 def test_cli():
     "Test the command-line interface"
-    assert examine(" ", extensive_bool=True) is None
-    assert examine("0" * int(10e7), extensive_bool=True) is None
-    assert examine(" ", False) is None
-    assert examine("0" * int(10e7), False) is None
+    testargs = ["--original"]
+    with patch.object(sys, "argv", testargs):
+        args = parse_args(testargs)
+
+    assert cli_examine(" ", args) is None
+    assert cli_examine("0" * int(10e7), args) is None
+
+    args.fast = True
+    assert cli_examine(" ", args) is None
+    assert cli_examine("0" * int(10e7), args) is None
+
+    args.fast = False
     assert (
-        examine(
-            '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body><p>A</p><p>B</p></body></html>'
+        cli_examine(
+            '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body><p>A</p><p>B</p></body></html>',
+            args,
         )
         is None
     )
     assert (
-        examine(
+        cli_examine(
             '<html><body><span class="entry-date">12. Juli 2016</span></body></html>',
-            True,
+            args,
         )
         == "2016-07-12"
     )
+    assert cli_examine("<html><body>2016-07-12</body></html>", args) == "2016-07-12"
+
+    args.maxdate = "2015-01-01"
     assert (
-        examine("<html><body>2016-07-12</body></html>", extensive_bool=True)
-        == "2016-07-12"
-    )
-    assert (
-        examine(
+        cli_examine(
             "<html><body>2016-07-12</body></html>",
-            extensive_bool=True,
-            maxdate="2015-01-01",
+            args,
         )
         is None
     )
+
+    args.maxdate = "2017-12-31"
     assert (
-        examine(
+        cli_examine(
             "<html><body>2016-07-12</body></html>",
-            extensive_bool=True,
-            maxdate="2017-12-31",
+            args,
         )
         == "2016-07-12"
     )
+
+    args.maxdate = "2017-41-41"
     assert (
-        examine(
+        cli_examine(
             "<html><body>2016-07-12</body></html>",
-            extensive_bool=True,
-            maxdate="2017-41-41",
+            args,
         )
         == "2016-07-12"
     )
+
     # first test
     testargs = ["", "-u", "123", "-v"]
     with patch.object(sys, "argv", testargs):
@@ -1617,18 +1627,23 @@ def test_download():
     with pytest.raises(SystemExit):
         with patch.object(sys, "argv", ["", "-u", "https://httpbin.org/status/404"]):
             main()
+
+    testargs = ["--original"]
+    with patch.object(sys, "argv", testargs):
+        args = parse_args(testargs)
+
     url = "https://httpbin.org/status/200"
     teststring = fetch_url(url)
     assert teststring is None
-    assert examine(teststring) is None
+    assert cli_examine(teststring, args) is None
     url = "https://httpbun.com/links/2/2"
     teststring = fetch_url(url)
     assert teststring is not None
-    assert examine(teststring) is None
+    assert cli_examine(teststring, args) is None
     url = "https://httpbun.com/html"
     teststring = fetch_url(url)
     assert teststring is not None
-    assert examine(teststring, False) is None
+    assert cli_examine(teststring, args) is None
 
 
 def test_dependencies():

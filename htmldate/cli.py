@@ -17,13 +17,9 @@ from .utils import fetch_url
 from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
 
 
-def examine(
+def cli_examine(
     htmlstring: Union[str, HtmlElement],
-    extensive_bool: bool = True,
-    original_date: bool = False,
-    verbose_flag: bool = False,
-    mindate: Optional[Any] = None,
-    maxdate: Optional[Any] = None,
+    args: Any,
 ) -> Optional[str]:
     """Generic safeguards and triggers"""
     # safety check
@@ -36,11 +32,11 @@ def examine(
     else:
         return find_date(
             htmlstring,
-            extensive_search=extensive_bool,
-            original_date=original_date,
-            verbose=verbose_flag,
-            min_date=mindate,
-            max_date=maxdate,
+            extensive_search=not args.fast,
+            original_date=args.original,
+            verbose=args.verbose,
+            min_date=args.mindate,
+            max_date=args.maxdate,
         )
     return None
 
@@ -83,7 +79,7 @@ def parse_args(args: Any) -> Any:
 def process_args(args: Any) -> None:
     """Process the arguments passed on the command-line."""
     # verbosity
-    if args.verbose is True:
+    if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
 
     # input type
@@ -92,20 +88,14 @@ def process_args(args: Any) -> None:
         if args.URL:
             htmlstring = fetch_url(args.URL)
             if htmlstring is None:
-                sys.exit(f"# ERROR no valid result for url: {args.URL}" + "\n")
+                sys.exit(f"No data for URL: {args.URL}" + "\n")
         # unicode check
         else:
             try:
                 htmlstring = sys.stdin.read()
             except UnicodeDecodeError as err:
-                sys.exit(f"# ERROR system/buffer encoding: {str(err)}" + "\n")
-        result = examine(
-            htmlstring,
-            extensive_bool=args.fast,
-            original_date=args.original,
-            verbose_flag=args.verbose,
-            maxdate=args.maxdate,
-        )
+                sys.exit(f"Wrong buffer encoding: {str(err)}" + "\n")
+        result = cli_examine(htmlstring, args)
         if result is not None:
             sys.stdout.write(result + "\n")
 
@@ -114,17 +104,8 @@ def process_args(args: Any) -> None:
         with open(args.inputfile, mode="r", encoding="utf-8") as inputfile:
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = examine(
-                    htmltext,  # type: ignore[arg-type]
-                    extensive_bool=args.fast,
-                    original_date=args.original,
-                    verbose_flag=args.verbose,
-                    mindate=args.mindate,
-                    maxdate=args.maxdate,
-                )
-                if result is None:
-                    result = "None"
-                sys.stdout.write(line.strip() + "\t" + result + "\n")
+                result = cli_examine(htmltext, args)  # type: ignore[arg-type]
+                sys.stdout.write(f"{line.strip()}\t{result or 'None'}\n")
 
 
 def main() -> None:

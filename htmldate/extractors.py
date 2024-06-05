@@ -46,7 +46,7 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
-FAST_PREPEND = ".//*[(self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul)]"
+FAST_PREPEND = ".//*[self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
 
@@ -88,7 +88,7 @@ MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
-DISCARD_EXPRESSIONS = XPath(""".//div[@id="wm-ipp-base" or @id="wm-ipp"]""")
+DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
 # not discarded for consistency (see above):
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
