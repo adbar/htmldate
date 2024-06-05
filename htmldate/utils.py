@@ -79,18 +79,19 @@ def detect_encoding(bytesobject: bytes) -> List[str]:
     # unicode-test
     if isutf8(bytesobject):
         return ["utf-8"]
+
     guesses = []
     # additional module
     if cchardet_detect is not None:
         cchardet_guess = cchardet_detect(bytesobject)["encoding"]
         if cchardet_guess is not None:
             guesses.append(cchardet_guess.lower())
+
     # try charset_normalizer on first part, fallback on full document
     detection_results = from_bytes(bytesobject[:15000]) or from_bytes(bytesobject)
-    # return alternatives
-    if len(detection_results) > 0:
-        guesses.extend([r.encoding for r in detection_results])
-    # it cannot be utf-8 (tested above)
+    guesses.extend([r.encoding for r in detection_results])
+
+    # return alternatives, it cannot be utf-8 (tested above)
     return [g for g in guesses if g not in UNICODE_ALIASES]
 
 
@@ -149,8 +150,7 @@ def fetch_url(url: str) -> Optional[str]:
             LOGGER.error("not a 200 response: %s for URL %s", response.status, url)
         elif (
             response.data is None
-            or len(response.data) < MIN_FILE_SIZE
-            or len(response.data) > MAX_FILE_SIZE
+            or not MIN_FILE_SIZE <= len(response.data) <= MAX_FILE_SIZE
         ):
             LOGGER.error("incorrect input data for URL %s", url)
         else:

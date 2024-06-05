@@ -60,6 +60,10 @@ def is_valid_date(
 @lru_cache(maxsize=16)
 def is_valid_format(outputformat: str) -> bool:
     """Validate the output format in the settings"""
+    # test in abstracto
+    if not isinstance(outputformat, str) or "%" not in outputformat:
+        LOGGER.error("malformed output format: %s", outputformat)
+        return False
     # test with date object
     dateobject = datetime(2017, 9, 1, 0, 0)
     try:
@@ -67,10 +71,6 @@ def is_valid_format(outputformat: str) -> bool:
     # other than ValueError: Python < 3.7 only
     except (NameError, TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
-        return False
-    # test in abstracto
-    if not isinstance(outputformat, str) or "%" not in outputformat:
-        LOGGER.error("malformed output format: %s", outputformat)
         return False
     return True
 
@@ -87,7 +87,7 @@ def plausible_year_filter(
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
 
-    for item in list(occurrences):
+    for item in occurrences:
         year_match = yearpat.search(item)
         if year_match is None:
             LOGGER.debug("not a year pattern: %s", item)
@@ -119,6 +119,10 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
         reference = timestamp
     elif not options.original and timestamp > reference:
         reference = timestamp
+    # if options.original:
+    #    reference = min(reference, timestamp) if reference else timestamp
+    # else:
+    #    reference = max(reference, timestamp) if reference else timestamp
     return reference
 
 
