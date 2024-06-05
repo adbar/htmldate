@@ -87,7 +87,7 @@ def plausible_year_filter(
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
 
-    for item in occurrences:
+    for item in list(occurrences):  # prevent RuntimeError
         year_match = yearpat.search(item)
         if year_match is None:
             LOGGER.debug("not a year pattern: %s", item)
