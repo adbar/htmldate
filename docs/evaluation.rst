@@ -2,9 +2,9 @@ Evaluation
 ==========
 
 
-Although text is ubiquitous on the Web, extracting information from web pages can prove to be difficult. In most cases, immediately accessible data on retrieved webpages do not carry substantial or accurate information: neither the URL nor the server response provide a reliable way to date a web document, that is find when it was written or modified.
+Although text is ubiquitous on the Web, extracting information from web pages can be a difficult task. Easily accessible data often lacks substance or accuracy. Specifically, the URL and server response do not provide a reliable way to determine when a web document was written or last modified.
 
-Content extraction mostly draws on Document Object Model (DOM) examination, that is on considering a given HTML document as a tree structure whose nodes represent parts of the document to be operated on. Less thorough and not necessarily faster alternatives use superficial search patterns such as regular expressions in order to capture desirable excerpts.
+To overcome this challenge, content extraction typically involves the Document Object Model (DOM) of an HTML document. This approach treats the document as a tree structure, where each node represents a part of the document that can be operated on. While this method is thorough, there are alternative approaches using superficial search patterns, such as regular expressions, to capture specific text parts. However, these alternatives may not be as effective or efficient.
 
 To run the evaluation, see `evaluation README <https://github.com/adbar/htmldate/blob/master/tests/README.rst>`_.
 
@@ -34,7 +34,7 @@ Description
 
 **Evaluation**: only documents with dates that are clearly to be determined are considered for this benchmark. A given day is taken as unit of reference, meaning that results are converted to ``%Y-%m-%d`` format if necessary in order to make them comparable. The evaluation script is available on the project repository: `tests/comparison.py <https://github.com/adbar/htmldate/blob/master/tests/comparison.py>`_. To reproduce the tests just clone the repository, install all necessary packages and run the evaluation script with the data provided in the *tests* directory.
 
-**Time**: the execution time (best of 3 tests) cannot be easily compared in all cases as some solutions perform a whole series of operations which are irrelevant to this task.
+**Time**: the execution time cannot be easily compared in all cases as some solutions perform a whole series of operations which are irrelevant to this task.
 
 **Errors:** *goose3*'s output isn't always meaningful and/or in a standardized format, these cases were discarded. *news-please* seems to have trouble with some encodings (e.g. in Chinese), in which case it leads to an exception.
 
