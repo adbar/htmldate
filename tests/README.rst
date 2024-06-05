@@ -28,10 +28,10 @@ Reproducing the evaluation
 --------------------------
 
 1. Install the packages specified in ``eval-requirements.txt``
-2. Run the script ``comparison.py``
-    - python or python3 ``comparison.py --help`` for more options
+2. Run the script ``comparison.py`` (``--help`` for more options)
 
 
 Hints:
+
 - As different packages are installed it is recommended to create a virtual environment, for example with ``pyenv`` or ``venv``.
 - Some packages are slow, to evaluate ``htmldate`` only run ``python3 comparison.py --small``.
