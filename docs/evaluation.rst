@@ -2,7 +2,11 @@ Evaluation
 ==========
 
 
-Although text is ubiquitous on the Web, extracting information from web pages can prove to be difficult. In most cases, immediately accessible data on retrieved webpages do not carry substantial or accurate information: neither the URL nor the server response provide a reliable way to date a web document, that is find when it was written or modified. Content extraction mostly draws on Document Object Model (DOM) examination, that is on considering a given HTML document as a tree structure whose nodes represent parts of the document to be operated on. Less thorough and not necessarily faster alternatives use superficial search patterns such as regular expressions in order to capture desirable excerpts.
+Although text is ubiquitous on the Web, extracting information from web pages can prove to be difficult. In most cases, immediately accessible data on retrieved webpages do not carry substantial or accurate information: neither the URL nor the server response provide a reliable way to date a web document, that is find when it was written or modified.
+
+Content extraction mostly draws on Document Object Model (DOM) examination, that is on considering a given HTML document as a tree structure whose nodes represent parts of the document to be operated on. Less thorough and not necessarily faster alternatives use superficial search patterns such as regular expressions in order to capture desirable excerpts.
+
+To run the evaluation, see `evaluation README <https://github.com/adbar/htmldate/blob/master/tests/README.rst>`_.
 
 
 Alternatives

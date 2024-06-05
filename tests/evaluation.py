@@ -3,8 +3,6 @@ Bundles extraction and evaluation functions for all libraries in the benchmark.
 """
 
 import json
-
-# import logging
 import os
 import re
 
@@ -23,8 +21,6 @@ from newsplease import NewsPlease
 from htmldate import find_date
 from htmldate.validators import convert_date
 
-
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 # list the jsons containing the pages here
@@ -63,7 +59,7 @@ def load_document(filename):
             except UnicodeDecodeError:
                 pass
         if not htmlstring:
-            print("Encoding error, using binary:", mypath)
+            # print("Encoding error, using binary:", mypath)
             htmlstring = htmlbinary
     return htmlstring
 
@@ -140,17 +136,8 @@ def run_goose(htmlstring):
 
 def evaluate_result(result, data):
     """evaluate result contents"""
-    true_positives = 0
-    false_positives = 0
-    true_negatives = 0  # not in use (yet)
-    false_negatives = 0
+    # template: tp, fp, tn, fn
     datereference = data["date"]
-    if result is None and datereference is None:
-        true_negatives += 1
-    elif result is None:
-        false_negatives += 1
-    elif result == datereference:
-        true_positives += 1
-    else:
-        false_positives += 1
-    return true_positives, false_positives, true_negatives, false_negatives
+    if result is None:
+        return (0, 0, 1, 1) if datereference is None else (0, 0, 0, 1)
+    return (1, 0, 0, 0) if result == datereference else (0, 1, 0, 0)
