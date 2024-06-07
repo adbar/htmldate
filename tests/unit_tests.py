@@ -1546,6 +1546,7 @@ def test_cli():
     with patch.object(sys, "argv", testargs):
         args = parse_args(testargs)
 
+    assert cli_examine(None, args) is None
     assert cli_examine(" ", args) is None
     assert cli_examine("0" * int(10e7), args) is None
 

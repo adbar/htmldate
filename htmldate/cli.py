@@ -13,8 +13,7 @@ from lxml.html import HtmlElement
 
 from . import __version__
 from .core import find_date
-from .utils import fetch_url
-from .settings import MIN_FILE_SIZE, MAX_FILE_SIZE
+from .utils import fetch_url, is_wrong_document
 
 
 def cli_examine(
@@ -23,22 +22,17 @@ def cli_examine(
 ) -> Optional[str]:
     """Generic safeguards and triggers"""
     # safety check
-    if htmlstring is None:
-        sys.stderr.write("# ERROR: empty document\n")
-    elif len(htmlstring) > MAX_FILE_SIZE:
-        sys.stderr.write("# ERROR: file too large\n")
-    elif len(htmlstring) < MIN_FILE_SIZE:
-        sys.stderr.write("# ERROR: file too small\n")
-    else:
-        return find_date(
-            htmlstring,
-            extensive_search=not args.fast,
-            original_date=args.original,
-            verbose=args.verbose,
-            min_date=args.mindate,
-            max_date=args.maxdate,
-        )
-    return None
+    if is_wrong_document(htmlstring):
+        sys.stderr.write("# ERROR: document is empty or too large\n")
+        return None
+    return find_date(
+        htmlstring,
+        extensive_search=not args.fast,
+        original_date=args.original,
+        verbose=args.verbose,
+        min_date=args.mindate,
+        max_date=args.maxdate,
+    )
 
 
 def parse_args(args: Any) -> Any:

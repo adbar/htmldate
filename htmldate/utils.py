@@ -21,7 +21,7 @@ from charset_normalizer import from_bytes
 
 from lxml.html import HtmlElement, HTMLParser, fromstring
 
-from .settings import MAX_FILE_SIZE, MIN_FILE_SIZE
+from .settings import MAX_FILE_SIZE
 
 
 LOGGER = logging.getLogger(__name__)
@@ -39,6 +39,8 @@ HTTP_POOL = urllib3.PoolManager(retries=RETRY_STRATEGY)
 HTML_PARSER = HTMLParser(
     collect_ids=False, default_doctype=False, encoding="utf-8", remove_pis=True
 )
+
+URL_PATTERN = re.compile(r"https?://[^ ]+$", re.I)
 
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
@@ -62,6 +64,13 @@ class Extractor:
         self.max: datetime = max_date
         self.min: datetime = min_date
         self.original: bool = original_date
+
+
+def is_wrong_document(data: Any) -> bool:
+    "Check if the input object is suitable to be processed."
+    if not data or len(data) > MAX_FILE_SIZE:
+        return True
+    return False
 
 
 def isutf8(data: bytes) -> bool:
@@ -148,10 +157,7 @@ def fetch_url(url: str) -> Optional[str]:
         # safety checks
         if response.status != 200:
             LOGGER.error("not a 200 response: %s for URL %s", response.status, url)
-        elif (
-            response.data is None
-            or not MIN_FILE_SIZE <= len(response.data) <= MAX_FILE_SIZE
-        ):
+        elif is_wrong_document(response.data):
             LOGGER.error("incorrect input data for URL %s", url)
         else:
             return decode_response(response.data)
@@ -201,15 +207,12 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
         raise TypeError("incompatible input type: %s", type(htmlobject))
     # the string is a URL, download it
     if isinstance(htmlobject, str) and htmlobject.startswith("http"):
-        htmltext = None
-        if re.match(r"https?://[^ ]+$", htmlobject):
-            LOGGER.info("URL detected, downloading: %s", htmlobject)
-            htmltext = fetch_url(htmlobject)
-            if htmltext is not None:
-                htmlobject = htmltext
-        # log the error and quit
-        if htmltext is None:
-            raise ValueError("URL couldn't be processed: %s", htmlobject)
+        if URL_PATTERN.match(htmlobject):
+            LOGGER.debug("URL detected, downloading: %s", htmlobject)
+            htmlobject = fetch_url(htmlobject)  # type: ignore[assignment]
+            # log the error and quit
+            if htmlobject is None:
+                raise ValueError("URL couldn't be processed: %s", htmlobject)
     # start processing
     tree = None
     # try to guess encoding and decode file: if None then keep original
