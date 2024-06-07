@@ -40,8 +40,6 @@ HTML_PARSER = HTMLParser(
     collect_ids=False, default_doctype=False, encoding="utf-8", remove_pis=True
 )
 
-URL_PATTERN = re.compile(r"https?://[^ ]+$", re.I)
-
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
@@ -206,20 +204,22 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     if not isinstance(htmlobject, (bytes, str)):
         raise TypeError("incompatible input type: %s", type(htmlobject))
     # the string is a URL, download it
-    if isinstance(htmlobject, str) and htmlobject.startswith("http"):
-        if URL_PATTERN.match(htmlobject):
-            LOGGER.debug("URL detected, downloading: %s", htmlobject)
-            htmlobject = fetch_url(htmlobject)  # type: ignore[assignment]
-            # log the error and quit
-            if htmlobject is None:
-                raise ValueError("URL couldn't be processed: %s", htmlobject)
+    if (
+        isinstance(htmlobject, str)
+        and htmlobject.startswith("http")
+        and not " " in htmlobject
+    ):
+        LOGGER.debug("URL detected, downloading: %s", htmlobject)
+        htmlobject = fetch_url(htmlobject)  # type: ignore[assignment]
+        # log the error and quit
+        if htmlobject is None:
+            raise ValueError("URL couldn't be processed: %s", htmlobject)
     # start processing
     tree = None
     # try to guess encoding and decode file: if None then keep original
     htmlobject = decode_file(htmlobject)
     # sanity checks
     beginning = htmlobject[:50].lower()
-    check_flag = is_dubious_html(beginning)
     # repair first
     htmlobject = repair_faulty_html(htmlobject, beginning)
     # first pass: use Unicode string
@@ -237,7 +237,7 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
         tree = fromstring_bytes(htmlobject)
     # rejection test: is it (well-formed) HTML at all?
     # log parsing errors
-    if tree is not None and check_flag is True and len(tree) < 2:
+    if tree is not None and is_dubious_html(beginning) and len(tree) < 2:
         LOGGER.error(
             "parsed tree length: %s, wrong data type or not valid HTML", len(tree)
         )
