@@ -399,7 +399,7 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type
-    return datetime.strftime(target, outputformat) if target is not None else None
+    return datetime.strftime(target, outputformat) if target else None
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -496,21 +496,22 @@ def idiosyncrasies_search(
     """Look for author-written dates throughout the web page"""
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
     if match:
-        candidate = None
-        parts = [int(part) for part in match.groups() if part]
-        if len(parts) == 3:
-            if len(str(parts[0])) == 4:
-                candidate = datetime(parts[0], parts[1], parts[2])
-            elif len(str(parts[2])) in (2, 4):
-                # DD/MM/YY
-                day, month = try_swap_values(parts[0], parts[1])
-                year = correct_year(parts[2])
-                try:
-                    candidate = datetime(year, month, day)
-                except ValueError:
-                    LOGGER.debug("value error in idiosyncrasies: %s", match[0])
-            if candidate and is_valid_date(
+        parts = list(filter(None, match.groups()))
+        if len(parts) != 3:
+            return None
+
+        try:
+            if len(parts[0]) == 4:  # year in first position
+                candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+            else:  # len(parts[2]) in (2, 4):  # DD/MM/YY
+                day, month = try_swap_values(int(parts[0]), int(parts[1]))
+                year = correct_year(int(parts[2]))
+                candidate = datetime(year, month, day)
+            if is_valid_date(
                 candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
             ):
                 return candidate.strftime(options.format)  # type: ignore[union-attr]
+        except ValueError:
+            LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+
     return None
