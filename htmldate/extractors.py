@@ -497,8 +497,6 @@ def idiosyncrasies_search(
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
     if match:
         parts = list(filter(None, match.groups()))
-        if len(parts) != 3:
-            return None
 
         try:
             if len(parts[0]) == 4:  # year in first position
@@ -511,7 +509,7 @@ def idiosyncrasies_search(
                 candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
             ):
                 return candidate.strftime(options.format)  # type: ignore[union-attr]
-        except ValueError:
-            LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+        except (IndexError, ValueError):
+            LOGGER.debug("cannot process idiosyncrasies: %s", match[0])
 
     return None
