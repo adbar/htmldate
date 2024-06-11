@@ -64,7 +64,7 @@ def is_valid_format(outputformat: str) -> bool:
     dateobject = datetime(2017, 9, 1, 0, 0)
     try:
         dateobject.strftime(outputformat)
-    except ValueError as err:
+    except (TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
         return False
     # test in abstracto
