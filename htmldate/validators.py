@@ -68,7 +68,7 @@ def is_valid_format(outputformat: str) -> bool:
     except (NameError, TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
         return False
-    # test in abstracto
+    # test in abstracto (could be the only test)
     if not isinstance(outputformat, str) or "%" not in outputformat:
         LOGGER.error("malformed output format: %s", outputformat)
         return False
@@ -87,7 +87,7 @@ def plausible_year_filter(
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
 
-    for item in list(occurrences):
+    for item in list(occurrences):  # prevent RuntimeError
         year_match = yearpat.search(item)
         if year_match is None:
             LOGGER.debug("not a year pattern: %s", item)
@@ -115,10 +115,10 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if options.original and (reference == 0 or timestamp < reference):
-        reference = timestamp
-    elif not options.original and timestamp > reference:
-        reference = timestamp
+    if options.original:
+        reference = min(reference, timestamp) if reference else timestamp
+    else:
+        reference = max(reference, timestamp)
     return reference
 
 
