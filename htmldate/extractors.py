@@ -46,7 +46,7 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
-FAST_PREPEND = ".//*[(self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul)]"
+FAST_PREPEND = ".//*[self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
 
@@ -88,7 +88,7 @@ MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
-DISCARD_EXPRESSIONS = XPath(""".//div[@id="wm-ipp-base" or @id="wm-ipp"]""")
+DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
 # not discarded for consistency (see above):
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
@@ -251,11 +251,8 @@ def correct_year(year: int) -> int:
 
 
 def try_swap_values(day: int, month: int) -> Tuple[int, int]:
-    """Swap day and month values if it seems feaaible."""
-    # If month is more than 12, swap it with the day
-    if month > 12 and day <= 12:
-        day, month = month, day
-    return day, month
+    """Swap day and month values if it seems feasible."""
+    return (month, day) if month > 12 and day <= 12 else (day, month)
 
 
 def regex_parse(string: str) -> Optional[datetime]:
@@ -266,13 +263,13 @@ def regex_parse(string: str) -> Optional[datetime]:
     match = LONG_TEXT_PATTERN.search(string)
     if not match:
         return None
+    groups = (
+        ("day", "month", "year")
+        if match.lastgroup == "year"
+        else ("day2", "month2", "year2")
+    )
     # process and return
     try:
-        groups = (
-            ("day", "month", "year")
-            if match.lastgroup == "year"
-            else ("day2", "month2", "year2")
-        )
         day, month, year = (
             int(match.group(groups[0])),
             int(TEXT_MONTHS[match.group(groups[1]).lower().strip(".")]),
@@ -402,7 +399,7 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type
-    return datetime.strftime(target, outputformat) if target is not None else None
+    return datetime.strftime(target, outputformat) if target else None
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -434,10 +431,8 @@ def try_date_expr(
         return customresult
 
     # use slow but extensive search
-    if extensive_search:
-        # additional filters to prevent computational cost
-        if not TEXT_DATE_PATTERN.search(string):
-            return None
+    # additional filters to prevent computational cost
+    if extensive_search and TEXT_DATE_PATTERN.search(string):
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
         if is_valid_date(
@@ -455,12 +450,10 @@ def img_search(
     """Skim through image elements"""
     element = tree.find('.//meta[@property="og:image"][@content]')
     if element is not None:
-        result = extract_url_date(
+        return extract_url_date(
             element.get("content"),
             options,
         )
-        if result is not None:
-            return result
     return None
 
 
@@ -504,20 +497,19 @@ def idiosyncrasies_search(
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
     if match:
         parts = list(filter(None, match.groups()))
-        if len(parts) == 3:
-            candidate = None
-            if len(parts[0]) == 4:
+
+        try:
+            if len(parts[0]) == 4:  # year in first position
                 candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
-            elif len(parts[2]) in (2, 4):
-                # DD/MM/YY
+            else:  # len(parts[2]) in (2, 4):  # DD/MM/YY
                 day, month = try_swap_values(int(parts[0]), int(parts[1]))
                 year = correct_year(int(parts[2]))
-                try:
-                    candidate = datetime(year, month, day)
-                except ValueError:
-                    LOGGER.debug("value error in idiosyncrasies: %s", match[0])
+                candidate = datetime(year, month, day)
             if is_valid_date(
                 candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
             ):
                 return candidate.strftime(options.format)  # type: ignore[union-attr]
+        except (IndexError, ValueError):
+            LOGGER.debug("cannot process idiosyncrasies: %s", match[0])
+
     return None
