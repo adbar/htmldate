@@ -14,14 +14,6 @@ import logging
 
 from datetime import datetime
 
-try:
-    datetime.fromisoformat  # type: ignore[attr-defined]
-# Python 3.6
-except AttributeError:  # pragma: no cover
-    from backports.datetime_fromisoformat import MonkeyPatch  # type: ignore
-
-    MonkeyPatch.patch_fromisoformat()
-
 from .core import find_date
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
