@@ -3,38 +3,9 @@ Seamlessly extract the date of web pages based on URL, header or body.
 http://github.com/adbar/htmldate
 """
 
-import re
 import sys
 
-from pathlib import Path
 from setuptools import setup
-
-
-# some problems with installation solved this way
-extras = {
-    "speed": [
-        "backports-datetime-fromisoformat; python_version < '3.11'",
-        "faust-cchardet >= 2.1.19",
-        "urllib3[brotli]",
-    ],
-}
-extras["all"] = extras["speed"]
-
-
-def get_long_description():
-    "Return the README"
-    with open("README.md", "r", encoding="utf-8") as filehandle:
-        long_description = filehandle.read()
-    # long_description += "\n\n"
-    # with open("CHANGELOG.md", encoding="utf8") as f:
-    #    long_description += f.read()
-    return long_description
-
-
-def get_version(package):
-    "Return package version as listed in `__version__` in `init.py`"
-    initfile = Path(package, "__init__.py").read_text()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", initfile)[1]
 
 
 # add argument to compile with mypyc
@@ -48,6 +19,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "--use-mypyc":
             "htmldate/__init__.py",
             "htmldate/core.py",
             "htmldate/extractors.py",
+            "htmldate/meta.py",
             "htmldate/settings.py",
             "htmldate/utils.py",
             "htmldate/validators.py",
@@ -60,74 +32,6 @@ else:
 
 
 setup(
-    name="htmldate",
-    version=get_version("htmldate"),
-    description="Fast and robust extraction of original and updated publication dates from URLs and web pages.",
-    long_description=get_long_description(),
-    long_description_content_type="text/markdown",
-    classifiers=[
-        # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "Development Status :: 5 - Production/Stable",
-        # 'Development Status :: 6 - Mature',
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Information Technology",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
-        "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Text Processing :: Linguistic",
-        "Topic :: Text Processing :: Markup :: HTML",
-    ],
-    keywords=[
-        "datetime",
-        "date-parser",
-        "entity-extraction",
-        "html-extraction",
-        "html-parsing",
-        "metadata-extraction",
-        "webarchives",
-        "web-scraping",
-    ],
-    url="https://htmldate.readthedocs.io",
-    project_urls={
-        "Source": "https://github.com/adbar/htmldate",
-        "Tracker": "https://github.com/adbar/htmldate/issues",
-        "Blog": "https://adrien.barbaresi.eu/blog/tag/htmldate.html",
-    },
-    author="Adrien Barbaresi",
-    author_email="barbaresi@bbaw.de",
-    license="Apache-2.0",
-    packages=["htmldate"],
-    include_package_data=True,
-    python_requires=">=3.8",
-    install_requires=[
-        "charset_normalizer >= 3.3.2",
-        "dateparser >= 1.1.2",  # 1.1.3+ slower
-        # see tests on Github Actions
-        "lxml == 4.9.2 ; platform_system == 'Darwin' and python_version <= '3.8'",
-        "lxml >= 5.2.2, < 6 ; platform_system != 'Darwin' or python_version > '3.8'",
-        "python-dateutil >= 2.8.2",
-        "urllib3 >= 1.26, < 3",
-    ],
-    extras_require=extras,
-    entry_points={
-        "console_scripts": ["htmldate=htmldate.cli:main"],
-    },
-    # platforms='any',
-    tests_require=["pytest"],
-    zip_safe=False,
-    # optional use of mypyc
+    # mypyc or not
     ext_modules=ext_modules,
 )
