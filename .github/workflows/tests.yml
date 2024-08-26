@@ -75,13 +75,13 @@ jobs:
         black --check --diff htmldate
         mypy -p htmldate
 
-    - name: Install full dependencies
-      if: ${{ matrix.env.MINIMAL == 'false'}}
-      run: python -m pip install -e ".[all]"
-
     - name: Install minimal dependencies
       if: ${{ matrix.env.MINIMAL == 'true'}}
       run: python -m pip install -e "."
+
+    - name: Install full dependencies
+      if: ${{ matrix.env.MINIMAL == 'false'}}
+      run: python -m pip install -e ".[all]"
 
     - name: Test with pytest
       run: |
