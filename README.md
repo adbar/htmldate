@@ -93,11 +93,13 @@ page](https://htmldate.readthedocs.io/en/latest/evaluation.html).
 ## Installation
 
 Htmldate is tested on Linux, macOS and Windows systems, it is compatible
-with Python 3.6 upwards. It can notably be installed with `pip` (`pip3`
+with Python 3.8 upwards. It can notably be installed with `pip` (`pip3`
 where applicable) from the PyPI package repository:
 
 -   `pip install htmldate`
 -   (optionally) `pip install htmldate[speed]`
+
+The last version to support Python 3.6 and 3.7 is `htmldate==1.8.1`.
 
 ## Documentation
 

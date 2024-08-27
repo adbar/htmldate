@@ -51,7 +51,7 @@ Change the output to a format known to Python's ``datetime`` module, the default
     '2016-12-23T05:11:00-0500'
 
 
-.. autofunction:: htmldate.validators.output_format_validator
+.. autofunction:: htmldate.validators.is_valid_format
 
 
 Original date
@@ -88,8 +88,6 @@ Clearing caches
     >>> from htmldate.meta import reset_caches
     # at a given point in time
     >>> reset_caches()
-
-*New in version 1.3.0.*
 
 
 Tests

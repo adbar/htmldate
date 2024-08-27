@@ -26,17 +26,15 @@ Useful internal functions
 
 .. autofunction:: htmldate.extractors.extract_url_date
 
-.. autofunction:: htmldate.extractors.extract_partial_url_date
-
 .. autofunction:: htmldate.extractors.external_date_parser
 
 
 Helpers
 -------
 
-.. autofunction:: htmldate.extractors.convert_date
+.. autofunction:: htmldate.validators.is_valid_date
 
-.. autofunction:: htmldate.extractors.date_validator
+.. autofunction:: htmldate.validators.convert_date
 
 .. autofunction:: htmldate.utils.load_html
 

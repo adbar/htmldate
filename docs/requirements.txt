@@ -1,4 +1,4 @@
 # version required
-sphinx>=7.2.6
+sphinx>=8.0.2
 # without version specifier
 htmldate
