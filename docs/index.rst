@@ -96,13 +96,16 @@ Installation
 Main package
 ~~~~~~~~~~~~
 
-This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.6 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.8 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 
     $ pip install htmldate # pip3 install on systems where both Python 2 and 3 are installed
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
+
+
+The last version to support Python 3.6 and 3.7 is ``htmldate==1.8.1``.
 
 
 Optional

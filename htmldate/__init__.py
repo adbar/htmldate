@@ -7,7 +7,7 @@ __title__ = "htmldate"
 __author__ = "Adrien Barbaresi"
 __license__ = "Apache-2.0"
 __copyright__ = "Copyright 2017-2024, Adrien Barbaresi"
-__version__ = "1.8.1"
+__version__ = "1.9.0"
 
 
 import logging

@@ -1,6 +1,12 @@
 ## Changelog
 
 
+## 1.9.0
+- focus on Python 3.8+, use pyproject.toml file and update setup (#150, #153, #160)
+- revamp tests and evaluation (#151)
+- simplify code parts (#152)
+- docs: convert readme to markdown (#147)
+
 ## 1.8.1
 - fix: more restrictive YYYYMM pattern to prevent ValueError with @b3n4kh (#145)
 - maintenance: add pre-commit with checks with @nadasuhailAyesh12 (#142)

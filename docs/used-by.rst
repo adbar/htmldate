@@ -64,10 +64,12 @@ Citations in papers
 Publications citing Htmldate
 ----------------------------
 
+- Ariyarathne, G., & Nwala, A. C. (2024). 3DLNews: A Three-decade Dataset of US Local News Articles. arXiv preprint arXiv:2408.04716.
 - Grabovoy, A., Bakhteev, O., & Chekhovich, Y. (2021). "The automatic approach for scientific papers dating," 2021 Ivannikov Ispras Open Conference (ISPRAS), pp. 107-113, IEEE, DOI: 10.1109/ISPRAS53967.2021.00020.
-Hanley, H. W., Kumar, D., & Durumeric, Z. (2023). Happenstance: Utilizing Semantic Search to Track Russian State Media Narratives about the Russo-Ukrainian War On Reddit. In Proceedings of the international AAAI conference on web and social media (Vol. 17, pp. 327-338).
-- Hanley, H. W., Kumar, D., & Durumeric, Z. (2023). A Golden Age: Conspiracy Theories' Relationship with Misinformation Outlets, News Media, and the Wider Internet. arXiv preprint arXiv:2301.10880.
+- Hanley, H. W., Kumar, D., & Durumeric, Z. (2023). Happenstance: Utilizing Semantic Search to Track Russian State Media Narratives about the Russo-Ukrainian War On Reddit. In Proceedings of the international AAAI conference on web and social media (Vol. 17, pp. 327-338).
+- Hanley, H. W., Kumar, D., & Durumeric, Z. (2023). A Golden Age: Conspiracy Theories' Relationship with Misinformation Outlets, News Media, and the Wider Internet. Proceedings of the ACM on Human-Computer Interaction, 7(CSCW2), 1-33.
 - Kupi, M. (2021). "Late to the Party? Agile Methods in British and German Government Institutions", Master’s thesis, Hertie School Berlin.
+- Olier, J. S., & Spadavecchia, C. (2024). Migration and emotions in the media: can socioeconomic indicators predict emotions in images associated with immigrants?. Journal of Computational Social Science, 1-32.
 - Smits, T., & Ros, R. (2021). "Distant reading 940,000 online circulations of 26 iconic photographs", New Media & Society, DOI: 10.1177/14614448211049.
 - Smits, T., & Ros, R. (2023). Space and Place in Online Visual Memory: The Tank Man in Hong Kong. The Visual Memory of Protest, Amsterdam University Press.
 - Stefanovitch, N. (2022). Team TMA at SemEval-2022 Task 8: Lightweight and Language-Agnostic News Similarity Classifier. In Proceedings of the 16th International Workshop on Semantic Evaluation (SemEval-2022) (pp. 1178-1183).
@@ -89,7 +91,6 @@ Software ecosystem
 
 
 .. image:: software-ecosystem.png
-    :alt: Software ecosystem 
+    :alt: Software ecosystem
     :align: center
     :width: 65%
-
