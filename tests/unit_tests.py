@@ -1396,6 +1396,13 @@ def test_search_html():
     )
     assert (
         search_page(
+            "<html><body><p> &copy; Copyright 1999-2020 Asia Pacific Star. All rights reserved.</p></body></html>",
+            options,
+        )
+        == "2020-01-01"
+    )
+    assert (
+        search_page(
             '<html><head><link xmlns="http://www.w3.org/1999/xhtml"/></head></html>',
             options,
         )

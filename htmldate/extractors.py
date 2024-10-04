@@ -190,7 +190,7 @@ TWO_COMP_REGEX = re.compile(rf"({MONTH_RE})[/.-]({YEAR_RE})")
 # extensive search patterns
 YEAR_PATTERN = re.compile(rf"^\D?({YEAR_RE})")
 COPYRIGHT_PATTERN = re.compile(
-    rf"(?:©|\&copy;|Copyright|\(c\))\D*(?:{YEAR_RE}-)?({YEAR_RE})\D"
+    rf"(?:©|\&copy;|Copyright|\(c\))\D*(?:{YEAR_RE})?-?({YEAR_RE})\D"
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
 THREE_CATCH = re.compile(r"([0-9]{4})/([0-9]{2})/([0-9]{2})")
