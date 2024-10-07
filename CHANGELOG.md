@@ -1,6 +1,10 @@
 ## Changelog
 
 
+## 1.9.1
+- fix: more robust copyright parsing (#165)
+- cleaning fix: safer element removal (2735620)
+
 ## 1.9.0
 - focus on Python 3.8+, use pyproject.toml file and update setup (#150, #153, #160)
 - revamp tests and evaluation (#151)
