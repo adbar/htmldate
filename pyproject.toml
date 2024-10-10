@@ -78,6 +78,7 @@ htmldate = "htmldate.cli:main"
 [project.optional-dependencies]
 dev = [
     "black",
+    "flake8",
     "mypy",
     "pytest",
     "pytest-cov",
@@ -96,5 +97,5 @@ all = [
     "htmldate[speed]",
 ]
 
-# [tool.pytest.ini_options]
-# testpaths = "tests/*test*.py"
+[tool.pytest.ini_options]
+testpaths = "tests/*test*.py"

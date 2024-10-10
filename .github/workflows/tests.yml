@@ -22,13 +22,9 @@ jobs:
         include:
         # custom python versions
         - os: macos-latest
-          python-version: 3.8
-        - os: macos-latest
           python-version: "3.10"
         - os: macos-latest
           python-version: "3.12"
-        - os: windows-latest
-          python-version: 3.8
         - os: windows-latest
           python-version: "3.10"
         - os: windows-latest
@@ -59,10 +55,12 @@ jobs:
     # package setup
     - uses: actions/checkout@v4
 
+    - name: Install dependencies
+      run: python -m pip install -e ".[dev]"
+
     # tests
     - name: Lint with flake8
       run: |
-        python -m pip install --upgrade flake8
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
@@ -71,12 +69,8 @@ jobs:
     - name: Code format and type checking
       if: ${{ matrix.python-version == '3.11' }}
       run: |
-        python -m pip install --upgrade .[dev]
         black --check --diff htmldate
         mypy -p htmldate
-
-    - name: Install minimal dependencies
-      run: python -m pip install -e "."
 
     - name: Install full dependencies
       if: ${{ matrix.env.MINIMAL == 'false'}}
@@ -84,12 +78,11 @@ jobs:
 
     - name: Test with pytest
       run: |
-        python -m pip install --upgrade pytest pytest-cov
-        pytest --cov=./ --cov-report=xml
+        python -m pytest --cov=./ --cov-report=xml
 
     # coverage
     - name: Upload coverage to Codecov
-      if: ${{ matrix.env.MINIMAL == 'false'}}
+      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.11' }}
       uses: codecov/codecov-action@v4
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
