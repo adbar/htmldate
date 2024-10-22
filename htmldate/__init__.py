@@ -12,8 +12,8 @@ __version__ = "1.9.1"
 
 import logging
 
-from datetime import datetime
-
 from .core import find_date
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
+
+__all__ = ["find_date"]

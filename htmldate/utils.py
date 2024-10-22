@@ -207,7 +207,7 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     if (
         isinstance(htmlobject, str)
         and htmlobject.startswith("http")
-        and not " " in htmlobject
+        and " " not in htmlobject
     ):
         LOGGER.debug("URL detected, downloading: %s", htmlobject)
         htmlobject = fetch_url(htmlobject)  # type: ignore[assignment]
