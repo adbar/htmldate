@@ -4,6 +4,7 @@
 ## 1.9.2
 - maintenance: explicit re-export and code quality (#168)
 - setup: remove pytest.ini (#167)
+- update dependencies
 
 ## 1.9.1
 - fix: more robust copyright parsing (#165)
