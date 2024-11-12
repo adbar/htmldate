@@ -1,6 +1,10 @@
 ## Changelog
 
 
+## 1.9.2
+- maintenance: explicit re-export and code quality (#168)
+- setup: remove pytest.ini (#167)
+
 ## 1.9.1
 - fix: more robust copyright parsing (#165)
 - cleaning fix: safer element removal (2735620)
