@@ -73,7 +73,8 @@ DATE_EXPRESSIONS = """
     contains(@class, 'fa-clock-o') or
     contains(@class, 'fa-calendar') or
     contains(@class, 'fecha') or
-    contains(@class, 'parution')
+    contains(@class, 'parution') or
+    contains(@id, 'footer-info-lastmod')
 ] |
 .//footer | .//small
 """
@@ -173,7 +174,7 @@ DISCARD_PATTERNS = re.compile(
 
 # use of regex module for speed?
 TEXT_PATTERNS = re.compile(
-    r'(?:date[^0-9"]{,20}|updated|published|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
+    r'(?:date[^0-9"]{,20}|updated|last-modified|published|posted|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
     r"(?:Datum|Stand|Veröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
     r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
