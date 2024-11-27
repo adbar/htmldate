@@ -84,7 +84,7 @@ jobs:
 
     # coverage
     - name: Upload coverage to Codecov
-      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.12' }}
+      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.13' }}
       uses: codecov/codecov-action@v4
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
