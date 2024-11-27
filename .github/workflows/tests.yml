@@ -17,19 +17,23 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.8, 3.9, "3.10", "3.11", "3.12", "3.13"]
         env: [{ MINIMAL: "true" }, { MINIMAL: "false" }]
         include:
         # custom python versions
+        - os: ubuntu-20.04
+          python-version: 3.8
+        - os: macos-13
+          python-version: 3.8
         - os: macos-latest
-          python-version: "3.10"
-        - os: macos-latest
-          python-version: "3.12"
+          python-version: "3.13"
         - os: windows-latest
-          python-version: "3.10"
+          python-version: "3.11"
         - os: windows-latest
-          python-version: "3.12"
+          python-version: "3.13"
     steps:
+    - uses: actions/checkout@v4
+
     # Python and pip setup
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -41,8 +45,9 @@ jobs:
 
     - name: Get pip cache dir
       id: pip-cache
+      shell: bash
       run: |
-        echo "::set-output name=dir::$(pip cache dir)"
+        echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
 
     - name: pip cache
       uses: actions/cache@v4
@@ -52,11 +57,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    # package setup
-    - uses: actions/checkout@v4
-
     - name: Install dependencies
-      run: python -m pip install -e ".[dev]"
+      run: python -m pip install --upgrade -e ".[dev]"
 
     # tests
     - name: Lint with flake8
@@ -67,7 +69,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Code format and type checking
-      if: ${{ matrix.python-version == '3.11' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         black --check --diff htmldate
         mypy -p htmldate
@@ -82,7 +84,7 @@ jobs:
 
     # coverage
     - name: Upload coverage to Codecov
-      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.11' }}
+      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.13' }}
       uses: codecov/codecov-action@v4
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
