@@ -371,7 +371,7 @@ def custom_parse(
                 candidate = datetime(
                     int(match.group("year2")), int(match.group("month2")), 1
                 )
-        except ValueError:  # pragma: no cover
+        except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
             if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
@@ -384,7 +384,7 @@ def custom_parse(
         try:
             LOGGER.debug("custom parse result: %s", dateobject)
             return dateobject.strftime(outputformat)  # type: ignore
-        except ValueError as err:
+        except ValueError as err:  # pragma: no cover
             LOGGER.error("value error during conversion: %s %s", string, err)
 
     return None

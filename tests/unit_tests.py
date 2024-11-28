@@ -958,6 +958,8 @@ def test_regex_parse():
         custom_parse("January 12 1098", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     )
     assert custom_parse("1998-01", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse("01-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse("13-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     assert custom_parse("10.10.98", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse("12122004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     assert (
