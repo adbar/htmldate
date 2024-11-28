@@ -958,6 +958,8 @@ def test_regex_parse():
         custom_parse("January 12 1098", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     )
     assert custom_parse("1998-01", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse("01-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
+    assert custom_parse("13-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     assert custom_parse("10.10.98", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse("12122004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     assert (
@@ -1669,10 +1671,12 @@ def test_dependencies():
 
 def test_deferred():
     "Test deferred extraction"
-    htmlstring = '<html><head><meta property="og:published_time" content="2017-09-01"/></head><body></body></html>'
-    url = "https://example.org/2017/08/30/this.html"
-    assert find_date(htmlstring, url=url, deferred_url_extractor=True) == "2017-09-01"
-    assert find_date(htmlstring, url=url, deferred_url_extractor=False) == "2017-08-30"
+    htmlstring = """<html><head>
+    <link rel="canonical" href="https://example.org/2017/08/30/this.html"/>
+    <meta property="og:published_time" content="2017-09-01"/>
+    </head><body></body></html>"""
+    assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
+    assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
 
 
 if __name__ == "__main__":

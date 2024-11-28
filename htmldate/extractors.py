@@ -22,7 +22,7 @@ from lxml.html import HtmlElement
 # own
 from .settings import CACHE_SIZE
 from .utils import Extractor, trim_text
-from .validators import convert_date, is_valid_date
+from .validators import convert_date, is_valid_date, validate_and_convert
 
 
 LOGGER = logging.getLogger(__name__)
@@ -371,7 +371,7 @@ def custom_parse(
                 candidate = datetime(
                     int(match.group("year2")), int(match.group("month2")), 1
                 )
-        except ValueError:  # pragma: no cover
+        except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
         else:
             if is_valid_date(candidate, "%Y-%m-%d", earliest=min_date, latest=max_date):
@@ -380,14 +380,9 @@ def custom_parse(
 
     # 5. Try the other regex pattern
     dateobject = regex_parse(string)
-    if is_valid_date(dateobject, outputformat, earliest=min_date, latest=max_date):
-        try:
-            LOGGER.debug("custom parse result: %s", dateobject)
-            return dateobject.strftime(outputformat)  # type: ignore
-        except ValueError as err:
-            LOGGER.error("value error during conversion: %s %s", string, err)
-
-    return None
+    return validate_and_convert(
+        dateobject, outputformat, earliest=min_date, latest=max_date
+    )
 
 
 def external_date_parser(string: str, outputformat: str) -> Optional[str]:

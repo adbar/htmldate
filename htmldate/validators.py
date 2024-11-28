@@ -57,6 +57,22 @@ def is_valid_date(
     return False
 
 
+def validate_and_convert(
+    date_input: Optional[Union[datetime, str]],
+    outputformat: str,
+    earliest: datetime,
+    latest: datetime,
+) -> Optional[str]:
+    "Robust validation and conversion for plausible dates."
+    if is_valid_date(date_input, outputformat, earliest, latest):
+        try:
+            LOGGER.debug("custom parse result: %s", date_input)
+            return date_input.strftime(outputformat)  # type: ignore
+        except ValueError as err:  # pragma: no cover
+            LOGGER.error("value error during conversion: %s %s", date_input, err)
+    return None
+
+
 @lru_cache(maxsize=16)
 def is_valid_format(outputformat: str) -> bool:
     """Validate the output format in the settings"""
