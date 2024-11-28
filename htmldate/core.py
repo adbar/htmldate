@@ -718,16 +718,18 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
     )
     if bestmatch is not None:
         dateobject = datetime(int(bestmatch[1]), int(bestmatch[2]), 1)
-        if is_valid_date(
-            dateobject, "%Y-%m-%d", earliest=options.min, latest=options.max
-        ) and (copyear == 0 or dateobject.year >= copyear):
-            LOGGER.debug(
-                'date found for pattern "%s": %s, %s',
-                YYYYMM_PATTERN,
-                bestmatch[1],
-                bestmatch[2],
+        if copyear == 0 or dateobject.year >= copyear:
+            result = validate_and_convert(
+                dateobject, options.format, earliest=options.min, latest=options.max
             )
-            return dateobject.strftime(options.format)
+            if result is not None:
+                LOGGER.debug(
+                    'date found for pattern "%s": %s, %s',
+                    YYYYMM_PATTERN,
+                    bestmatch[1],
+                    bestmatch[2],
+                )
+                return result
 
     # 2 components, second option
     candidates = plausible_year_filter(
@@ -765,12 +767,12 @@ def search_page(htmlstring: str, options: Extractor) -> Optional[str]:
     # try full-blown text regex on all HTML?
     dateobject = regex_parse(htmlstring)  # type: ignore[assignment]
     # todo: find all candidates and disambiguate?
-    if copyear == 0 or dateobject.year >= copyear:
+    if copyear == 0 or (dateobject and dateobject.year >= copyear):
         result = validate_and_convert(
             dateobject, options.format, earliest=options.min, latest=options.max
         )
-    if result is not None:
-        return result
+        if result is not None:
+            return result
 
     # catchall: copyright mention
     if copyear != 0:
