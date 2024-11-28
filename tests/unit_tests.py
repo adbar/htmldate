@@ -1675,7 +1675,6 @@ def test_deferred():
     <link rel="canonical" href="https://example.org/2017/08/30/this.html"/>
     <meta property="og:published_time" content="2017-09-01"/>
     </head><body></body></html>"""
-    url = "https://example.org/2017/08/30/this.html"
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
 
