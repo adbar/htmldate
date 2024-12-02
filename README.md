@@ -114,18 +114,19 @@ license](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 Versions prior to v1.8.0 are under GPLv3+ license.
 
-## Author
+## Context
 
-Initially launched to create text databases for research purposes,
+Initially launched to create text databases for research purposes
+at the Berlin-Brandenburg Academy of Sciences (DWDS and ZDL units),
 this project continues to be maintained, but its future development
 depends on community support.
 
-If you value this software or depend on it for your product, consider
-sponsoring it or contributing to its codebase. Your support will
+If you value this software or depend on it for your product, **consider
+sponsoring it or contributing to its codebase**. Your support will
 help maintain and enhance this popular package, ensuring its growth,
 robustness, and accessibility for developers and users around the world.
 
-Reach out via the software repository or the `contact page <https://adrien.barbaresi.eu/>`_
+Reach out via the software repository or the [contact page](https://adrien.barbaresi.eu/)
 for inquiries, collaborations, or feedback.
 
 Extracting and pre-processing web texts to meet the exacting standards
