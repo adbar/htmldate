@@ -124,7 +124,7 @@ this project continues to be maintained but its future development
 depends on community support.
 
 **If you value this software or depend on it for your product, consider
-sponsoring it or contributing to its codebase**. Your support will
+sponsoring it and contributing to its codebase**. Your support will
 help maintain and enhance this popular package, ensuring its growth,
 robustness, and accessibility for developers and users around the world.
 
