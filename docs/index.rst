@@ -34,7 +34,14 @@ htmldate: find the publication date of web pages
 
 |
 
-Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
+Find **original and updated publication dates** of any web page.
+It is often not possible to do it using just the URL or the server response.
+
+**On the command-line or with Python**, all the steps needed from web page
+download to HTML parsing, scraping, and text analysis are included.
+
+The package is used in production on millions of documents and integrated into
+`thousands of projects <https://github.com/adbar/htmldate/network/dependents>`_.
 
 
 In a nutshell
@@ -246,10 +253,22 @@ This package is distributed under the `Apache 2.0 license <https://www.apache.or
 Versions prior to v1.8.0 are under GPLv3+ license.
 
 
-Author
-------
+Context
+-------
 
-This effort is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing). Extracting and pre-processing web texts to the exacting standards of scientific research presents a substantial challenge for those who conduct such research. There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
+Initially launched to create text databases for research purposes
+at the Berlin-Brandenburg Academy of Sciences (DWDS and ZDL units),
+this project continues to be maintained but its future development
+depends on community support.
+
+**If you value this software or depend on it for your product, consider
+sponsoring it and contributing to its codebase**. Your support will
+help maintain and enhance this popular package, ensuring its growth,
+robustness, and accessibility for developers and users around the world.
+
+Reach out via the software repository or the `contact page
+<https://adrien.barbaresi.eu/>`_ for inquiries, collaborations, or feedback.
+
 
 .. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
@@ -277,8 +296,6 @@ This effort is part of methods to derive information from web documents in order
 -  Barbaresi, A. "`htmldate: A Python package to extract publication dates from web pages <https://doi.org/10.21105/joss.02439>`_", Journal of Open Source Software, 5(51), 2439, 2020. DOI: 10.21105/joss.02439
 -  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://hal.archives-ouvertes.fr/hal-02447264/document>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
 -  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
-
-You can contact me via my `contact page <https://adrien.barbaresi.eu/>`_ or `GitHub <https://github.com/adbar>`_.
 
 
 Contributing

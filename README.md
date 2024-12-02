@@ -13,12 +13,14 @@
 
 <br/>
 
-Find **original and updated publication dates** of any web page. **On
-the command-line or with Python**, all the steps needed from web page
-download to HTML parsing, scraping, and text analysis are included. The
-package is used in production on millions of documents and integrated by
-[multiple
-libraries](https://github.com/adbar/htmldate/network/dependents).
+Find **original and updated publication dates** of any web page.
+It is often not possible to do it using just the URL or the server response.
+
+**On the command-line or with Python**, all the steps needed from web page
+download to HTML parsing, scraping, and text analysis are included.
+
+The package is used in production on millions of documents and integrated into
+[thousands of projects](https://github.com/adbar/htmldate/network/dependents).
 
 
 ## In a nutshell
@@ -114,17 +116,20 @@ license](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 Versions prior to v1.8.0 are under GPLv3+ license.
 
-## Author
+## Context
 
-This project is part of methods to derive information from web documents
-in order to build [text databases for
-research](https://www.dwds.de/d/k-web) (chiefly linguistic analysis and
-natural language processing).
+Initially launched to create text databases for research purposes
+at the Berlin-Brandenburg Academy of Sciences (DWDS and ZDL units),
+this project continues to be maintained but its future development
+depends on community support.
 
-Extracting and pre-processing web texts to meet the exacting standards
-is a significant challenge. It is often not possible to reliably
-determine the date of publication or modification using either the URL
-or the server response. For more information:
+**If you value this software or depend on it for your product, consider
+sponsoring it and contributing to its codebase**. Your support will
+help maintain and enhance this popular package, ensuring its growth,
+robustness, and accessibility for developers and users around the world.
+
+Reach out via the software repository or the [contact page](https://adrien.barbaresi.eu/)
+for inquiries, collaborations, or feedback.
 
 [![JOSS article reference DOI: 10.21105/joss.02439](https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen)](https://doi.org/10.21105/joss.02439)
 [![Zenodo archive DOI: 10.5281/zenodo.3459599](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.3459599-blue)](https://doi.org/10.5281/zenodo.3459599)
@@ -155,9 +160,6 @@ or the server response. For more information:
     corpora](https://hal.archives-ouvertes.fr/hal-01371704v2/document)\",
     Proceedings of the [10th Web as Corpus Workshop
     (WAC-X)](https://www.sigwac.org.uk/wiki/WAC-X), 2016.
-
-You can contact me via my [contact page](https://adrien.barbaresi.eu/)
-or [GitHub](https://github.com/adbar).
 
 ## Contributing
 
