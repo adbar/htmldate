@@ -34,7 +34,14 @@ htmldate: find the publication date of web pages
 
 |
 
-Find original and updated publication dates of any web page. From the command-line or within Python, all the steps needed from web page download to HTML parsing, scraping, and text analysis are included.
+Find **original and updated publication dates** of any web page.
+It is often not possible to do it using just the URL or the server response.
+
+**On the command-line or with Python**, all the steps needed from web page
+download to HTML parsing, scraping, and text analysis are included.
+
+The package is used in production on millions of documents and integrated into
+`thousands of projects <https://github.com/adbar/htmldate/network/dependents>`_.
 
 
 In a nutshell
@@ -262,10 +269,6 @@ robustness, and accessibility for developers and users around the world.
 Reach out via the software repository or the `contact page
 <https://adrien.barbaresi.eu/>`_ for inquiries, collaborations, or feedback.
 
-Extracting and pre-processing web texts to meet the exacting standards
-is a significant challenge. It is often not possible to reliably
-determine the date of publication or modification using either the URL
-or the server response. For more information:
 
 .. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
