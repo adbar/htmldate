@@ -116,10 +116,17 @@ Versions prior to v1.8.0 are under GPLv3+ license.
 
 ## Author
 
-This project is part of methods to derive information from web documents
-in order to build [text databases for
-research](https://www.dwds.de/d/k-web) (chiefly linguistic analysis and
-natural language processing).
+Initially launched to create text databases for research purposes,
+this project continues to be maintained, but its future development
+depends on community support.
+
+If you value this software or depend on it for your product, consider
+sponsoring it or contributing to its codebase. Your support will
+help maintain and enhance this popular package, ensuring its growth,
+robustness, and accessibility for developers and users around the world.
+
+Reach out via the software repository or the `contact page <https://adrien.barbaresi.eu/>`_
+for inquiries, collaborations, or feedback.
 
 Extracting and pre-processing web texts to meet the exacting standards
 is a significant challenge. It is often not possible to reliably

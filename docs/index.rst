@@ -249,7 +249,19 @@ Versions prior to v1.8.0 are under GPLv3+ license.
 Author
 ------
 
-This effort is part of methods to derive information from web documents in order to build `text databases for research <https://www.dwds.de/d/k-web>`_ (chiefly linguistic analysis and natural language processing). Extracting and pre-processing web texts to the exacting standards of scientific research presents a substantial challenge for those who conduct such research. There are web pages for which neither the URL nor the server response provide a reliable way to find out when a document was published or modified. For more information:
+Initially launched to create text databases for research purposes,
+this project continues to be maintained, but its future development
+depends on community support.
+
+If you value this software or depend on it for your product, consider
+sponsoring it or contributing to its codebase. Your support will
+help maintain and enhance this popular package, ensuring its growth,
+robustness, and accessibility for developers and users around the world.
+
+Extracting and pre-processing web texts to meet the exacting standards
+is a significant challenge. It is often not possible to reliably
+determine the date of publication or modification using either the URL
+or the server response. For more information:
 
 .. image:: https://img.shields.io/badge/JOSS-10.21105%2Fjoss.02439-brightgreen
    :target: https://doi.org/10.21105/joss.02439
