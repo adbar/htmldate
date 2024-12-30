@@ -116,7 +116,7 @@ license](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 Versions prior to v1.8.0 are under GPLv3+ license.
 
-## Context
+## Context and contributions
 
 Initially launched to create text databases for research purposes
 at the Berlin-Brandenburg Academy of Sciences (DWDS and ZDL units),
@@ -124,9 +124,10 @@ this project continues to be maintained but its future development
 depends on community support.
 
 **If you value this software or depend on it for your product, consider
-sponsoring it and contributing to its codebase**. Your support will
-help maintain and enhance this popular package, ensuring its growth,
-robustness, and accessibility for developers and users around the world.
+sponsoring it and contributing to its codebase**. Your support
+will help maintain and enhance this package.
+Visit the [Contributing page](https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md)
+for more information.
 
 Reach out via the software repository or the [contact page](https://adrien.barbaresi.eu/)
 for inquiries, collaborations, or feedback.
@@ -161,15 +162,6 @@ for inquiries, collaborations, or feedback.
     Proceedings of the [10th Web as Corpus Workshop
     (WAC-X)](https://www.sigwac.org.uk/wiki/WAC-X), 2016.
 
-## Contributing
-
-[Contributions](https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md)
-are welcome as well as issues filed on the [dedicated
-page](https://github.com/adbar/htmldate/issues).
-
-Special thanks to the
-[contributors](https://github.com/adbar/htmldate/graphs/contributors)
-who have submitted features and bugfixes!
 
 ## Acknowledgements
 
