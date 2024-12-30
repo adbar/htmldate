@@ -1,4 +1,4 @@
-htmldate: find the publication date of web pages
+Htmldate: Find the Publication Date of Web Pages
 ================================================
 
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
@@ -28,7 +28,7 @@ htmldate: find the publication date of web pages
 |
 
 .. image:: htmldate-logo.png
-    :alt: Logo as PNG image
+    :alt: Htmldate Logo
     :align: center
     :width: 60%
 
@@ -52,7 +52,7 @@ In a nutshell
 .. image:: htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
-    :width: 95%
+    :width: 80%
     :target: https://htmldate.readthedocs.org/
 
 |
@@ -253,8 +253,8 @@ This package is distributed under the `Apache 2.0 license <https://www.apache.or
 Versions prior to v1.8.0 are under GPLv3+ license.
 
 
-Context
--------
+Context and contributions
+-------------------------
 
 Initially launched to create text databases for research purposes
 at the Berlin-Brandenburg Academy of Sciences (DWDS and ZDL units),
@@ -262,9 +262,11 @@ this project continues to be maintained but its future development
 depends on community support.
 
 **If you value this software or depend on it for your product, consider
-sponsoring it and contributing to its codebase**. Your support will
-help maintain and enhance this popular package, ensuring its growth,
-robustness, and accessibility for developers and users around the world.
+sponsoring it and contributing to its codebase**. Your support
+`on GitHub <https://github.com/sponsors/adbar>`_ or `ko-fi.com <https://ko-fi.com/adbarbaresi>`_
+will help maintain and enhance this package.
+Visit the `Contributing page <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_
+for more information.
 
 Reach out via the software repository or the `contact page
 <https://adrien.barbaresi.eu/>`_ for inquiries, collaborations, or feedback.
@@ -296,19 +298,6 @@ Reach out via the software repository or the `contact page
 -  Barbaresi, A. "`htmldate: A Python package to extract publication dates from web pages <https://doi.org/10.21105/joss.02439>`_", Journal of Open Source Software, 5(51), 2439, 2020. DOI: 10.21105/joss.02439
 -  Barbaresi, A. "`Generic Web Content Extraction with Open-Source Software <https://hal.archives-ouvertes.fr/hal-02447264/document>`_", Proceedings of KONVENS 2019, Kaleidoscope Abstracts, 2019.
 -  Barbaresi, A. "`Efficient construction of metadata-enhanced web corpora <https://hal.archives-ouvertes.fr/hal-01371704v2/document>`_", Proceedings of the `10th Web as Corpus Workshop (WAC-X) <https://www.sigwac.org.uk/wiki/WAC-X>`_, 2016.
-
-
-Contributing
-------------
-
-`Contributions <https://github.com/adbar/htmldate/blob/master/CONTRIBUTING.md>`_ are welcome!
-
-Feel free to file issues on the `dedicated page <https://github.com/adbar/htmldate/issues>`_. Thanks to the `contributors <https://github.com/adbar/htmldate/graphs/contributors>`_ who submitted features and bugfixes!
-
-Kudos to the following software libraries:
-
--  `lxml <http://lxml.de/>`_, `dateparser <https://github.com/scrapinghub/dateparser>`_
--  A few patterns are derived from the `python-goose <https://github.com/grangier/python-goose>`_, `metascraper <https://github.com/ianstormtaylor/metascraper>`_, `newspaper <https://github.com/codelucas/newspaper>`_ and `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_ libraries. This module extends their coverage and robustness significantly.
 
 
 Going further
