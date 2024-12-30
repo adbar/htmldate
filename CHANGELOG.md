@@ -1,5 +1,10 @@
 ## Changelog
 
+## 1.9.3
+- extraction: add heuristics (#173)
+- maintenance: explicitly support Python 3.13 (#172)
+- tests: better coverage (#175)
+- docs: update images and contributing (#180)
 
 ## 1.9.2
 - maintenance: explicit re-export and code quality (#168)
