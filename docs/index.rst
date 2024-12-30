@@ -1,4 +1,4 @@
-htmldate: find the publication date of web pages
+Htmldate: Find the Publication Date of Web Pages
 ================================================
 
 .. image:: https://img.shields.io/pypi/v/htmldate.svg
@@ -28,7 +28,7 @@ htmldate: find the publication date of web pages
 |
 
 .. image:: htmldate-logo.png
-    :alt: Logo as PNG image
+    :alt: Htmldate Logo
     :align: center
     :width: 60%
 
@@ -52,7 +52,7 @@ In a nutshell
 .. image:: htmldate-demo.gif
     :alt: Demo as GIF image
     :align: center
-    :width: 95%
+    :width: 80%
     :target: https://htmldate.readthedocs.org/
 
 |

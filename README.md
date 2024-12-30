@@ -9,7 +9,7 @@
 
 <br/>
 
-<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png" alt="Logo as PNG image" width="60%"/>
+<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-logo.png" alt="Htmldate Logo" align="center" width="60%"/>
 
 <br/>
 
@@ -27,7 +27,7 @@ The package is used in production on millions of documents and integrated into
 
 <br/>
 
-<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif" alt="Demo as GIF image" width="80%"/>
+<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif" alt="Demo as GIF image" align="center" width="80%"/>
 
 <br/>
 
