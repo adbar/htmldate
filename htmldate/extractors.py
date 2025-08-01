@@ -12,7 +12,6 @@ from typing import List, Optional, Pattern, Tuple
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore  # third-party, slow
-from dateparser_data.settings import default_parsers
 
 from dateutil.parser import parse as dateutil_parse
 
@@ -34,9 +33,8 @@ EXTERNAL_PARSER = DateDataParser(
     settings={
         "NORMALIZE": True,  # False may be faster
         "PARSERS": [
-            p
-            for p in default_parsers
-            if p not in ("no-spaces-time", "relative-time", "timestamp")
+            "custom-formats",
+            "absolute-time",
         ],
         "PREFER_DATES_FROM": "past",
         "PREFER_LOCALE_DATE_ORDER": True,

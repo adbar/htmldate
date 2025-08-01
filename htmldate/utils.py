@@ -46,6 +46,7 @@ FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
 class Extractor:
     "Defines a class to store all extraction options."
+
     __slots__ = ["extensive", "format", "max", "min", "original"]
 
     # consider dataclasses for Python 3.7+
