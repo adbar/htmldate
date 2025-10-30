@@ -17,26 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         env: [{ MINIMAL: "true" }, { MINIMAL: "false" }]
         include:
         # custom python versions
-        - os: ubuntu-20.04
-          python-version: 3.8
-        - os: macos-13
-          python-version: 3.8
         - os: macos-latest
           python-version: "3.13"
         - os: windows-latest
-          python-version: "3.11"
-        - os: windows-latest
           python-version: "3.13"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     # Python and pip setup
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -85,7 +79,7 @@ jobs:
     # coverage
     - name: Upload coverage to Codecov
       if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.13' }}
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
