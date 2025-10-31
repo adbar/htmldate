@@ -1,5 +1,8 @@
 ## Changelog
 
+## 1.9.4
+- maintenance: remove LXML version constraint (#184)
+
 ## 1.9.3
 - extraction: add heuristics (#173)
 - maintenance: explicitly support Python 3.13 (#172)
