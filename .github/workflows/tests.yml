@@ -12,6 +12,8 @@ on:
 jobs:
   build:
 
+    env:
+      REF_PY_VERSION: "3.13"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -22,9 +24,9 @@ jobs:
         include:
         # custom python versions
         - os: macos-latest
-          python-version: "3.13"
+          python-version: ${{ env.REF_PY_VERSION }}
         - os: windows-latest
-          python-version: "3.13"
+          python-version: ${{ env.REF_PY_VERSION }}
     steps:
     - uses: actions/checkout@v5
 
@@ -63,7 +65,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Code format and type checking
-      if: ${{ matrix.python-version == '3.13' }}
+      if: ${{ matrix.python-version == env.REF_PY_VERSION }}
       run: |
         black --check --diff htmldate
         mypy -p htmldate
@@ -78,7 +80,7 @@ jobs:
 
     # coverage
     - name: Upload coverage to Codecov
-      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == '3.13' }}
+      if: ${{ matrix.env.MINIMAL == 'false' && matrix.python-version == env.REF_PY_VERSION }}
       uses: codecov/codecov-action@v5
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
