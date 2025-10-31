@@ -11,7 +11,7 @@ license = { text = "Apache 2.0" }
 dynamic = ["version"]
 requires-python = ">=3.8"
 authors = [
-  {name = "Adrien Barbaresi", email = "barbaresi@bbaw.de"}
+  {name = "Adrien Barbaresi", email = "adrien.barbaresi@gmail.com"}
 ]
 keywords=[
     "datetime",
@@ -43,6 +43,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Text Processing :: Linguistic",
