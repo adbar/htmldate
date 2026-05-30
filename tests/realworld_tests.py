@@ -768,9 +768,8 @@ def test_cli():
     "Test the command-line interface"
     # third test: Linux and MacOS only
     if os.name != "nt":
-        testargs = [""]
-        with patch.object(sys, "argv", testargs):
-            args = parse_args(testargs)
+        testargs = []
+        args = parse_args(testargs)
         sys.stdin = open(
             os.path.join(TEST_DIR, "cache", "befifty.montauk.html"),
             "r",

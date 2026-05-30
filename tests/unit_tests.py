@@ -1515,7 +1515,6 @@ def test_idiosyncrasies():
 def test_parser():
     """test argument parsing for the command-line interface"""
     testargs = [
-        "-f",
         "-v",
         "--original",
         "-max",
@@ -1523,26 +1522,23 @@ def test_parser():
         "-u",
         "https://www.example.org",
     ]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    args = parse_args(testargs)
     assert args.fast is True
     assert args.original is True
     assert args.verbose is True
     assert args.maxdate == "2015-12-31"
     assert args.URL == "https://www.example.org"
-    testargs = ["-f", "-min", "2015-12-31"]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    testargs = ["-min", "2015-12-31"]
+    args = parse_args(testargs)
     assert args.fast is True
     assert args.original is False
     assert args.verbose is False
     assert args.mindate == "2015-12-31"
     # version
     f = io.StringIO()
-    testargs = ["", "--version"]
+    testargs = ["--version"]
     with pytest.raises(SystemExit) as e, redirect_stdout(f):
-        with patch.object(sys, "argv", testargs):
-            args = parse_args(testargs)
+        args = parse_args(testargs)
     assert e.type == SystemExit and e.value.code == 0
     assert re.match(
         r"Htmldate [0-9]\.[0-9]+\.[0-9] - Python [0-9]\.[0-9]+\.[0-9]", f.getvalue()
@@ -1552,8 +1548,7 @@ def test_parser():
 def test_cli():
     "Test the command-line interface"
     testargs = ["--original"]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    args = parse_args(testargs)
 
     assert cli_examine(None, args) is None
     assert cli_examine(" ", args) is None
@@ -1608,16 +1603,14 @@ def test_cli():
     )
 
     # first test
-    testargs = ["", "-u", "123", "-v"]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    testargs = ["-u", "123", "-v"]
+    args = parse_args(testargs)
     with pytest.raises(SystemExit) as err:
         process_args(args)
     assert err.type == SystemExit
     # meaningful test
-    testargs = ["", "-u", "https://httpbun.com/html"]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    testargs = ["-u", "https://httpbun.com/html"]
+    args = parse_args(testargs)
     f = io.StringIO()
     with redirect_stdout(f):
         process_args(args)
@@ -1638,8 +1631,7 @@ def test_download():
             main()
 
     testargs = ["--original"]
-    with patch.object(sys, "argv", testargs):
-        args = parse_args(testargs)
+    args = parse_args(testargs)
 
     url = "https://httpbin.org/status/200"
     teststring = fetch_url(url)

@@ -11,15 +11,22 @@ try:
 except ImportError:
     from charset_normalizer import detect
 
-from articleDateExtractor import extractArticlePublishedDate
-from date_guesser import guess_date
-from goose3 import Goose
-from newspaper import Article
-from newspaper.article import ArticleDownloadState
-from newsplease import NewsPlease
-
 from htmldate import find_date
 from htmldate.validators import convert_date
+
+# Optional third-party libraries, only needed for the full benchmark
+# (i.e. comparison.py *without* --small). Guard the imports so the
+# htmldate-only run works without these heavy/legacy packages installed.
+try:
+    from articleDateExtractor import extractArticlePublishedDate
+    from date_guesser import guess_date
+    from goose3 import Goose
+    from newspaper import Article
+    from newspaper.article import ArticleDownloadState
+    from newsplease import NewsPlease
+except ImportError:
+    extractArticlePublishedDate = guess_date = Goose = None
+    Article = ArticleDownloadState = NewsPlease = None
 
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -32,7 +39,7 @@ for each in eval_paths:
     with open(evalpath, "r", encoding="utf-8") as f:
         EVAL_PAGES.update(json.load(f))
 
-G = Goose()
+G = Goose() if Goose is not None else None
 
 
 def load_document(filename):

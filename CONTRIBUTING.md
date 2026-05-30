@@ -26,7 +26,6 @@ and if there are no errors.
    - Tests with `pytest`
    - Type checking with `mypy` on the directory: `mypy htmldate/`
    - Code formatting with `black` on the directory as well
-   - Optional: install `pre-commit` to use the corresponding commit hooks
 
 
 For further questions you can use [GitHub issues](https://github.com/adbar/htmldate/issues) or [E-Mail](https://adrien.barbaresi.eu/).

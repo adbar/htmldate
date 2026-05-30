@@ -8,7 +8,6 @@ from .core import compare_reference
 from .extractors import try_date_expr
 from .validators import filter_ymd_candidate, is_valid_date, is_valid_format
 
-
 LOGGER = logging.getLogger(__name__)
 
 

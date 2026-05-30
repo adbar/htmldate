@@ -4,16 +4,14 @@ Filters for date parsing and date validators.
 """
 
 import logging
+import re
 
 from collections import Counter
 from datetime import datetime
 from functools import lru_cache
-from time import mktime
-from typing import Match, Optional, Pattern, Union, Counter as Counter_Type
 
 from .settings import CACHE_SIZE, MIN_DATE
 from .utils import Extractor
-
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.debug("minimum date setting: %s", MIN_DATE)
@@ -21,7 +19,7 @@ LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 @lru_cache(maxsize=CACHE_SIZE)
 def is_valid_date(
-    date_input: Optional[Union[datetime, str]],
+    date_input: datetime | str | None,
     outputformat: str,
     earliest: datetime,
     latest: datetime,
@@ -58,16 +56,18 @@ def is_valid_date(
 
 
 def validate_and_convert(
-    date_input: Optional[Union[datetime, str]],
+    date_input: datetime | None,
     outputformat: str,
     earliest: datetime,
     latest: datetime,
-) -> Optional[str]:
+) -> str | None:
     "Robust validation and conversion for plausible dates."
-    if is_valid_date(date_input, outputformat, earliest, latest):
+    if date_input is not None and is_valid_date(
+        date_input, outputformat, earliest, latest
+    ):
         try:
             LOGGER.debug("custom parse result: %s", date_input)
-            return date_input.strftime(outputformat)  # type: ignore
+            return date_input.strftime(outputformat)
         except ValueError as err:  # pragma: no cover
             LOGGER.error("value error during conversion: %s %s", date_input, err)
     return None
@@ -83,8 +83,8 @@ def is_valid_format(outputformat: str) -> bool:
     except (TypeError, ValueError) as err:
         LOGGER.error("wrong output format or type: %s %s", outputformat, err)
         return False
-    # test in abstracto (could be the only test)
-    if not isinstance(outputformat, str) or "%" not in outputformat:
+    # a format without any directive cannot produce a date
+    if "%" not in outputformat:
         LOGGER.error("malformed output format: %s", outputformat)
         return False
     return True
@@ -93,14 +93,15 @@ def is_valid_format(outputformat: str) -> bool:
 def plausible_year_filter(
     htmlstring: str,
     *,
-    pattern: Pattern[str],
-    yearpat: Pattern[str],
+    pattern: re.Pattern[str],
+    yearpat: re.Pattern[str],
     earliest: datetime,
     latest: datetime,
     incomplete: bool = False,
-) -> Counter_Type[str]:
+) -> Counter[str]:
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
+    min_year, max_year = earliest.year, latest.year
 
     for item in list(occurrences):  # prevent RuntimeError
         year_match = yearpat.search(item)
@@ -116,7 +117,7 @@ def plausible_year_filter(
             century = "19" if lastdigits[0] == "9" else "20"
             potential_year = int(century + lastdigits)
 
-        if not earliest.year <= potential_year <= latest.year:
+        if not min_year <= potential_year <= max_year:
             LOGGER.debug("no potential year: %s", item)
             del occurrences[item]
 
@@ -126,7 +127,7 @@ def plausible_year_filter(
 def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = int(mktime(datetime.strptime(attempt, options.format).timetuple()))
+        timestamp = int(datetime.strptime(attempt, options.format).timestamp())
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
@@ -139,14 +140,13 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
 
 @lru_cache(maxsize=CACHE_SIZE)
 def filter_ymd_candidate(
-    bestmatch: Match[str],
-    pattern: Pattern[str],
-    original_date: bool,
+    bestmatch: re.Match[str],
+    pattern: re.Pattern[str],
     copyear: int,
     outputformat: str,
     min_date: datetime,
     max_date: datetime,
-) -> Optional[str]:
+) -> str | None:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
         pagedate = "-".join([bestmatch[1], bestmatch[2], bestmatch[3]])
@@ -155,15 +155,6 @@ def filter_ymd_candidate(
         ):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
-            ## TODO: test and improve
-            # if original_date is True:
-            #    if copyear == 0 or int(bestmatch[1]) <= copyear:
-            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
-            # else:
-            #    if copyear == 0 or int(bestmatch[1]) >= copyear:
-            #        LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
-            #        return convert_date(pagedate, '%Y-%m-%d', outputformat)
     return None
 
 
@@ -180,7 +171,7 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(reference: int, options: Extractor) -> Optional[str]:
+def check_extracted_reference(reference: int, options: Extractor) -> str | None:
     """Test if the extracted reference date can be returned"""
     if reference > 0:
         dateobject = datetime.fromtimestamp(reference)
@@ -192,25 +183,29 @@ def check_extracted_reference(reference: int, options: Extractor) -> Optional[st
     return None
 
 
-def check_date_input(
-    date_object: Optional[Union[datetime, str]], default: datetime
-) -> datetime:
+def check_date_input(date_object: datetime | str | None, default: datetime) -> datetime:
     "Check if the input is a usable datetime or ISO date string, return default otherwise"
     if isinstance(date_object, datetime):
         return date_object
     if isinstance(date_object, str):
         try:
-            return datetime.fromisoformat(date_object)  # type: ignore[attr-defined]
+            return datetime.fromisoformat(date_object)
         except ValueError:
             LOGGER.warning("invalid datetime string: %s", date_object)
     return default  # no input or error thrown
 
 
-def get_min_date(min_date: Optional[Union[datetime, str]]) -> datetime:
+def get_min_date(min_date: datetime | str | None) -> datetime:
     """Validates the minimum date and/or defaults to earliest plausible date"""
     return check_date_input(min_date, MIN_DATE)
 
 
-def get_max_date(max_date: Optional[Union[datetime, str]]) -> datetime:
-    """Validates the maximum date and/or defaults to latest plausible date"""
-    return check_date_input(max_date, datetime.now())
+def get_max_date(max_date: datetime | str | None) -> datetime:
+    """Validates the maximum date and/or defaults to the end of the current day.
+    A day-granular default stays stable across calls (unlike datetime.now()),
+    which lets the date-validation caches be reused from one document to the
+    next in batch processing, and accepts dates published earlier the same day."""
+    end_of_today = datetime.now().replace(
+        hour=23, minute=59, second=59, microsecond=999999
+    )
+    return check_date_input(max_date, end_of_today)

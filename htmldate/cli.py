@@ -7,7 +7,6 @@ import logging
 import sys
 
 from platform import python_version
-from typing import Any, Optional, Union
 
 from lxml.html import HtmlElement
 
@@ -17,12 +16,12 @@ from .utils import fetch_url, is_wrong_document
 
 
 def cli_examine(
-    htmlstring: Union[str, HtmlElement],
-    args: Any,
-) -> Optional[str]:
+    htmlstring: str | HtmlElement | None,
+    args: argparse.Namespace,
+) -> str | None:
     """Generic safeguards and triggers"""
     # safety check
-    if is_wrong_document(htmlstring):
+    if htmlstring is None or is_wrong_document(htmlstring):
         sys.stderr.write("# ERROR: document is empty or too large\n")
         return None
     return find_date(
@@ -35,7 +34,7 @@ def cli_examine(
     )
 
 
-def parse_args(args: Any) -> Any:
+def parse_args(args: list[str]) -> argparse.Namespace:
     """Define parser for command-line arguments"""
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument(
@@ -67,10 +66,10 @@ def parse_args(args: Any) -> Any:
         action="version",
         version=f"Htmldate {__version__} - Python {python_version()}",
     )
-    return argsparser.parse_args()
+    return argsparser.parse_args(args)
 
 
-def process_args(args: Any) -> None:
+def process_args(args: argparse.Namespace) -> None:
     """Process the arguments passed on the command-line."""
     # verbosity
     if args.verbose:
@@ -98,7 +97,7 @@ def process_args(args: Any) -> None:
         with open(args.inputfile, mode="r", encoding="utf-8") as inputfile:
             for line in inputfile:
                 htmltext = fetch_url(line.strip())
-                result = cli_examine(htmltext, args)  # type: ignore[arg-type]
+                result = cli_examine(htmltext, args)
                 sys.stdout.write(f"{line.strip()}\t{result or 'None'}\n")
 
 
