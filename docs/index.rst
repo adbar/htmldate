@@ -21,9 +21,9 @@ Htmldate: Find the Publication Date of Web Pages
    :target: https://doi.org/10.21105/joss.02439
    :alt: JOSS article reference DOI: 10.21105/joss.02439
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: Code style: black
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
 
 |
 

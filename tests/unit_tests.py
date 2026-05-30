@@ -1538,8 +1538,8 @@ def test_parser():
     f = io.StringIO()
     testargs = ["--version"]
     with pytest.raises(SystemExit) as e, redirect_stdout(f):
-        args = parse_args(testargs)
-    assert e.type == SystemExit and e.value.code == 0
+        parse_args(testargs)
+    assert e.type is SystemExit and e.value.code == 0
     assert re.match(
         r"Htmldate [0-9]\.[0-9]+\.[0-9] - Python [0-9]\.[0-9]+\.[0-9]", f.getvalue()
     )
@@ -1607,7 +1607,7 @@ def test_cli():
     args = parse_args(testargs)
     with pytest.raises(SystemExit) as err:
         process_args(args)
-    assert err.type == SystemExit
+    assert err.type is SystemExit
     # meaningful test
     testargs = ["-u", "https://httpbun.com/html"]
     args = parse_args(testargs)

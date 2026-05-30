@@ -75,11 +75,10 @@ htmldate = "htmldate.cli:main"
 # Development extras
 [project.optional-dependencies]
 dev = [
-    "black",
-    "flake8",
     "mypy",
     "pytest",
     "pytest-cov",
+    "ruff",
     "types-dateparser",
     "types-python-dateutil",
     "types-lxml",
@@ -95,11 +94,19 @@ all = [
     "htmldate[speed]",
 ]
 
-[tool.black]
-target-version = ["py310"]
+[tool.ruff]
+target-version = "py310"
 
 [tool.mypy]
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+# faust-cchardet (optional "speed" extra) ships no type stubs and is absent
+# during the type-checking step, so silence its import here. This behaves the
+# same whether the extra is installed (import-untyped) or not (import-not-found),
+# unlike an inline ignore tied to a single error code.
+module = ["cchardet"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = "tests/*test*.py"

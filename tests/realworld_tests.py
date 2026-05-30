@@ -10,7 +10,6 @@ import os
 import sys
 
 from contextlib import redirect_stdout
-from unittest.mock import patch
 
 import pytest
 

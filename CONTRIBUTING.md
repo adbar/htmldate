@@ -25,7 +25,7 @@ and if there are no errors.
 2. Run the tests and code quality tools:
    - Tests with `pytest`
    - Type checking with `mypy` on the directory: `mypy htmldate/`
-   - Code formatting with `black` on the directory as well
+   - Linting with `ruff check .` and formatting with `ruff format htmldate/`
 
 
 For further questions you can use [GitHub issues](https://github.com/adbar/htmldate/issues) or [E-Mail](https://adrien.barbaresi.eu/).

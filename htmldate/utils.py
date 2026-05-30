@@ -13,7 +13,7 @@ import urllib3
 
 # CChardet is faster and can be more accurate
 try:
-    from cchardet import detect as cchardet_detect  # type: ignore[import-untyped]
+    from cchardet import detect as cchardet_detect
 except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
