@@ -90,6 +90,13 @@ def is_valid_format(outputformat: str) -> bool:
     return True
 
 
+def correct_year(year: int) -> int:
+    """Adapt year from YY to YYYY format"""
+    if year < 100:
+        year += 1900 if year >= 90 else 2000
+    return year
+
+
 def plausible_year_filter(
     htmlstring: str,
     *,
@@ -114,8 +121,7 @@ def plausible_year_filter(
         if not incomplete:
             potential_year = int(lastdigits)
         else:
-            century = "19" if lastdigits[0] == "9" else "20"
-            potential_year = int(century + lastdigits)
+            potential_year = correct_year(int(lastdigits))
 
         if not min_year <= potential_year <= max_year:
             LOGGER.debug("no potential year: %s", item)

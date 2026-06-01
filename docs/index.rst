@@ -80,7 +80,7 @@ Features
 -  URLs, HTML files, or HTML trees are given as input (includes batch processing)
 -  Output as string in any date format (defaults to `ISO 8601 YMD <https://en.wikipedia.org/wiki/ISO_8601>`_)
 -  Detection of both original and updated dates
--  Compatible with all recent versions of Python
+-  Compatible with Python 3.10 and later
 
 
 ``htmldate`` can examine markup and text. It provides the following ways to date an HTML document:
@@ -94,7 +94,7 @@ Features
 
 The output is thoroughly verified in terms of plausibility and adequateness. If a valid date has been found the library outputs a date string corresponding to either the last update or the original publishing statement (the default), in the desired format.
 
-Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support German, English and Turkish.
+Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support English, French, German, Indonesian and Turkish.
 
 
 Installation
@@ -103,16 +103,16 @@ Installation
 Main package
 ~~~~~~~~~~~~
 
-This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.8 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.10 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
 
 .. code-block:: bash
 
-    $ pip install htmldate # pip3 install on systems where both Python 2 and 3 are installed
+    $ pip install htmldate
     $ pip install --upgrade htmldate # to make sure you have the latest version
     $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
 
 
-The last version to support Python 3.6 and 3.7 is ``htmldate==1.8.1``.
+The last version to support Python 3.6 and 3.7 is ``htmldate==1.8.1``; for Python 3.8 and 3.9 use the ``1.9.x`` series.
 
 
 Optional
@@ -129,16 +129,6 @@ You can also install or update the packages separately, *htmldate* will detect w
 The ``dateparser`` package is noticeably slower in its latest versions, version ``1.1.2`` is recommended for speed.
 
 *For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_.
-
-
-Experimental
-~~~~~~~~~~~~
-
-Experimental compilation with ``mypyc``, as using pre-compiled library may shorten processing speed:
-
-1. Install ``mypy``: ``pip3 install mypy``
-2. Compile the package: ``python setup.py --use-mypyc bdist_wheel``
-3. Use the newly created wheel: ``pip3 install dist/...``
 
 
 With Python
@@ -162,7 +152,7 @@ In case the web page features easily readable metadata in the header, the extrac
 .. code-block:: python
 
     >>> find_date('https://creativecommons.org/about/')
-    '2017-08-11' # has been updated since
+    '2017-08-11' # may change
     >>> find_date('https://creativecommons.org/about/', extensive_search=False)
     >>>
 
@@ -189,7 +179,7 @@ Change the output to a format known to Python's ``datetime`` module, the default
 .. code-block:: python
 
     >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
-    '18 November 2016'  # may have changed since
+    '18 November 2016'  # may change
 
 
 Original vs. updated dates
@@ -200,7 +190,7 @@ Although the time delta between original publication and "last modified" info is
 .. code-block:: python
 
     >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)  # modified behavior
-    '2016-06-23'
+    '2016-06-23' # may change
 
 For more information see `options page <options.html>`_.
 

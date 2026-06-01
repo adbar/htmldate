@@ -153,12 +153,13 @@ def test_sanity():
     assert is_valid_format("ABC") is False
     assert is_valid_format(123) is False
     assert is_valid_format(("a", "b")) is False
-    _, discarded = discard_unwanted(
+    tree = discard_unwanted(
         html.fromstring(
             '<html><body><div id="wm-ipp">000</div><div>AAA</div></body></html>'
         )
     )
-    assert len(discarded) == 1
+    assert tree.find('.//div[@id="wm-ipp"]') is None  # archive.org banner removed
+    assert "AAA" in tree.text_content()  # real content kept
     # reset caches: examine_date_elements used above
     old_values = try_date_expr.cache_info()
     reset_caches()

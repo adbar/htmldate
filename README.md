@@ -54,7 +54,7 @@ $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
     YMD](https://en.wikipedia.org/wiki/ISO_8601)).
 -   Detection of both original and updated dates.
 -   Multilingual.
--   Compatible with all recent versions of Python.
+-   Compatible with Python 3.10 and later.
 
 ### How it works
 
@@ -77,17 +77,17 @@ Finally, the output is validated and converted to the chosen format.
 
 ## Performance
 
-1000 web pages containing identifiable dates (as of 2023-11-13 on Python 3.10)
+1000 web pages containing identifiable dates (as of 2026-06-01 on Python 3.13)
 
 | Python Package | Precision | Recall | Accuracy | F-Score | Time |
 | -------------- | --------- | ------ | -------- | ------- | ---- |
-| articleDateExtractor 0.20 | 0.803 | 0.734 | 0.622 | 0.767 | 5x |
-| date_guesser 2.1.4 | 0.781 | 0.600 | 0.514 | 0.679 | 18x |
-| goose3 3.1.17 | 0.869 | 0.532 | 0.493 | 0.660 | 15x |
-| htmldate\[all\] 1.6.0 (fast) | **0.883** | 0.924 | 0.823 | 0.903 | **1x** |
-| htmldate\[all\] 1.6.0 (extensive) | 0.870 | **0.993** | **0.865** | **0.928** | 1.7x |
-| newspaper3k 0.2.8 | 0.769 | 0.667 | 0.556 | 0.715 | 15x |
-| news-please 1.5.35 | 0.801 | 0.768 | 0.645 | 0.784 | 34x |
+| articleDateExtractor 0.20 | 0.846 | 0.745 | 0.656 | 0.792 | 3x |
+| date_guesser 2.1.4 | 0.832 | 0.611 | 0.544 | 0.705 | 11x |
+| goose3 3.1.21 | **0.930** | 0.568 | 0.545 | 0.706 | 14x |
+| htmldate\[all\] 1.10.0 (fast) | 0.924 | 0.927 | 0.861 | 0.925 | **1x** |
+| htmldate\[all\] 1.10.0 (extensive) | 0.908 | **0.993** | **0.903** | **0.949** | 1.8x |
+| newspaper4k 0.9.5 | 0.912 | 0.728 | 0.680 | 0.810 | 2.5x |
+| news-please 1.6.16 | 0.845 | 0.777 | 0.680 | 0.810 | 29x |
 
 For the complete results and explanations see [evaluation
 page](https://htmldate.readthedocs.io/en/latest/evaluation.html).
@@ -95,13 +95,14 @@ page](https://htmldate.readthedocs.io/en/latest/evaluation.html).
 ## Installation
 
 Htmldate is tested on Linux, macOS and Windows systems, it is compatible
-with Python 3.8 upwards. It can notably be installed with `pip` (`pip3`
+with Python 3.10 upwards. It can notably be installed with `pip` (`pip3`
 where applicable) from the PyPI package repository:
 
 -   `pip install htmldate`
 -   (optionally) `pip install htmldate[speed]`
 
-The last version to support Python 3.6 and 3.7 is `htmldate==1.8.1`.
+The last version to support Python 3.6 and 3.7 is `htmldate==1.8.1`; for
+Python 3.8 and 3.9 use the `1.9.x` series.
 
 ## Documentation
 

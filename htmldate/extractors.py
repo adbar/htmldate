@@ -18,9 +18,9 @@ from lxml.etree import XPath
 from lxml.html import HtmlElement
 
 # own
-from .settings import CACHE_SIZE
+from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
 from .utils import Extractor, trim_text
-from .validators import convert_date, is_valid_date, validate_and_convert
+from .validators import convert_date, correct_year, is_valid_date, validate_and_convert
 
 LOGGER = logging.getLogger(__name__)
 
@@ -80,8 +80,6 @@ DATE_EXPRESSIONS = """
 # or contains(@id, 'lastmod') or contains(@class, 'updated')
 
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
-MIN_SEGMENT_LEN = 6
-MAX_SEGMENT_LEN = 52
 
 # discard parts of the webpage
 # archive.org banner inserts
@@ -209,13 +207,11 @@ MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
 
-def discard_unwanted(tree: HtmlElement) -> tuple[HtmlElement, list[HtmlElement]]:
-    """Delete unwanted sections of an HTML document and return them as a list"""
-    my_discarded = []
+def discard_unwanted(tree: HtmlElement) -> HtmlElement:
+    """Delete unwanted sections of an HTML document."""
     for subtree in DISCARD_EXPRESSIONS(tree):
-        my_discarded.append(subtree)
         subtree.getparent().remove(subtree)
-    return tree, my_discarded
+    return tree
 
 
 def extract_url_date(
@@ -235,13 +231,6 @@ def extract_url_date(
             except ValueError as err:  # pragma: no cover
                 LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
-
-
-def correct_year(year: int) -> int:
-    """Adapt year from YY to YYYY format"""
-    if year < 100:
-        year += 1900 if year >= 90 else 2000
-    return year
 
 
 def try_swap_values(day: int, month: int) -> tuple[int, int]:

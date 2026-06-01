@@ -81,13 +81,13 @@ def process_args(args: argparse.Namespace) -> None:
         if args.URL:
             htmlstring = fetch_url(args.URL)
             if htmlstring is None:
-                sys.exit(f"No data for URL: {args.URL}" + "\n")
+                sys.exit(f"No data for URL: {args.URL}\n")
         # unicode check
         else:
             try:
                 htmlstring = sys.stdin.read()
             except UnicodeDecodeError as err:
-                sys.exit(f"Wrong buffer encoding: {str(err)}" + "\n")
+                sys.exit(f"Wrong buffer encoding: {err}\n")
         result = cli_examine(htmlstring, args)
         if result is not None:
             sys.stdout.write(result + "\n")
