@@ -6,15 +6,14 @@ Module bundling functions related to HTML processing.
 import logging
 import re
 
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, List, Optional, Set, Union
 
 import urllib3
 
-
 # CChardet is faster and can be more accurate
 try:
-    from cchardet import detect as cchardet_detect  # type: ignore
+    from cchardet import detect as cchardet_detect
 except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
@@ -23,10 +22,9 @@ from lxml.html import HtmlElement, HTMLParser, fromstring
 
 from .settings import MAX_FILE_SIZE
 
-
 LOGGER = logging.getLogger(__name__)
 
-UNICODE_ALIASES: Set[str] = {"utf-8", "utf_8"}
+UNICODE_ALIASES: set[str] = {"utf-8", "utf_8"}
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 RETRY_STRATEGY = urllib3.util.Retry(
@@ -44,32 +42,21 @@ DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
 
+# eq=False keeps identity-based hashing so instances stay usable as lru_cache keys
+@dataclass(slots=True, eq=False)
 class Extractor:
     "Defines a class to store all extraction options."
 
-    __slots__ = ["extensive", "format", "max", "min", "original"]
-
-    # consider dataclasses for Python 3.7+
-    def __init__(
-        self,
-        extensive_search: bool,
-        max_date: datetime,
-        min_date: datetime,
-        original_date: bool,
-        outputformat: str,
-    ) -> None:
-        self.extensive: bool = extensive_search
-        self.format: str = outputformat
-        self.max: datetime = max_date
-        self.min: datetime = min_date
-        self.original: bool = original_date
+    extensive: bool
+    max: datetime
+    min: datetime
+    original: bool
+    format: str
 
 
-def is_wrong_document(data: Any) -> bool:
+def is_wrong_document(data: str | bytes | HtmlElement | None) -> bool:
     "Check if the input object is suitable to be processed."
-    if not data or len(data) > MAX_FILE_SIZE:
-        return True
-    return False
+    return not data or len(data) > MAX_FILE_SIZE
 
 
 def isutf8(data: bytes) -> bool:
@@ -81,7 +68,7 @@ def isutf8(data: bytes) -> bool:
     return True
 
 
-def detect_encoding(bytesobject: bytes) -> List[str]:
+def detect_encoding(bytesobject: bytes) -> list[str]:
     """Read all input or first chunk and return a list of encodings"""
     # alternatives: https://github.com/scrapy/w3lib/blob/master/w3lib/encoding.py
     # unicode-test
@@ -103,7 +90,7 @@ def detect_encoding(bytesobject: bytes) -> List[str]:
     return [g for g in guesses if g not in UNICODE_ALIASES]
 
 
-def decode_file(filecontent: Union[bytes, str]) -> str:
+def decode_file(filecontent: bytes | str) -> str:
     """Guess bytestring encoding and try to decode to Unicode string.
     Resort to destructive conversion otherwise."""
     # init
@@ -116,25 +103,24 @@ def decode_file(filecontent: Union[bytes, str]) -> str:
             htmltext = filecontent.decode(guessed_encoding)
         except (LookupError, UnicodeDecodeError):  # VISCII: lookup
             LOGGER.warning("wrong encoding detected: %s", guessed_encoding)
-            htmltext = None
         else:
             break
     # return original content if nothing else succeeded
     return htmltext or str(filecontent, encoding="utf-8", errors="replace")
 
 
-def decode_response(response: Any) -> str:
+def decode_response(response: urllib3.response.HTTPResponse | bytes) -> str:
     """Read the urllib3 object corresponding to the server response, then
     try to guess its encoding and decode it to return a unicode string"""
     # urllib3 response object / bytes switch
-    if isinstance(response, urllib3.response.HTTPResponse) or hasattr(response, "data"):
+    if isinstance(response, urllib3.response.HTTPResponse):
         resp_content = response.data
     else:
         resp_content = response
     return decode_file(resp_content)
 
 
-def fetch_url(url: str) -> Optional[str]:
+def fetch_url(url: str) -> str | None:
     """Fetches page using urllib3 and decodes the response.
 
     Args:
@@ -149,7 +135,7 @@ def fetch_url(url: str) -> Optional[str]:
     try:
         # read by streaming chunks (stream=True, iter_content=xx)
         # so we can stop downloading as soon as MAX_FILE_SIZE is reached
-        response = HTTP_POOL.request("GET", url, timeout=30)  # type: ignore
+        response = HTTP_POOL.request("GET", url, timeout=30)
     except Exception as err:
         LOGGER.error("download error: %s %s", url, err)  # sys.exc_info()[0]
     else:
@@ -175,7 +161,7 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
         firstline, _, rest = htmlstring.partition("\n")
         htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
     # other issue with malformed documents: check first three lines
-    for i, line in enumerate(iter(htmlstring.splitlines())):
+    for i, line in enumerate(htmlstring.splitlines()):
         if "<html" in line and line.endswith("/>"):
             htmlstring = FAULTY_HTML.sub(r"\1>", htmlstring, count=1)
             break
@@ -184,17 +170,16 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
     return htmlstring
 
 
-def fromstring_bytes(htmlobject: str) -> Optional[HtmlElement]:
+def fromstring_bytes(htmlobject: str) -> HtmlElement | None:
     "Try to pass bytes to LXML parser."
-    tree = None
     try:
-        tree = fromstring(htmlobject.encode("utf8"), parser=HTML_PARSER)
+        return fromstring(htmlobject.encode("utf8"), parser=HTML_PARSER)
     except Exception as err:
         LOGGER.error("lxml parser bytestring %s", err)
-    return tree
+    return None
 
 
-def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElement]:
+def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     """Load object given as input and validate its type
     (accepted: lxml.html tree, bytestring and string)
     """
@@ -203,7 +188,7 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
         return htmlobject
     # do not accept any other type after this point
     if not isinstance(htmlobject, (bytes, str)):
-        raise TypeError("incompatible input type: %s", type(htmlobject))
+        raise TypeError(f"incompatible input type: {type(htmlobject)}")
     # the string is a URL, download it
     if (
         isinstance(htmlobject, str)
@@ -211,10 +196,11 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
         and " " not in htmlobject
     ):
         LOGGER.debug("URL detected, downloading: %s", htmlobject)
-        htmlobject = fetch_url(htmlobject)  # type: ignore[assignment]
+        downloaded = fetch_url(htmlobject)
         # log the error and quit
-        if htmlobject is None:
-            raise ValueError("URL couldn't be processed: %s", htmlobject)
+        if downloaded is None:
+            raise ValueError(f"URL couldn't be processed: {htmlobject}")
+        htmlobject = downloaded
     # start processing
     tree = None
     # try to guess encoding and decode file: if None then keep original
@@ -246,15 +232,20 @@ def load_html(htmlobject: Union[bytes, str, HtmlElement]) -> Optional[HtmlElemen
     return tree
 
 
-def clean_html(tree: HtmlElement, elemlist: List[str]) -> HtmlElement:
+def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
     "Delete selected elements."
-    for element in tree.iter(elemlist):  # type: ignore[call-overload]
-        parent = element.getparent()
-        if parent is not None:
-            parent.remove(element)
+    for element in tree.iter(elemlist):
+        # drop_tree() keeps the element's tail text (a date may sit right after a
+        # cleaned media element); fall back to remove() if it is unavailable
+        try:
+            element.drop_tree()
+        except AttributeError:  # pragma: no cover
+            parent = element.getparent()
+            if parent is not None:
+                parent.remove(element)
     return tree
 
 
 def trim_text(string: str) -> str:
     "Remove superfluous space and normalize remaining space."
-    return " ".join(string.split()).strip()
+    return " ".join(string.split())

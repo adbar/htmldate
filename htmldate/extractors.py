@@ -8,10 +8,9 @@ import re
 
 from datetime import datetime
 from functools import lru_cache
-from typing import List, Optional, Pattern, Tuple
 
 # coverage for date parsing
-from dateparser import DateDataParser  # type: ignore  # third-party, slow
+from dateparser import DateDataParser  # type: ignore[attr-defined]  # third-party, slow
 
 from dateutil.parser import parse as dateutil_parse
 
@@ -22,7 +21,6 @@ from lxml.html import HtmlElement
 from .settings import CACHE_SIZE
 from .utils import Extractor, trim_text
 from .validators import convert_date, is_valid_date, validate_and_convert
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -120,9 +118,7 @@ LONG_TEXT_PATTERN = re.compile(
     rf"""(?P<month>{REGEX_MONTHS})\s
 (?P<day>{DAY_RE})(?:st|nd|rd|th)?,? (?P<year>{YEAR_RE})|
 (?P<day2>{DAY_RE})(?:st|nd|rd|th|\.)? (?:of )?
-(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>{YEAR_RE})""".replace(
-        "\n", ""
-    ),
+(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>{YEAR_RE})""".replace("\n", ""),
     re.I,
 )
 
@@ -213,7 +209,7 @@ MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
 
-def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]:
+def discard_unwanted(tree: HtmlElement) -> tuple[HtmlElement, list[HtmlElement]]:
     """Delete unwanted sections of an HTML document and return them as a list"""
     my_discarded = []
     for subtree in DISCARD_EXPRESSIONS(tree):
@@ -223,9 +219,9 @@ def discard_unwanted(tree: HtmlElement) -> Tuple[HtmlElement, List[HtmlElement]]
 
 
 def extract_url_date(
-    testurl: Optional[str],
+    testurl: str | None,
     options: Extractor,
-) -> Optional[str]:
+) -> str | None:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     if testurl is not None:
         match = COMPLETE_URL.search(testurl)
@@ -233,10 +229,9 @@ def extract_url_date(
             LOGGER.debug("found date in URL: %s", match[0])
             try:
                 dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
-                if is_valid_date(
+                return validate_and_convert(
                     dateobject, options.format, earliest=options.min, latest=options.max
-                ):
-                    return dateobject.strftime(options.format)
+                )
             except ValueError as err:  # pragma: no cover
                 LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
@@ -249,12 +244,12 @@ def correct_year(year: int) -> int:
     return year
 
 
-def try_swap_values(day: int, month: int) -> Tuple[int, int]:
+def try_swap_values(day: int, month: int) -> tuple[int, int]:
     """Swap day and month values if it seems feasible."""
     return (month, day) if month > 12 and day <= 12 else (day, month)
 
 
-def regex_parse(string: str) -> Optional[datetime]:
+def regex_parse(string: str) -> datetime | None:
     """Try full-text parse for date elements using a series of regular expressions
     with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
@@ -285,7 +280,7 @@ def regex_parse(string: str) -> Optional[datetime]:
 
 def custom_parse(
     string: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> Optional[str]:
+) -> str | None:
     """Try to bypass the slow dateparser"""
     LOGGER.debug("custom parse test: %s", string)
 
@@ -303,7 +298,7 @@ def custom_parse(
         # b. much faster than extensive parsing
         else:
             try:
-                candidate = datetime.fromisoformat(string)  # type: ignore[attr-defined]
+                candidate = datetime.fromisoformat(string)
             except ValueError:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
@@ -383,7 +378,7 @@ def custom_parse(
     )
 
 
-def external_date_parser(string: str, outputformat: str) -> Optional[str]:
+def external_date_parser(string: str, outputformat: str) -> str | None:
     """Use dateutil parser or dateparser module according to system settings"""
     LOGGER.debug("send to external parser: %s", string)
     try:
@@ -393,17 +388,17 @@ def external_date_parser(string: str, outputformat: str) -> Optional[str]:
         target = None
         LOGGER.error("external parser error: %s %s", string, err)
     # issue with data type
-    return datetime.strftime(target, outputformat) if target else None
+    return target.strftime(outputformat) if target else None
 
 
 @lru_cache(maxsize=CACHE_SIZE)
 def try_date_expr(
-    string: Optional[str],
+    string: str | None,
     outputformat: str,
     extensive_search: bool,
     min_date: datetime,
     max_date: datetime,
-) -> Optional[str]:
+) -> str | None:
     """Use a series of heuristics and rules to parse a potential date expression"""
     if not string:
         return None
@@ -440,7 +435,7 @@ def try_date_expr(
 def img_search(
     tree: HtmlElement,
     options: Extractor,
-) -> Optional[str]:
+) -> str | None:
     """Skim through image elements"""
     element = tree.find('.//meta[@property="og:image"][@content]')
     if element is not None:
@@ -453,9 +448,9 @@ def img_search(
 
 def pattern_search(
     text: str,
-    date_pattern: Pattern[str],
+    date_pattern: re.Pattern[str],
     options: Extractor,
-) -> Optional[str]:
+) -> str | None:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
     if match and is_valid_date(
@@ -469,7 +464,7 @@ def pattern_search(
 def json_search(
     tree: HtmlElement,
     options: Extractor,
-) -> Optional[str]:
+) -> str | None:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
     json_pattern = JSON_PUBLISHED if options.original else JSON_MODIFIED
@@ -479,14 +474,16 @@ def json_search(
     ):
         if not elem.text or '"date' not in elem.text:
             continue
-        return pattern_search(elem.text, json_pattern, options)
+        result = pattern_search(elem.text, json_pattern, options)
+        if result is not None:
+            return result
     return None
 
 
 def idiosyncrasies_search(
     htmlstring: str,
     options: Extractor,
-) -> Optional[str]:
+) -> str | None:
     """Look for author-written dates throughout the web page"""
     match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
     if match:
@@ -499,10 +496,9 @@ def idiosyncrasies_search(
                 day, month = try_swap_values(int(parts[0]), int(parts[1]))
                 year = correct_year(int(parts[2]))
                 candidate = datetime(year, month, day)
-            if is_valid_date(
-                candidate, "%Y-%m-%d", earliest=options.min, latest=options.max
-            ):
-                return candidate.strftime(options.format)  # type: ignore[union-attr]
+            return validate_and_convert(
+                candidate, options.format, earliest=options.min, latest=options.max
+            )
         except (IndexError, ValueError):
             LOGGER.debug("cannot process idiosyncrasies: %s", match[0])
 
