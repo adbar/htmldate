@@ -1,9 +1,9 @@
 ## Changelog
 
 ## 1.10.0
-- maintenance: modernize typing, packaging and code
-- evaluation: review and correct benchmark ground-truth labels, update and speed up alternatives
-- performance: stable day-granular cache key and reduced copying
+- maintenance: modernize code and packaging (#188)
+- evaluation: review and correct benchmark ground-truth labels, update and speed up alternatives (#189)
+- performance: code hardening, stable day-granular cache key and reduced copying
 - fixes: preserve tails in element cleaning
 
 ## 1.9.4
