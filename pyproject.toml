@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 name = "htmldate"
 description = "Fast and robust extraction of original and updated publication dates from URLs and web pages."
 readme = "README.md"
-license = { text = "Apache 2.0" }
+license = "Apache-2.0"
 dynamic = ["version"]
 requires-python = ">=3.10"
 authors = [
@@ -31,7 +31,6 @@ classifiers = [
     "Intended Audience :: Education",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
