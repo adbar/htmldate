@@ -18,6 +18,10 @@ MIN_DATE: datetime = datetime(1995, 1, 1)
 # set an upper limit to the number of candidates
 MAX_POSSIBLE_CANDIDATES: int = 1000
 
+# Text segment length bounds (in characters) for date extraction
+MIN_SEGMENT_LEN: int = 6
+MAX_SEGMENT_LEN: int = 52
+
 CLEANING_LIST = [
     "applet",
     "audio",

@@ -18,7 +18,7 @@ There are comparable software solutions in Python, the following date extraction
 - `date_guesser <https://github.com/mitmedialab/date_guesser>`_ extracts publication dates from a web pages along with an accuracy measure (not used here),
 - `goose3 <https://github.com/goose3/goose3>`_ can extract information for embedded content,
 - `htmldate <https://github.com/adbar/htmldate>`_ is the software package described here, it is designed to extract original and updated publication dates of web pages,
-- `newspaper <https://github.com/codelucas/newspaper>`_ is mostly geared towards newspaper texts,
+- `newspaper4k <https://github.com/AndyTheFactory/newspaper4k>`_ (the maintained successor of newspaper3k) is mostly geared towards newspaper texts,
 - `news-please <https://github.com/fhamborg/news-please>`_ is a news crawler that extracts structured information.
 
 Two alternative packages are not tested here but could be used in addition:
@@ -36,13 +36,30 @@ Description
 
 **Time**: the execution time cannot be easily compared in all cases as some solutions perform a whole series of operations which are irrelevant to this task.
 
-**Errors:** *goose3*'s output isn't always meaningful and/or in a standardized format, these cases were discarded. *news-please* seems to have trouble with some encodings (e.g. in Chinese), in which case it leads to an exception.
+**Errors:** *goose3*'s output isn't always meaningful and/or in a standardized format, these cases were discarded.
 
 
 Results
 -------
 
 The results below show that **date extraction is not a completely solved task** but one for which extractors have to resort to heuristics and guesses. The figures documenting recall and accuracy capture the real-world performance of the tools as the absence of a date output impacts the result.
+
+
+================================ ========= ========= ========= ========= =======
+1000 web pages containing identifiable dates (as of 2026-06-01 on Python 3.13)
+--------------------------------------------------------------------------------
+Python Package                   Precision Recall    Accuracy  F-Score   Time
+================================ ========= ========= ========= ========= =======
+articleDateExtractor 0.20        0.846     0.745     0.656     0.792     3x
+date_guesser 2.1.4               0.832     0.611     0.544     0.705     11x
+goose3 3.1.21                    **0.930** 0.568     0.545     0.706     14x
+htmldate[all] 1.10.0 (fast)      0.924     0.927     0.861     0.925     **1x**
+htmldate[all] 1.10.0 (extensive) 0.908     **0.993** **0.903** **0.949** 1.8x
+newspaper4k 0.9.5                0.912     0.728     0.680     0.810     2.5x
+news-please 1.6.16               0.845     0.777     0.680     0.810     29x
+================================ ========= ========= ========= ========= =======
+
+This run uses a reviewed version of the ground-truth labels (publication-date corrections) and the maintained *newspaper4k* fork in place of the now-unmaintained *newspaper3k*.
 
 
 =============================== ========= ========= ========= ========= =======
@@ -61,6 +78,8 @@ news-please 1.5.35              0.801     0.768     0.645     0.784     34x
 
 
 Additional data for new pages in English collected by the `Data Culture Group <https://dataculturegroup.org>`_ at Northeastern University.
+
+The discussion below refers to the most recent run (top table), measured against a reviewed version of the publication-date labels.
 
 Precision describes if the dates given as output are correct: *goose3* fares well precision-wise but it fails to extract dates in a large majority of cases (poor recall). The difference in accuracy between *date_guesser* and *newspaper* is consistent with tests described on the `website of the former <https://github.com/mitmedialab/date_guesser>`_.
 

@@ -28,8 +28,6 @@ from .extractors import (
     FAST_PREPEND,
     SLOW_PREPEND,
     FREE_TEXT_EXPRESSIONS,
-    MAX_SEGMENT_LEN,
-    MIN_SEGMENT_LEN,
     YEAR_PATTERN,
     YMD_PATTERN,
     COPYRIGHT_PATTERN,
@@ -54,11 +52,18 @@ from .extractors import (
     THREE_COMP_REGEX_B,
     TWO_COMP_REGEX,
 )
-from .settings import CACHE_SIZE, CLEANING_LIST, MAX_POSSIBLE_CANDIDATES
+from .settings import (
+    CACHE_SIZE,
+    CLEANING_LIST,
+    MAX_POSSIBLE_CANDIDATES,
+    MAX_SEGMENT_LEN,
+    MIN_SEGMENT_LEN,
+)
 from .utils import Extractor, clean_html, load_html, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
+    correct_year,
     filter_ymd_candidate,
     get_min_date,
     get_max_date,
@@ -563,7 +568,7 @@ def normalize_match(match: re.Match[str] | None) -> str:
     and optionally expand the year from two to four digits."""
     day, month, year = (g.zfill(2) for g in match.groups() if g)  # type: ignore[union-attr]
     if len(year) == 2:
-        year = f"19{year}" if year[0] == "9" else f"20{year}"
+        year = str(correct_year(int(year)))
     return f"{year}-{month}-{day}"
 
 
@@ -852,8 +857,6 @@ def find_date(
         original_date,
         outputformat,
     )
-    # unclear what this line is for and it impedes type checking:
-    # find_date.extensive_search = extensive_search
 
     # URL
     if url is None:
@@ -891,9 +894,7 @@ def find_date(
     # costly deepcopy of the whole document
     pruning_tree = deepcopy(tree) if isinstance(htmlobject, HtmlElement) else tree
     try:
-        search_tree, discarded = discard_unwanted(
-            clean_html(pruning_tree, CLEANING_LIST)
-        )
+        search_tree = discard_unwanted(clean_html(pruning_tree, CLEANING_LIST))
     # rare LXML error: no NULL bytes or control characters
     except ValueError:  # pragma: no cover
         search_tree = tree
@@ -922,13 +923,6 @@ def find_date(
     )
     if result is not None:
         return result
-
-    # TODO: decide on this
-    # search in discarded parts (e.g. archive.org-banner)
-    # for subtree in discarded:
-    #    dateresult = examine_date_elements(subtree, DATE_EXPRESSIONS, options)
-    #    if dateresult is not None:
-    #        return dateresult
 
     # robust conversion to string
     try:

@@ -4,8 +4,6 @@ Compare extraction results with other libraries of the same kind.
 
 import argparse
 import contextlib
-import json
-import os
 import sys
 import time
 
@@ -15,6 +13,7 @@ from tabulate import tabulate
 
 
 from evaluation import (
+    EVAL_PAGES,
     evaluate_result,
     load_document,
     run_htmldate_extensive,
@@ -25,17 +24,6 @@ from evaluation import (
     run_newsplease,
     run_goose,
 )
-
-
-TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-# list the jsons containing the pages here
-eval_paths = ["eval_mediacloud_2020.json", "eval_default.json"]
-# load the pages here
-EVAL_PAGES = {}
-for each in eval_paths:
-    evalpath = os.path.join(TEST_DIR, each)
-    with open(evalpath, "r", encoding="utf-8") as f:
-        EVAL_PAGES.update(json.load(f))
 
 
 PARSER = argparse.ArgumentParser(description="Run the evaluation")
@@ -63,20 +51,19 @@ TEMPLATE_DICT = {
 FUNC_DICT = {
     "htmldate_extensive": run_htmldate_extensive,
     "htmldate_fast": run_htmldate_fast,
-    **{
-        key: func
-        for key, func in [
-            ("newspaper", run_newspaper),
-            ("newsplease", run_newsplease),
-            ("articledateextractor", run_articledateextractor),
-            ("date_guesser", run_dateguesser),
-            ("goose", run_goose),
-        ]
-        if not ARGS.small
-    },
 }
+if not ARGS.small:
+    FUNC_DICT.update(
+        {
+            "newspaper": run_newspaper,
+            "newsplease": run_newsplease,
+            "articledateextractor": run_articledateextractor,
+            "date_guesser": run_dateguesser,
+            "goose": run_goose,
+        }
+    )
 
-RESULTS_DICT = {key: TEMPLATE_DICT.copy() for key, value in FUNC_DICT.items()}
+RESULTS_DICT = {key: TEMPLATE_DICT.copy() for key in FUNC_DICT}
 
 
 def calculate_scores(name, mydict):
