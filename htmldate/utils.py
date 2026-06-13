@@ -160,12 +160,11 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
     if "doctype" in beginning:
         firstline, _, rest = htmlstring.partition("\n")
         htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
-    # other issue with malformed documents: check first three lines
-    for i, line in enumerate(htmlstring.splitlines()):
-        if "<html" in line and line.endswith("/>"):
+    # other issue with malformed documents: check first few lines only
+    # (split avoids materialising every line of a large document)
+    for line in htmlstring.split("\n", 4)[:4]:
+        if "<html" in line and line.rstrip("\r").endswith("/>"):
             htmlstring = FAULTY_HTML.sub(r"\1>", htmlstring, count=1)
-            break
-        if i > 2:
             break
     return htmlstring
 

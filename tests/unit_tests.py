@@ -10,6 +10,7 @@ import logging
 import os
 import re
 import sys
+import time
 
 from collections import Counter
 from contextlib import redirect_stdout
@@ -121,6 +122,24 @@ def test_input():
     assert find_date("<" * 100) is None
     assert find_date("<html></html>", verbose=True) is None
     assert find_date("<html><body>\u0008this\xdf\n\u001f+\uffff</body></html>") is None
+
+    # out-of-range "data-utime" timestamps must not crash (return None instead)
+    for utime in ("999999999999999", "99999999999999999999", "-99999999999999"):
+        assert (
+            find_date(
+                f'<html><body><abbr class="published" data-utime="{utime}">x</abbr>'
+                "<p>filler text</p></body></html>"
+            )
+            is None
+        )
+    # a valid Unix timestamp still resolves
+    assert (
+        find_date(
+            '<html><body><abbr class="published" data-utime="1609459200">x</abbr>'
+            "</body></html>"
+        )
+        == "2021-01-01"
+    )
 
     # min and max date output
     assert get_min_date("2020-02-20").date() == datetime.date(2020, 2, 20)
@@ -866,6 +885,13 @@ def test_try_date_expr():
         )
         == "2022-02-25"
     )
+    # all-numeric strings without a year are not dates and must not be handed to the
+    # slow external parser (used to take ~1s each: a DoS amplifier)
+    for junk in ("1.2.3.4.5.6.7.8.9", "13.13.13.13.13.13", "13.13.13.13.99"):
+        try_date_expr.cache_clear()
+        start = time.perf_counter()
+        assert try_date_expr(junk, OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
+        assert time.perf_counter() - start < 0.5
 
 
 # def test_header():
@@ -1417,6 +1443,22 @@ def test_search_html():
             options,
         )
         is None
+    )
+
+
+def test_copyright_redos():
+    "A page repeating a copyright token with no year must not hang (ReDoS guard)."
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
+    # the unbounded \D* used to backtrack quadratically here (~10s at 8000 tokens)
+    payload = "<html><body><footer>" + ("Copyright " * 8000) + "</footer></body></html>"
+    start = time.perf_counter()
+    assert search_page(payload, options) is None
+    # generous threshold: bounded form runs in well under 0.1s, unbounded took ~10s
+    assert time.perf_counter() - start < 2.0
+    # a genuine copyright year is still extracted unchanged
+    assert (
+        search_page("<html><body><p>© 2021 Example Corp</p></body></html>", options)
+        == "2021-01-01"
     )
 
 
