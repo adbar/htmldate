@@ -42,6 +42,16 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
+# per-document budget for the slow external parser (reset in find_date)
+_PARSER_CALLS = 0
+
+
+def reset_parser_budget() -> None:
+    "Reset the per-document external-parser call counter."
+    global _PARSER_CALLS
+    _PARSER_CALLS = 0
+
+
 FAST_PREPEND = ".//*[self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
@@ -151,6 +161,8 @@ TEXT_MONTHS = {
 }
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
+# gate for try_date_expr: a real date has a 4-digit year or a month name
+FOUR_DIGITS = re.compile(r"\d{4}")
 
 DISCARD_PATTERNS = re.compile(
     r"^\d{2}:\d{2}(?: |:|$)|"
@@ -168,7 +180,8 @@ DISCARD_PATTERNS = re.compile(
 TEXT_PATTERNS = re.compile(
     r'(?:date[^0-9"]{,20}|updated|last-modified|published|posted|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
     r"(?:Datum|Stand|Veröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
-    r"(?:güncellen?me|yayı(?:m|n)lan?ma) *?(?:tarihi)? *?:? *?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
+    # bounded space-runs ({0,9}? not *?) to prevent ReDoS
+    r"(?:güncellen?me|yayı(?:m|n)lan?ma) {0,9}?(?:tarihi)? {0,9}?:? {0,9}?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
     r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
 )
@@ -182,8 +195,9 @@ TWO_COMP_REGEX = re.compile(rf"({MONTH_RE})[/.-]({YEAR_RE})")
 
 # extensive search patterns
 YEAR_PATTERN = re.compile(rf"^\D?({YEAR_RE})")
+# bounded gap (\D{0,99}, not unbounded \D*) to avoid quadratic backtracking (ReDoS)
 COPYRIGHT_PATTERN = re.compile(
-    rf"(?:©|\&copy;|Copyright|\(c\))\D*(?:{YEAR_RE})?-?({YEAR_RE})\D"
+    rf"(?:©|\&copy;|Copyright|\(c\))\D{{0,99}}(?:{YEAR_RE})?-?({YEAR_RE})\D"
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
 THREE_CATCH = re.compile(r"([0-9]{4})/([0-9]{2})/([0-9]{2})")
@@ -201,7 +215,7 @@ SLASHES_PATTERN = re.compile(
 )
 SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-](?:1[0-2]|0[1-9]))\D")
-YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9]|)")
+YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
@@ -369,6 +383,11 @@ def custom_parse(
 
 def external_date_parser(string: str, outputformat: str) -> str | None:
     """Use dateutil parser or dateparser module according to system settings"""
+    # DoS guard: bound the slow locale-scanning calls per document
+    global _PARSER_CALLS
+    if _PARSER_CALLS >= 30:
+        return None
+    _PARSER_CALLS += 1
     LOGGER.debug("send to external parser: %s", string)
     try:
         target = EXTERNAL_PARSER.get_date_data(string)["date_obj"]
@@ -409,8 +428,13 @@ def try_date_expr(
         return customresult
 
     # use slow but extensive search
-    # additional filters to prevent computational cost
-    if extensive_search and TEXT_DATE_PATTERN.search(string):
+    # additional filters to prevent computational cost: only hand strings that
+    # could be a date (4-digit year or a letter) to the slow external parser
+    if (
+        extensive_search
+        and TEXT_DATE_PATTERN.search(string)
+        and (FOUR_DIGITS.search(string) or any(c.isalpha() for c in string))
+    ):
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
         if is_valid_date(

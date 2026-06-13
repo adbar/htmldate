@@ -23,6 +23,7 @@ from .extractors import (
     json_search,
     regex_parse,
     pattern_search,
+    reset_parser_budget,
     try_date_expr,
     DATE_EXPRESSIONS,
     FAST_PREPEND,
@@ -857,6 +858,7 @@ def find_date(
         original_date,
         outputformat,
     )
+    reset_parser_budget()
 
     # URL
     if url is None:

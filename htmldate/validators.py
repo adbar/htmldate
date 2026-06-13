@@ -180,7 +180,12 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
 def check_extracted_reference(reference: int, options: Extractor) -> str | None:
     """Test if the extracted reference date can be returned"""
     if reference > 0:
-        dateobject = datetime.fromtimestamp(reference)
+        # reference (untrusted) may be outside the platform timestamp range
+        try:
+            dateobject = datetime.fromtimestamp(reference)
+        except (OSError, OverflowError, ValueError):
+            LOGGER.debug("invalid reference timestamp: %s", reference)
+            return None
         converted = dateobject.strftime(options.format)
         if is_valid_date(
             converted, options.format, earliest=options.min, latest=options.max
