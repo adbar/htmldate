@@ -42,16 +42,6 @@ EXTERNAL_PARSER = DateDataParser(
 )
 
 
-# per-document budget for the slow external parser (reset in find_date)
-_PARSER_CALLS = 0
-
-
-def reset_parser_budget() -> None:
-    "Reset the per-document external-parser call counter."
-    global _PARSER_CALLS
-    _PARSER_CALLS = 0
-
-
 FAST_PREPEND = ".//*[self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul]"
 # self::b or self::em or self::font or self::i or self::strong
 SLOW_PREPEND = ".//*"
@@ -383,11 +373,6 @@ def custom_parse(
 
 def external_date_parser(string: str, outputformat: str) -> str | None:
     """Use dateutil parser or dateparser module according to system settings"""
-    # DoS guard: bound the slow locale-scanning calls per document
-    global _PARSER_CALLS
-    if _PARSER_CALLS >= 30:
-        return None
-    _PARSER_CALLS += 1
     LOGGER.debug("send to external parser: %s", string)
     try:
         target = EXTERNAL_PARSER.get_date_data(string)["date_obj"]
