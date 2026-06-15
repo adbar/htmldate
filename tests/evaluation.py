@@ -161,3 +161,8 @@ def evaluate_result(result, data):
     if result is None:
         return (0, 0, 1, 1) if datereference is None else (0, 0, 0, 1)
     return (1, 0, 0, 0) if result == datereference else (0, 1, 0, 0)
+
+
+def f1_score(tp, fp, fn):
+    """Compute the F1-score from the confusion-matrix counts"""
+    return (2 * tp) / (2 * tp + fp + fn)

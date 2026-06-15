@@ -15,6 +15,7 @@ from tabulate import tabulate
 from evaluation import (
     EVAL_PAGES,
     evaluate_result,
+    f1_score,
     load_document,
     run_htmldate_extensive,
     run_htmldate_fast,
@@ -74,12 +75,12 @@ def calculate_scores(name, mydict):
         mydict["false_positives"],
         mydict["true_negatives"],
     )
-    time1 = f'{mydict["time"] / RESULTS_DICT["htmldate_extensive"]["time"] :.2f}x'
-    time2 = f'{mydict["time"] / RESULTS_DICT["htmldate_fast"]["time"] :.2f}x'
+    time1 = f"{mydict['time'] / RESULTS_DICT['htmldate_extensive']['time']:.2f}x"
+    time2 = f"{mydict['time'] / RESULTS_DICT['htmldate_fast']['time']:.2f}x"
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     accuracy = (tp + tn) / (tp + tn + fp + fn)
-    fscore = (2 * tp) / (2 * tp + fp + fn)  # 2*((precision*recall)/(precision+recall))
+    fscore = f1_score(tp, fp, fn)
     return name, precision, recall, accuracy, fscore, mydict["time"], time1, time2
 
 
@@ -98,15 +99,15 @@ def run_eval(html, data):
 
 
 if __name__ == "__main__":
-
     # hack to suppress noise
     my_stdout = sys.stdout if ARGS.verbose else None
     my_stderr = sys.stderr if ARGS.verbose else None
 
     for item, data in tqdm.tqdm(EVAL_PAGES.items(), total=len(EVAL_PAGES)):
         htmlstring = load_document(data["file"])
-        with contextlib.redirect_stdout(my_stdout), contextlib.redirect_stderr(
-            my_stderr
+        with (
+            contextlib.redirect_stdout(my_stdout),
+            contextlib.redirect_stderr(my_stderr),
         ):
             run_eval(htmlstring, data)
 
