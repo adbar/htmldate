@@ -41,7 +41,7 @@ Large "offline" web text collections are now standard among the research communi
 # Functionality
 
 
-``htmldate`` finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It operates both within Python and from the command-line. URLs, HTML files, or HTML trees are given as input, and the library outputs a date string in the desired format or ``None`` as the output is thouroughly verified in terms of plausibility and adequateness.
+``htmldate`` finds original and updated publication dates of web pages using heuristics on HTML code and linguistic patterns. It operates both within Python and from the command-line. URLs, HTML files, or HTML trees are given as input, and the library outputs a date string in the desired format or ``None`` as the output is thoroughly verified in terms of plausibility and adequateness.
 
 The package features a combination of tree traversal and text-based extraction, and the following methods are used to date HTML documents:
 
@@ -67,7 +67,7 @@ Diverse extraction and scraping techniques are routinely used on web document co
 There are comparable software solutions in Python. The following date extraction packages are open-source and work out-of-the-box:
 
 - ``articleDateExtractor`` detects, extracts, and normalizes the publication date of an online article or blog post [@articleDateExtractor],
-- ``date_guesser`` extracts publication dates from a web pages along with an accuracy measure which is not tested here [@dateguesser],
+- ``date_guesser`` extracts publication dates from web pages along with an accuracy measure which is not tested here [@dateguesser],
 - ``goose3`` can extract information for embedded content [@goose3],
 - ``htmldate`` is the software package described here; it is designed to extract original and updated publication dates of web pages [@Barbaresi:2019],
 - ``newspaper`` is mostly geared towards newspaper texts [@newspaper],
