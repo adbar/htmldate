@@ -127,14 +127,12 @@ def fetch_url(url: str) -> str | None:
         url: URL of the page to fetch.
 
     Returns:
-        HTML code as string, or Urllib3 response object (headers + body), or empty string in case
-        the result is invalid, or None if there was a problem with the network.
+        HTML code as a string, or None if the network request failed, the
+        response status was not 200, or the payload was invalid.
 
     """
     # send
     try:
-        # read by streaming chunks (stream=True, iter_content=xx)
-        # so we can stop downloading as soon as MAX_FILE_SIZE is reached
         response = HTTP_POOL.request("GET", url, timeout=30)
     except Exception as err:
         LOGGER.error("download error: %s %s", url, err)  # sys.exc_info()[0]
@@ -150,7 +148,7 @@ def fetch_url(url: str) -> str | None:
 
 
 def is_dubious_html(beginning: str) -> bool:
-    "Assess if the object is proper HTML (awith a corresponding tag or declaration)."
+    "Assess if the object is proper HTML (with a corresponding tag or declaration)."
     return "html" not in beginning
 
 

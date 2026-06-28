@@ -17,39 +17,56 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 
-@lru_cache(maxsize=CACHE_SIZE)
+def _is_in_range(dateobject: datetime, earliest: datetime, latest: datetime) -> bool:
+    """Check whether a datetime falls within the configured time window."""
+    if (
+        earliest.year <= dateobject.year <= latest.year
+        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
+    ):
+        return True
+    return False
+
+
 def is_valid_date(
     date_input: datetime | str | None,
     outputformat: str,
     earliest: datetime,
     latest: datetime,
 ) -> bool:
-    """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
-    # safety check
+    """Validate a date w.r.t. the chosen outputformat and time boundaries."""
     if date_input is None:
         return False
 
-    # try if date can be parsed using chosen outputformat
+    # datetime path: no format needed for parsing, no cache required
     if isinstance(date_input, datetime):
-        dateobject = date_input
-    else:
-        # speed-up
-        try:
-            if outputformat == "%Y-%m-%d":
-                dateobject = datetime(
-                    int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
-                )
-            # default
-            else:
-                dateobject = datetime.strptime(date_input, outputformat)
-        except ValueError:
-            return False
+        result = _is_in_range(date_input, earliest, latest)
+        if not result:
+            LOGGER.debug("date not valid: %s", date_input)
+        return result
 
-    # year first, then full validation: not newer than today or stored variable
-    if (
-        earliest.year <= dateobject.year <= latest.year
-        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
-    ):
+    # string path: parse then validate (cached on the string + format combo)
+    return _parse_and_validate(date_input, outputformat, earliest, latest)
+
+
+@lru_cache(maxsize=CACHE_SIZE)
+def _parse_and_validate(
+    date_input: str,
+    outputformat: str,
+    earliest: datetime,
+    latest: datetime,
+) -> bool:
+    """Parse a date string and validate it against time boundaries."""
+    try:
+        if outputformat == "%Y-%m-%d":
+            dateobject = datetime(
+                int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
+            )
+        else:
+            dateobject = datetime.strptime(date_input, outputformat)
+    except ValueError:
+        return False
+
+    if _is_in_range(dateobject, earliest, latest):
         return True
     LOGGER.debug("date not valid: %s", date_input)
     return False
@@ -146,7 +163,7 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
 
 @lru_cache(maxsize=CACHE_SIZE)
 def filter_ymd_candidate(
-    bestmatch: re.Match[str],
+    bestmatch: tuple[str, ...] | None,
     pattern: re.Pattern[str],
     copyear: int,
     outputformat: str,
@@ -155,9 +172,9 @@ def filter_ymd_candidate(
 ) -> str | None:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[1], bestmatch[2], bestmatch[3]])
+        pagedate = "-".join([bestmatch[0], bestmatch[1], bestmatch[2]])
         if is_valid_date(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date) and (
-            copyear == 0 or int(bestmatch[1]) >= copyear
+            copyear == 0 or int(bestmatch[0]) >= copyear
         ):
             LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
@@ -169,10 +186,9 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     # speed-up (%Y-%m-%d)
     if inputformat == outputformat:
         return datestring
-    # date object (speedup)
+    # datetime object passed directly (callers may violate the str annotation)
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
-    # normal
     dateobject = datetime.strptime(datestring, inputformat)
     return dateobject.strftime(outputformat)
 

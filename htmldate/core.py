@@ -7,10 +7,10 @@ import logging
 import re
 
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from copy import deepcopy
 from datetime import datetime
-from functools import lru_cache, partial
+from functools import partial
 
 from lxml.html import HtmlElement, tostring
 
@@ -205,11 +205,12 @@ def examine_text(
     options: Extractor,
 ) -> str | None:
     "Prepare text and try to extract a date."
-    text = trim_text(text)
-
-    if len(text) <= MIN_SEGMENT_LEN:
+    if len(text.strip()) <= MIN_SEGMENT_LEN:
         return None
 
+    text = trim_text(text)
+    if len(text) <= MIN_SEGMENT_LEN:
+        return None
     text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
     return try_date_expr(
         text, options.format, options.extensive, options.min, options.max
@@ -218,20 +219,28 @@ def examine_text(
 
 def examine_date_elements(
     tree: HtmlElement,
-    expression: str,
+    expression: str | Iterable[str],
     options: Extractor,
 ) -> str | None:
-    """Check HTML elements one by one for date expressions"""
-    elements = tree.xpath(expression)
-    if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
-        return None
+    """Check HTML elements one by one for date expressions.
 
-    for elem in elements:
-        # try element text and link title (Blogspot)
-        for text in [elem.text_content(), elem.get("title", "")]:
-            attempt = examine_text(text, options)
-            if attempt:
-                return attempt
+    ``expression`` can be a single XPath or an iterable of them; in the latter
+    case they are tried in order and the first one to yield a match wins, so a
+    high-priority expression can be given alongside cheap fallbacks without an
+    extra tree traversal."""
+    expressions = [expression] if isinstance(expression, str) else expression
+
+    for expr in expressions:
+        elements = tree.xpath(expr)
+        if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
+            continue
+
+        for elem in elements:
+            # try element text and link title (Blogspot)
+            for text in [elem.text_content(), elem.get("title", "")]:
+                attempt = examine_text(text, options)
+                if attempt:
+                    return attempt
 
     return None
 
@@ -425,7 +434,6 @@ def search_pattern(
     return select_candidate(candidates, catch, yearpat, options)
 
 
-@lru_cache(maxsize=CACHE_SIZE)
 def compare_reference(
     reference: int,
     expression: str,
@@ -605,7 +613,8 @@ def search_normalized(
     )
     bestmatch = select_candidate(normalized, YMD_PATTERN, YMD_YEAR, options)
     return filter_ymd_candidate(
-        bestmatch, pattern, copyear, options.format, options.min, options.max
+        bestmatch.groups() if bestmatch else None,
+        pattern, copyear, options.format, options.min, options.max
     )
 
 
@@ -655,7 +664,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
             options,
         )
         result = filter_ymd_candidate(
-            bestmatch,
+            bestmatch.groups() if bestmatch else None,
             patterns[0],
             copyear,
             options.format,
@@ -686,7 +695,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         options,
     )
     result = filter_ymd_candidate(
-        bestmatch,
+        bestmatch.groups() if bestmatch else None,
         DATESTRINGS_PATTERN,
         copyear,
         options.format,
@@ -911,12 +920,7 @@ def find_date(
     result = (
         examine_date_elements(
             search_tree,
-            date_expr,
-            options,
-        )
-        or examine_date_elements(
-            search_tree,
-            ".//title|.//h1",
+            [date_expr, ".//title|.//h1"],
             options,
         )
         or examine_time_elements(search_tree, options)

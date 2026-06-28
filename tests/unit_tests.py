@@ -24,6 +24,7 @@ from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
     compare_reference,
     examine_date_elements,
+    examine_text,
     find_date,
     search_page,
     search_pattern,
@@ -179,6 +180,12 @@ def test_input():
     assert get_max_date("3030-30-50").date() == datetime.date.today()
     assert get_max_date(datetime.datetime(3000, 1, 1)) == datetime.datetime(3000, 1, 1)
     assert get_max_date("2020-02-20T13:30:00") == datetime.datetime(2020, 2, 20, 13, 30)
+
+
+def test_examine_text():
+    """test early-exit guards in examine_text"""
+    assert examine_text("  ab  ", OPTIONS) is None
+    assert examine_text("a   b   c", OPTIONS) is None
 
 
 def test_sanity():
@@ -834,8 +841,7 @@ def test_convert_date():
     """test date conversion"""
     assert convert_date("2016-11-18", "%Y-%m-%d", "%d %B %Y") == "18 November 2016"
     assert convert_date("18 November 2016", "%d %B %Y", "%Y-%m-%d") == "2016-11-18"
-    dateobject = datetime.datetime.strptime("2016-11-18", "%Y-%m-%d")
-    assert convert_date(dateobject, "%d %B %Y", "%Y-%m-%d") == "2016-11-18"
+    assert convert_date(datetime.datetime(2016, 11, 18), "%Y-%m-%d %H:%M:%S", "%Y-%m-%d") == "2016-11-18"
 
 
 def test_try_date_expr():
