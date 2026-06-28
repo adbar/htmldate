@@ -53,7 +53,6 @@ from .extractors import (
     TWO_COMP_REGEX,
 )
 from .settings import (
-    CACHE_SIZE,
     CLEANING_LIST,
     MAX_POSSIBLE_CANDIDATES,
     MAX_SEGMENT_LEN,
@@ -614,7 +613,11 @@ def search_normalized(
     bestmatch = select_candidate(normalized, YMD_PATTERN, YMD_YEAR, options)
     return filter_ymd_candidate(
         bestmatch.groups() if bestmatch else None,
-        pattern, copyear, options.format, options.min, options.max
+        pattern,
+        copyear,
+        options.format,
+        options.min,
+        options.max,
     )
 
 
@@ -917,14 +920,11 @@ def find_date(
 
     # then look for expressions
     # and try time elements
-    result = (
-        examine_date_elements(
-            search_tree,
-            [date_expr, ".//title|.//h1"],
-            options,
-        )
-        or examine_time_elements(search_tree, options)
-    )
+    result = examine_date_elements(
+        search_tree,
+        [date_expr, ".//title|.//h1"],
+        options,
+    ) or examine_time_elements(search_tree, options)
     if result is not None:
         return result
 
