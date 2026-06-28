@@ -204,9 +204,6 @@ def examine_text(
     options: Extractor,
 ) -> str | None:
     "Prepare text and try to extract a date."
-    if len(text.strip()) <= MIN_SEGMENT_LEN:
-        return None
-
     text = trim_text(text)
     if len(text) <= MIN_SEGMENT_LEN:
         return None
@@ -472,8 +469,7 @@ def examine_abbr_elements(
             # class
             elif elem.get("class") in CLASS_ATTRS:
                 # other attributes
-                if "title" in elem.attrib:
-                    trytext = elem.get("title")
+                if trytext := elem.get("title"):
                     LOGGER.debug("abbr published-title found: %s", trytext)
                     # shortcut
                     if options.original:

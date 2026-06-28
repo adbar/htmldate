@@ -19,12 +19,10 @@ LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 def _is_in_range(dateobject: datetime, earliest: datetime, latest: datetime) -> bool:
     """Check whether a datetime falls within the configured time window."""
-    if (
+    return (
         earliest.year <= dateobject.year <= latest.year
         and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
-    ):
-        return True
-    return False
+    )
 
 
 def is_valid_date(
@@ -58,18 +56,16 @@ def _parse_and_validate(
     """Parse a date string and validate it against time boundaries."""
     try:
         if outputformat == "%Y-%m-%d":
-            dateobject = datetime(
-                int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
-            )
+            dateobject = datetime.fromisoformat(date_input)
         else:
             dateobject = datetime.strptime(date_input, outputformat)
     except ValueError:
         return False
 
-    if _is_in_range(dateobject, earliest, latest):
-        return True
-    LOGGER.debug("date not valid: %s", date_input)
-    return False
+    result = _is_in_range(dateobject, earliest, latest)
+    if not result:
+        LOGGER.debug("date not valid: %s", date_input)
+    return result
 
 
 def validate_and_convert(
