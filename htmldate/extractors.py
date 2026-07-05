@@ -19,7 +19,7 @@ from lxml.html import HtmlElement
 
 # own
 from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
-from .utils import Extractor, trim_text
+from .utils import Extractor, remove_if_attached, trim_text
 from .validators import convert_date, correct_year, is_valid_date, validate_and_convert
 
 LOGGER = logging.getLogger(__name__)
@@ -207,14 +207,13 @@ SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-](?:1[0-2]|0[1-9]))\D")
 YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
-MMYYYY_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
 
 def discard_unwanted(tree: HtmlElement) -> HtmlElement:
     """Delete unwanted sections of an HTML document."""
     for subtree in DISCARD_EXPRESSIONS(tree):
-        subtree.getparent().remove(subtree)
+        remove_if_attached(subtree)
     return tree
 
 
@@ -259,16 +258,21 @@ def regex_parse(string: str) -> datetime | None:
     try:
         day, month, year = (
             int(match.group(groups[0])),
-            int(TEXT_MONTHS[match.group(groups[1]).lower().strip(".")]),
+            TEXT_MONTHS[match.group(groups[1]).lower().strip(".")],
             int(match.group(groups[2])),
         )
         year = correct_year(year)
         day, month = try_swap_values(day, month)
         dateobject = datetime(year, month, day)
-    except ValueError:
+    except (KeyError, ValueError):
         return None
     LOGGER.debug("multilingual text found: %s", dateobject)
     return dateobject
+
+
+def _parse_yyyymmdd(digits: str) -> datetime:
+    "Build a datetime from a leading 8-digit YYYYMMDD run."
+    return datetime(int(digits[:4]), int(digits[4:6]), int(digits[6:8]))
 
 
 def custom_parse(
@@ -283,9 +287,7 @@ def custom_parse(
         # a. '201709011234' not covered by dateparser, and regex too slow
         if string[4:8].isdigit():
             try:
-                candidate = datetime(
-                    int(string[:4]), int(string[4:6]), int(string[6:8])
-                )
+                candidate = _parse_yyyymmdd(string)
             except ValueError:
                 LOGGER.debug("8-digit error: %s", string[:8])  # return None
         # b. much faster than extensive parsing
@@ -309,8 +311,7 @@ def custom_parse(
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
-            year, month, day = int(match[1][:4]), int(match[1][4:6]), int(match[1][6:8])
-            candidate = datetime(year, month, day)
+            candidate = _parse_yyyymmdd(match[1])
         except ValueError:
             LOGGER.debug("YYYYMMDD value error: %s", match[0])
         else:

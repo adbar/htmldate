@@ -56,7 +56,8 @@ def _parse_and_validate(
     """Parse a date string and validate it against time boundaries."""
     try:
         if outputformat == "%Y-%m-%d":
-            dateobject = datetime.fromisoformat(date_input)
+            # read the leading YYYY-MM-DD and ignore the rest
+            dateobject = datetime.fromisoformat(date_input[:10])
         else:
             dateobject = datetime.strptime(date_input, outputformat)
     except ValueError:
@@ -117,7 +118,6 @@ def plausible_year_filter(
     yearpat: re.Pattern[str],
     earliest: datetime,
     latest: datetime,
-    incomplete: bool = False,
 ) -> Counter[str]:
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
@@ -130,11 +130,9 @@ def plausible_year_filter(
             del occurrences[item]
             continue
 
-        lastdigits = year_match[1]
-        if not incomplete:
-            potential_year = int(lastdigits)
-        else:
-            potential_year = correct_year(int(lastdigits))
+        # correct_year() is a no-op for already-4-digit years, so this also
+        # covers yearpat patterns that only ever capture 4 digits
+        potential_year = correct_year(int(year_match[1]))
 
         if not min_year <= potential_year <= max_year:
             LOGGER.debug("no potential year: %s", item)
@@ -168,7 +166,7 @@ def filter_ymd_candidate(
 ) -> str | None:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[0], bestmatch[1], bestmatch[2]])
+        pagedate = "-".join(bestmatch[:3])
         if is_valid_date(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date) and (
             copyear == 0 or int(bestmatch[0]) >= copyear
         ):

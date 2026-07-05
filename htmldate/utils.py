@@ -229,6 +229,13 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     return tree
 
 
+def remove_if_attached(element: HtmlElement) -> None:
+    "Remove an element from its parent, if it still has one."
+    parent = element.getparent()
+    if parent is not None:
+        parent.remove(element)
+
+
 def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
     "Delete selected elements."
     for element in tree.iter(elemlist):
@@ -237,9 +244,7 @@ def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
         try:
             element.drop_tree()
         except AttributeError:  # pragma: no cover
-            parent = element.getparent()
-            if parent is not None:
-                parent.remove(element)
+            remove_if_attached(element)
     return tree
 
 

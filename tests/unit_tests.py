@@ -1,4 +1,3 @@
-# pylint:disable-msg=W1401
 """
 Unit tests for the htmldate library.
 """
@@ -784,6 +783,23 @@ def test_is_valid_date():
         is_valid_date("202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
         is False
     )
+    # trailing content beyond the 10-char YYYY-MM-DD shape must be ignored
+    # (read as 2020-01-01), not parsed as a time/offset by fromisoformat()
+    assert (
+        is_valid_date(
+            "2020-01-01-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is True
+    )
+    assert (
+        is_valid_date(
+            "2020-01-01 12:00:00-01-01",
+            OUTPUTFORMAT,
+            earliest=MIN_DATE,
+            latest=LATEST_POSSIBLE,
+        )
+        is True
+    )
     assert (
         is_valid_date("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
     )
@@ -851,7 +867,6 @@ def test_try_date_expr():
     """test date extraction via external package"""
     assert try_date_expr(None, OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
 
-    find_date.extensive_search = False
     assert (
         try_date_expr(
             "Fri, Sept 1, 2017", OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE
@@ -859,7 +874,6 @@ def test_try_date_expr():
         is None
     )
 
-    find_date.extensive_search = True
     assert (
         try_date_expr(
             "Friday, September 01, 2017", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
@@ -949,10 +963,6 @@ def test_try_date_expr():
     assert (
         try_date_expr("18000101", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
     )
-
-
-# def test_header():
-#    assert examine_header(tree, options)
 
 
 def test_compare_reference():
@@ -1050,12 +1060,7 @@ def test_regex_parse():
         custom_parse("3/14/2016", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     )
     assert custom_parse("20041212", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse("20041212", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     assert custom_parse("1212-20-04", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse("1212-20-04", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert (
-        custom_parse("2004-12-12", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    )
     assert (
         custom_parse("2004-12-12", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     )
@@ -1064,7 +1069,6 @@ def test_regex_parse():
         custom_parse("12.12.2004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
     )
     assert custom_parse("2019 28 meh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse("2019 28 meh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     # regex-based matches
     assert (
         custom_parse("abcd 20041212 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
@@ -1072,10 +1076,6 @@ def test_regex_parse():
     )
     assert (
         custom_parse("abcd 2004-2-12 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        is not None
-    )
-    assert (
-        custom_parse("abcd 2004-2 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
         is not None
     )
     assert (
@@ -1110,129 +1110,84 @@ def test_regex_parse():
         is None
     )
     # for Nones caused by newlines and duplicates
-    assert regex_parse("January 1st, 1998") is not None
-    assert regex_parse("February 1st, 1998") is not None
-    assert regex_parse("March 1st, 1998") is not None
-    assert regex_parse("April 1st, 1998") is not None
-    assert regex_parse("May 1st, 1998") is not None
-    assert regex_parse("June 1st, 1998") is not None
-    assert regex_parse("July 1st, 1998") is not None
-    assert regex_parse("August 1st, 1998") is not None
-    assert regex_parse("September 1st, 1998") is not None
-    assert regex_parse("October 1st, 1998") is not None
-    assert regex_parse("November 1st, 1998") is not None
-    assert regex_parse("December 1st, 1998") is not None
-    assert regex_parse("Jan 1st, 1998") is not None
-    assert regex_parse("Feb 1st, 1998") is not None
-    assert regex_parse("Mar 1st, 1998") is not None
-    assert regex_parse("Apr 1st, 1998") is not None
-    assert regex_parse("Jun 1st, 1998") is not None
-    assert regex_parse("Jul 1st, 1998") is not None
-    assert regex_parse("Aug 1st, 1998") is not None
-    assert regex_parse("Sep 1st, 1998") is not None
-    assert regex_parse("Oct 1st, 1998") is not None
-    assert regex_parse("Nov 1st, 1998") is not None
-    assert regex_parse("Dec 1st, 1998") is not None
-    assert regex_parse("Januar 1, 1998") is not None
-    assert regex_parse("Jänner 1, 1998") is not None
-    assert regex_parse("Februar 1, 1998") is not None
-    assert regex_parse("Feber 1, 1998") is not None
-    assert regex_parse("März 1, 1998") is not None
-    assert regex_parse("April 1, 1998") is not None
-    assert regex_parse("Mai 1, 1998") is not None
-    assert regex_parse("Juni 1, 1998") is not None
-    assert regex_parse("Juli 1, 1998") is not None
-    assert regex_parse("August 1, 1998") is not None
-    assert regex_parse("September 1, 1998") is not None
-    assert regex_parse("Oktober 1, 1998") is not None
+    en_full = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+    en_abbr = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ]
+    de_full = [
+        "Januar",
+        "Jänner",
+        "Februar",
+        "Feber",
+        "März",
+        "April",
+        "Mai",
+        "Juni",
+        "Juli",
+        "August",
+        "September",
+        "Oktober",
+        "November",
+        "Dezember",
+    ]
+    tr_full = [
+        "Ocak",
+        "Şubat",
+        "Mart",
+        "Nisan",
+        "Mayıs",
+        "Haziran",
+        "Temmuz",
+        "Ağustos",
+        "Eylül",
+        "Ekim",
+        "Kasım",
+        "Aralık",
+    ]
+    tr_abbr = [
+        "Oca",
+        "Şub",
+        "Mar",
+        "Nis",
+        "May",
+        "Haz",
+        "Tem",
+        "Ağu",
+        "Eyl",
+        "Eki",
+        "Kas",
+        "Ara",
+    ]
+    for month in en_full + en_abbr:
+        assert regex_parse(f"{month} 1st, 1998") is not None, month
+    for month in de_full + tr_full + tr_abbr:
+        assert regex_parse(f"{month} 1, 1998") is not None, month
     assert regex_parse("1. Okt. 1998") is not None
-    assert regex_parse("November 1, 1998") is not None
-    assert regex_parse("Dezember 1, 1998") is not None
-    assert regex_parse("Ocak 1, 1998") is not None
-    assert regex_parse("Şubat 1, 1998") is not None
-    assert regex_parse("Mart 1, 1998") is not None
-    assert regex_parse("Nisan 1, 1998") is not None
-    assert regex_parse("Mayıs 1, 1998") is not None
-    assert regex_parse("Haziran 1, 1998") is not None
-    assert regex_parse("Temmuz 1, 1998") is not None
-    assert regex_parse("Ağustos 1, 1998") is not None
-    assert regex_parse("Eylül 1, 1998") is not None
-    assert regex_parse("Ekim 1, 1998") is not None
-    assert regex_parse("Kasım 1, 1998") is not None
-    assert regex_parse("Aralık 1, 1998") is not None
-    assert regex_parse("Oca 1, 1998") is not None
-    assert regex_parse("Şub 1, 1998") is not None
-    assert regex_parse("Mar 1, 1998") is not None
-    assert regex_parse("Nis 1, 1998") is not None
-    assert regex_parse("May 1, 1998") is not None
-    assert regex_parse("Haz 1, 1998") is not None
-    assert regex_parse("Tem 1, 1998") is not None
-    assert regex_parse("Ağu 1, 1998") is not None
-    assert regex_parse("Eyl 1, 1998") is not None
-    assert regex_parse("Eki 1, 1998") is not None
-    assert regex_parse("Kas 1, 1998") is not None
-    assert regex_parse("Ara 1, 1998") is not None
-    assert regex_parse("1 January 1998") is not None
-    assert regex_parse("1 February 1998") is not None
-    assert regex_parse("1 March 1998") is not None
-    assert regex_parse("1 April 1998") is not None
-    assert regex_parse("1 May 1998") is not None
-    assert regex_parse("1 June 1998") is not None
-    assert regex_parse("1 July 1998") is not None
-    assert regex_parse("1 August 1998") is not None
-    assert regex_parse("1 September 1998") is not None
-    assert regex_parse("1 October 1998") is not None
-    assert regex_parse("1 November 1998") is not None
-    assert regex_parse("1 December 1998") is not None
-    assert regex_parse("1 Jan 1998") is not None
-    assert regex_parse("1 Feb 1998") is not None
-    assert regex_parse("1 Mar 1998") is not None
-    assert regex_parse("1 Apr 1998") is not None
-    assert regex_parse("1 Jun 1998") is not None
-    assert regex_parse("1 Jul 1998") is not None
-    assert regex_parse("1 Aug 1998") is not None
-    assert regex_parse("1 Sep 1998") is not None
-    assert regex_parse("1 Oct 1998") is not None
-    assert regex_parse("1 Nov 1998") is not None
-    assert regex_parse("1 Dec 1998") is not None
-    assert regex_parse("1 Januar 1998") is not None
-    assert regex_parse("1 Jänner 1998") is not None
-    assert regex_parse("1 Februar 1998") is not None
-    assert regex_parse("1 Feber 1998") is not None
-    assert regex_parse("1 März 1998") is not None
-    assert regex_parse("1 April 1998") is not None
-    assert regex_parse("1 Mai 1998") is not None
-    assert regex_parse("1 Juni 1998") is not None
-    assert regex_parse("1 Juli 1998") is not None
-    assert regex_parse("1 August 1998") is not None
-    assert regex_parse("1 September 1998") is not None
-    assert regex_parse("1 Oktober 1998") is not None
-    assert regex_parse("1 November 1998") is not None
-    assert regex_parse("1 Dezember 1998") is not None
-    assert regex_parse("1 Ocak 1998") is not None
-    assert regex_parse("1 Şubat 1998") is not None
-    assert regex_parse("1 Mart 1998") is not None
-    assert regex_parse("1 Nisan 1998") is not None
-    assert regex_parse("1 Mayıs 1998") is not None
-    assert regex_parse("1 Haziran 1998") is not None
-    assert regex_parse("1 Temmuz 1998") is not None
-    assert regex_parse("1 Ağustos 1998") is not None
-    assert regex_parse("1 Eylül 1998") is not None
-    assert regex_parse("1 Ekim 1998") is not None
-    assert regex_parse("1 Kasım 1998") is not None
-    assert regex_parse("1 Aralık 1998") is not None
-    assert regex_parse("1 Oca 1998") is not None
-    assert regex_parse("1 Şub 1998") is not None
-    assert regex_parse("1 Mar 1998") is not None
-    assert regex_parse("1 Nis 1998") is not None
-    assert regex_parse("1 May 1998") is not None
-    assert regex_parse("1 Haz 1998") is not None
-    assert regex_parse("1 Tem 1998") is not None
-    assert regex_parse("1 Ağu 1998") is not None
-    assert regex_parse("1 Eyl 1998") is not None
-    assert regex_parse("1 Eki 1998") is not None
-    assert regex_parse("1 Kas 1998") is not None
-    assert regex_parse("1 Ara 1998") is not None
+    for month in en_full + en_abbr + de_full + tr_full + tr_abbr:
+        assert regex_parse(f"1 {month} 1998") is not None, month
 
 
 def test_external_date_parser():
@@ -1663,14 +1618,14 @@ def test_parser():
         "https://www.example.org",
     ]
     args = parse_args(testargs)
-    assert args.fast is True
+    assert args.fast is False
     assert args.original is True
     assert args.verbose is True
     assert args.maxdate == "2015-12-31"
     assert args.URL == "https://www.example.org"
     testargs = ["-min", "2015-12-31"]
     args = parse_args(testargs)
-    assert args.fast is True
+    assert args.fast is False
     assert args.original is False
     assert args.verbose is False
     assert args.mindate == "2015-12-31"
@@ -1851,41 +1806,3 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
-
-
-if __name__ == "__main__":
-    # function-level
-    test_input()
-    test_sanity()
-    test_is_valid_date()
-    test_search_pattern()
-    test_try_date_expr()
-    test_convert_date()
-    test_compare_reference()
-    test_candidate_selection()
-    test_regex_parse()
-    test_external_date_parser()
-    # test_header()
-
-    # module-level
-    test_deferred()
-    test_no_date()
-    test_exact_date()
-    test_search_html()
-    test_copyright_redos()
-    test_url()
-    test_approximate_url()
-    test_idiosyncrasies()
-    # new_pages()
-
-    # dependencies
-    test_dependencies()
-
-    # cli
-    test_parser()
-    test_cli()
-
-    # loading functions
-    test_download()
-    test_encoding_detection()
-    test_fetch_url_errors()

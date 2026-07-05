@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections import Counter
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sized
 from copy import deepcopy
 from datetime import datetime
 from functools import partial
@@ -46,7 +46,6 @@ from .extractors import (
     YYYYMM_PATTERN,
     YYYYMM_CATCH,
     MMYYYY_PATTERN,
-    MMYYYY_YEAR,
     SIMPLE_PATTERN,
     THREE_COMP_REGEX_A,
     THREE_COMP_REGEX_B,
@@ -213,22 +212,23 @@ def examine_text(
     )
 
 
+def has_plausible_candidates(candidates: Sized) -> bool:
+    "Check that the number of candidates is neither zero nor excessive."
+    return 0 < len(candidates) <= MAX_POSSIBLE_CANDIDATES
+
+
 def examine_date_elements(
     tree: HtmlElement,
     expression: str | Iterable[str],
     options: Extractor,
 ) -> str | None:
-    """Check HTML elements one by one for date expressions.
-
-    ``expression`` can be a single XPath or an iterable of them; in the latter
-    case they are tried in order and the first one to yield a match wins, so a
-    high-priority expression can be given alongside cheap fallbacks without an
-    extra tree traversal."""
+    """Check HTML elements one by one for date expressions. ``expression`` can
+    be a single XPath or an iterable of them, tried in order."""
     expressions = [expression] if isinstance(expression, str) else expression
 
     for expr in expressions:
         elements = tree.xpath(expr)
-        if not elements or len(elements) > MAX_POSSIBLE_CANDIDATES:
+        if not has_plausible_candidates(elements):
             continue
 
         for elem in elements:
@@ -268,11 +268,7 @@ def examine_header(
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
         # safeguard
-        if (
-            not elem.attrib
-            or "content" not in elem.attrib
-            and "datetime" not in elem.attrib
-        ):
+        if "content" not in elem.attrib and "datetime" not in elem.attrib:
             continue
         # name attribute, most frequent
         if "name" in elem.attrib:
@@ -298,8 +294,8 @@ def examine_header(
                 LOGGER.debug("examining meta property: %s", logstring(elem))
                 attempt = tryfunc(elem.get("content"))
                 if attempt is not None:
-                    if (attribute in DATE_ATTRIBUTES and options.original) or (
-                        attribute in PROPERTY_MODIFIED and not options.original
+                    if attribute in (
+                        DATE_ATTRIBUTES if options.original else PROPERTY_MODIFIED
                     ):
                         headerdate = attempt
                     # hurts precision
@@ -314,8 +310,10 @@ def examine_header(
                 attempt = tryfunc(elem.get("datetime") or elem.get("content"))
                 # store value
                 if attempt is not None:
-                    if (attribute in ITEMPROP_ATTRS_ORIGINAL and options.original) or (
-                        attribute in ITEMPROP_ATTRS_MODIFIED and not options.original
+                    if attribute in (
+                        ITEMPROP_ATTRS_ORIGINAL
+                        if options.original
+                        else ITEMPROP_ATTRS_MODIFIED
                     ):
                         headerdate = attempt
                     # put on hold: hurts precision
@@ -368,7 +366,7 @@ def select_candidate(
     options: Extractor,
 ) -> re.Match[str] | None:
     """Select a candidate among the most frequent matches"""
-    if not occurrences or len(occurrences) > MAX_POSSIBLE_CANDIDATES:
+    if not has_plausible_candidates(occurrences):
         return None
 
     if len(occurrences) == 1:
@@ -395,13 +393,14 @@ def select_candidate(
 
     # safety net: plausibility
     if all(validation):
-        # same number of occurrences: always take top of the pile?
-        if counts[0] == counts[1]:
-            match = catch.search(patterns[0])
-        # safety net: newer date but up to 50% less frequent
-        elif years[1] != years[0] and counts[1] / counts[0] > 0.5:
+        # newer date but up to 50% less frequent: take it, unless counts are tied
+        if (
+            counts[0] != counts[1]
+            and years[1] != years[0]
+            and counts[1] / counts[0] > 0.5
+        ):
             match = catch.search(patterns[1])
-        # not newer or hopefully not significant
+        # same number of occurrences, or not newer / not significant: top of the pile
         else:
             match = catch.search(patterns[0])
     elif any(validation):
@@ -450,7 +449,7 @@ def examine_abbr_elements(
 ) -> str | None:
     """Scan the page for abbr elements and check if their content contains an eligible date"""
     elements = tree.findall(".//abbr")
-    if 0 < len(elements) < MAX_POSSIBLE_CANDIDATES:
+    if has_plausible_candidates(elements):
         reference = 0
         for elem in elements:
             # data-utime (mostly Facebook)
@@ -469,7 +468,8 @@ def examine_abbr_elements(
             # class
             elif elem.get("class") in CLASS_ATTRS:
                 # other attributes
-                if trytext := elem.get("title"):
+                trytext = elem.get("title")
+                if trytext is not None:
                     LOGGER.debug("abbr published-title found: %s", trytext)
                     # shortcut
                     if options.original:
@@ -506,7 +506,7 @@ def examine_time_elements(
 ) -> str | None:
     """Scan the page for time elements and check if their content contains an eligible date"""
     elements = tree.findall(".//time")
-    if 0 < len(elements) < MAX_POSSIBLE_CANDIDATES:
+    if has_plausible_candidates(elements):
         # scan all the tags and look for the newest one
         reference = 0
         for elem in elements:
@@ -515,11 +515,7 @@ def examine_time_elements(
             # go for datetime
             if len(datetime_attr) > 6:
                 # shortcut: time pubdate
-                if (
-                    "pubdate" in elem.attrib
-                    and elem.get("pubdate") == "pubdate"
-                    and options.original
-                ):
+                if elem.get("pubdate") == "pubdate" and options.original:
                     shortcut_flag = True
                     LOGGER.debug("shortcut for time pubdate found: %s", datetime_attr)
                 # shortcuts: class attribute
@@ -589,8 +585,6 @@ def search_normalized(
     normalizer: Callable[[str], str],
     copyear: int,
     options: Extractor,
-    *,
-    incomplete: bool = False,
 ) -> str | None:
     """Filter plausible years, normalize each candidate to the YMD format, then
     select the best match and validate it (shared candidate-selection pipeline)."""
@@ -600,7 +594,6 @@ def search_normalized(
         yearpat=yearpat,
         earliest=options.min,
         latest=options.max,
-        incomplete=incomplete,
     )
     # revert DD-MM-YYYY patterns before sorting
     normalized = Counter(
@@ -712,7 +705,6 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         lambda item: normalize_match(THREE_COMP_REGEX_B.match(item)),
         copyear,
         options,
-        incomplete=True,
     )
     if result is not None:
         return result
@@ -746,11 +738,10 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
     result = search_normalized(
         htmlstring,
         MMYYYY_PATTERN,
-        MMYYYY_YEAR,
+        SELECT_YMD_YEAR,
         normalize_two_comp,
         copyear,
         options,
-        incomplete=options.original,
     )
     if result is not None:
         return result
@@ -768,7 +759,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
     # catchall: copyright mention
     if copyear != 0:
         LOGGER.debug("using copyright year as default")
-        dateobject = datetime(int(copyear), 1, 1)
+        dateobject = datetime(copyear, 1, 1)
         return dateobject.strftime(options.format)
 
     # last resort: 1 component
@@ -909,10 +900,7 @@ def find_date(
         LOGGER.error("lxml cleaner error")
 
     # define expressions + text_content
-    if extensive_search:
-        date_expr = SLOW_PREPEND + DATE_EXPRESSIONS
-    else:
-        date_expr = FAST_PREPEND + DATE_EXPRESSIONS
+    date_expr = (SLOW_PREPEND if extensive_search else FAST_PREPEND) + DATE_EXPRESSIONS
 
     # then look for expressions
     # and try time elements
