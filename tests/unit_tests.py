@@ -290,12 +290,10 @@ def test_exact_date():
         )
         == "2017-01-09"
     )
-    assert (
-        find_date(
-            '<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>'
-        )
-        == "2017-01-01"
-    )
+    # copyrightyear reserve, with and without extensive search
+    htmldoc = '<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>'
+    for extensive in (True, False):
+        assert find_date(htmldoc, extensive_search=extensive) == "2017-01-01"
 
     # original date
     htmldoc = '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:DatePublished" content="2017-07-02"/></head><body/></html>'
@@ -523,6 +521,10 @@ def test_exact_date():
         )
         == "2011-09-28"
     )
+    # a shortcut <time> beats an older plain <time> (not min-folded)
+    for attr in ('pubdate="pubdate"', 'class="entry-time"'):
+        htmldoc = f'<html><body><time datetime="2016-05-05" {attr}></time><time datetime="2010-01-01"></time></body></html>'
+        assert find_date(htmldoc, original_date=True) == "2016-05-05", attr
     # bug #54
     assert (
         find_date(

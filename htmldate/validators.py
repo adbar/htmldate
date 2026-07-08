@@ -141,6 +141,13 @@ def plausible_year_filter(
     return occurrences
 
 
+def update_reference(reference: int, candidate: int, original: bool) -> int:
+    "Fold a timestamp into the running reference: oldest if original, else newest."
+    if original:
+        return min(reference, candidate) if reference else candidate
+    return max(reference, candidate)
+
+
 def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
@@ -148,17 +155,12 @@ def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if options.original:
-        reference = min(reference, timestamp) if reference else timestamp
-    else:
-        reference = max(reference, timestamp)
-    return reference
+    return update_reference(reference, timestamp, options.original)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
 def filter_ymd_candidate(
     bestmatch: tuple[str, ...] | None,
-    pattern: re.Pattern[str],
     copyear: int,
     outputformat: str,
     min_date: datetime,
@@ -170,7 +172,7 @@ def filter_ymd_candidate(
         if is_valid_date(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date) and (
             copyear == 0 or int(bestmatch[0]) >= copyear
         ):
-            LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+            LOGGER.debug("date found: %s", pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
     return None
 
