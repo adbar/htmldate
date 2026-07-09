@@ -741,6 +741,49 @@ def test_exact_date():
     )
 
 
+def test_free_text_timezone():
+    """Time of day and time zone must be preserved when dates are extracted
+    from free text / JSON via regexes (issue #174)."""
+    tzformat = "%Y-%m-%d %H:%M:%S%z"
+
+    # JSON-LD datePublished with time and time zone
+    jsonld = (
+        '<html><head><script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"datePublished":"2024-11-06T08:37:00+05:30"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    assert (
+        find_date(jsonld, outputformat=tzformat, original_date=True)
+        == "2024-11-06 08:37:00+0530"
+    )
+    # default date-only output stays unchanged
+    assert find_date(jsonld, original_date=True) == "2024-11-06"
+
+    # JSON-LD dateModified with time and time zone
+    jsonld_mod = (
+        '<html><head><script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"dateModified":"2024-11-06T08:37:00+05:30"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    assert (
+        find_date(jsonld_mod, outputformat=tzformat, original_date=False)
+        == "2024-11-06 08:37:00+0530"
+    )
+
+    # timestamp found in free text of the body
+    freetext = (
+        "<html><body><p>Published on 2024-11-06T08:37:00+05:30 "
+        "by someone</p></body></html>"
+    )
+    assert (
+        find_date(freetext, outputformat=tzformat, original_date=True)
+        == "2024-11-06 08:37:00+0530"
+    )
+    assert find_date(freetext, original_date=True) == "2024-11-06"
+
+
 def test_is_valid_date():
     """test internal date validation"""
     assert (
