@@ -175,7 +175,6 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
-# search_page / find_date patterns
 TIMESTAMP_PATTERN = re.compile(
     rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE}).[0-9]{{2}}:[0-9]{{2}}:[0-9]{{2}}"
 )
@@ -189,17 +188,15 @@ TWO_COMP_REGEX = re.compile(rf"({MONTH_RE})[/.-]({YEAR_RE})")
 
 # extensive search patterns
 YEAR_PATTERN = re.compile(rf"^\D?({YEAR_RE})")
-# bounded gap (\D{0,99}, not unbounded \D*) to avoid quadratic backtracking (ReDoS)
+# bounded gap \D{0,99} (not \D*) avoids ReDoS
 COPYRIGHT_PATTERN = re.compile(
     rf"(?:©|\&copy;|Copyright|\(c\))\D{{0,99}}(?:{YEAR_RE})?-?({YEAR_RE})\D"
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
-THREE_CATCH = re.compile(r"([0-9]{4})/([0-9]{2})/([0-9]{2})")
 THREE_LOOSE_PATTERN = re.compile(r"\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D")
 THREE_LOOSE_CATCH = re.compile(r"([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})")
 SELECT_YMD_PATTERN = re.compile(r"\D([0-3]?[0-9][/.-][01]?[0-9][/.-][0-9]{4})\D")
 SELECT_YMD_YEAR = re.compile(rf"({YEAR_RE})\D?$")
-YMD_YEAR = re.compile(rf"^({YEAR_RE})")
 DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
@@ -213,10 +210,7 @@ YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9])")
 MMYYYY_PATTERN = re.compile(r"\D([01]?[0-9][/.-][12][0-9]{3})\D")
 SIMPLE_PATTERN = re.compile(rf"(?<!w3.org)\D({YEAR_RE})\D")
 
-THREE_COMP_PATTERNS = (
-    (THREE_PATTERN, THREE_CATCH),
-    (THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH),
-)
+THREE_COMP_PATTERNS = (THREE_PATTERN, THREE_LOOSE_PATTERN)
 
 
 def examine_text(
@@ -241,8 +235,7 @@ def examine_date_elements(
     expression: str | Iterable[str],
     options: Extractor,
 ) -> str | None:
-    """Check HTML elements one by one for date expressions. ``expression`` can
-    be a single XPath or an iterable of them, tried in order."""
+    """Check elements for date expressions; ``expression`` is one XPath or an iterable of them."""
     expressions = [expression] if isinstance(expression, str) else expression
 
     for expr in expressions:
@@ -403,14 +396,13 @@ def select_candidate(
 
     # safety net: plausibility
     if all(validation):
-        # newer date but up to 50% less frequent: take it, unless counts are tied
+        # newer but <50% less frequent and counts differ: take it, else top of the pile
         if (
             counts[0] != counts[1]
             and years[1] != years[0]
             and counts[1] / counts[0] > 0.5
         ):
             match = catch.search(patterns[1])
-        # same number of occurrences, or not newer / not significant: top of the pile
         else:
             match = catch.search(patterns[0])
     elif any(validation):
@@ -576,7 +568,7 @@ def search_normalized(
     normalized = Counter(
         {normalizer(item): count for item, count in candidates.items()}
     )
-    bestmatch = select_candidate(normalized, YMD_PATTERN, YMD_YEAR, options)
+    bestmatch = select_candidate(normalized, YMD_PATTERN, YEAR_PATTERN, options)
     return _filter_ymd(bestmatch, copyear, options)
 
 
@@ -653,9 +645,9 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
     LOGGER.debug("3 components")
     # target URL characteristics
     # then more loosely structured data
-    for patterns in THREE_COMP_PATTERNS:
+    for pattern in THREE_COMP_PATTERNS:
         result = _search_and_filter(
-            htmlstring, patterns[0], patterns[1], copyear, options
+            htmlstring, pattern, THREE_LOOSE_CATCH, copyear, options
         )
         if result is not None:
             return result

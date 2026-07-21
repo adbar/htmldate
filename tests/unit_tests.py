@@ -113,11 +113,12 @@ def test_input():
         )
         is not None
     )
-    # response decoding
-    assert decode_response(b"\x1f\x8babcdef") is not None
+    # response decoding: object-with-.data, raw bytes, and the empty-body guard
     mock = Mock()
     mock.data = b" "
     assert decode_response(mock) is not None
+    assert decode_response(b"\x1f\x8babcdef") is not None
+    assert decode_response(b"") == ""
 
     # find_date logic
     with pytest.raises(TypeError):
@@ -785,8 +786,8 @@ def test_is_valid_date():
         is_valid_date("202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
         is False
     )
-    # trailing content beyond the 10-char YYYY-MM-DD shape must be ignored
-    # (read as 2020-01-01), not parsed as a time/offset by fromisoformat()
+    # trailing content beyond the 10-char YYYY-MM-DD shape is ignored
+    # (positional read: only date_input[:4]/[5:7]/[8:10] matter)
     assert (
         is_valid_date(
             "2020-01-01-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
@@ -799,6 +800,19 @@ def test_is_valid_date():
             OUTPUTFORMAT,
             earliest=MIN_DATE,
             latest=LATEST_POSSIBLE,
+        )
+        is True
+    )
+    # separator is not checked either (positional slicing, not strict ISO)
+    assert (
+        is_valid_date(
+            "2020/01/01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is True
+    )
+    assert (
+        is_valid_date(
+            "2020.01.01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
     )

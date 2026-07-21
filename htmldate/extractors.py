@@ -6,6 +6,7 @@ Custom parsers and XPath expressions for date extraction
 import logging
 import re
 
+from collections.abc import Iterator
 from datetime import datetime
 from functools import lru_cache
 
@@ -243,12 +244,8 @@ def _parse_yyyymmdd(digits: str) -> datetime:
     return datetime(int(digits[:4]), int(digits[4:6]), int(digits[6:8]))
 
 
-def custom_parse(
-    string: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> str | None:
-    """Try to bypass the slow dateparser"""
-    LOGGER.debug("custom parse test: %s", string)
-
+def _date_candidates(string: str) -> Iterator[datetime | None]:
+    "Yield datetime candidates for custom_parse, in decreasing priority order."
     # 1. shortcut
     if string[:4].isdigit():
         candidate = None
@@ -257,7 +254,7 @@ def custom_parse(
             try:
                 candidate = _parse_yyyymmdd(string)
             except ValueError:
-                LOGGER.debug("8-digit error: %s", string[:8])  # return None
+                LOGGER.debug("8-digit error: %s", string[:8])
         # b. much faster than extensive parsing
         else:
             try:
@@ -268,78 +265,61 @@ def custom_parse(
                     candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
                 except (OverflowError, TypeError, ValueError):
                     LOGGER.debug("dateutil parsing error: %s", string)
-        # c. plausibility test
-        result = validate_and_convert(
-            candidate, outputformat, earliest=min_date, latest=max_date
-        )
-        if result is not None:
-            return result
+        yield candidate
 
     # 2. Try YYYYMMDD, use regex
     match = YMD_NO_SEP_PATTERN.search(string)
     if match:
         try:
-            candidate = _parse_yyyymmdd(match[1])
+            yield _parse_yyyymmdd(match[1])
         except ValueError:
             LOGGER.debug("YYYYMMDD value error: %s", match[0])
-        else:
-            result = validate_and_convert(
-                candidate, outputformat, earliest=min_date, latest=max_date
-            )
-            if result is not None:
-                return result
 
     # 3. Try the very common YMD, Y-M-D, and D-M-Y patterns
     match = YMD_PATTERN.search(string)
     if match:
         try:
             if match.lastgroup == "day":
-                candidate = datetime(
+                yield datetime(
                     int(match.group("year")),
                     int(match.group("month")),
                     int(match.group("day")),
                 )
             else:
-                candidate = _build_dmy(
+                yield _build_dmy(
                     int(match.group("day2")),
                     int(match.group("month2")),
                     int(match.group("year2")),
                 )
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
-        else:
-            result = validate_and_convert(
-                candidate, outputformat, earliest=min_date, latest=max_date
-            )
-            if result is not None:
-                return result
 
-    # 4. Try the Y-M and M-Y patterns
+    # 4. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
     match = YM_PATTERN.search(string)
     if match:
         try:
-            if match.lastgroup == "month":
-                candidate = datetime(
-                    int(match.group("year")), int(match.group("month")), 1
-                )
-            else:
-                candidate = datetime(
-                    int(match.group("year2")), int(match.group("month2")), 1
-                )
+            year = match.group("year") or match.group("year2")
+            month = match.group("month") or match.group("month2")
+            yield datetime(int(year), int(month), 1)
         except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
-        else:
-            result = validate_and_convert(
-                candidate, outputformat, earliest=min_date, latest=max_date
-            )
-            if result is not None:
-                return result
 
     # 5. Try the other regex pattern
-    dateobject = regex_parse(string)
-    return validate_and_convert(
-        dateobject, outputformat, earliest=min_date, latest=max_date
-    )
+    yield regex_parse(string)
+
+
+def custom_parse(
+    string: str, outputformat: str, min_date: datetime, max_date: datetime
+) -> str | None:
+    """Try to bypass the slow dateparser"""
+    LOGGER.debug("custom parse test: %s", string)
+    for candidate in _date_candidates(string):
+        result = validate_and_convert(
+            candidate, outputformat, earliest=min_date, latest=max_date
+        )
+        if result is not None:
+            return result
+    return None
 
 
 def external_date_parser(string: str, outputformat: str) -> str | None:
@@ -402,7 +382,7 @@ def try_date_expr(
 
 
 def try_date_expr_opts(string: str | None, options: Extractor) -> str | None:
-    "Uncached options wrapper for try_date_expr (Extractor is unhashable)."
+    "Uncached wrapper for try_date_expr: Extractor is identity-hashed, so caching it is useless."
     return try_date_expr(
         string, options.format, options.extensive, options.min, options.max
     )

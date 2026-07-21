@@ -143,7 +143,7 @@ def fetch_url(url: str) -> str | None:
         elif is_wrong_document(response.data):
             LOGGER.error("incorrect input data for URL %s", url)
         else:
-            return decode_response(response.data)
+            return decode_file(response.data)
     return None
 
 
@@ -158,8 +158,7 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
     if "doctype" in beginning:
         firstline, _, rest = htmlstring.partition("\n")
         htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
-    # other issue with malformed documents: check first few lines only
-    # (split avoids materialising every line of a large document)
+    # check first few lines only (split cap avoids materialising a large doc)
     for line in htmlstring.split("\n", 4)[:4]:
         if "<html" in line and line.rstrip("\r").endswith("/>"):
             htmlstring = FAULTY_HTML.sub(r"\1>", htmlstring, count=1)
@@ -198,8 +197,6 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
         if downloaded is None:
             raise ValueError(f"URL couldn't be processed: {htmlobject}")
         htmlobject = downloaded
-    # start processing
-    tree = None
     # try to guess encoding and decode file: if None then keep original
     htmlobject = decode_file(htmlobject)
     # sanity checks
@@ -207,17 +204,16 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     # repair first
     htmlobject = repair_faulty_html(htmlobject, beginning)
     # first pass: use Unicode string
-    fallback_parse = False
     try:
         tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
         # "Unicode strings with encoding declaration are not supported."
-        fallback_parse = True
-        tree = fromstring_bytes(htmlobject)
+        tree = None
     except Exception as err:  # pragma: no cover
         LOGGER.error("lxml parsing failed: %s", err)
-    # second pass: try passing bytes to LXML
-    if (tree is None or len(tree) < 1) and not fallback_parse:
+        tree = None
+    # fallback: try passing bytes to LXML
+    if tree is None or len(tree) < 1:
         tree = fromstring_bytes(htmlobject)
     # rejection test: is it (well-formed) HTML at all?
     # log parsing errors
@@ -239,8 +235,7 @@ def remove_if_attached(element: HtmlElement) -> None:
 def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
     "Delete selected elements."
     for element in tree.iter(elemlist):
-        # drop_tree() keeps the element's tail text (a date may sit right after a
-        # cleaned media element); fall back to remove() if it is unavailable
+        # drop_tree() keeps tail text (a date may follow a cleaned element)
         try:
             element.drop_tree()
         except AttributeError:  # pragma: no cover

@@ -35,14 +35,14 @@ def is_valid_date(
     if date_input is None:
         return False
 
-    # datetime path: no format needed for parsing, no cache required
+    # datetime: no parsing needed, so no cache
     if isinstance(date_input, datetime):
         result = _is_in_range(date_input, earliest, latest)
         if not result:
             LOGGER.debug("date not valid: %s", date_input)
         return result
 
-    # string path: parse then validate (cached on the string + format combo)
+    # string: parse then validate (cached)
     return _parse_and_validate(date_input, outputformat, earliest, latest)
 
 
@@ -56,8 +56,10 @@ def _parse_and_validate(
     """Parse a date string and validate it against time boundaries."""
     try:
         if outputformat == "%Y-%m-%d":
-            # read the leading YYYY-MM-DD and ignore the rest
-            dateobject = datetime.fromisoformat(date_input[:10])
+            # positional YYYY-MM-DD read: faster than strptime, separator-agnostic
+            dateobject = datetime(
+                int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
+            )
         else:
             dateobject = datetime.strptime(date_input, outputformat)
     except ValueError:
@@ -130,8 +132,7 @@ def plausible_year_filter(
             del occurrences[item]
             continue
 
-        # correct_year() is a no-op for already-4-digit years, so this also
-        # covers yearpat patterns that only ever capture 4 digits
+        # correct_year() is a no-op on 4-digit years, so this covers both cases
         potential_year = correct_year(int(year_match[1]))
 
         if not min_year <= potential_year <= max_year:
@@ -177,12 +178,19 @@ def filter_ymd_candidate(
     return None
 
 
+def reset_validator_caches() -> None:
+    "Clear this module's lru caches."
+    _parse_and_validate.cache_clear()
+    filter_ymd_candidate.cache_clear()
+    is_valid_format.cache_clear()
+
+
 def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     """Parse date and return string in desired format"""
     # speed-up (%Y-%m-%d)
     if inputformat == outputformat:
         return datestring
-    # datetime object passed directly (callers may violate the str annotation)
+    # some callers pass a datetime despite the str annotation
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
     dateobject = datetime.strptime(datestring, inputformat)
