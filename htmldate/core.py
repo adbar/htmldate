@@ -252,6 +252,20 @@ def examine_header(
     :return: Returns a valid date expression as a string, or None
 
     """
+    headerdate, reserve = examine_header_candidates(tree, options)
+    # if nothing was found, look for lower granularity (so far: "copyright year")
+    if headerdate is None and reserve is not None:
+        LOGGER.debug("opting for reserve date with less granularity")
+        headerdate = reserve
+    return headerdate
+
+
+def examine_header_candidates(
+    tree: HtmlElement,
+    options: Extractor,
+) -> tuple[str | None, str | None]:
+    """Parse header elements and return the matching date along with a
+    lower-confidence reserve date, if any."""
     headerdate, reserve = None, None
     tryfunc = partial(
         try_date_expr,
@@ -348,12 +362,7 @@ def examine_header(
         # exit loop
         if headerdate is not None:
             break
-    # if nothing was found, look for lower granularity (so far: "copyright year")
-    if headerdate is None and reserve is not None:
-        LOGGER.debug("opting for reserve date with less granularity")
-        headerdate = reserve
-    # return value
-    return headerdate
+    return headerdate, reserve
 
 
 def select_candidate(
@@ -872,7 +881,9 @@ def find_date(
 
     # first try header
     # then try to use JSON data
-    result = examine_header(tree, options) or json_search(tree, options)
+    # a header reserve date is lower-confidence than JSON-LD, so try JSON first
+    header_result, header_reserve = examine_header_candidates(tree, options)
+    result = header_result or json_search(tree, options) or header_reserve
     if result is not None:
         return result
 

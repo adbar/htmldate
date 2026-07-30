@@ -784,6 +784,22 @@ def test_free_text_timezone():
     assert find_date(freetext, original_date=True) == "2024-11-06"
 
 
+def test_json_over_header_reserve():
+    """A lower-confidence header reserve date must not take precedence over
+    JSON-LD data (issue #195)."""
+    htmlstring = (
+        "<html><head>"
+        '<meta property="article:modified_time" content="2020-07-20"/>'
+        '<script type="application/ld+json">'
+        '{"@type":"Article","datePublished":"2020-07-01",'
+        '"dateModified":"2020-07-20"}</script>'
+        "</head><body><p>text</p></body></html>"
+    )
+    assert find_date(htmlstring, original_date=True) == "2020-07-01"
+    # the modified date is still returned when it is the one requested
+    assert find_date(htmlstring, original_date=False) == "2020-07-20"
+
+
 def test_is_valid_date():
     """test internal date validation"""
     assert (
