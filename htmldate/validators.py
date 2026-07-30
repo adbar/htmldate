@@ -186,10 +186,9 @@ def reset_validator_caches() -> None:
 
 
 def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
-    """Parse date and return string in desired format"""
-    # speed-up (%Y-%m-%d)
-    if inputformat == outputformat:
-        return datestring
+    """Parse date and return string in desired format. Always round-trips:
+    the regexes accept unpadded fields, so passing the input through when the
+    formats match would leak e.g. "2016-11-1"."""
     # some callers pass a datetime despite the str annotation
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)

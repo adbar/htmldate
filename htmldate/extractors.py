@@ -91,7 +91,8 @@ DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
 
 DAY_RE = "[0-3]?[0-9]"
 MONTH_RE = "[0-1]?[0-9]"
-YEAR_RE = "199[0-9]|20[0-3][0-9]"
+# keep grouped: bare in "({YEAR_RE}-...)" the "|" would split the whole group
+YEAR_RE = "(?:199[0-9]|20[0-3][0-9])"
 
 # regex cache
 YMD_NO_SEP_PATTERN = re.compile(r"\b(\d{8})\b")
@@ -123,9 +124,14 @@ LONG_TEXT_PATTERN = re.compile(
 
 COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|$)")
 
-JSON_MODIFIED = re.compile(rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I)
+# optional ISO-8601 time-of-day and time zone suffix (e.g. "T08:37:00+05:30")
+TIME_TZ_RE = r"[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?"
+
+JSON_MODIFIED = re.compile(
+    rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
+)
 JSON_PUBLISHED = re.compile(
-    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I
+    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
 )
 
 # English, French, German, Indonesian and Turkish month names
@@ -412,6 +418,10 @@ def img_search(
     return None
 
 
+# strftime directives carrying time of day or time zone
+TIME_TZ_DIRECTIVES = ("%H", "%I", "%M", "%S", "%f", "%z", "%Z", "%p", "%X", "%c")
+
+
 def pattern_search(
     text: str,
     date_pattern: re.Pattern[str],
@@ -419,12 +429,22 @@ def pattern_search(
 ) -> str | None:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
-    if match and is_valid_date(
+    if not match or not is_valid_date(
         match[1], "%Y-%m-%d", earliest=options.min, latest=options.max
     ):
-        LOGGER.debug("regex found: %s %s", date_pattern, match[0])
-        return convert_date(match[1], "%Y-%m-%d", options.format)
-    return None
+        return None
+    LOGGER.debug("regex found: %s %s", date_pattern, match[0])
+    # carry time of day and time zone through when the output format needs them
+    # (group 1 is the date, the optional group 2 the time/tz suffix)
+    full = (
+        custom_parse(match[1] + match[2], options.format, options.min, options.max)
+        if match.lastindex
+        and match.lastindex >= 2
+        and match[2]
+        and any(directive in options.format for directive in TIME_TZ_DIRECTIVES)
+        else None
+    )
+    return full or convert_date(match[1], "%Y-%m-%d", options.format)
 
 
 def json_search(

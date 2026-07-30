@@ -12,6 +12,7 @@ from copy import deepcopy
 from datetime import datetime
 from functools import partial
 
+from lxml.etree import Comment
 from lxml.html import HtmlElement, tostring
 
 # own
@@ -32,6 +33,7 @@ from .extractors import (
     DAY_RE,
     MONTH_RE,
     YEAR_RE,
+    TIME_TZ_RE,
 )
 from .settings import (
     CLEANING_LIST,
@@ -39,7 +41,7 @@ from .settings import (
     MAX_SEGMENT_LEN,
     MIN_SEGMENT_LEN,
 )
-from .utils import Extractor, clean_html, load_html, trim_text
+from .utils import Extractor, clean_html, load_html, remove_if_attached, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -60,6 +62,14 @@ LOGGER = logging.getLogger(__name__)
 def logstring(element: HtmlElement) -> str:
     """Format the element to be logged to a string."""
     return tostring(element, pretty_print=False, encoding="unicode").strip()
+
+
+def serialize(tree: HtmlElement) -> str:
+    "Robust conversion to string."
+    try:
+        return tostring(tree, pretty_print=False, encoding="unicode")
+    except UnicodeDecodeError:
+        return tostring(tree, pretty_print=False).decode("utf-8", "ignore")
 
 
 DATE_ATTRIBUTES = {
@@ -175,9 +185,9 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
-TIMESTAMP_PATTERN = re.compile(
-    rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE}).[0-9]{{2}}:[0-9]{{2}}:[0-9]{{2}}"
-)
+TIMESTAMP_PATTERN = re.compile(rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})")
+# same without the mandatory time: fast-mode last resort only, see find_date
+TIMESTAMP_LOOSE_PATTERN = re.compile(rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?")
 
 # component patterns
 THREE_COMP_REGEX_A = re.compile(rf"({DAY_RE})[/.-]({MONTH_RE})[/.-]({YEAR_RE})")
@@ -846,7 +856,9 @@ def find_date(
         search_tree = discard_unwanted(clean_html(pruning_tree, CLEANING_LIST))
     # rare LXML error: no NULL bytes or control characters
     except ValueError:  # pragma: no cover
-        search_tree = tree
+        # pruning_tree, not tree: it is ours in both cases, and the fast-mode
+        # fallback below strips this tree in place
+        search_tree = pruning_tree
         LOGGER.error("lxml cleaner error")
 
     # define expressions + text_content
@@ -862,11 +874,7 @@ def find_date(
     if result is not None:
         return result
 
-    # robust conversion to string
-    try:
-        htmlstring = tostring(search_tree, pretty_print=False, encoding="unicode")
-    except UnicodeDecodeError:
-        htmlstring = tostring(search_tree, pretty_print=False).decode("utf-8", "ignore")
+    htmlstring = serialize(search_tree)
 
     # date regex timestamp rescue
     # try image elements
@@ -879,18 +887,22 @@ def find_date(
     if result is not None:
         return result
 
-    # last resort
-    if extensive_search:
-        LOGGER.debug("extensive search started")
-        # TODO: further tests & decide according to original_date
-        reference = 0
-        for segment in FREE_TEXT_EXPRESSIONS(search_tree):
-            segment = segment.strip()
-            if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
-                continue
-            reference = compare_reference(reference, segment, options)
-        converted = check_extracted_reference(reference, options)
-        # return or search page HTML
-        return converted or search_page(htmlstring, options)
+    # fast mode has no search_page fallback: accept a bare date, but not one from
+    # comments/script/style (CSS markers, asset cache-busters are not dates)
+    if not extensive_search:
+        for element in list(search_tree.iter(Comment)):
+            remove_if_attached(element)
+        clean_html(search_tree, ["script", "style"])
+        return pattern_search(serialize(search_tree), TIMESTAMP_LOOSE_PATTERN, options)
 
-    return None
+    LOGGER.debug("extensive search started")
+    # TODO: further tests & decide according to original_date
+    reference = 0
+    for segment in FREE_TEXT_EXPRESSIONS(search_tree):
+        segment = segment.strip()
+        if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:
+            continue
+        reference = compare_reference(reference, segment, options)
+    converted = check_extracted_reference(reference, options)
+    # return or search page HTML
+    return converted or search_page(htmlstring, options)

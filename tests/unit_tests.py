@@ -745,6 +745,77 @@ def test_exact_date():
     )
 
 
+def test_free_text_timezone():
+    """Time of day and time zone must be preserved when dates are extracted
+    from free text / JSON via regexes (issue #174)."""
+    tzformat = "%Y-%m-%d %H:%M:%S%z"
+
+    # JSON-LD datePublished with time and time zone
+    jsonld = (
+        '<html><head><script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"datePublished":"2024-11-06T08:37:00+05:30"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    assert (
+        find_date(jsonld, outputformat=tzformat, original_date=True)
+        == "2024-11-06 08:37:00+0530"
+    )
+    # default date-only output stays unchanged
+    assert find_date(jsonld, original_date=True) == "2024-11-06"
+
+    # JSON-LD dateModified with time and time zone
+    jsonld_mod = (
+        '<html><head><script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"dateModified":"2024-11-06T08:37:00+05:30"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    assert (
+        find_date(jsonld_mod, outputformat=tzformat, original_date=False)
+        == "2024-11-06 08:37:00+0530"
+    )
+
+    # timestamp found in free text of the body
+    freetext = (
+        "<html><body><p>Published on 2024-11-06T08:37:00+05:30 "
+        "by someone</p></body></html>"
+    )
+    assert (
+        find_date(freetext, outputformat=tzformat, original_date=True)
+        == "2024-11-06 08:37:00+0530"
+    )
+    assert find_date(freetext, original_date=True) == "2024-11-06"
+
+
+def test_1990s_dates():
+    "YEAR_RE's alternation must stay grouped, else a lone year matches and the date is lost."
+    for year in (1995, 1999, 2001, 2024):
+        jsonld = (
+            '<html><head><script type="application/ld+json">'
+            f'{{"datePublished":"{year}-03-05T08:37:00"}}'
+            "</script></head><body><p>x</p></body></html>"
+        )
+        assert (
+            find_date(jsonld, original_date=True, extensive_search=False)
+            == f"{year}-03-05"
+        ), year
+        body = f"<html><body><p>Published on {year}-03-05T08:37:00</p></body></html>"
+        assert find_date(body, extensive_search=False) == f"{year}-03-05", year
+
+
+def test_fast_mode_bare_date():
+    "Fast mode has no search_page fallback, so a bare date is accepted last."
+    doc = "<html><body><p>Some text published 2020-05-05 by someone</p></body></html>"
+    assert find_date(doc, extensive_search=False) == "2020-05-05"
+    # a full timestamp still wins over an earlier bare date
+    doc = (
+        "<html><body><p>menu 2019-01-01</p>"
+        "<p>published 2020-05-05T10:00:00</p></body></html>"
+    )
+    assert find_date(doc, extensive_search=False) == "2020-05-05"
+
+
 def test_is_valid_date():
     """test internal date validation"""
     assert (
