@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections import Counter
-from collections.abc import Callable, Iterable, Sized
+from collections.abc import Callable, Sized
 from copy import deepcopy
 from datetime import datetime
 from functools import partial
@@ -232,12 +232,10 @@ def has_plausible_candidates(candidates: Sized) -> bool:
 
 def examine_date_elements(
     tree: HtmlElement,
-    expression: str | Iterable[str],
+    expressions: list[str],
     options: Extractor,
 ) -> str | None:
-    """Check elements for date expressions; ``expression`` is one XPath or an iterable of them."""
-    expressions = [expression] if isinstance(expression, str) else expression
-
+    "Check elements matching the XPath expressions for date strings."
     for expr in expressions:
         elements = tree.xpath(expr)
         if not has_plausible_candidates(elements):
@@ -483,7 +481,7 @@ def examine_abbr_elements(
         # return or try rescue in abbr content
         return check_extracted_reference(reference, options) or examine_date_elements(
             tree,
-            ".//abbr",
+            [".//abbr"],
             options,
         )
     return None
@@ -531,9 +529,9 @@ def examine_time_elements(
     return None
 
 
-def normalize_match(match: re.Match[str] | None) -> str:
-    """Normalize string output by adding "0" if necessary,
-    and optionally expand the year from two to four digits."""
+def normalize_match(pattern: re.Pattern[str], item: str) -> str:
+    "Zero-pad the matched components and expand a 2-digit year."
+    match = pattern.match(item)
     day, month, year = (g.zfill(2) for g in match.groups() if g)  # type: ignore[union-attr]
     if len(year) == 2:
         year = str(correct_year(int(year)))
@@ -634,7 +632,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         options,
     )
     if bestmatch is not None:
-        year = int(bestmatch[0])
+        year = int(bestmatch[1])
         if is_valid_date(
             datetime(year, 1, 1), "%Y", earliest=options.min, latest=options.max
         ):
@@ -657,7 +655,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         htmlstring,
         SELECT_YMD_PATTERN,
         SELECT_YMD_YEAR,
-        lambda item: normalize_match(THREE_COMP_REGEX_A.match(item)),
+        partial(normalize_match, THREE_COMP_REGEX_A),
         copyear,
         options,
     )
@@ -676,7 +674,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         htmlstring,
         SLASHES_PATTERN,
         SLASHES_YEAR,
-        lambda item: normalize_match(THREE_COMP_REGEX_B.match(item)),
+        partial(normalize_match, THREE_COMP_REGEX_B),
         copyear,
         options,
     )
@@ -734,7 +732,7 @@ def search_page(htmlstring: str, options: Extractor) -> str | None:
         options,
     )
     if bestmatch is not None:
-        return _finalize_candidate(datetime(int(bestmatch[0]), 1, 1), copyear, options)
+        return _finalize_candidate(datetime(int(bestmatch[1]), 1, 1), copyear, options)
 
     return None
 

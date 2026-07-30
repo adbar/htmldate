@@ -4,6 +4,7 @@ Unit tests for the htmldate library.
 
 import datetime
 import io
+import itertools
 import logging
 import os
 import re
@@ -35,12 +36,13 @@ from htmldate.extractors import (
     external_date_parser,
     regex_parse,
     try_date_expr,
+    MONTHS,
+    REGEX_MONTHS,
 )
 from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
 from htmldate.utils import (
     Extractor,
-    decode_response,
     detect_encoding,
     fetch_url,
     is_dubious_html,
@@ -113,13 +115,6 @@ def test_input():
         )
         is not None
     )
-    # response decoding: object-with-.data, raw bytes, and the empty-body guard
-    mock = Mock()
-    mock.data = b" "
-    assert decode_response(mock) is not None
-    assert decode_response(b"\x1f\x8babcdef") is not None
-    assert decode_response(b"") == ""
-
     # find_date logic
     with pytest.raises(TypeError):
         assert find_date(None) is None
@@ -193,11 +188,11 @@ def test_sanity():
     # XPath looking for date elements
     mytree = html.fromstring("<html><body><p>Test.</p></body></html>")
     with pytest.raises(XPathEvalError):
-        examine_date_elements(mytree, ".//[Error", OPTIONS)
-    result = examine_date_elements(mytree, ".//p", OPTIONS)
+        examine_date_elements(mytree, [".//[Error"], OPTIONS)
+    result = examine_date_elements(mytree, [".//p"], OPTIONS)
     assert result is None
     mytree = html.fromstring("<html><body><p>1999/03/05</p></body></html>")
-    result = examine_date_elements(mytree, ".//p", OPTIONS)
+    result = examine_date_elements(mytree, [".//p"], OPTIONS)
     assert result is not None
     # wrong field values in output format
     assert is_valid_format("%Y-%m-%d") is True
@@ -1204,6 +1199,39 @@ def test_regex_parse():
     assert regex_parse("1. Okt. 1998") is not None
     for month in en_full + en_abbr + de_full + tr_full + tr_abbr:
         assert regex_parse(f"1 {month} 1998") is not None, month
+    # dotted/dotless i cases where str.lower() diverges from re.I folding
+    for month, mnum in [("MAYIS", 5), ("KASIM", 11), ("EKİM", 10), ("Mayis", 5)]:
+        expected = datetime.datetime(1998, mnum, 1)
+        assert regex_parse(f"1 {month} 1998") == expected, month
+
+
+def _expand_alternative(alternative: str) -> set:
+    "Expand a REGEX_MONTHS alternative with [..] classes and optional '?' characters."
+    parts = []
+    i = 0
+    while i < len(alternative):
+        if alternative[i] == "[":
+            end = alternative.index("]", i)
+            parts.append(list(alternative[i + 1 : end]))
+            i = end + 1
+        elif alternative[i + 1 : i + 2] == "?":
+            parts.append([alternative[i], ""])
+            i += 2
+        else:
+            parts.append([alternative[i]])
+            i += 1
+    return {"".join(combo) for combo in itertools.product(*parts)}
+
+
+def test_month_lists_agree():
+    "REGEX_MONTHS and MONTHS must cover the same names, else regex_parse silently misses."
+    alternatives = [a for a in REGEX_MONTHS.replace("\n", "").split("|") if a]
+    # every name the pattern can match must resolve to a month number
+    for name in set().union(*map(_expand_alternative, alternatives)):
+        assert regex_parse(f"1 {name} 1998") is not None, name
+    # and every known month name must be reachable from the pattern
+    for name in {month for tup in MONTHS for month in tup}:
+        assert any(re.fullmatch(a, name, re.I) for a in alternatives), name
 
 
 def test_external_date_parser():

@@ -8,7 +8,6 @@ import re
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
 
 import urllib3
 
@@ -110,27 +109,8 @@ def decode_file(filecontent: bytes | str) -> str:
     return htmltext or str(filecontent, encoding="utf-8", errors="replace")
 
 
-def decode_response(response: Any) -> str:
-    """Read the data from a response object exposing the body via ``.data``
-    (e.g. urllib3 or a compatible response) or from a bytestring, then guess
-    its encoding and decode it to return a unicode string."""
-    # accept any response-like object exposing the body via .data, or raw bytes;
-    # .data may be None, so guard before decoding
-    data = response.data if hasattr(response, "data") else response
-    return decode_file(data) if data else ""
-
-
 def fetch_url(url: str) -> str | None:
-    """Fetches page using urllib3 and decodes the response.
-
-    Args:
-        url: URL of the page to fetch.
-
-    Returns:
-        HTML code as a string, or None if the network request failed, the
-        response status was not 200, or the payload was invalid.
-
-    """
+    "Fetch a page and decode it, or return None on a failed request or invalid payload."
     # send
     try:
         response = HTTP_POOL.request("GET", url, timeout=30)

@@ -128,7 +128,7 @@ JSON_PUBLISHED = re.compile(
     rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I
 )
 
-# English, French, German, Indonesian and Turkish dates cache
+# English, French, German, Indonesian and Turkish month names
 MONTHS = [
     ("jan", "januar", "jänner", "january", "januari", "janvier", "ocak", "oca"),
     ("feb", "februar", "feber", "february", "februari", "février", "şubat", "şub"),
@@ -144,9 +144,16 @@ MONTHS = [
     ("dec", "dez", "dezember", "december", "desember", "décembre", "aralık", "ara"),
 ]
 
-TEXT_MONTHS = {
-    month: mnum for mnum, mlist in enumerate(MONTHS, start=1) for month in mlist
-}
+# regex, not a dict: str.lower() disagrees with re.I on dotted/dotless i (e.g. "MAYIS")
+MONTH_PATTERNS = [
+    re.compile(rf"^(?:{'|'.join(map(re.escape, m))})$", re.I) for m in MONTHS
+]
+
+
+def _month_number(token: str) -> int | None:
+    "Month number for a name in any supported language."
+    return next((i for i, p in enumerate(MONTH_PATTERNS, 1) if p.match(token)), None)
+
 
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
 # gate for try_date_expr: a real date has a 4-digit year or a month name
@@ -226,14 +233,17 @@ def regex_parse(string: str) -> datetime | None:
         if match.lastgroup == "year"
         else ("day2", "month2", "year2")
     )
+    month = _month_number(match.group(groups[1]))
+    if month is None:  # pragma: no cover — every REGEX_MONTHS name is in MONTHS
+        return None
     # process and return
     try:
         dateobject = _build_dmy(
             int(match.group(groups[0])),
-            TEXT_MONTHS[match.group(groups[1]).lower()],
+            month,
             int(match.group(groups[2])),
         )
-    except (KeyError, ValueError):
+    except ValueError:
         return None
     LOGGER.debug("multilingual text found: %s", dateobject)
     return dateobject
