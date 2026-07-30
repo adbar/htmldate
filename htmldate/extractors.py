@@ -122,13 +122,16 @@ LONG_TEXT_PATTERN = re.compile(
 
 COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|$)")
 
-JSON_MODIFIED = re.compile(rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I)
+# optional ISO-8601 time-of-day and time zone suffix (e.g. "T08:37:00+05:30")
+TIME_TZ_RE = r"[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?"
+
+JSON_MODIFIED = re.compile(
+    rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
+)
 JSON_PUBLISHED = re.compile(
-    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})', re.I
+    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
 )
-TIMESTAMP_PATTERN = re.compile(
-    rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE}).[0-9]{{2}}:[0-9]{{2}}:[0-9]{{2}}"
-)
+TIMESTAMP_PATTERN = re.compile(rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})")
 
 # English, French, German, Indonesian and Turkish dates cache
 MONTHS = [
@@ -444,6 +447,10 @@ def img_search(
     return None
 
 
+# strftime directives carrying time of day or time zone
+TIME_TZ_DIRECTIVES = ("%H", "%I", "%M", "%S", "%f", "%z", "%Z", "%p", "%X", "%c")
+
+
 def pattern_search(
     text: str,
     date_pattern: re.Pattern[str],
@@ -451,12 +458,21 @@ def pattern_search(
 ) -> str | None:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
-    if match and is_valid_date(
+    if not match or not is_valid_date(
         match[1], "%Y-%m-%d", earliest=options.min, latest=options.max
     ):
-        LOGGER.debug("regex found: %s %s", date_pattern, match[0])
-        return convert_date(match[1], "%Y-%m-%d", options.format)
-    return None
+        return None
+    LOGGER.debug("regex found: %s %s", date_pattern, match[0])
+    # carry time of day and time zone through when the output format needs them
+    # (regexes only capture the date part, the optional suffix holds time/tz)
+    if match.lastindex and match.lastindex >= 2 and match[2]:
+        if any(directive in options.format for directive in TIME_TZ_DIRECTIVES):
+            full = custom_parse(
+                match[1] + match[2], options.format, options.min, options.max
+            )
+            if full is not None:
+                return full
+    return convert_date(match[1], "%Y-%m-%d", options.format)
 
 
 def json_search(

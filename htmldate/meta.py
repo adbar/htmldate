@@ -29,11 +29,11 @@ def reset_caches() -> None:
     is_valid_date.cache_clear()
     is_valid_format.cache_clear()
     try_date_expr.cache_clear()
-    # charset_normalizer
+    # charset_normalizer internals: cache_clear may be absent depending on version
     try:
-        encoding_languages.cache_clear()
-        is_suspiciously_successive_range.cache_clear()
-        is_accentuated.cache_clear()
+        getattr(encoding_languages, "cache_clear")()
+        getattr(is_suspiciously_successive_range, "cache_clear")()
+        getattr(is_accentuated, "cache_clear")()
     # prevent possible changes in function names
     except (AttributeError, NameError) as err:  # pragma: no cover
         LOGGER.error("impossible to clear cache for function: %s", err)
