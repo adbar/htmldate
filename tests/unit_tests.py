@@ -746,6 +746,35 @@ def test_exact_date():
     )
 
 
+def test_json_ld_over_header_reserve():
+    """A less reliable header date must not shadow an explicit JSON-LD date
+    (issue #195)."""
+    htmlstring = (
+        "<html><head>"
+        '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+        '<script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"datePublished":"2020-01-15T08:00:00+00:00",'
+        '"dateModified":"2023-05-20T12:00:00+00:00"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    # the modification date is only a fallback here: JSON-LD has the original one
+    assert find_date(htmlstring, original_date=True) == "2020-01-15"
+    # the modification date is what was asked for, header result still wins
+    assert find_date(htmlstring, original_date=False) == "2023-05-20"
+
+    # without a JSON-LD alternative the header fallback is still used
+    assert (
+        find_date(
+            "<html><head>"
+            '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+            "</head><body><p>text</p></body></html>",
+            original_date=True,
+        )
+        == "2023-05-20"
+    )
+
+
 def test_free_text_timezone():
     """Time of day and time zone must be preserved when dates are extracted
     from free text / JSON via regexes (issue #174)."""
