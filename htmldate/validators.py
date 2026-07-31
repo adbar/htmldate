@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import lru_cache
 
 from .settings import CACHE_SIZE, MIN_DATE
@@ -17,42 +17,58 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 
-@lru_cache(maxsize=CACHE_SIZE)
+def _is_in_range(dateobject: datetime, earliest: datetime, latest: datetime) -> bool:
+    """Check whether a datetime falls within the configured time window."""
+    return (
+        earliest.year <= dateobject.year <= latest.year
+        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
+    )
+
+
 def is_valid_date(
     date_input: datetime | str | None,
     outputformat: str,
     earliest: datetime,
     latest: datetime,
 ) -> bool:
-    """Validate a string w.r.t. the chosen outputformat and basic heuristics"""
-    # safety check
+    """Validate a date w.r.t. the chosen outputformat and time boundaries."""
     if date_input is None:
         return False
 
-    # try if date can be parsed using chosen outputformat
+    # datetime: no parsing needed, so no cache
     if isinstance(date_input, datetime):
-        dateobject = date_input
-    else:
-        # speed-up
-        try:
-            if outputformat == "%Y-%m-%d":
-                dateobject = datetime(
-                    int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
-                )
-            # default
-            else:
-                dateobject = datetime.strptime(date_input, outputformat)
-        except ValueError:
-            return False
+        result = _is_in_range(date_input, earliest, latest)
+        if not result:
+            LOGGER.debug("date not valid: %s", date_input)
+        return result
 
-    # year first, then full validation: not newer than today or stored variable
-    if (
-        earliest.year <= dateobject.year <= latest.year
-        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
-    ):
-        return True
-    LOGGER.debug("date not valid: %s", date_input)
-    return False
+    # string: parse then validate (cached)
+    return _parse_and_validate(date_input, outputformat, earliest, latest)
+
+
+@lru_cache(maxsize=CACHE_SIZE)
+def _parse_and_validate(
+    date_input: str,
+    outputformat: str,
+    earliest: datetime,
+    latest: datetime,
+) -> bool:
+    """Parse a date string and validate it against time boundaries."""
+    try:
+        if outputformat == "%Y-%m-%d":
+            # positional YYYY-MM-DD read: faster than strptime, separator-agnostic
+            dateobject = datetime(
+                int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
+            )
+        else:
+            dateobject = datetime.strptime(date_input, outputformat)
+    except ValueError:
+        return False
+
+    result = _is_in_range(dateobject, earliest, latest)
+    if not result:
+        LOGGER.debug("date not valid: %s", date_input)
+    return result
 
 
 def validate_and_convert(
@@ -104,7 +120,6 @@ def plausible_year_filter(
     yearpat: re.Pattern[str],
     earliest: datetime,
     latest: datetime,
-    incomplete: bool = False,
 ) -> Counter[str]:
     """Filter the date patterns to find plausible years only"""
     occurrences = Counter(pattern.findall(htmlstring))  # slow!
@@ -117,11 +132,8 @@ def plausible_year_filter(
             del occurrences[item]
             continue
 
-        lastdigits = year_match[1]
-        if not incomplete:
-            potential_year = int(lastdigits)
-        else:
-            potential_year = correct_year(int(lastdigits))
+        # correct_year() is a no-op on 4-digit years, so this covers both cases
+        potential_year = correct_year(int(year_match[1]))
 
         if not min_year <= potential_year <= max_year:
             LOGGER.debug("no potential year: %s", item)
@@ -130,24 +142,32 @@ def plausible_year_filter(
     return occurrences
 
 
+def update_reference(reference: int, candidate: int, original: bool) -> int:
+    "Fold a timestamp into the running reference: oldest if original, else newest."
+    if original:
+        return min(reference, candidate) if reference else candidate
+    return max(reference, candidate)
+
+
 def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = int(datetime.strptime(attempt, options.format).timestamp())
+        # UTC on both sides of the round-trip: host-timezone-independent
+        # results (data-utime feeds real epochs into the same reference)
+        timestamp = int(
+            datetime.strptime(attempt, options.format)
+            .replace(tzinfo=timezone.utc)
+            .timestamp()
+        )
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
-    if options.original:
-        reference = min(reference, timestamp) if reference else timestamp
-    else:
-        reference = max(reference, timestamp)
-    return reference
+    return update_reference(reference, timestamp, options.original)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
 def filter_ymd_candidate(
-    bestmatch: re.Match[str],
-    pattern: re.Pattern[str],
+    bestmatch: tuple[str, ...] | None,
     copyear: int,
     outputformat: str,
     min_date: datetime,
@@ -155,24 +175,28 @@ def filter_ymd_candidate(
 ) -> str | None:
     """Filter free text candidates in the YMD format"""
     if bestmatch is not None:
-        pagedate = "-".join([bestmatch[1], bestmatch[2], bestmatch[3]])
+        pagedate = "-".join(bestmatch[:3])
         if is_valid_date(pagedate, "%Y-%m-%d", earliest=min_date, latest=max_date) and (
-            copyear == 0 or int(bestmatch[1]) >= copyear
+            copyear == 0 or int(bestmatch[0]) >= copyear
         ):
-            LOGGER.debug('date found for pattern "%s": %s', pattern, pagedate)
+            LOGGER.debug("date found: %s", pagedate)
             return convert_date(pagedate, "%Y-%m-%d", outputformat)
     return None
 
 
+def reset_validator_caches() -> None:
+    "Clear this module's lru caches."
+    _parse_and_validate.cache_clear()
+    filter_ymd_candidate.cache_clear()
+    is_valid_format.cache_clear()
+
+
 def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
-    """Parse date and return string in desired format"""
-    # speed-up (%Y-%m-%d)
-    if inputformat == outputformat:
-        return datestring
-    # date object (speedup)
+    """Parse a date string and render it in the output format.
+    No same-format shortcut: unpadded matches like "2016-11-1" must be normalized."""
+    # some callers pass a datetime despite the str annotation
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
-    # normal
     dateobject = datetime.strptime(datestring, inputformat)
     return dateobject.strftime(outputformat)
 
@@ -182,7 +206,7 @@ def check_extracted_reference(reference: int, options: Extractor) -> str | None:
     if reference > 0:
         # reference (untrusted) may be outside the platform timestamp range
         try:
-            dateobject = datetime.fromtimestamp(reference)
+            dateobject = datetime.fromtimestamp(reference, tz=timezone.utc)
         except (OSError, OverflowError, ValueError):
             LOGGER.debug("invalid reference timestamp: %s", reference)
             return None

@@ -100,18 +100,11 @@ MOCK_PAGES = {
     "https://www.mozilla.org/en-US/security/advisories/mfsa2024-17/": "mozilla.org.mfsa2024-17.html",
 }
 
-MEDIACLOUD_PAGES = {"pagename": "thing.html"}
-
 
 def load_mock_page(url, dirname="cache", dictname=MOCK_PAGES):
     """load mock page from samples"""
     with open(os.path.join(TEST_DIR, dirname, dictname[url]), "rb") as inputf:
         return inputf.read()
-
-
-def load_mediacloud_page(url):
-    """load mediacloud page from samples"""
-    return load_mock_page(url, dirname="test_set", dictname=MEDIACLOUD_PAGES)
 
 
 def test_no_date():
@@ -765,7 +758,7 @@ def test_dependencies():
 
 def test_cli():
     "Test the command-line interface"
-    # third test: Linux and MacOS only
+    # Linux and MacOS only
     if os.name != "nt":
         testargs = []
         args = parse_args(testargs)
@@ -779,16 +772,3 @@ def test_cli():
             process_args(args)
         assert f.getvalue() == "2017-07-12\n"
         sys.stdin = sys.__stdin__
-
-
-if __name__ == "__main__":
-    # meta
-    test_readme_examples()
-    test_dependencies()
-
-    # module-level
-    test_no_date()
-    test_exact_date()
-    test_approximate_date()
-    test_search_html()
-    test_cli()

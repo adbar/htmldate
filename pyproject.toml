@@ -96,6 +96,11 @@ all = [
 [tool.ruff]
 target-version = "py310"
 
+[tool.ruff.lint]
+# pin the rule set: ruff 0.16 widened its defaults from 59 to 413 rules, whose
+# extra findings are noise here (naive datetimes are inherent to date extraction)
+select = ["E4", "E7", "E9", "F"]
+
 [tool.mypy]
 warn_unused_ignores = true
 

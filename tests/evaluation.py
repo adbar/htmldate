@@ -6,12 +6,8 @@ import json
 import os
 import re
 
-try:
-    from cchardet import detect
-except ImportError:
-    from charset_normalizer import detect
-
 from htmldate import find_date
+from htmldate.utils import decode_file
 from htmldate.validators import convert_date
 
 # Optional third-party libraries, only needed for the full benchmark
@@ -43,31 +39,13 @@ G = Goose() if Goose is not None else None
 
 def load_document(filename):
     """load mock page from samples"""
-    htmlstring = ""
     # look for the right directory
     for directory in ("test_set", "cache", "eval"):
         mypath = os.path.join(TEST_DIR, directory, filename)
         if os.path.isfile(mypath):
             break
-    # open and convert the file to str
-    try:
-        with open(mypath, "r", encoding="utf-8") as inputf:
-            htmlstring = inputf.read()
-    # encoding/windows fix for the tests
-    except UnicodeDecodeError:
-        # read as binary
-        with open(mypath, "rb") as inputf:
-            htmlbinary = inputf.read()
-        guessed_encoding = detect(htmlbinary)["encoding"]
-        if guessed_encoding:
-            try:
-                htmlstring = htmlbinary.decode(guessed_encoding)
-            except UnicodeDecodeError:
-                pass
-        if not htmlstring:
-            # print("Encoding error, using binary:", mypath)
-            htmlstring = htmlbinary
-    return htmlstring
+    with open(mypath, "rb") as inputf:
+        return decode_file(inputf.read())
 
 
 def run_htmldate_extensive(htmlstring):

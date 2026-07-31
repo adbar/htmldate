@@ -38,7 +38,7 @@ def parse_args(args: list[str]) -> argparse.Namespace:
     """Define parser for command-line arguments"""
     argsparser = argparse.ArgumentParser()
     argsparser.add_argument(
-        "-f", "--fast", help="fast mode: disable extensive search", action="store_false"
+        "-f", "--fast", help="fast mode: disable extensive search", action="store_true"
     )
     argsparser.add_argument(
         "-i",
@@ -96,9 +96,9 @@ def process_args(args: argparse.Namespace) -> None:
     else:
         with open(args.inputfile, mode="r", encoding="utf-8") as inputfile:
             for line in inputfile:
-                htmltext = fetch_url(line.strip())
-                result = cli_examine(htmltext, args)
-                sys.stdout.write(f"{line.strip()}\t{result or 'None'}\n")
+                url = line.strip()
+                result = cli_examine(fetch_url(url), args)
+                sys.stdout.write(f"{url}\t{result or 'None'}\n")
 
 
 def main() -> None:

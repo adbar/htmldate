@@ -8,7 +8,6 @@ import re
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
 
 import urllib3
 
@@ -110,31 +109,10 @@ def decode_file(filecontent: bytes | str) -> str:
     return htmltext or str(filecontent, encoding="utf-8", errors="replace")
 
 
-def decode_response(response: Any) -> str:
-    """Read the data from a response object exposing the body via ``.data``
-    (e.g. urllib3 or a compatible response) or from a bytestring, then guess
-    its encoding and decode it to return a unicode string."""
-    # accept any response-like object exposing the body via .data, or raw bytes;
-    # .data may be None, so guard before decoding
-    data = response.data if hasattr(response, "data") else response
-    return decode_file(data) if data else ""
-
-
 def fetch_url(url: str) -> str | None:
-    """Fetches page using urllib3 and decodes the response.
-
-    Args:
-        url: URL of the page to fetch.
-
-    Returns:
-        HTML code as string, or Urllib3 response object (headers + body), or empty string in case
-        the result is invalid, or None if there was a problem with the network.
-
-    """
+    "Fetch a page and decode it, or return None on a failed request or invalid payload."
     # send
     try:
-        # read by streaming chunks (stream=True, iter_content=xx)
-        # so we can stop downloading as soon as MAX_FILE_SIZE is reached
         response = HTTP_POOL.request("GET", url, timeout=30)
     except Exception as err:
         LOGGER.error("download error: %s %s", url, err)  # sys.exc_info()[0]
@@ -145,12 +123,12 @@ def fetch_url(url: str) -> str | None:
         elif is_wrong_document(response.data):
             LOGGER.error("incorrect input data for URL %s", url)
         else:
-            return decode_response(response.data)
+            return decode_file(response.data)
     return None
 
 
 def is_dubious_html(beginning: str) -> bool:
-    "Assess if the object is proper HTML (awith a corresponding tag or declaration)."
+    "Assess if the object is proper HTML (with a corresponding tag or declaration)."
     return "html" not in beginning
 
 
@@ -160,8 +138,7 @@ def repair_faulty_html(htmlstring: str, beginning: str) -> str:
     if "doctype" in beginning:
         firstline, _, rest = htmlstring.partition("\n")
         htmlstring = DOCTYPE_TAG.sub("", firstline, count=1) + "\n" + rest
-    # other issue with malformed documents: check first few lines only
-    # (split avoids materialising every line of a large document)
+    # check first few lines only (split cap avoids materialising a large doc)
     for line in htmlstring.split("\n", 4)[:4]:
         if "<html" in line and line.rstrip("\r").endswith("/>"):
             htmlstring = FAULTY_HTML.sub(r"\1>", htmlstring, count=1)
@@ -200,8 +177,6 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
         if downloaded is None:
             raise ValueError(f"URL couldn't be processed: {htmlobject}")
         htmlobject = downloaded
-    # start processing
-    tree = None
     # try to guess encoding and decode file: if None then keep original
     htmlobject = decode_file(htmlobject)
     # sanity checks
@@ -209,17 +184,16 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     # repair first
     htmlobject = repair_faulty_html(htmlobject, beginning)
     # first pass: use Unicode string
-    fallback_parse = False
     try:
         tree = fromstring(htmlobject, parser=HTML_PARSER)
     except ValueError:
         # "Unicode strings with encoding declaration are not supported."
-        fallback_parse = True
-        tree = fromstring_bytes(htmlobject)
+        tree = None
     except Exception as err:  # pragma: no cover
         LOGGER.error("lxml parsing failed: %s", err)
-    # second pass: try passing bytes to LXML
-    if (tree is None or len(tree) < 1) and not fallback_parse:
+        tree = None
+    # fallback: try passing bytes to LXML
+    if tree is None or len(tree) < 1:
         tree = fromstring_bytes(htmlobject)
     # rejection test: is it (well-formed) HTML at all?
     # log parsing errors
@@ -231,17 +205,21 @@ def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     return tree
 
 
+def remove_if_attached(element: HtmlElement) -> None:
+    "Remove an element from its parent, if it still has one."
+    parent = element.getparent()
+    if parent is not None:
+        parent.remove(element)
+
+
 def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
     "Delete selected elements."
     for element in tree.iter(elemlist):
-        # drop_tree() keeps the element's tail text (a date may sit right after a
-        # cleaned media element); fall back to remove() if it is unavailable
+        # drop_tree() keeps tail text (a date may follow a cleaned element)
         try:
             element.drop_tree()
         except AttributeError:  # pragma: no cover
-            parent = element.getparent()
-            if parent is not None:
-                parent.remove(element)
+            remove_if_attached(element)
     return tree
 
 
