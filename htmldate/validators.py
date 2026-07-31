@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import lru_cache
 
 from .settings import CACHE_SIZE, MIN_DATE
@@ -152,7 +152,13 @@ def update_reference(reference: int, candidate: int, original: bool) -> int:
 def compare_values(reference: int, attempt: str, options: Extractor) -> int:
     """Compare the date expression to a reference"""
     try:
-        timestamp = int(datetime.strptime(attempt, options.format).timestamp())
+        # UTC on both sides of the round-trip: host-timezone-independent
+        # results (data-utime feeds real epochs into the same reference)
+        timestamp = int(
+            datetime.strptime(attempt, options.format)
+            .replace(tzinfo=timezone.utc)
+            .timestamp()
+        )
     except Exception as err:
         LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
         return reference
@@ -186,9 +192,8 @@ def reset_validator_caches() -> None:
 
 
 def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
-    """Parse date and return string in desired format. Always round-trips:
-    the regexes accept unpadded fields, so passing the input through when the
-    formats match would leak e.g. "2016-11-1"."""
+    """Parse a date string and render it in the output format.
+    No same-format shortcut: unpadded matches like "2016-11-1" must be normalized."""
     # some callers pass a datetime despite the str annotation
     if isinstance(datestring, datetime):
         return datestring.strftime(outputformat)
@@ -201,7 +206,7 @@ def check_extracted_reference(reference: int, options: Extractor) -> str | None:
     if reference > 0:
         # reference (untrusted) may be outside the platform timestamp range
         try:
-            dateobject = datetime.fromtimestamp(reference)
+            dateobject = datetime.fromtimestamp(reference, tz=timezone.utc)
         except (OSError, OverflowError, ValueError):
             LOGGER.debug("invalid reference timestamp: %s", reference)
             return None

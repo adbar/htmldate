@@ -9,6 +9,7 @@ import re
 from collections.abc import Iterator
 from datetime import datetime
 from functools import lru_cache
+from itertools import islice
 
 # coverage for date parsing
 from dateparser import DateDataParser  # type: ignore[attr-defined]  # third-party, slow
@@ -91,7 +92,7 @@ DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
 
 DAY_RE = "[0-3]?[0-9]"
 MONTH_RE = "[0-1]?[0-9]"
-# keep grouped: bare in "({YEAR_RE}-...)" the "|" would split the whole group
+# keep the (?:...): interpolated bare, the "|" would split the enclosing group
 YEAR_RE = "(?:199[0-9]|20[0-3][0-9])"
 
 # regex cache
@@ -178,12 +179,15 @@ DISCARD_PATTERNS = re.compile(
 )
 
 # use of regex module for speed?
+# numeric core shared by all TEXT_PATTERNS alternatives, used as prefilter
+DATE_CORE_PATTERN = re.compile(r"[0-9]{1,4}[./][0-9]{1,2}[./][0-9]{2,4}")
+
+# gap-runs bounded to {0,9} (ReDoS + keeps matches within the prefilter windows)
 TEXT_PATTERNS = re.compile(
-    r'(?:date[^0-9"]{,20}|updated|last-modified|published|posted|on)(?:[ :])*?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
+    r'(?:date[^0-9"]{,20}|updated|last-modified|published|posted|on)[ :]{0,9}?([0-9]{1,4})[./]([0-9]{1,2})[./]([0-9]{2,4})|'  # EN
     r"(?:Datum|Stand|Veröffentlicht am):? ?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})|"  # DE
-    # bounded space-runs ({0,9}? not *?) to prevent ReDoS
     r"(?:güncellen?me|yayı(?:m|n)lan?ma) {0,9}?(?:tarihi)? {0,9}?:? {0,9}?([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})|"
-    r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) *?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) *(?:güncellendi|yayı(?:m|n)landı)",  # TR
+    r"([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4}) {0,9}?(?:'de|'da|'te|'ta|’de|’da|’te|’ta|tarihinde) {0,9}(?:güncellendi|yayı(?:m|n)landı)",  # TR
     re.I,
 )
 
@@ -471,7 +475,18 @@ def idiosyncrasies_search(
     options: Extractor,
 ) -> str | None:
     """Look for author-written dates throughout the web page"""
-    match = TEXT_PATTERNS.search(htmlstring)  # EN+DE+TR
+    # probe ±60-char windows around numeric cores (enough: gap-runs are bounded),
+    # then re-search unbounded so the result equals a full slow scan
+    match = None
+    cores = DATE_CORE_PATTERN.finditer(htmlstring)
+    for core in islice(cores, 1000):
+        start = max(0, core.start() - 60)
+        if TEXT_PATTERNS.search(htmlstring, start, core.end() + 60):  # EN+DE+TR
+            match = TEXT_PATTERNS.search(htmlstring, start)
+            break
+    else:
+        if next(cores, None) is not None:  # cap hit on a date-dense document
+            match = TEXT_PATTERNS.search(htmlstring)
     if match:
         parts = list(filter(None, match.groups()))
 

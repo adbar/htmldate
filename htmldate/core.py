@@ -12,7 +12,6 @@ from copy import deepcopy
 from datetime import datetime
 from functools import partial
 
-from lxml.etree import Comment
 from lxml.html import HtmlElement, tostring
 
 # own
@@ -41,7 +40,7 @@ from .settings import (
     MAX_SEGMENT_LEN,
     MIN_SEGMENT_LEN,
 )
-from .utils import Extractor, clean_html, load_html, remove_if_attached, trim_text
+from .utils import Extractor, clean_html, load_html, trim_text
 from .validators import (
     check_extracted_reference,
     compare_values,
@@ -404,7 +403,7 @@ def select_candidate(
 
     # safety net: plausibility
     if all(validation):
-        # newer but <50% less frequent and counts differ: take it, else top of the pile
+        # prefer the newer candidate unless it is under half as frequent
         if (
             counts[0] != counts[1]
             and years[1] != years[0]
@@ -887,13 +886,12 @@ def find_date(
     if result is not None:
         return result
 
-    # fast mode has no search_page fallback: accept a bare date, but not one from
-    # comments/script/style (CSS markers, asset cache-busters are not dates)
+    # fast mode has no search_page fallback: accept a bare date, but from text
+    # only — itertext() skips comments and attributes yet keeps tail text
     if not extensive_search:
-        for element in list(search_tree.iter(Comment)):
-            remove_if_attached(element)
         clean_html(search_tree, ["script", "style"])
-        return pattern_search(serialize(search_tree), TIMESTAMP_LOOSE_PATTERN, options)
+        text = " ".join(search_tree.itertext())
+        return pattern_search(text, TIMESTAMP_LOOSE_PATTERN, options)
 
     LOGGER.debug("extensive search started")
     # TODO: further tests & decide according to original_date

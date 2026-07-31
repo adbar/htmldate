@@ -34,6 +34,7 @@ from htmldate.extractors import (
     custom_parse,
     discard_unwanted,
     external_date_parser,
+    idiosyncrasies_search,
     regex_parse,
     try_date_expr,
     MONTHS,
@@ -814,6 +815,17 @@ def test_fast_mode_bare_date():
         "<p>published 2020-05-05T10:00:00</p></body></html>"
     )
     assert find_date(doc, extensive_search=False) == "2020-05-05"
+    # text after a comment is kept
+    doc = "<html><body><span>Published on <!-- ts -->2020-05-05</span></body></html>"
+    assert find_date(doc, extensive_search=False) == "2020-05-05"
+    # dates in attributes, comments and script/style are not accepted
+    for snippet in (
+        '<a href="/theme.css?v=2021-03-04">menu</a>',
+        "<!-- 2021-03-04 -->",
+        "<style>/* 2021-03-04 */</style><script>var x = '2021-03-04';</script>",
+    ):
+        doc = f"<html><body>{snippet}<p>no dates in text</p></body></html>"
+        assert find_date(doc, extensive_search=False) is None
 
 
 def test_is_valid_date():
@@ -1720,6 +1732,10 @@ def test_idiosyncrasies():
         )
         == "2006-12-06"
     )
+    # date-dense document: prefilter cap exhausted, full-scan fallback
+    dense = "999.99.99 " * 1500
+    assert idiosyncrasies_search(dense + "updated: 2021.07.13", OPTIONS) == "2021-07-13"
+    assert idiosyncrasies_search(dense, OPTIONS) is None
 
 
 def test_parser():

@@ -497,7 +497,7 @@ def test_exact_date():
             ),
             extensive_search=False,
         )
-    ) == "2019-12-02"
+    ) is None
     assert (
         find_date(
             load_mock_page(
