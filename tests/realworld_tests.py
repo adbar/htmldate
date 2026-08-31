@@ -29,6 +29,7 @@ LATEST_POSSIBLE = datetime.datetime.now()
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 MOCK_PAGES = {
+    "https://www.theguardian.com/tv-and-radio/2026/aug/30/vigil-review-this-police-thriller-is-twisty-explosive-and-so-boring": "theguardian.html",
     "http://blog.kinra.de/?p=959/": "kinra.de.html",
     "http://blog.python.org/2016/12/python-360-is-now-available.html": "blog.python.org.html",
     "http://blog.todamax.net/2018/midp-emulator-kemulator-und-brick-challenge/": "blog.todamax.net.html",
@@ -129,7 +130,12 @@ def test_no_date():
 
 def test_exact_date():
     "These pages should return an exact date"
-
+    assert (
+    find_date(
+        load_mock_page("https://www.theguardian.com/tv-and-radio/2026/aug/30/vigil-review-this-police-thriller-is-twisty-explosive-and-so-boring")
+    )
+    == "2026-08-30"
+    )
     ## link in header
     assert (
         find_date(
