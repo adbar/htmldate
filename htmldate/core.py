@@ -12,6 +12,7 @@ from copy import deepcopy
 from datetime import datetime
 from functools import partial
 
+from lxml.etree import Element
 from lxml.html import HtmlElement, tostring
 
 # own
@@ -24,9 +25,7 @@ from .extractors import (
     regex_parse,
     pattern_search,
     try_date_expr_opts,
-    DATE_EXPRESSIONS,
-    FAST_PREPEND,
-    SLOW_PREPEND,
+    FAST_TAGS,
     FREE_TEXT_EXPRESSIONS,
     YMD_PATTERN,
     DAY_RE,
@@ -239,24 +238,56 @@ def has_plausible_candidates(candidates: Sized) -> bool:
     return 0 < len(candidates) <= MAX_POSSIBLE_CANDIDATES
 
 
-def examine_date_elements(
-    tree: HtmlElement,
-    expressions: list[str],
-    options: Extractor,
-) -> str | None:
-    "Check elements matching the XPath expressions for date strings."
-    for expr in expressions:
-        elements = tree.xpath(expr)
-        if not has_plausible_candidates(elements):
-            continue
+ALWAYS_TAGS = frozenset({"footer", "small"})
+ID_CLASS_CUES = re.compile("[Mm]eta|time|publish|footer")
+CLASS_CUES = re.compile(
+    "info|post_detail|block-content|byline|subline|posted|submitted|created-post|"
+    "publication|author|autor|field-content|fa-clock-o|fa-calendar|fecha|parution"
+)
 
-        for elem in elements:
-            # try element text and link title (Blogspot)
-            for text in [elem.text_content(), elem.get("title", "")]:
-                attempt = examine_text(text, options)
-                if attempt:
-                    return attempt
 
+def is_date_candidate(elem: HtmlElement) -> bool:
+    "Mirrors the former XPath: only the first attribute in source order counts."
+    first = first_id_class = None
+    for key, value in elem.attrib.items():
+        if first is None and key in ("id", "class", "itemprop"):
+            first = value
+        if first_id_class is None and key in ("id", "class"):
+            first_id_class = value
+    if first is None:
+        return False
+    folded = first.replace("D", "d")
+    if "date" in folded or "datum" in folded:
+        return True
+    if first_id_class is not None and ID_CLASS_CUES.search(first_id_class):
+        return True
+    cls = elem.get("class")
+    if cls is not None and CLASS_CUES.search(cls):
+        return True
+    idval = elem.get("id")
+    return idval is not None and "footer-info-lastmod" in idval
+
+
+def date_candidates(tree: HtmlElement, extensive_search: bool) -> list[HtmlElement]:
+    "Collect date-bearing elements."
+    elements = (
+        tree.iterdescendants(Element)
+        if extensive_search
+        else tree.iterdescendants(*FAST_TAGS, *ALWAYS_TAGS)
+    )
+    return [e for e in elements if e.tag in ALWAYS_TAGS or is_date_candidate(e)]
+
+
+def examine_elements(elements: list[HtmlElement], options: Extractor) -> str | None:
+    "Check candidate elements for date strings."
+    if not has_plausible_candidates(elements):
+        return None
+    for elem in elements:
+        # try element text and link title (Blogspot)
+        for text in [elem.text_content(), elem.get("title", "")]:
+            attempt = examine_text(text, options)
+            if attempt:
+                return attempt
     return None
 
 
@@ -488,10 +519,8 @@ def examine_abbr_elements(
                     LOGGER.debug("abbr published found: %s", elem.text)
                     reference = compare_reference(reference, elem.text, options)
         # return or try rescue in abbr content
-        return check_extracted_reference(reference, options) or examine_date_elements(
-            tree,
-            [".//abbr"],
-            options,
+        return check_extracted_reference(reference, options) or examine_elements(
+            elements, options
         )
     return None
 
@@ -860,16 +889,11 @@ def find_date(
         search_tree = pruning_tree
         LOGGER.error("lxml cleaner error")
 
-    # define expressions + text_content
-    date_expr = (SLOW_PREPEND if extensive_search else FAST_PREPEND) + DATE_EXPRESSIONS
-
-    # then look for expressions
-    # and try time elements
-    result = examine_date_elements(
-        search_tree,
-        [date_expr, ".//title|.//h1"],
-        options,
-    ) or examine_time_elements(search_tree, options)
+    result = (
+        examine_elements(date_candidates(search_tree, extensive_search), options)
+        or examine_elements(search_tree.xpath(".//title|.//h1"), options)
+        or examine_time_elements(search_tree, options)
+    )
     if result is not None:
         return result
 

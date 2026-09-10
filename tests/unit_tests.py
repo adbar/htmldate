@@ -17,13 +17,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from lxml import html
-from lxml.etree import XPathEvalError
+from lxml import etree, html
 
 from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
     compare_reference,
-    examine_date_elements,
+    date_candidates,
+    examine_elements,
     examine_text,
     find_date,
     search_page,
@@ -34,9 +34,11 @@ from htmldate.extractors import (
     custom_parse,
     discard_unwanted,
     external_date_parser,
+    get_external_parser,
     idiosyncrasies_search,
     regex_parse,
     try_date_expr,
+    FAST_PREPEND,
     MONTHS,
     REGEX_MONTHS,
 )
@@ -186,14 +188,11 @@ def test_examine_text():
 
 def test_sanity():
     """Test if function arguments are interpreted and processed correctly."""
-    # XPath looking for date elements
     mytree = html.fromstring("<html><body><p>Test.</p></body></html>")
-    with pytest.raises(XPathEvalError):
-        examine_date_elements(mytree, [".//[Error"], OPTIONS)
-    result = examine_date_elements(mytree, [".//p"], OPTIONS)
+    result = examine_elements(mytree.xpath(".//p"), OPTIONS)
     assert result is None
     mytree = html.fromstring("<html><body><p>1999/03/05</p></body></html>")
-    result = examine_date_elements(mytree, [".//p"], OPTIONS)
+    result = examine_elements(mytree.xpath(".//p"), OPTIONS)
     assert result is not None
     # wrong field values in output format
     assert is_valid_format("%Y-%m-%d") is True
@@ -208,7 +207,7 @@ def test_sanity():
     )
     assert tree.find('.//div[@id="wm-ipp"]') is None  # archive.org banner removed
     assert "AAA" in tree.text_content()  # real content kept
-    # reset caches: examine_date_elements used above
+    # reset caches
     old_values = try_date_expr.cache_info()
     reset_caches()
     assert try_date_expr.cache_info() != old_values
@@ -230,6 +229,62 @@ def test_no_date():
         )
         is None
     )
+
+
+# reference for date_candidates
+DATE_XPATH = """
+[
+    contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
+    contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
+    contains(translate(@id|@class, "M", "m"), 'meta') or
+    contains(@id|@class, 'time') or
+    contains(@id|@class, 'publish') or
+    contains(@id|@class, 'footer') or
+    contains(@class, 'info') or
+    contains(@class, 'post_detail') or
+    contains(@class, 'block-content') or
+    contains(@class, 'byline') or
+    contains(@class, 'subline') or
+    contains(@class, 'posted') or
+    contains(@class, 'submitted') or
+    contains(@class, 'created-post') or
+    contains(@class, 'publication') or
+    contains(@class, 'author') or
+    contains(@class, 'autor') or
+    contains(@class, 'field-content') or
+    contains(@class, 'fa-clock-o') or
+    contains(@class, 'fa-calendar') or
+    contains(@class, 'fecha') or
+    contains(@class, 'parution') or
+    contains(@id, 'footer-info-lastmod')
+] |
+.//footer | .//small
+"""
+
+
+def test_date_candidates_match_xpath():
+    docs = [
+        # attribute order
+        '<html><body><div itemprop="date" class="x" id="y">a</div>'
+        '<div id="y" itemprop="date" class="x">b</div>'
+        '<div class="x" itemprop="y" id="meta">c</div>'
+        '<div id="Meta" itemprop="y" class="x">d</div>'
+        '<div class="x" id="footer-info-lastmod">e</div></body></html>',
+        # case folding, itemprop alone, empty values
+        '<html><body><div class="DATE">a</div><div class="Datum">b</div>'
+        '<div itemprop="datePublished">c</div><div itemprop="meta">d</div>'
+        '<div class="" id="date">e</div><div class="">f</div></body></html>',
+        # footer/small, non-fast tags, comments, PIs
+        '<html><body><footer><small class="x"><footer>a</footer></small></footer>'
+        '<article class="date">b</article><a class="byline">c</a>'
+        '<!--c--><?pi x?><p class="fecha">d</p></body></html>',
+    ]
+    for doc in docs:
+        for tree in (load_html(doc), etree.fromstring(doc)):
+            for extensive, prepend in ((True, ".//*"), (False, FAST_PREPEND)):
+                assert date_candidates(tree, extensive) == tree.xpath(
+                    prepend + DATE_XPATH
+                )
 
 
 def test_exact_date():
@@ -1142,6 +1197,17 @@ def test_regex_parse():
     assert regex_parse("Salı, Mart 26, 2019") is not None
     assert regex_parse("36/14/2016") is None
     assert regex_parse("January 36 1998") is None
+    # leftmost match
+    text = (
+        "x" * 500 + " 2020 pixels, then 12. Oktober 2019 and March 3, 2021 " + "y" * 500
+    )
+    assert regex_parse(text) == datetime.datetime(2019, 10, 12)
+    assert regex_parse(
+        "Mart 26, 2019" + " " * 200 + "1 Mayıs 2020"
+    ) == datetime.datetime(2019, 3, 26)
+    assert regex_parse("no year here: 3. Dezember") is None
+    # overlap with previous year token
+    assert regex_parse("Oktober 2020 September 2020") == datetime.datetime(2020, 9, 20)
     assert (
         custom_parse("January 12 1098", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     )
@@ -1337,9 +1403,67 @@ def test_external_date_parser():
     )
     # https://github.com/scrapinghub/dateparser/issues/685
     assert external_date_parser("12345678912 days", OUTPUTFORMAT) is None
+    # pure digit strings skip the external parser
+    try_date_expr.cache_clear()
+    with patch("htmldate.extractors.external_date_parser") as mock_parser:
+        assert (
+            try_date_expr("45025", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
+            is None
+        )
+        mock_parser.assert_not_called()
+    assert get_external_parser() is get_external_parser()
     # https://github.com/scrapinghub/dateparser/issues/680
     assert external_date_parser("2.2250738585072011e-308", OUTPUTFORMAT) is None
     assert external_date_parser("⁰⁴⁵₀₁₂", OUTPUTFORMAT) is None
+
+
+def test_external_parser_gate():
+    doc = "<html><body>{}</body></html>"
+    # non-English day precision
+    assert (
+        find_date(doc.format("<time>5 de marzo de 2019</time>"), extensive_search=True)
+        == "2019-03-05"
+    )
+    assert (
+        find_date(doc.format("<p>3 de mayo de 2019</p>"), extensive_search=True)
+        == "2019-05-03"
+    )
+    # independent of original_date
+    time_elem = doc.format('<time class="updated" datetime="3 мая 2019">x</time>')
+    for original in (False, True):
+        assert (
+            find_date(time_elem, extensive_search=True, original_date=original)
+            == "2019-05-03"
+        )
+    # 2-digit year only with REGEX_MONTHS names
+    assert (
+        find_date(doc.format('<p class="date">05 Mar 19</p>'), extensive_search=True)
+        == "2019-03-05"
+    )
+    assert (
+        find_date(doc.format('<p class="date">05 marzo 19</p>'), extensive_search=True)
+        is None
+    )
+    # year range follows min_date
+    assert (
+        find_date(
+            doc.format('<p class="date">March 5, 1985</p>'),
+            extensive_search=True,
+            min_date="1980-01-01",
+        )
+        == "1985-03-05"
+    )
+    # letterless strings never sent
+    try_date_expr.cache_clear()
+    with patch("htmldate.extractors.external_date_parser") as mock_parser:
+        assert (
+            find_date(
+                doc.format('<p class="date">(66) 9 8436-0806</p>'),
+                extensive_search=True,
+            )
+            is None
+        )
+        mock_parser.assert_not_called()
 
 
 def test_url():
