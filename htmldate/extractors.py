@@ -10,9 +10,7 @@ from collections.abc import Iterator
 from datetime import datetime
 from functools import lru_cache
 from itertools import islice
-
-# coverage for date parsing
-from dateparser import DateDataParser  # type: ignore[attr-defined]  # third-party, slow
+from typing import TYPE_CHECKING
 
 from dateutil.parser import parse as dateutil_parse
 
@@ -24,63 +22,38 @@ from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
 from .utils import Extractor, remove_if_attached, trim_text
 from .validators import convert_date, correct_year, is_valid_date, validate_and_convert
 
+if TYPE_CHECKING:  # pragma: no cover
+    from dateparser import DateDataParser  # type: ignore[attr-defined]
+
 LOGGER = logging.getLogger(__name__)
 
-EXTERNAL_PARSER = DateDataParser(
-    languages=None,
-    locales=None,
-    region=None,
-    settings={
-        "NORMALIZE": True,  # False may be faster
-        "PARSERS": [
-            "custom-formats",
-            "absolute-time",
-        ],
-        "PREFER_DATES_FROM": "past",
-        "PREFER_LOCALE_DATE_ORDER": True,
-        "RETURN_AS_TIMEZONE_AWARE": False,
-        "STRICT_PARSING": True,
-    },
-)
+
+@lru_cache(maxsize=None)
+def get_external_parser() -> "DateDataParser":
+    "Lazy import, unused in fast mode."
+    from dateparser import DateDataParser  # type: ignore[attr-defined]
+
+    return DateDataParser(
+        languages=None,
+        locales=None,
+        region=None,
+        settings={
+            "NORMALIZE": True,  # False may be faster
+            "PARSERS": [
+                "custom-formats",
+                "absolute-time",
+            ],
+            "PREFER_DATES_FROM": "past",
+            "PREFER_LOCALE_DATE_ORDER": True,
+            "RETURN_AS_TIMEZONE_AWARE": False,
+            "STRICT_PARSING": True,
+        },
+    )
 
 
-FAST_PREPEND = ".//*[self::div or self::h2 or self::h3 or self::h4 or self::li or self::p or self::span or self::time or self::ul]"
-# self::b or self::em or self::font or self::i or self::strong
-SLOW_PREPEND = ".//*"
-
-DATE_EXPRESSIONS = """
-[
-    contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
-    contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
-    contains(translate(@id|@class, "M", "m"), 'meta') or
-    contains(@id|@class, 'time') or
-    contains(@id|@class, 'publish') or
-    contains(@id|@class, 'footer') or
-    contains(@class, 'info') or
-    contains(@class, 'post_detail') or
-    contains(@class, 'block-content') or
-    contains(@class, 'byline') or
-    contains(@class, 'subline') or
-    contains(@class, 'posted') or
-    contains(@class, 'submitted') or
-    contains(@class, 'created-post') or
-    contains(@class, 'publication') or
-    contains(@class, 'author') or
-    contains(@class, 'autor') or
-    contains(@class, 'field-content') or
-    contains(@class, 'fa-clock-o') or
-    contains(@class, 'fa-calendar') or
-    contains(@class, 'fecha') or
-    contains(@class, 'parution') or
-    contains(@id, 'footer-info-lastmod')
-] |
-.//footer | .//small
-"""
-
-# further tests needed:
-# or contains(@class, 'article')
-# or contains(@id, 'lastmod') or contains(@class, 'updated')
-
+FAST_TAGS = ("div", "h2", "h3", "h4", "li", "p", "span", "time", "ul")
+# further tests needed: b, em, font, i, strong
+FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
 # discard parts of the webpage
@@ -123,6 +96,8 @@ LONG_TEXT_PATTERN = re.compile(
     re.I,
 )
 
+YEAR_CANDIDATES = re.compile(YEAR_RE)
+
 COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|$)")
 
 # optional ISO-8601 time-of-day and time zone suffix (e.g. "T08:37:00+05:30")
@@ -162,9 +137,12 @@ def _month_number(token: str) -> int | None:
     return next((i for i, p in enumerate(MONTH_PATTERNS, 1) if p.match(token)), None)
 
 
-TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]|^\d+$")
-# gate for try_date_expr: a real date has a 4-digit year or a month name
-FOUR_DIGITS = re.compile(r"\d{4}")
+# gate for try_date_expr
+TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]")
+YEAR_OR_MONTH = re.compile(
+    rf"(?<!\d)\d{{4}}(?!\d)|\b(?:{REGEX_MONTHS})\b".replace("\n", ""), re.I
+)
+DAY_TOKEN = re.compile(r"(?<!\d)\d{1,2}(?!\d)")
 
 DISCARD_PATTERNS = re.compile(
     r"^\d{2}:\d{2}(?: |:|$)|"
@@ -235,7 +213,16 @@ def regex_parse(string: str) -> datetime | None:
     with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
-    match = LONG_TEXT_PATTERN.search(string)
+    # search windows end at each year token
+    match = None
+    prev = 0
+    for year in YEAR_CANDIDATES.finditer(string):
+        match = LONG_TEXT_PATTERN.search(
+            string, max(prev, year.start() - 60), year.end()
+        )
+        if match:
+            break
+        prev = year.start()
     if not match:
         return None
     groups = (
@@ -346,7 +333,7 @@ def external_date_parser(string: str, outputformat: str) -> str | None:
     """Use dateutil parser or dateparser module according to system settings"""
     LOGGER.debug("send to external parser: %s", string)
     try:
-        target = EXTERNAL_PARSER.get_date_data(string)["date_obj"]
+        target = get_external_parser().get_date_data(string)["date_obj"]
     # 2 types of errors possible
     except (OverflowError, ValueError) as err:  # pragma: no cover
         target = None
@@ -384,12 +371,13 @@ def try_date_expr(
         return customresult
 
     # use slow but extensive search
-    # additional filters to prevent computational cost: only hand strings that
-    # could be a date (4-digit year or a letter) to the slow external parser
+    # only plausible dates reach the slow external parser
     if (
         extensive_search
         and TEXT_DATE_PATTERN.search(string)
-        and (FOUR_DIGITS.search(string) or any(c.isalpha() for c in string))
+        and (match := YEAR_OR_MONTH.search(string)) is not None
+        and (not match[0].isdigit() or min_date.year <= int(match[0]) <= max_date.year)
+        and DAY_TOKEN.search(string)
     ):
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)

@@ -81,7 +81,6 @@ dev = [
     "types-dateparser",
     "types-python-dateutil",
     "types-lxml",
-    "types-urllib3",
 ]
 speed = [
     "backports-datetime-fromisoformat; python_version < '3.11'",
