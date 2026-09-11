@@ -15,7 +15,7 @@ Alternatives
 There are comparable software solutions in Python, the following date extraction packages are open-source and work out-of-the-box:
 
 - `articleDateExtractor <https://github.com/Webhose/article-date-extractor>`_ detects, extracts and normalizes the publication date of an online article or blog post,
-- `date_guesser <https://github.com/mitmedialab/date_guesser>`_ extracts publication dates from a web pages along with an accuracy measure (not used here),
+- `date_guesser <https://github.com/mitmedialab/date_guesser>`_ extracts publication dates from web pages along with an accuracy measure (not used here),
 - `goose3 <https://github.com/goose3/goose3>`_ can extract information for embedded content,
 - `htmldate <https://github.com/adbar/htmldate>`_ is the software package described here, it is designed to extract original and updated publication dates of web pages,
 - `newspaper4k <https://github.com/AndyTheFactory/newspaper4k>`_ (the maintained successor of newspaper3k) is mostly geared towards newspaper texts,
