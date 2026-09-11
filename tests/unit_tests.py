@@ -24,8 +24,10 @@ from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
     compare_reference,
     examine_date_elements,
+    examine_header,
     examine_text,
     find_date,
+    load_html,
     search_page,
     search_pattern,
     select_candidate,
@@ -774,6 +776,31 @@ def test_json_ld_over_header_reserve():
         == "2023-05-20"
     )
 
+
+def test_examine_header():
+    """The examine_header() wrapper must return the header date, falling back
+    to the less reliable "reserve" date when nothing else was found."""
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
+
+    # only a reserve date (modification date) is available: it is returned
+    tree = load_html(
+        "<html><head>"
+        '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+        "</head><body><p>text</p></body></html>"
+    )
+    assert examine_header(tree, options) == "2023-05-20"
+
+    # a proper header date wins over the reserve mechanism
+    tree = load_html(
+        "<html><head>"
+        '<meta property="article:published_time" content="2020-01-15T08:00:00+00:00"/>'
+        "</head><body><p>text</p></body></html>"
+    )
+    assert examine_header(tree, options) == "2020-01-15"
+
+    # no header dates at all
+    tree = load_html("<html><head></head><body><p>text</p></body></html>")
+    assert examine_header(tree, options) is None
 
 def test_free_text_timezone():
     """Time of day and time zone must be preserved when dates are extracted
