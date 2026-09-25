@@ -8,6 +8,7 @@ import io
 import logging
 import os
 import re
+import subprocess
 import sys
 import time
 
@@ -42,12 +43,13 @@ from htmldate.extractors import (
     MONTHS,
     MONTH_KEYS,
     MONTH_NUMBERS,
-    _fold,
+    _fold_month_name,
 )
 from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
 from htmldate.utils import (
     Extractor,
+    decode_file,
     detect_encoding,
     fetch_url,
     is_dubious_html,
@@ -56,11 +58,13 @@ from htmldate.utils import (
 )
 import htmldate.utils
 from htmldate.validators import (
+    compare_values,
     convert_date,
     get_max_date,
     get_min_date,
     is_valid_date,
     is_valid_format,
+    update_reference,
 )
 
 
@@ -238,6 +242,8 @@ DATE_XPATH = """
 [
     contains(translate(@id|@class|@itemprop, "D", "d"), 'date') or
     contains(translate(@id|@class|@itemprop, "D", "d"), 'datum') or
+    contains(translate(@itemprop, "D", "d"), 'date') or
+    contains(translate(@itemprop, "D", "d"), 'datum') or
     contains(translate(@id|@class, "M", "m"), 'meta') or
     contains(@id|@class, 'time') or
     contains(@id|@class, 'publish') or
@@ -272,7 +278,9 @@ def test_date_candidates_match_xpath():
             '<div id="y" itemprop="date" class="x">b</div>'
             '<div class="x" itemprop="y" id="meta">c</div>'
             '<div id="Meta" itemprop="y" class="x">d</div>'
-            '<div class="x" id="footer-info-lastmod">e</div></body></html>'
+            '<div class="x" id="footer-info-lastmod">e</div>'
+            '<div class="x" itemprop="datePublished">f</div>'
+            '<div id="x" itemprop="Datum">g</div></body></html>'
         ),
         # case folding, itemprop alone, empty values
         (
@@ -354,6 +362,10 @@ def test_exact_date():
     htmldoc = '<html><head><meta itemprop="copyrightyear" content="2017"/></head><body></body></html>'
     for extensive in (True, False):
         assert find_date(htmldoc, extensive_search=extensive) == "2017-01-01"
+    assert find_date(htmldoc, outputformat="%d %B %Y") == "01 January 2017"
+    # unpadded years below 1000 pass the positional check
+    htmldoc = htmldoc.replace("2017", " 999")
+    assert find_date(htmldoc, min_date="0500-01-01") in ("0999-01-01", "999-01-01")
 
     # original date
     htmldoc = '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:DatePublished" content="2017-07-02"/></head><body/></html>'
@@ -677,7 +689,9 @@ def test_exact_date():
     # JSON-LD script block (json_search path)
     assert (
         find_date(
-            '<html><head><script type="application/ld+json">'
+            '<html><head><script type="application/ld+json"></script>'
+            '<script type="application/ld+json">{"@type":"Person"}</script>'
+            '<script type="application/ld+json">'
             '{"@type":"Article","datePublished":"2020-05-05"}</script></head>'
             "<body>x</body></html>",
             original_date=True,
@@ -893,6 +907,10 @@ def test_fast_mode_bare_date():
 
 def test_is_valid_date():
     """test internal date validation"""
+    assert (
+        is_valid_date(None, OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
+        is False
+    )
     assert (
         is_valid_date(
             "2016-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
@@ -1125,10 +1143,36 @@ def test_try_date_expr():
 def test_compare_reference():
     """test comparison function"""
     options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    assert compare_reference(0, "AAAA", options) == 0
-    assert compare_reference(1517500000, "2018-33-01", options) == 1517500000
-    assert 1517400000 < compare_reference(0, "2018-02-01", options) < 1517500000
-    assert compare_reference(1517500000, "2018-02-01", options) == 1517500000
+    reference = datetime.datetime(2018, 2, 1)
+    assert compare_reference(None, "AAAA", options) is None
+    assert compare_reference(reference, "2018-33-01", options) is reference
+    assert compare_reference(None, "2018-02-01", options) == reference
+    assert compare_reference(reference, "2018-01-01", options) is reference
+    assert compare_reference(reference, "2018-03-01", options) == datetime.datetime(
+        2018, 3, 1
+    )
+    # wall-clock comparison across naive and aware dates
+    aware = datetime.datetime(
+        2020, 5, 5, 23, tzinfo=datetime.timezone(datetime.timedelta(hours=-5))
+    )
+    naive = datetime.datetime(2020, 5, 6, 1)
+    assert update_reference(aware, naive, False) is naive
+    assert update_reference(aware, naive, True) is aware
+    # unpadded years below 1000 keep the reference
+    assert compare_values(reference, "999-01-01T00:00:00.000000", options) is reference
+    # formats that do not parse back keep naive dates and time zones
+    tzformat = "%Y-%m-%dT%H:%M:%S%z"
+    doc = '<html><body><time datetime="{}">x</time></body></html>'
+    assert (
+        find_date(doc.format("2020-05-05T23:30:00-05:00"), outputformat=tzformat)
+        == "2020-05-05T23:30:00-0500"
+    )
+    assert (
+        find_date(
+            doc.format("2018-10-23"), outputformat=tzformat, extensive_search=False
+        )
+        == "2018-10-23T00:00:00"
+    )
 
 
 def test_candidate_selection():
@@ -1363,6 +1407,10 @@ def test_regex_parse():
     # glued month names match, non-month words are skipped
     assert regex_parse("Xjune 5, 2020") == datetime.datetime(2020, 6, 5)
     assert regex_parse("By John SmithMarch 5, 2020") == datetime.datetime(2020, 3, 5)
+    assert regex_parse("WednesdayJanuary 5, 2020") == datetime.datetime(2020, 1, 5)
+    assert regex_parse("a" * 100000 + "March 5, 2020") == datetime.datetime(2020, 3, 5)
+    # a skipped match can overlap the real date
+    assert regex_parse("Smith 5 2020 March 2021") == datetime.datetime(2021, 3, 20)
     assert regex_parse("1 apple 2020 5 June 2020") == datetime.datetime(2020, 6, 5)
     assert regex_parse("Top 10 Walmart 2020") is None
     assert regex_parse("31 Tennis 2020 then 5 June 2020") == datetime.datetime(
@@ -1380,9 +1428,11 @@ def test_month_names_match_dateparser():
         for number, key in enumerate(MONTH_KEYS, 1):
             for name in (n.strip() for n in info.get(key, [])):
                 if len(name) >= 3 and name.isalpha():
-                    known[_fold(name)] = number
+                    known[_fold_month_name(name)] = number
     # folding must not collapse two names onto one key
     assert len(MONTH_NUMBERS) == sum(map(len, MONTHS))
+    # regex_parse caps glued words at 12 letters
+    assert max(map(len, MONTH_NUMBERS)) <= 12
     # unaccented "aout" is absent from dateparser's French data
     assert set(MONTH_NUMBERS) - set(known) <= {"aout"}
     assert not {k: v for k, v in MONTH_NUMBERS.items() if known.get(k, v) != v}
@@ -1410,7 +1460,7 @@ def test_external_date_parser():
     assert external_date_parser("12345678912 days", OUTPUTFORMAT) is None
     # pure digit strings skip the external parser
     try_date_expr.cache_clear()
-    with patch("htmldate.extractors.external_date_parser") as mock_parser:
+    with patch("htmldate.extractors._external_date") as mock_parser:
         assert (
             try_date_expr("45025", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
             is None
@@ -1420,6 +1470,17 @@ def test_external_date_parser():
     # https://github.com/scrapinghub/dateparser/issues/680
     assert external_date_parser("2.2250738585072011e-308", OUTPUTFORMAT) is None
     assert external_date_parser("⁰⁴⁵₀₁₂", OUTPUTFORMAT) is None
+    # dateparser results in formats that do not parse back
+    for outputformat, expected in (
+        ("%Y-%m-%dT%H:%M:%S%z", "2019-03-05T00:00:00"),
+        ("%B %d", "March 05"),
+    ):
+        assert (
+            try_date_expr(
+                "5 de marzo de 2019", outputformat, True, MIN_DATE, LATEST_POSSIBLE
+            )
+            == expected
+        )
 
 
 def test_external_parser_gate():
@@ -1461,7 +1522,7 @@ def test_external_parser_gate():
     )
     # letterless strings never sent
     try_date_expr.cache_clear()
-    with patch("htmldate.extractors.external_date_parser") as mock_parser:
+    with patch("htmldate.extractors._external_date") as mock_parser:
         assert (
             find_date(
                 doc.format('<p class="date">(66) 9 8436-0806</p>'),
@@ -2026,6 +2087,27 @@ def test_encoding_detection():
         htmldate.utils, "cchardet_detect", Mock(return_value={"encoding": None})
     ):
         assert detect_encoding(data)
+
+
+def test_decode_file():
+    assert decode_file("öäü") == "öäü"
+    # utf-8 decodes directly, without detection
+    with patch.object(htmldate.utils, "detect_encoding") as detect:
+        assert decode_file("öäü".encode("utf-8")) == "öäü"
+    detect.assert_not_called()
+    # long enough for charset_normalizer alone (cchardet is optional)
+    text = "Grüße aus München, schöne Äpfel und Öl. " * 5
+    assert decode_file(text.encode("latin-1")) == text
+    # unknown or wrong guesses fall back to a lossy utf-8 decoding
+    with patch.object(
+        htmldate.utils, "detect_encoding", return_value=["unknown", "ascii"]
+    ):
+        assert decode_file("öäü".encode("latin-1")) == "�" * 3
+
+
+def test_lazy_dateparser():
+    code = "import sys, htmldate; assert 'dateparser' not in sys.modules"
+    subprocess.run([sys.executable, "-c", code], check=True)
 
 
 def test_fetch_url_errors():

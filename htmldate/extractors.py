@@ -79,8 +79,8 @@ YM_PATTERN = re.compile(
     rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
 
-# any word, MONTH_NUMBERS decides
-MONTH_WORD = r"[^\W\d_]{3,12}"
+# any word from its start, MONTH_NUMBERS decides
+MONTH_WORD = r"(?<![^\W\d_])[^\W\d_]{3,}"
 LONG_TEXT_PATTERN = re.compile(
     rf"""(?P<month>{MONTH_WORD})\s
 (?P<day>{DAY_RE})(?:st|nd|rd|th)?,? (?P<year>{YEAR_RE})|
@@ -88,8 +88,6 @@ LONG_TEXT_PATTERN = re.compile(
 (?P<month2>{MONTH_WORD})[,.]? (?P<year2>{YEAR_RE})""".replace("\n", ""),
     re.I,
 )
-
-YEAR_CANDIDATES = re.compile(YEAR_RE)
 
 COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|$)")
 
@@ -120,12 +118,14 @@ MONTHS = [
 ]
 
 
-def _fold(token: str) -> str:
+def _fold_month_name(token: str) -> str:
     "str.lower() alone mishandles the Turkish dotless i."
     return token.replace("ı", "i").replace("İ", "i").lower()
 
 
-MONTH_NUMBERS = {_fold(name): i for i, names in enumerate(MONTHS, 1) for name in names}
+MONTH_NUMBERS = {
+    _fold_month_name(name): i for i, names in enumerate(MONTHS, 1) for name in names
+}
 
 
 # gate for try_date_expr
@@ -159,7 +159,7 @@ def month_words() -> frozenset[str]:
     from dateparser.languages.loader import default_loader
 
     return frozenset(
-        _fold(word)
+        _fold_month_name(word)
         for locale in default_loader.get_locales()
         for key in MONTH_KEYS
         for word in locale.info.get(key, [])
@@ -172,7 +172,7 @@ def has_date_cue(string: str, min_date: datetime, max_date: datetime) -> bool:
     match = YEAR_OR_MONTH.search(string)
     if match is not None:
         return not match[0].isdigit() or min_date.year <= int(match[0]) <= max_date.year
-    return any(_fold(word) in month_words() for word in WORD.findall(string))
+    return any(_fold_month_name(word) in month_words() for word in WORD.findall(string))
 
 
 DISCARD_PATTERNS = re.compile(
@@ -244,43 +244,33 @@ def regex_parse(string: str) -> datetime | None:
     with particular emphasis on English, French, German and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
-    # search windows end at each year token
-    prev = 0
-    for year in YEAR_CANDIDATES.finditer(string):
-        for match in LONG_TEXT_PATTERN.finditer(
-            string, max(prev, year.start() - 60), year.end()
-        ):
-            groups = (
-                ("day", "month", "year")
-                if match.lastgroup == "year"
-                else ("day2", "month2", "year2")
+    pos = 0
+    while match := LONG_TEXT_PATTERN.search(string, pos):
+        word = _fold_month_name(match["month"] or match["month2"])
+        # month-first: glued words ("SmithMarch"), longest known suffix
+        # capped tail: slicing a whole long word is quadratic
+        if match["month"]:
+            word = word[-12:]
+            word = next(
+                (word[i:] for i in range(len(word) - 2) if word[i:] in MONTH_NUMBERS),
+                word,
             )
-            word = _fold(match.group(groups[1]))
-            # month-first: glued words ("SmithMarch"), longest known suffix
-            if groups[0] == "day":
-                word = next(
-                    (
-                        word[i:]
-                        for i in range(len(word) - 2)
-                        if word[i:] in MONTH_NUMBERS
-                    ),
-                    word,
-                )
-            month = MONTH_NUMBERS.get(word)
-            if month is None:
-                continue
-            # process and return
-            try:
-                dateobject = _build_dmy(
-                    int(match.group(groups[0])),
-                    month,
-                    int(match.group(groups[2])),
-                )
-            except ValueError:
-                return None
-            LOGGER.debug("multilingual text found: %s", dateobject)
-            return dateobject
-        prev = year.start()
+        month = MONTH_NUMBERS.get(word)
+        if month is None:
+            # retry from the next position: matches can overlap
+            pos = match.start() + 1
+            continue
+        # process and return
+        try:
+            dateobject = _build_dmy(
+                int(match["day"] or match["day2"]),
+                month,
+                int(match["year"] or match["year2"]),
+            )
+        except ValueError:
+            return None
+        LOGGER.debug("multilingual text found: %s", dateobject)
+        return dateobject
     return None
 
 
@@ -367,16 +357,20 @@ def custom_parse(
     return None
 
 
-def external_date_parser(string: str, outputformat: str) -> str | None:
-    """Use dateutil parser or dateparser module according to system settings"""
+def _external_date(string: str) -> datetime | None:
+    "Parse the string with dateparser."
     LOGGER.debug("send to external parser: %s", string)
     try:
-        target = get_external_parser().get_date_data(string)["date_obj"]
+        return get_external_parser().get_date_data(string)["date_obj"]
     # 2 types of errors possible
     except (OverflowError, ValueError) as err:  # pragma: no cover
-        target = None
         LOGGER.error("external parser error: %s %s", string, err)
-    # issue with data type
+        return None
+
+
+def external_date_parser(string: str, outputformat: str) -> str | None:
+    """Use dateutil parser or dateparser module according to system settings"""
+    target = _external_date(string)
     return target.strftime(outputformat) if target else None
 
 
@@ -416,12 +410,10 @@ def try_date_expr(
         and DAY_TOKEN.search(string)
         and has_date_cue(string, min_date, max_date)
     ):
-        # send to date parser
-        dateparser_result = external_date_parser(string, outputformat)
-        if is_valid_date(
-            dateparser_result, outputformat, earliest=min_date, latest=max_date
-        ):
-            return dateparser_result
+        # validate before formatting: not every format parses back
+        return validate_and_convert(
+            _external_date(string), outputformat, earliest=min_date, latest=max_date
+        )
 
     return None
 

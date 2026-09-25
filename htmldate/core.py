@@ -9,7 +9,7 @@ import re
 from collections import Counter
 from collections.abc import Callable, Sized
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import partial
 
 from lxml.etree import Element
@@ -24,6 +24,7 @@ from .extractors import (
     json_search,
     regex_parse,
     pattern_search,
+    try_date_expr,
     try_date_expr_opts,
     FAST_TAGS,
     FREE_TEXT_EXPRESSIONS,
@@ -41,6 +42,7 @@ from .settings import (
 )
 from .utils import Extractor, clean_html, load_html, trim_text
 from .validators import (
+    REFERENCE_FORMAT,
     check_extracted_reference,
     compare_values,
     correct_year,
@@ -247,19 +249,21 @@ CLASS_CUES = re.compile(
 
 
 def is_date_candidate(elem: HtmlElement) -> bool:
-    "Mirrors the former XPath: only the first attribute in source order counts."
-    first = first_id_class = None
+    "Mirrors the former XPath: of id and class, only the first in source order counts."
+    first = itemprop = None
     for key, value in elem.attrib.items():
-        if first is None and key in ("id", "class", "itemprop"):
+        if key == "itemprop":
+            itemprop = value
+        elif first is None and key in ("id", "class"):
             first = value
-        if first_id_class is None and key in ("id", "class"):
-            first_id_class = value
+    for cue in (first, itemprop):
+        if cue is not None:
+            folded = cue.replace("D", "d")
+            if "date" in folded or "datum" in folded:
+                return True
     if first is None:
         return False
-    folded = first.replace("D", "d")
-    if "date" in folded or "datum" in folded:
-        return True
-    if first_id_class is not None and ID_CLASS_CUES.search(first_id_class):
+    if ID_CLASS_CUES.search(first):
         return True
     cls = elem.get("class")
     if cls is not None and CLASS_CUES.search(cls):
@@ -372,7 +376,9 @@ def examine_header(
                     if is_valid_date(
                         attempt, "%Y-%m-%d", earliest=options.min, latest=options.max
                     ):
-                        reserve = attempt
+                        reserve = datetime(int(attempt[:4]), 1, 1).strftime(
+                            options.format
+                        )
         # pubdate, relatively rare
         elif "pubdate" in elem.attrib:
             if elem.get("pubdate", "").lower() == "pubdate":
@@ -470,12 +476,14 @@ def search_pattern(
 
 
 def compare_reference(
-    reference: int,
+    reference: datetime | None,
     expression: str,
     options: Extractor,
-) -> int:
+) -> datetime | None:
     """Compare candidate to current date reference (includes date validation and older/newer test)"""
-    attempt = try_date_expr_opts(expression, options)
+    attempt = try_date_expr(
+        expression, REFERENCE_FORMAT, options.extensive, options.min, options.max
+    )
     if attempt is not None:
         return compare_values(reference, attempt, options)
     return reference
@@ -488,13 +496,16 @@ def examine_abbr_elements(
     """Scan the page for abbr elements and check if their content contains an eligible date"""
     elements = tree.findall(".//abbr")
     if has_plausible_candidates(elements):
-        reference = 0
+        reference: datetime | None = None
         for elem in elements:
             # data-utime (mostly Facebook)
             if "data-utime" in elem.attrib:
+                # untrusted: may be outside the platform timestamp range
                 try:
-                    candidate = int(elem.get("data-utime", ""))
-                except ValueError:
+                    candidate = datetime.fromtimestamp(
+                        int(elem.get("data-utime", "")), tz=timezone.utc
+                    )
+                except (OSError, OverflowError, ValueError):
                     continue
                 LOGGER.debug("data-utime found: %s", candidate)
                 reference = update_reference(reference, candidate, options.original)
@@ -512,7 +523,7 @@ def examine_abbr_elements(
                     else:
                         reference = compare_reference(reference, trytext, options)
                         # faster execution
-                        if reference > 0:
+                        if reference is not None:
                             break
                 # dates, not times of the day
                 elif elem.text and len(elem.text) > 10:
@@ -533,7 +544,7 @@ def examine_time_elements(
     elements = tree.findall(".//time")
     if has_plausible_candidates(elements):
         # scan all the tags and look for the newest one
-        reference = 0
+        reference: datetime | None = None
         for elem in elements:
             datetime_attr = elem.get("datetime", "")
             # go for datetime
@@ -919,7 +930,7 @@ def find_date(
 
     LOGGER.debug("extensive search started")
     # TODO: further tests & decide according to original_date
-    reference = 0
+    reference: datetime | None = None
     for segment in FREE_TEXT_EXPRESSIONS(search_tree):
         segment = segment.strip()
         if not MIN_SEGMENT_LEN < len(segment) < MAX_SEGMENT_LEN:

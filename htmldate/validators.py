@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime
 from functools import lru_cache
 
 from .settings import CACHE_SIZE, MIN_DATE
@@ -142,27 +142,36 @@ def plausible_year_filter(
     return occurrences
 
 
-def update_reference(reference: int, candidate: int, original: bool) -> int:
-    "Fold a timestamp into the running reference: oldest if original, else newest."
-    if original:
-        return min(reference, candidate) if reference else candidate
-    return max(reference, candidate)
+# lossless whatever the output format
+REFERENCE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f%z"
 
 
-def compare_values(reference: int, attempt: str, options: Extractor) -> int:
-    """Compare the date expression to a reference"""
+def update_reference(
+    reference: datetime | None, candidate: datetime, original: bool
+) -> datetime:
+    "Fold a date into the running reference: oldest if original, else newest."
+    if reference is None:
+        return candidate
+    # wall-clock comparison, as written on the page
+    pick = min if original else max
+    return pick(reference, candidate, key=lambda d: d.replace(tzinfo=None))
+
+
+def compare_values(
+    reference: datetime | None, attempt: str, options: Extractor
+) -> datetime | None:
+    """Compare the date expression (in REFERENCE_FORMAT) to a reference"""
     try:
-        # UTC on both sides of the round-trip: host-timezone-independent
-        # results (data-utime feeds real epochs into the same reference)
-        timestamp = int(
-            datetime.strptime(attempt, options.format)
-            .replace(tzinfo=timezone.utc)
-            .timestamp()
-        )
-    except Exception as err:
-        LOGGER.debug("datetime.strptime exception: %s for string %s", err, attempt)
-        return reference
-    return update_reference(reference, timestamp, options.original)
+        # naive (empty %z), or any on Python 3.11+
+        candidate = datetime.fromisoformat(attempt)
+    except ValueError:
+        try:
+            candidate = datetime.strptime(attempt, REFERENCE_FORMAT)
+        # glibc does not pad years below 1000
+        except ValueError:
+            LOGGER.debug("unreadable reference: %s", attempt)
+            return reference
+    return update_reference(reference, candidate, options.original)
 
 
 @lru_cache(maxsize=CACHE_SIZE)
@@ -201,20 +210,14 @@ def convert_date(datestring: str, inputformat: str, outputformat: str) -> str:
     return dateobject.strftime(outputformat)
 
 
-def check_extracted_reference(reference: int, options: Extractor) -> str | None:
+def check_extracted_reference(
+    reference: datetime | None, options: Extractor
+) -> str | None:
     """Test if the extracted reference date can be returned"""
-    if reference > 0:
-        # reference (untrusted) may be outside the platform timestamp range
-        try:
-            dateobject = datetime.fromtimestamp(reference, tz=timezone.utc)
-        except (OSError, OverflowError, ValueError):
-            LOGGER.debug("invalid reference timestamp: %s", reference)
-            return None
-        converted = dateobject.strftime(options.format)
-        if is_valid_date(
-            converted, options.format, earliest=options.min, latest=options.max
-        ):
-            return converted
+    if reference is not None and is_valid_date(
+        reference, options.format, earliest=options.min, latest=options.max
+    ):
+        return reference.strftime(options.format)
     return None
 
 
