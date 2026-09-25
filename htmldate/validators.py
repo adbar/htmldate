@@ -89,7 +89,7 @@ def validate_and_convert(
         date_input, outputformat, earliest, latest
     ):
         try:
-            LOGGER.debug("custom parse result: %s", date_input)
+            LOGGER.debug("valid date: %s", date_input)
             return date_input.strftime(outputformat)
         except ValueError as err:  # pragma: no cover
             LOGGER.error("value error during conversion: %s %s", date_input, err)
@@ -159,7 +159,7 @@ def update_reference(
     "Fold a date into the running reference: oldest if original, else newest."
     if reference is None:
         return candidate
-    # wall-clock comparison, as written on the page
+    # wall-clock, as written on the page
     pick = min if original else max
     return pick(reference, candidate, key=lambda d: d.replace(tzinfo=None))
 

@@ -324,7 +324,7 @@ def examine_header(
             attribute = elem.get("name", "").lower()
             # url
             if attribute == "og:url":
-                reserve = extract_url_date(content, options)
+                reserve = extract_url_date(content, options) or reserve
             # date
             elif attribute in DATE_ATTRIBUTES:
                 LOGGER.debug("examining meta name: %s", logstring(elem))
@@ -335,7 +335,7 @@ def examine_header(
                 if not options.original:
                     headerdate = tryfunc(content)
                 else:
-                    reserve = tryfunc(content)
+                    reserve = tryfunc(content) or reserve
         # property attribute
         elif "property" in elem.attrib:
             attribute = elem.get("property", "").lower()
@@ -394,7 +394,7 @@ def examine_header(
                 if (attribute == "date") == options.original:
                     headerdate = attempt
                 else:
-                    reserve = attempt
+                    reserve = attempt or reserve
         # exit loop
         if headerdate is not None:
             break
@@ -440,7 +440,8 @@ def select_candidate(
 
     # safety net: plausibility
     if all(validation):
-        # prefer the newer candidate unless it is under half as frequent
+        # the runner-up (older, or newer if original) wins when from another
+        # year and more than half as frequent, except on ties
         if (
             counts[0] != counts[1]
             and years[1] != years[0]

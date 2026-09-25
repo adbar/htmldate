@@ -222,7 +222,7 @@ def extract_url_date(
                 return validate_and_convert(
                     dateobject, options.format, earliest=options.min, latest=options.max
                 )
-            except ValueError as err:  # pragma: no cover
+            except ValueError as err:
                 LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
 
@@ -257,7 +257,7 @@ def regex_parse(string: str) -> datetime | None:
             )
         month = MONTH_NUMBERS.get(word)
         if month is None:
-            # retry from the next position: matches can overlap
+            # matches can overlap
             pos = match.start() + 1
             continue
         # process and return
@@ -268,7 +268,8 @@ def regex_parse(string: str) -> datetime | None:
                 int(match["year"] or match["year2"]),
             )
         except ValueError:
-            return None
+            pos = match.end()
+            continue
         LOGGER.debug("multilingual text found: %s", dateobject)
         return dateobject
     return None
@@ -369,7 +370,7 @@ def _external_date(string: str) -> datetime | None:
 
 
 def external_date_parser(string: str, outputformat: str) -> str | None:
-    """Use dateutil parser or dateparser module according to system settings"""
+    """Parse with dateparser and format, without date range check."""
     target = _external_date(string)
     return target.strftime(outputformat) if target else None
 

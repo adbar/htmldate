@@ -366,6 +366,21 @@ def test_exact_date():
     # unpadded years below 1000 pass the positional check
     htmldoc = htmldoc.replace("2017", " 999")
     assert find_date(htmldoc, min_date="0500-01-01") in ("0999-01-01", "999-01-01")
+    # out of range: no reserve
+    assert find_date(htmldoc, extensive_search=False) is None
+    # a later meta without a date keeps the reserve
+    for meta in (
+        '<meta name="og:url" content="https://example.org/page"/>',
+        '<meta name="lastmodified" content="nonsense"/>',
+        '<meta http-equiv="last-modified" content="nonsense"/>',
+    ):
+        htmldoc = f'<html><head><meta property="article:published_time" content="2020-03-04"/>{meta}</head><body></body></html>'
+        assert find_date(htmldoc, extensive_search=False) == "2020-03-04"
+        htmldoc = f'<html><head><meta itemprop="copyrightyear" content="2019"/>{meta}</head><body></body></html>'
+        assert (
+            find_date(htmldoc, extensive_search=False, original_date=True)
+            == "2019-01-01"
+        )
 
     # original date
     htmldoc = '<html><head><meta property="OG:Updated_Time" content="2017-09-01"/><meta property="OG:DatePublished" content="2017-07-02"/></head><body/></html>'
@@ -647,6 +662,13 @@ def test_exact_date():
         find_date(
             '<html><body><abbr class="published" title="2016-11-12">XYZ</abbr></body></html>',
             original_date=True,
+        )
+        == "2016-11-12"
+    )
+    # an unparseable title does not stop the scan
+    assert (
+        find_date(
+            '<html><body><abbr class="published" title="nonsense">x</abbr><abbr class="published" title="2016-11-12">y</abbr></body></html>'
         )
         == "2016-11-12"
     )
@@ -1434,6 +1456,12 @@ def test_regex_parse():
     assert regex_parse("31 Tennis 2020 then 5 June 2020") == datetime.datetime(
         2020, 6, 5
     )
+    # impossible dates are skipped whole
+    assert regex_parse("31 June 2020, 5 July 2020") == datetime.datetime(2020, 7, 5)
+    assert regex_parse("Top 100 March 2020, updated 5 April 2020") == datetime.datetime(
+        2020, 4, 5
+    )
+    assert regex_parse("31 June 2020") is None
 
 
 def test_month_names_match_dateparser():
@@ -1573,6 +1601,14 @@ def test_url():
         find_date(
             "<html><body><p>Aaa, bbb.</p></body></html>",
             url="http://example.com/2016/key-words",
+        )
+        is None
+    )
+    # impossible date in the URL
+    assert (
+        find_date(
+            "<html><body><p>Aaa, bbb.</p></body></html>",
+            url="http://example.com/2016/02/30/key-words",
         )
         is None
     )
