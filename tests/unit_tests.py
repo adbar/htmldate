@@ -267,19 +267,25 @@ DATE_XPATH = """
 def test_date_candidates_match_xpath():
     docs = [
         # attribute order
-        '<html><body><div itemprop="date" class="x" id="y">a</div>'
-        '<div id="y" itemprop="date" class="x">b</div>'
-        '<div class="x" itemprop="y" id="meta">c</div>'
-        '<div id="Meta" itemprop="y" class="x">d</div>'
-        '<div class="x" id="footer-info-lastmod">e</div></body></html>',
+        (
+            '<html><body><div itemprop="date" class="x" id="y">a</div>'
+            '<div id="y" itemprop="date" class="x">b</div>'
+            '<div class="x" itemprop="y" id="meta">c</div>'
+            '<div id="Meta" itemprop="y" class="x">d</div>'
+            '<div class="x" id="footer-info-lastmod">e</div></body></html>'
+        ),
         # case folding, itemprop alone, empty values
-        '<html><body><div class="DATE">a</div><div class="Datum">b</div>'
-        '<div itemprop="datePublished">c</div><div itemprop="meta">d</div>'
-        '<div class="" id="date">e</div><div class="">f</div></body></html>',
+        (
+            '<html><body><div class="DATE">a</div><div class="Datum">b</div>'
+            '<div itemprop="datePublished">c</div><div itemprop="meta">d</div>'
+            '<div class="" id="date">e</div><div class="">f</div></body></html>'
+        ),
         # footer/small, non-fast tags, comments, PIs
-        '<html><body><footer><small class="x"><footer>a</footer></small></footer>'
-        '<article class="date">b</article><a class="byline">c</a>'
-        '<!--c--><?pi x?><p class="fecha">d</p></body></html>',
+        (
+            '<html><body><footer><small class="x"><footer>a</footer></small></footer>'
+            '<article class="date">b</article><a class="byline">c</a>'
+            '<!--c--><?pi x?><p class="fecha">d</p></body></html>'
+        ),
     ]
     for doc in docs:
         for tree in (load_html(doc), etree.fromstring(doc)):
