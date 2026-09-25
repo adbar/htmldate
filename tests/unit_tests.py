@@ -907,6 +907,24 @@ def test_fast_mode_bare_date():
 
 def test_is_valid_date():
     """test internal date validation"""
+
+    class NoTimestamp(datetime.datetime):
+        "Mimics Windows with naive dates before 1970."
+
+        def timestamp(self):
+            raise OSError
+
+    earliest = datetime.datetime(2000, 6, 1)
+    for month, expected in ((7, True), (5, False)):
+        assert (
+            is_valid_date(
+                NoTimestamp(2000, month, 1),
+                OUTPUTFORMAT,
+                earliest=earliest,
+                latest=LATEST_POSSIBLE,
+            )
+            is expected
+        )
     assert (
         is_valid_date(None, OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
         is False

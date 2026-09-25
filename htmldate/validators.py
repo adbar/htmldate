@@ -19,10 +19,17 @@ LOGGER.debug("minimum date setting: %s", MIN_DATE)
 
 def _is_in_range(dateobject: datetime, earliest: datetime, latest: datetime) -> bool:
     """Check whether a datetime falls within the configured time window."""
-    return (
-        earliest.year <= dateobject.year <= latest.year
-        and earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
-    )
+    if not earliest.year <= dateobject.year <= latest.year:
+        return False
+    try:
+        return earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
+    # Windows: no timestamps for naive dates before 1970
+    except OSError:
+        return (
+            earliest.replace(tzinfo=None)
+            <= dateobject.replace(tzinfo=None)
+            <= latest.replace(tzinfo=None)
+        )
 
 
 def is_valid_date(
