@@ -255,7 +255,18 @@ def regex_parse(string: str) -> datetime | None:
                 if match.lastgroup == "year"
                 else ("day2", "month2", "year2")
             )
-            month = MONTH_NUMBERS.get(_fold(match.group(groups[1])))
+            word = _fold(match.group(groups[1]))
+            # month-first: glued words ("SmithMarch"), longest known suffix
+            if groups[0] == "day":
+                word = next(
+                    (
+                        word[i:]
+                        for i in range(len(word) - 2)
+                        if word[i:] in MONTH_NUMBERS
+                    ),
+                    word,
+                )
+            month = MONTH_NUMBERS.get(word)
             if month is None:
                 continue
             # process and return

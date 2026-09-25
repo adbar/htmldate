@@ -1354,9 +1354,14 @@ def test_regex_parse():
     for month, mnum in [("MAYIS", 5), ("KASIM", 11), ("EKİM", 10), ("Mayis", 5)]:
         expected = datetime.datetime(1998, mnum, 1)
         assert regex_parse(f"1 {month} 1998") == expected, month
-    # glued and non-month words are skipped
-    assert regex_parse("Xjune 5, 2020") is None
+    # glued month names match, non-month words are skipped
+    assert regex_parse("Xjune 5, 2020") == datetime.datetime(2020, 6, 5)
+    assert regex_parse("By John SmithMarch 5, 2020") == datetime.datetime(2020, 3, 5)
     assert regex_parse("1 apple 2020 5 June 2020") == datetime.datetime(2020, 6, 5)
+    assert regex_parse("Top 10 Walmart 2020") is None
+    assert regex_parse("31 Tennis 2020 then 5 June 2020") == datetime.datetime(
+        2020, 6, 5
+    )
 
 
 def test_month_names_match_dateparser():
