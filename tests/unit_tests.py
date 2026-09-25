@@ -3,8 +3,8 @@ Unit tests for the htmldate library.
 """
 
 import datetime
+import importlib
 import io
-import itertools
 import logging
 import os
 import re
@@ -40,7 +40,9 @@ from htmldate.extractors import (
     try_date_expr,
     FAST_PREPEND,
     MONTHS,
-    REGEX_MONTHS,
+    MONTH_KEYS,
+    MONTH_NUMBERS,
+    _fold,
 )
 from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
@@ -1348,39 +1350,31 @@ def test_regex_parse():
     assert regex_parse("1. Okt. 1998") is not None
     for month in en_full + en_abbr + de_full + tr_full + tr_abbr:
         assert regex_parse(f"1 {month} 1998") is not None, month
-    # dotted/dotless i cases where str.lower() diverges from re.I folding
+    # dotted/dotless i
     for month, mnum in [("MAYIS", 5), ("KASIM", 11), ("EKİM", 10), ("Mayis", 5)]:
         expected = datetime.datetime(1998, mnum, 1)
         assert regex_parse(f"1 {month} 1998") == expected, month
+    # glued and non-month words are skipped
+    assert regex_parse("Xjune 5, 2020") is None
+    assert regex_parse("1 apple 2020 5 June 2020") == datetime.datetime(2020, 6, 5)
 
 
-def _expand_alternative(alternative: str) -> set:
-    "Expand a REGEX_MONTHS alternative with [..] classes and optional '?' characters."
-    parts = []
-    i = 0
-    while i < len(alternative):
-        if alternative[i] == "[":
-            end = alternative.index("]", i)
-            parts.append(list(alternative[i + 1 : end]))
-            i = end + 1
-        elif alternative[i + 1 : i + 2] == "?":
-            parts.append([alternative[i], ""])
-            i += 2
-        else:
-            parts.append([alternative[i]])
-            i += 1
-    return {"".join(combo) for combo in itertools.product(*parts)}
-
-
-def test_month_lists_agree():
-    "REGEX_MONTHS and MONTHS must cover the same names, else regex_parse silently misses."
-    alternatives = [a for a in REGEX_MONTHS.replace("\n", "").split("|") if a]
-    # every name the pattern can match must resolve to a month number
-    for name in set().union(*map(_expand_alternative, alternatives)):
-        assert regex_parse(f"1 {name} 1998") is not None, name
-    # and every known month name must be reachable from the pattern
-    for name in {month for tup in MONTHS for month in tup}:
-        assert any(re.fullmatch(a, name, re.I) for a in alternatives), name
+def test_month_names_match_dateparser():
+    "Every name in MONTHS is a dateparser month name with the same number."
+    known = {}
+    for language in ("en", "de", "fr", "id", "tr"):
+        info = importlib.import_module(
+            f"dateparser.data.date_translation_data.{language}"
+        ).info
+        for number, key in enumerate(MONTH_KEYS, 1):
+            for name in (n.strip() for n in info.get(key, [])):
+                if len(name) >= 3 and name.isalpha():
+                    known[_fold(name)] = number
+    # folding must not collapse two names onto one key
+    assert len(MONTH_NUMBERS) == sum(map(len, MONTHS))
+    # unaccented "aout" is absent from dateparser's French data
+    assert set(MONTH_NUMBERS) - set(known) <= {"aout"}
+    assert not {k: v for k, v in MONTH_NUMBERS.items() if known.get(k, v) != v}
 
 
 def test_external_date_parser():
@@ -1435,15 +1429,16 @@ def test_external_parser_gate():
             find_date(time_elem, extensive_search=True, original_date=original)
             == "2019-05-03"
         )
-    # 2-digit year only with REGEX_MONTHS names
-    assert (
-        find_date(doc.format('<p class="date">05 Mar 19</p>'), extensive_search=True)
-        == "2019-03-05"
-    )
-    assert (
-        find_date(doc.format('<p class="date">05 marzo 19</p>'), extensive_search=True)
-        is None
-    )
+    # 2-digit year with any dateparser month name
+    for text, expected in (
+        ("05 Mar 19", "2019-03-05"),
+        ("05 marzo 19", "2019-03-05"),
+        ("12 мая 19", "2019-05-12"),
+    ):
+        assert (
+            find_date(doc.format(f'<p class="date">{text}</p>'), extensive_search=True)
+            == expected
+        ), text
     # year range follows min_date
     assert (
         find_date(
@@ -2010,6 +2005,7 @@ def test_download():
 
 def test_encoding_detection():
     """detect_encoding handles the optional cchardet module being absent or unhelpful"""
+    assert detect_encoding("öäü encoding test".encode("utf-8")) == ["utf-8"]
     data = "öäü encoding test".encode("latin-1")  # not valid UTF-8
     # cchardet absent (optional dep not installed)
     with patch.object(htmldate.utils, "cchardet_detect", None):

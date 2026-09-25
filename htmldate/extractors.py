@@ -79,20 +79,13 @@ YM_PATTERN = re.compile(
     rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
 
-REGEX_MONTHS = """
-January?|February?|March|A[pv]ril|Ma[iy]|Jun[ei]|Jul[iy]|August|September|O[ck]tober|November|De[csz]ember|
-Jan|Feb|M[aä]r|Apr|Jun|Jul|Aug|Sep|O[ck]t|Nov|De[cz]|
-Januari|Februari|Maret|Mei|Agustus|
-Jänner|Feber|März|
-janvier|février|mars|juin|juillet|aout|septembre|octobre|novembre|décembre|
-Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|
-Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara
-"""  # todo: check "août"
+# any word, MONTH_NUMBERS decides
+MONTH_WORD = r"[^\W\d_]{3,12}"
 LONG_TEXT_PATTERN = re.compile(
-    rf"""(?P<month>{REGEX_MONTHS})\s
+    rf"""(?P<month>{MONTH_WORD})\s
 (?P<day>{DAY_RE})(?:st|nd|rd|th)?,? (?P<year>{YEAR_RE})|
 (?P<day2>{DAY_RE})(?:st|nd|rd|th|\.)? (?:of )?
-(?P<month2>{REGEX_MONTHS})[,.]? (?P<year2>{YEAR_RE})""".replace("\n", ""),
+(?P<month2>{MONTH_WORD})[,.]? (?P<year2>{YEAR_RE})""".replace("\n", ""),
     re.I,
 )
 
@@ -126,23 +119,61 @@ MONTHS = [
     ("dec", "dez", "dezember", "december", "desember", "décembre", "aralık", "ara"),
 ]
 
-# regex, not a dict: str.lower() disagrees with re.I on dotted/dotless i (e.g. "MAYIS")
-MONTH_PATTERNS = [
-    re.compile(rf"^(?:{'|'.join(map(re.escape, m))})$", re.I) for m in MONTHS
-]
+
+def _fold(token: str) -> str:
+    "str.lower() alone mishandles the Turkish dotless i."
+    return token.replace("ı", "i").replace("İ", "i").lower()
 
 
-def _month_number(token: str) -> int | None:
-    "Month number for a name in any supported language."
-    return next((i for i, p in enumerate(MONTH_PATTERNS, 1) if p.match(token)), None)
+MONTH_NUMBERS = {_fold(name): i for i, names in enumerate(MONTHS, 1) for name in names}
 
 
 # gate for try_date_expr
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]")
 YEAR_OR_MONTH = re.compile(
-    rf"(?<!\d)\d{{4}}(?!\d)|\b(?:{REGEX_MONTHS})\b".replace("\n", ""), re.I
+    rf"(?<!\d)\d{{4}}(?!\d)|\b(?:{'|'.join(re.escape(n) for t in MONTHS for n in t)})\b",
+    re.I,
 )
 DAY_TOKEN = re.compile(r"(?<!\d)\d{1,2}(?!\d)")
+# shorter entries ("de", "I") are common words
+WORD = re.compile(r"[^\W\d_]{3,}")
+MONTH_KEYS = (
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+)
+
+
+@lru_cache(maxsize=None)
+def month_words() -> frozenset[str]:
+    "Month names in all dateparser locales."
+    from dateparser.languages.loader import default_loader
+
+    return frozenset(
+        _fold(word)
+        for locale in default_loader.get_locales()
+        for key in MONTH_KEYS
+        for word in locale.info.get(key, [])
+        if WORD.fullmatch(word)
+    )
+
+
+def has_date_cue(string: str, min_date: datetime, max_date: datetime) -> bool:
+    "The first year or known month decides, else any dateparser month name."
+    match = YEAR_OR_MONTH.search(string)
+    if match is not None:
+        return not match[0].isdigit() or min_date.year <= int(match[0]) <= max_date.year
+    return any(_fold(word) in month_words() for word in WORD.findall(string))
+
 
 DISCARD_PATTERNS = re.compile(
     r"^\d{2}:\d{2}(?: |:|$)|"
@@ -214,36 +245,32 @@ def regex_parse(string: str) -> datetime | None:
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
     # search windows end at each year token
-    match = None
     prev = 0
     for year in YEAR_CANDIDATES.finditer(string):
-        match = LONG_TEXT_PATTERN.search(
+        for match in LONG_TEXT_PATTERN.finditer(
             string, max(prev, year.start() - 60), year.end()
-        )
-        if match:
-            break
+        ):
+            groups = (
+                ("day", "month", "year")
+                if match.lastgroup == "year"
+                else ("day2", "month2", "year2")
+            )
+            month = MONTH_NUMBERS.get(_fold(match.group(groups[1])))
+            if month is None:
+                continue
+            # process and return
+            try:
+                dateobject = _build_dmy(
+                    int(match.group(groups[0])),
+                    month,
+                    int(match.group(groups[2])),
+                )
+            except ValueError:
+                return None
+            LOGGER.debug("multilingual text found: %s", dateobject)
+            return dateobject
         prev = year.start()
-    if not match:
-        return None
-    groups = (
-        ("day", "month", "year")
-        if match.lastgroup == "year"
-        else ("day2", "month2", "year2")
-    )
-    month = _month_number(match.group(groups[1]))
-    if month is None:  # pragma: no cover — every REGEX_MONTHS name is in MONTHS
-        return None
-    # process and return
-    try:
-        dateobject = _build_dmy(
-            int(match.group(groups[0])),
-            month,
-            int(match.group(groups[2])),
-        )
-    except ValueError:
-        return None
-    LOGGER.debug("multilingual text found: %s", dateobject)
-    return dateobject
+    return None
 
 
 def _parse_yyyymmdd(digits: str) -> datetime:
@@ -375,9 +402,8 @@ def try_date_expr(
     if (
         extensive_search
         and TEXT_DATE_PATTERN.search(string)
-        and (match := YEAR_OR_MONTH.search(string)) is not None
-        and (not match[0].isdigit() or min_date.year <= int(match[0]) <= max_date.year)
         and DAY_TOKEN.search(string)
+        and has_date_cue(string, min_date, max_date)
     ):
         # send to date parser
         dateparser_result = external_date_parser(string, outputformat)
