@@ -3,7 +3,7 @@
 ## 1.x.x
 - breaking: CLI now defaults to extensive search, `-f/--fast` enables fast mode (previously inverted)
 - fix: parse month names regardless of case (e.g. uppercase Turkish), no more crash
-- performance: fixes for regex backtracking and other DoS vectors, working candidate-filter cache
+- performance: misc fixes in date extraction
 - maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures changed
 - tests: full line coverage, leaner test suite
 

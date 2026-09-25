@@ -96,6 +96,11 @@ def decode_file(filecontent: bytes | str) -> str:
     # init
     if isinstance(filecontent, str):
         return filecontent
+    # detect_encoding would decode a second time
+    try:
+        return filecontent.decode("utf-8")
+    except UnicodeDecodeError:
+        pass
     htmltext = None
     # encoding
     for guessed_encoding in detect_encoding(filecontent):
