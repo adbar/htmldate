@@ -3,8 +3,15 @@
 ## 1.x.x
 - breaking: CLI now defaults to extensive search, `-f/--fast` enables fast mode (previously inverted)
 - fix: parse month names regardless of case (e.g. uppercase Turkish), no more crash
+- fix: `itemprop` date cues in any attribute order
+- fix: keep time and time zone of regex matches (#194)
+- fix: `outputformat` applied to copyright years and to formats such as `%z`
+- fix: header fallback date kept when a later meta tag has none
+- fix: text search continues past impossible dates such as "31 June"
+- maintenance: require dateparser >= 1.4.2 (#199)
 - performance: misc fixes in date extraction
 - maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures changed
+- maintenance: `compare_reference`, `update_reference`, `compare_values` and `check_extracted_reference` use `datetime | None` instead of `int` timestamps
 - tests: full line coverage, leaner test suite
 
 ## 1.10.0
