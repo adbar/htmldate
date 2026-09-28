@@ -63,10 +63,14 @@ def _parse_and_validate(
     """Parse a date string and validate it against time boundaries."""
     try:
         if outputformat == "%Y-%m-%d":
-            # positional YYYY-MM-DD read: faster than strptime, separator-agnostic
-            dateobject = datetime(
-                int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
-            )
+            try:
+                # positional YYYY-MM-DD read: faster than strptime, separator-agnostic
+                dateobject = datetime(
+                    int(date_input[:4]), int(date_input[5:7]), int(date_input[8:10])
+                )
+            except ValueError:
+                # unpadded parts ("2020-1-15")
+                dateobject = datetime.strptime(date_input, outputformat)
         else:
             dateobject = datetime.strptime(date_input, outputformat)
     except ValueError:

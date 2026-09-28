@@ -14,6 +14,7 @@ import time
 
 from collections import Counter
 from contextlib import redirect_stdout
+from functools import partial
 from unittest.mock import Mock, patch
 
 import pytest
@@ -27,9 +28,14 @@ from htmldate.core import (
     examine_elements,
     examine_text,
     find_date,
+    search_normalized,
     search_page,
     search_pattern,
     select_candidate,
+    normalize_match,
+    SELECT_YMD_PATTERN,
+    SELECT_YMD_YEAR,
+    THREE_COMP_REGEX_A,
 )
 from htmldate.extractors import (
     custom_parse,
@@ -917,6 +923,10 @@ def test_fast_mode_bare_date():
     # text after a comment is kept
     doc = "<html><body><span>Published on <!-- ts -->2020-05-05</span></body></html>"
     assert find_date(doc, extensive_search=False) == "2020-05-05"
+    # unpadded parts, output padded
+    for text in ("2020-1-15", "2020-1-15T10:00:00"):
+        doc = f"<html><body><p>Posted {text} by someone</p></body></html>"
+        assert find_date(doc, extensive_search=False) == "2020-01-15"
     # dates in attributes, comments and script/style are not accepted
     for snippet in (
         '<a href="/theme.css?v=2021-03-04">menu</a>',
@@ -1014,6 +1024,19 @@ def test_is_valid_date():
             "2020.01.01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
         )
         is True
+    )
+    # unpadded parts fall back to strptime
+    assert (
+        is_valid_date(
+            "2020-1-15", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is True
+    )
+    assert (
+        is_valid_date(
+            "2020-1-35", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
+        )
+        is False
     )
     assert (
         is_valid_date("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
@@ -1739,6 +1762,21 @@ def test_search_pattern():
             options,
         )
         is not None
+    )
+
+
+def test_search_normalized():
+    # separator variants add up: 2 against 3 keeps the newer
+    assert (
+        search_normalized(
+            " 01.02.2020 x 01/02/2020 x 05.03.2019 x 05.03.2019 x 05.03.2019 ",
+            SELECT_YMD_PATTERN,
+            SELECT_YMD_YEAR,
+            partial(normalize_match, THREE_COMP_REGEX_A),
+            0,
+            OPTIONS,
+        )
+        == "2020-02-01"
     )
 
 

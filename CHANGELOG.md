@@ -8,6 +8,8 @@
 - fix: `outputformat` applied to copyright years and to formats such as `%z`
 - fix: header fallback date kept when a later meta tag has none
 - fix: text search continues past impossible dates such as "31 June"
+- fix: same date with different separators counted together ("01.02.2020", "01/02/2020")
+- fix: unpadded dates such as "2020-1-15" accepted, now also in fast mode
 - maintenance: require dateparser >= 1.4.2 (#199)
 - performance: misc fixes in date extraction
 - maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures changed

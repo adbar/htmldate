@@ -613,9 +613,9 @@ def search_normalized(
         latest=options.max,
     )
     # revert DD-MM-YYYY patterns before sorting
-    normalized = Counter(
-        {normalizer(item): count for item, count in candidates.items()}
-    )
+    normalized: Counter[str] = Counter()
+    for item, count in candidates.items():
+        normalized[normalizer(item)] += count
     bestmatch = select_candidate(normalized, YMD_PATTERN, YEAR_PATTERN, options)
     return _filter_ymd(bestmatch, copyear, options)
 
