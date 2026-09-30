@@ -27,7 +27,6 @@ from htmldate.core import (
     examine_header,
     examine_text,
     find_date,
-    load_html,
     search_page,
     search_pattern,
     select_candidate,
@@ -801,6 +800,7 @@ def test_examine_header():
     # no header dates at all
     tree = load_html("<html><head></head><body><p>text</p></body></html>")
     assert examine_header(tree, options) is None
+
 
 def test_free_text_timezone():
     """Time of day and time zone must be preserved when dates are extracted
