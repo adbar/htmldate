@@ -83,7 +83,6 @@ dev = [
     "types-lxml",
 ]
 speed = [
-    "backports-datetime-fromisoformat; python_version < '3.11'",
     "faust-cchardet >= 2.1.19",
     "urllib3[brotli]",
 ]

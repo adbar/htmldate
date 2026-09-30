@@ -5,7 +5,6 @@ Meta-functions to be applied module-wide.
 import logging
 
 from .extractors import try_date_expr
-from .validators import reset_validator_caches
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +22,6 @@ def reset_caches() -> None:
     """Reset all known LRU caches used to speed-up processing.
     This may release some memory."""
     # htmldate
-    reset_validator_caches()
     try_date_expr.cache_clear()
     # charset_normalizer internals: cache_clear may be absent depending on version
     # (getattr keeps mypy happy; the except still guards missing names/attrs)
