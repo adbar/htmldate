@@ -4,11 +4,10 @@ Filters for date parsing and date validators.
 """
 
 import logging
-import re
 
-from collections import Counter
 from collections.abc import Iterable
 from datetime import datetime
+from functools import lru_cache
 
 from .settings import MIN_DATE
 from .utils import Extractor
@@ -55,6 +54,7 @@ def validate_ymd(
     return validate(dateobject, earliest, latest)
 
 
+@lru_cache(maxsize=16)
 def is_valid_format(outputformat: str) -> bool:
     """Validate the output format in the settings"""
     # test with date object
@@ -76,35 +76,6 @@ def correct_year(year: int) -> int:
     if year < 100:
         year += 1900 if year >= 90 else 2000
     return year
-
-
-def plausible_year_filter(
-    htmlstring: str,
-    *,
-    pattern: re.Pattern[str],
-    yearpat: re.Pattern[str],
-    earliest: datetime,
-    latest: datetime,
-) -> Counter[str]:
-    """Filter the date patterns to find plausible years only"""
-    occurrences = Counter(pattern.findall(htmlstring))  # slow!
-    min_year, max_year = earliest.year, latest.year
-
-    for item in list(occurrences):  # prevent RuntimeError
-        year_match = yearpat.search(item)
-        if year_match is None:
-            LOGGER.debug("not a year pattern: %s", item)
-            del occurrences[item]
-            continue
-
-        # correct_year() is a no-op on 4-digit years, so this covers both cases
-        potential_year = correct_year(int(year_match[1]))
-
-        if not min_year <= potential_year <= max_year:
-            LOGGER.debug("no potential year: %s", item)
-            del occurrences[item]
-
-    return occurrences
 
 
 def pick(dates: Iterable[datetime | None], options: Extractor) -> datetime | None:

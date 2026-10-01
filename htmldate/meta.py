@@ -5,6 +5,7 @@ Meta-functions to be applied module-wide.
 import logging
 
 from .extractors import try_date_expr
+from .validators import is_valid_format
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ def reset_caches() -> None:
     This may release some memory."""
     # htmldate
     try_date_expr.cache_clear()
+    is_valid_format.cache_clear()
     # charset_normalizer internals: cache_clear may be absent depending on version
     # (getattr keeps mypy happy; the except still guards missing names/attrs)
     try:

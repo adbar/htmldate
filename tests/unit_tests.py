@@ -30,11 +30,9 @@ from htmldate.core import (
     search_pattern,
     select_candidate,
     SELECT_YMD_PATTERN,
-    SELECT_YMD_YEAR,
     THREE_COMP_REGEX_A,
     THREE_LOOSE_CATCH,
     THREE_LOOSE_PATTERN,
-    YEAR_PATTERN,
 )
 from htmldate.extractors import (
     custom_parse,
@@ -228,8 +226,10 @@ def test_sanity():
     assert "AAA" in tree.text_content()  # real content kept
     # reset caches
     old_values = try_date_expr.cache_info()
+    is_valid_format("%Y")
     reset_caches()
     assert try_date_expr.cache_info() != old_values
+    assert is_valid_format.cache_info().currsize == 0
 
 
 def test_no_date():
@@ -1080,7 +1080,6 @@ def test_candidate_selection():
         assert search_pattern(
             "  2116-12-23  2116-12-23  2116-12-23  2017-08-11  2017-08-11  ",
             THREE_LOOSE_PATTERN,
-            YEAR_PATTERN,
             THREE_LOOSE_CATCH,
             "ymd",
             options,
@@ -1089,13 +1088,26 @@ def test_candidate_selection():
         search_pattern(
             " 2020-89-56 1901-89-56 ",
             THREE_LOOSE_PATTERN,
-            YEAR_PATTERN,
             THREE_LOOSE_CATCH,
             "ymd",
             options,
         )
         is None
     )
+    # an impossible winner aborts the step, no fallback to the runner-up
+    assert (
+        search_pattern(
+            " 2018-13-27 x 2017-05-04 ",
+            THREE_LOOSE_PATTERN,
+            THREE_LOOSE_CATCH,
+            "ymd",
+            Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
+        )
+        is None
+    )
+    # the catch year group bounds years, even with an earlier min_date
+    options = Extractor(True, LATEST_POSSIBLE, datetime.datetime(1980, 1, 1), False)
+    assert search_page("<p>/1985/03/04/ x 1985-03-04 x</p>", options) is None
 
 
 def test_regex_parse():
@@ -1431,12 +1443,10 @@ def test_search_pattern():
     options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
     pattern = re.compile(r"\D([0-9]{4}[/.-][0-9]{2})\D")
     catch = re.compile(r"([0-9]{4})[/.-]([0-9]{2})")
-    yearpat = re.compile(r"^([12][0-9]{3})")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
-            yearpat,
             catch,
             "ym",
             options,
@@ -1447,7 +1457,6 @@ def test_search_pattern():
         search_pattern(
             "The date is 2002.02.15.",
             pattern,
-            yearpat,
             catch,
             "ym",
             options,
@@ -1458,7 +1467,6 @@ def test_search_pattern():
         search_pattern(
             "http://www.url.net/index.html",
             pattern,
-            yearpat,
             catch,
             "ym",
             options,
@@ -1469,7 +1477,6 @@ def test_search_pattern():
         search_pattern(
             "http://www.url.net/2016/01/index.html",
             pattern,
-            yearpat,
             catch,
             "ym",
             options,
@@ -1479,12 +1486,10 @@ def test_search_pattern():
     #
     pattern = re.compile(r"\D([0-9]{2}[/.-][0-9]{4})\D")
     catch = re.compile(r"([0-9]{2})[/.-]([0-9]{4})")
-    yearpat = re.compile(r"([12][0-9]{3})$")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
-            yearpat,
             catch,
             "my",
             options,
@@ -1495,7 +1500,6 @@ def test_search_pattern():
         search_pattern(
             "It happened on the 15.02.2002, the day when it all began.",
             pattern,
-            yearpat,
             catch,
             "my",
             options,
@@ -1505,12 +1509,10 @@ def test_search_pattern():
     #
     pattern = re.compile(r"\D(2[01][0-9]{2})\D")
     catch = re.compile(r"(2[01][0-9]{2})")
-    yearpat = re.compile(r"^(2[01][0-9]{2})")
     assert (
         search_pattern(
             "It happened in the film 300.",
             pattern,
-            yearpat,
             catch,
             "y",
             options,
@@ -1521,7 +1523,6 @@ def test_search_pattern():
         search_pattern(
             "It happened in 2002.",
             pattern,
-            yearpat,
             catch,
             "y",
             options,
@@ -1535,7 +1536,6 @@ def test_search_normalized():
     assert search_pattern(
         " 01.02.2020 x 01/02/2020 x 05.03.2019 x 05.03.2019 x 05.03.2019 ",
         SELECT_YMD_PATTERN,
-        SELECT_YMD_YEAR,
         THREE_COMP_REGEX_A,
         "dmy",
         OPTIONS,

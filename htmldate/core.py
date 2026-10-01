@@ -45,7 +45,6 @@ from .validators import (
     get_max_date,
     is_valid_format,
     pick,
-    plausible_year_filter,
     validate,
     validate_ymd,
 )
@@ -198,9 +197,8 @@ COPYRIGHT_PATTERN = re.compile(
 )
 THREE_PATTERN = re.compile(r"/([0-9]{4}/[0-9]{2}/[0-9]{2})[01/]")
 THREE_LOOSE_PATTERN = re.compile(r"\D([0-9]{4}[/.-][0-9]{2}[/.-][0-9]{2})\D")
-THREE_LOOSE_CATCH = re.compile(r"([0-9]{4})[/.-]([0-9]{2})[/.-]([0-9]{2})")
+THREE_LOOSE_CATCH = re.compile(rf"({YEAR_RE})[/.-]([0-9]{{2}})[/.-]([0-9]{{2}})")
 SELECT_YMD_PATTERN = re.compile(rf"\D({DAY_RE}[/.-]{MONTH_RE}[/.-][0-9]{{4}})\D")
-SELECT_YMD_YEAR = re.compile(rf"({YEAR_RE})\D?$")
 DATESTRINGS_PATTERN = re.compile(
     r"(\D19[0-9]{2}[01][0-9][0-3][0-9]\D|\D20[0-9]{2}[01][0-9][0-3][0-9]\D)"
 )
@@ -208,7 +206,6 @@ DATESTRINGS_CATCH = re.compile(rf"({YEAR_RE})([01][0-9])([0-3][0-9])")
 SLASHES_PATTERN = re.compile(
     rf"\D({DAY_RE}/{MONTH_RE}/[0129][0-9]|[0-3][0-9]\.[01][0-9]\.[0129][0-9])\D"
 )
-SLASHES_YEAR = re.compile(r"([0-9]{2})$")
 YYYYMM_PATTERN = re.compile(r"\D([12][0-9]{3}[/.-](?:1[0-2]|0[1-9]))\D")
 YYYYMM_CATCH = re.compile(rf"({YEAR_RE})[/.-](1[0-2]|0[1-9])")
 MMYYYY_PATTERN = re.compile(rf"\D({MONTH_RE}[/.-][12][0-9]{{3}})\D")
@@ -501,48 +498,50 @@ def select_candidate(occurrences: Counter[str], options: Extractor) -> str | Non
     return first
 
 
-def normalize(catch: re.Pattern[str], order: str, item: str) -> str:
+# year, month and day positions, -1 reads the "1" appended in normalize
+ORDER_INDEX = {
+    o: (o.find("y"), o.find("m"), o.find("d")) for o in ("ymd", "dmy", "ym", "my", "y")
+}
+
+
+def normalize(catch: re.Pattern[str], order: str, item: str) -> str | None:
     "Write the parts, named by order (y, m, d), as a YYYY-MM-DD key."
     match = catch.search(item)
-    parts = dict(zip(order, (g for g in match.groups() if g)))  # type: ignore[union-attr]
-    year = correct_year(int(parts["y"]))
-    return f"{year}-{parts.get('m', '1').zfill(2)}-{parts.get('d', '1').zfill(2)}"
+    if match is None:
+        return None
+    parts = [*filter(None, match.groups()), "1"]
+    y, m, d = ORDER_INDEX[order]
+    return f"{correct_year(int(parts[y]))}-{parts[m].zfill(2)}-{parts[d].zfill(2)}"
 
 
 def search_pattern(
     htmlstring: str,
     pattern: re.Pattern[str],
-    yearpat: re.Pattern[str],
     catch: re.Pattern[str],
     order: str,
     options: Extractor,
 ) -> datetime | None:
-    "Count plausible matches as YMD keys, then select and validate one."
-    candidates = plausible_year_filter(
-        htmlstring,
-        pattern=pattern,
-        yearpat=yearpat,
-        earliest=options.min,
-        latest=options.max,
-    )
-    # count separator and order variants together
+    "Count matches with a plausible year as YMD keys, then select and validate one."
+    # separator and order variants count together
     normalized: Counter[str] = Counter()
-    for item, count in candidates.items():
-        normalized[normalize(catch, order, item)] += count
+    for item, count in Counter(pattern.findall(htmlstring)).items():
+        key = normalize(catch, order, item)
+        if key and options.min.year <= int(key[:4]) <= options.max.year:
+            normalized[key] += count
     best = select_candidate(normalized, options)
     return validate_ymd(best, options.min, options.max) if best else None
 
 
 PAGE_PATTERNS = (
     # 3 components: target URL characteristics, then more loosely structured data
-    (THREE_PATTERN, YEAR_PATTERN, THREE_LOOSE_CATCH, "ymd"),
-    (THREE_LOOSE_PATTERN, YEAR_PATTERN, THREE_LOOSE_CATCH, "ymd"),
-    (SELECT_YMD_PATTERN, SELECT_YMD_YEAR, THREE_COMP_REGEX_A, "dmy"),
-    (DATESTRINGS_PATTERN, YEAR_PATTERN, DATESTRINGS_CATCH, "ymd"),
-    (SLASHES_PATTERN, SLASHES_YEAR, THREE_COMP_REGEX_B, "dmy"),
+    (THREE_PATTERN, THREE_LOOSE_CATCH, "ymd"),
+    (THREE_LOOSE_PATTERN, THREE_LOOSE_CATCH, "ymd"),
+    (SELECT_YMD_PATTERN, THREE_COMP_REGEX_A, "dmy"),
+    (DATESTRINGS_PATTERN, DATESTRINGS_CATCH, "ymd"),
+    (SLASHES_PATTERN, THREE_COMP_REGEX_B, "dmy"),
     # 2 components
-    (YYYYMM_PATTERN, YEAR_PATTERN, YYYYMM_CATCH, "ym"),
-    (MMYYYY_PATTERN, SELECT_YMD_YEAR, TWO_COMP_REGEX, "my"),
+    (YYYYMM_PATTERN, YYYYMM_CATCH, "ym"),
+    (MMYYYY_PATTERN, TWO_COMP_REGEX, "my"),
 )
 
 
@@ -561,9 +560,7 @@ def search_page(htmlstring: str, options: Extractor) -> datetime | None:
 
     """
     # copyright symbol
-    copydate = search_pattern(
-        htmlstring, COPYRIGHT_PATTERN, YEAR_PATTERN, YEAR_PATTERN, "y", options
-    )
+    copydate = search_pattern(htmlstring, COPYRIGHT_PATTERN, YEAR_PATTERN, "y", options)
     copyear = copydate.year if copydate else 0
     LOGGER.debug("copyright year/footer: %s", copyear)
 
@@ -583,9 +580,7 @@ def search_page(htmlstring: str, options: Extractor) -> datetime | None:
         return copydate
 
     # last resort: 1 component
-    return search_pattern(
-        htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, YEAR_PATTERN, "y", options
-    )
+    return search_pattern(htmlstring, SIMPLE_PATTERN, YEAR_PATTERN, "y", options)
 
 
 def find_date(

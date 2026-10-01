@@ -14,7 +14,7 @@
 - fix: unpadded dates such as "2020-1-15" accepted, now also in fast mode
 - maintenance: require dateparser >= 1.4.2 (#199)
 - performance: misc fixes in date extraction
-- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `plausible_year_filter`, `search_pattern` and `select_candidate` signatures changed, `search_normalized` removed
+- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `search_pattern` and `select_candidate` signatures changed, `search_normalized` and `plausible_year_filter` removed
 - maintenance: drop unused `backports-datetime-fromisoformat` from the `speed` extra
 - tests: full line coverage, leaner test suite
 
