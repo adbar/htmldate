@@ -2,18 +2,20 @@
 
 ## 1.x.x
 - breaking: CLI now defaults to extensive search, `-f/--fast` enables fast mode (previously inverted)
+- breaking: internal functions return `datetime | None`, only `find_date` applies `outputformat`, `is_valid_date` and `convert_date` removed
 - fix: parse month names regardless of case (e.g. uppercase Turkish), no more crash
 - fix: `itemprop` date cues in any attribute order
 - fix: keep time and time zone of regex matches (#194)
 - fix: `outputformat` applied to copyright years and to formats such as `%z`
 - fix: header fallback date kept when a later meta tag has none
 - fix: text search continues past impossible dates such as "31 June"
-- fix: same date with different separators counted together ("01.02.2020", "01/02/2020")
+- fix: same date with different separators counted together in all page text patterns ("01.02.2020", "01/02/2020", "2020-02-01")
+- fix: 8-digit dates such as "20200201" sorted by date, not by the preceding character
 - fix: unpadded dates such as "2020-1-15" accepted, now also in fast mode
 - maintenance: require dateparser >= 1.4.2 (#199)
 - performance: misc fixes in date extraction
-- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures changed
-- maintenance: `compare_reference`, `update_reference`, `compare_values` and `check_extracted_reference` use `datetime | None` instead of `int` timestamps
+- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `search_pattern` and `select_candidate` signatures changed, `search_normalized` and `plausible_year_filter` removed
+- maintenance: drop unused `backports-datetime-fromisoformat` from the `speed` extra
 - tests: full line coverage, leaner test suite
 
 ## 1.10.0

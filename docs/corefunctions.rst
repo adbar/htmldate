@@ -18,6 +18,8 @@ Handling date extraction
 Useful internal functions
 -------------------------
 
+Internal functions return a ``datetime`` or ``None``: only ``find_date`` applies the output format.
+
 .. autofunction:: htmldate.extractors.try_date_expr
 
 .. autofunction:: htmldate.extractors.custom_parse
@@ -32,9 +34,7 @@ Useful internal functions
 Helpers
 -------
 
-.. autofunction:: htmldate.validators.is_valid_date
-
-.. autofunction:: htmldate.validators.convert_date
+.. autofunction:: htmldate.validators.validate
 
 .. autofunction:: htmldate.utils.load_html
 

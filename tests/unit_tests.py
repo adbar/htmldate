@@ -14,7 +14,6 @@ import time
 
 from collections import Counter
 from contextlib import redirect_stdout
-from functools import partial
 from unittest.mock import Mock, patch
 
 import pytest
@@ -23,19 +22,17 @@ from lxml import etree, html
 
 from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
-    compare_reference,
     date_candidates,
     examine_elements,
     examine_text,
     find_date,
-    search_normalized,
     search_page,
     search_pattern,
     select_candidate,
-    normalize_match,
     SELECT_YMD_PATTERN,
-    SELECT_YMD_YEAR,
     THREE_COMP_REGEX_A,
+    THREE_LOOSE_CATCH,
+    THREE_LOOSE_PATTERN,
 )
 from htmldate.extractors import (
     custom_parse,
@@ -64,24 +61,32 @@ from htmldate.utils import (
 )
 import htmldate.utils
 from htmldate.validators import (
-    compare_values,
-    convert_date,
     get_max_date,
     get_min_date,
-    is_valid_date,
     is_valid_format,
-    update_reference,
+    pick,
+    validate,
+    validate_ymd,
 )
 
 
 TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-OUTPUTFORMAT = "%Y-%m-%d"
 
 LATEST_POSSIBLE = datetime.datetime.now()
 
-OPTIONS = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
+OPTIONS = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True)
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+
+def ymd(date):
+    "Format a datetime result for comparison."
+    return date.strftime("%Y-%m-%d") if date else None
+
+
+def parse(string, extensive=True):
+    "try_date_expr with the default date range."
+    return ymd(try_date_expr(string, extensive, MIN_DATE, LATEST_POSSIBLE))
 
 
 def test_input():
@@ -221,8 +226,10 @@ def test_sanity():
     assert "AAA" in tree.text_content()  # real content kept
     # reset caches
     old_values = try_date_expr.cache_info()
+    is_valid_format("%Y")
     reset_caches()
     assert try_date_expr.cache_info() != old_values
+    assert is_valid_format.cache_info().currsize == 0
 
 
 def test_no_date():
@@ -937,7 +944,7 @@ def test_fast_mode_bare_date():
         assert find_date(doc, extensive_search=False) is None
 
 
-def test_is_valid_date():
+def test_validate():
     """test internal date validation"""
 
     class NoTimestamp(datetime.datetime):
@@ -947,282 +954,88 @@ def test_is_valid_date():
             raise OSError
 
     earliest = datetime.datetime(2000, 6, 1)
-    for month, expected in ((7, True), (5, False)):
-        assert (
-            is_valid_date(
-                NoTimestamp(2000, month, 1),
-                OUTPUTFORMAT,
-                earliest=earliest,
-                latest=LATEST_POSSIBLE,
-            )
-            is expected
-        )
-    assert (
-        is_valid_date(None, OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
-        is False
-    )
-    assert (
-        is_valid_date(
-            "2016-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "1998-08-08", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "2001-12-31", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "1992-07-30", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is False
-    )
-    assert (
-        is_valid_date(
-            "1901-13-98", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is False
-    )
-    assert (
-        is_valid_date("202-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE)
-        is False
-    )
-    # trailing content beyond the 10-char YYYY-MM-DD shape is ignored
-    # (positional read: only date_input[:4]/[5:7]/[8:10] matter)
-    assert (
-        is_valid_date(
-            "2020-01-01-01-01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "2020-01-01 12:00:00-01-01",
-            OUTPUTFORMAT,
-            earliest=MIN_DATE,
-            latest=LATEST_POSSIBLE,
-        )
-        is True
-    )
-    # separator is not checked either (positional slicing, not strict ISO)
-    assert (
-        is_valid_date(
-            "2020/01/01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "2020.01.01", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    # unpadded parts fall back to strptime
-    assert (
-        is_valid_date(
-            "2020-1-15", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "2020-1-35", OUTPUTFORMAT, earliest=MIN_DATE, latest=LATEST_POSSIBLE
-        )
-        is False
-    )
-    assert (
-        is_valid_date("1922", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is False
-    )
-    assert (
-        is_valid_date("2004", "%Y", earliest=MIN_DATE, latest=LATEST_POSSIBLE) is True
-    )
-    assert (
-        is_valid_date(
-            "1991-01-02",
-            OUTPUTFORMAT,
-            earliest=datetime.datetime(1990, 1, 1),
-            latest=LATEST_POSSIBLE,
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "1991-01-02",
-            OUTPUTFORMAT,
-            earliest=datetime.datetime(1992, 1, 1),
-            latest=LATEST_POSSIBLE,
-        )
-        is False
-    )
-    assert (
-        is_valid_date(
-            "1991-01-02",
-            OUTPUTFORMAT,
-            earliest=MIN_DATE,
-            latest=datetime.datetime(1990, 1, 1),
-        )
-        is False
-    )
-    assert (
-        is_valid_date(
-            "1991-01-02",
-            OUTPUTFORMAT,
-            earliest=datetime.datetime(1990, 1, 1),
-            latest=datetime.datetime(1995, 1, 1),
-        )
-        is True
-    )
-    assert (
-        is_valid_date(
-            "1991-01-02",
-            OUTPUTFORMAT,
-            earliest=datetime.datetime(1990, 1, 1),
-            latest=datetime.datetime(1990, 12, 31),
-        )
-        is False
-    )
-
-
-def test_convert_date():
-    """test date conversion"""
-    assert convert_date("2016-11-18", "%Y-%m-%d", "%d %B %Y") == "18 November 2016"
-    assert convert_date("18 November 2016", "%d %B %Y", "%Y-%m-%d") == "2016-11-18"
-    assert (
-        convert_date(datetime.datetime(2016, 11, 18), "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
-        == "2016-11-18"
-    )
+    assert validate(NoTimestamp(2000, 7, 1), earliest, LATEST_POSSIBLE) is not None
+    assert validate(NoTimestamp(2000, 5, 1), earliest, LATEST_POSSIBLE) is None
+    assert validate(None, MIN_DATE, LATEST_POSSIBLE) is None
+    assert validate(datetime.datetime(1922, 1, 1), MIN_DATE, LATEST_POSSIBLE) is None
+    for string, expected in (
+        ("2016-01-01", True),
+        ("1998-08-08", True),
+        ("2001-12-31", True),
+        ("1992-07-30", False),
+        ("1901-13-98", False),
+        ("202-01", False),
+        # positional read: trailing content and separators are ignored
+        ("2020-01-01-01-01", True),
+        ("2020-01-01 12:00:00-01-01", True),
+        ("2020/01/01", True),
+        ("2020.01.01", True),
+        # unpadded parts fall back to strptime
+        ("2020-1-15", True),
+        ("2020-1-35", False),
+    ):
+        result = validate_ymd(string, MIN_DATE, LATEST_POSSIBLE)
+        assert (result is not None) is expected, string
+    day = datetime.datetime(1991, 1, 2)
+    for earliest, latest, expected in (
+        (datetime.datetime(1990, 1, 1), LATEST_POSSIBLE, True),
+        (datetime.datetime(1992, 1, 1), LATEST_POSSIBLE, False),
+        (MIN_DATE, datetime.datetime(1990, 1, 1), False),
+        (datetime.datetime(1990, 1, 1), datetime.datetime(1995, 1, 1), True),
+        (datetime.datetime(1990, 1, 1), datetime.datetime(1990, 12, 31), False),
+    ):
+        assert (validate(day, earliest, latest) is day) is expected
 
 
 def test_try_date_expr():
     """test date extraction via external package"""
-    assert try_date_expr(None, OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE) is None
-
-    assert (
-        try_date_expr(
-            "Fri, Sept 1, 2017", OUTPUTFORMAT, False, MIN_DATE, LATEST_POSSIBLE
-        )
-        is None
-    )
-
-    assert (
-        try_date_expr(
-            "Friday, September 01, 2017", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr(
-            "Fr, 1 Sep 2017 16:27:51 MESZ",
-            OUTPUTFORMAT,
-            True,
-            MIN_DATE,
-            LATEST_POSSIBLE,
-        )
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr(
-            "Freitag, 01. September 2017", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr(
-            "Am 1. September 2017 um 15:36 Uhr schrieb",
-            OUTPUTFORMAT,
-            True,
-            MIN_DATE,
-            LATEST_POSSIBLE,
-        )
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr(
-            "Fri - September 1 - 2017", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr("1.9.2017", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
-        == "2017-09-01"
-    )
-    assert (
-        try_date_expr("1/9/17", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
-        == "2017-09-01"
-    )  # assuming MDY format
-    assert (
-        try_date_expr("201709011234", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
-        == "2017-09-01"
-    )
-    # other output format
-    assert (
-        try_date_expr("1.9.2017", "%d %B %Y", True, MIN_DATE, LATEST_POSSIBLE)
-        == "01 September 2017"
-    )
-    # wrong
-    assert try_date_expr("201", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    assert (
-        try_date_expr("14:35:10", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    )
-    assert (
-        try_date_expr("12:00 h", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    )
-    # date range
-    assert (
-        try_date_expr("2005-2006", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
-        is None
-    )
+    assert try_date_expr(None, False, MIN_DATE, LATEST_POSSIBLE) is None
+    assert parse("Fri, Sept 1, 2017", extensive=False) is None
+    for string in (
+        "Friday, September 01, 2017",
+        "Fr, 1 Sep 2017 16:27:51 MESZ",
+        "Freitag, 01. September 2017",
+        "Am 1. September 2017 um 15:36 Uhr schrieb",
+        "Fri - September 1 - 2017",
+        "1.9.2017",
+        "1/9/17",  # assuming MDY format
+        "201709011234",
+    ):
+        assert parse(string) == "2017-09-01", string
+    # wrong, and a date range
+    for string in ("201", "14:35:10", "12:00 h", "2005-2006"):
+        assert parse(string) is None, string
     # Mandarin
-    assert (
-        try_date_expr(
-            "发布时间: 2022-02-25 14:34", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2022-02-25"
-    )
+    assert parse("发布时间: 2022-02-25 14:34") == "2022-02-25"
     # all-numeric strings without a year are not dates and must not be handed to the
     # slow external parser (used to take ~1s each: a DoS amplifier)
     for junk in ("1.2.3.4.5.6.7.8.9", "13.13.13.13.13.13", "13.13.13.13.99"):
         try_date_expr.cache_clear()
         start = time.perf_counter()
-        assert (
-            try_date_expr(junk, OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-        )
+        assert parse(junk) is None
         assert time.perf_counter() - start < 0.5
     # a well-formed YYYYMMDD whose date is out of range is rejected (not returned)
     try_date_expr.cache_clear()
-    assert (
-        try_date_expr("18000101", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE) is None
-    )
+    assert parse("18000101") is None
 
 
-def test_compare_reference():
-    """test comparison function"""
-    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    reference = datetime.datetime(2018, 2, 1)
-    assert compare_reference(None, "AAAA", options) is None
-    assert compare_reference(reference, "2018-33-01", options) is reference
-    assert compare_reference(None, "2018-02-01", options) == reference
-    assert compare_reference(reference, "2018-01-01", options) is reference
-    assert compare_reference(reference, "2018-03-01", options) == datetime.datetime(
-        2018, 3, 1
-    )
+def test_pick():
+    """test the choice among candidate dates"""
+    older, newer = datetime.datetime(2018, 2, 1), datetime.datetime(2018, 3, 1)
+    newest = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False)
+    oldest = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True)
+    assert pick([None], newest) is None
+    assert pick([None, older, newer], newest) is newer
+    assert pick([None, older, newer], oldest) is older
+    # the chosen date is range-checked
+    assert pick([older, datetime.datetime(1990, 1, 1)], oldest) is None
     # wall-clock comparison across naive and aware dates
     aware = datetime.datetime(
         2020, 5, 5, 23, tzinfo=datetime.timezone(datetime.timedelta(hours=-5))
     )
     naive = datetime.datetime(2020, 5, 6, 1)
-    assert update_reference(aware, naive, False) is naive
-    assert update_reference(aware, naive, True) is aware
-    # unpadded years below 1000 keep the reference
-    assert compare_values(reference, "999-01-01T00:00:00.000000", options) is reference
+    assert pick([aware, naive], newest) is naive
+    assert pick([aware, naive], oldest) is aware
     # formats that do not parse back keep naive dates and time zones
     tzformat = "%Y-%m-%dT%H:%M:%S%z"
     doc = '<html><body><time datetime="{}">x</time></body></html>'
@@ -1240,25 +1053,7 @@ def test_compare_reference():
 
 def test_candidate_selection():
     """test the algorithm for several candidates"""
-    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    # patterns
-    catch = re.compile(r"([0-9]{4})-([0-9]{2})-([0-9]{2})")
-    yearpat = re.compile(r"^([0-9]{4})")
-    # nonsense
-    occurrences = Counter(
-        [
-            "20208956",
-            "20208956",
-            "20208956",
-            "19018956",
-            "209561",
-            "22020895607-12",
-            "2-28",
-        ]
-    )
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result is None
-    # plausible
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False)
     occurrences = Counter(
         [
             "2016-12-23",
@@ -1270,31 +1065,49 @@ def test_candidate_selection():
             "2017-11-28",
         ]
     )
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result.group(0) == "2017-11-28"
-
-    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result.group(0) == "2016-07-12"
-    # mix plausible/implausible
-    occurrences = Counter(
-        ["2116-12-23", "2116-12-23", "2116-12-23", "2017-08-11", "2017-08-11"]
-    )
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result.group(0) == "2017-08-11"
-
-    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    occurrences = Counter(
-        ["2116-12-23", "2116-12-23", "2116-12-23", "2017-08-11", "2017-08-11"]
-    )
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result.group(0) == "2017-08-11"
+    assert select_candidate(occurrences, options) == "2017-11-28"
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True)
+    assert select_candidate(occurrences, options) == "2016-07-12"
     # taking date present twice, corner case
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, False)
     occurrences = Counter(
         ["2016-12-23", "2016-12-23", "2017-08-11", "2017-08-11", "2017-08-11"]
     )
-    result = select_candidate(occurrences, catch, yearpat, options)
-    assert result.group(0) == "2016-12-23"
+    assert select_candidate(occurrences, options) == "2016-12-23"
+    # implausible years are filtered before selection
+    for original in (True, False):
+        options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, original)
+        assert search_pattern(
+            "  2116-12-23  2116-12-23  2116-12-23  2017-08-11  2017-08-11  ",
+            THREE_LOOSE_PATTERN,
+            THREE_LOOSE_CATCH,
+            "ymd",
+            options,
+        ) == datetime.datetime(2017, 8, 11)
+    assert (
+        search_pattern(
+            " 2020-89-56 1901-89-56 ",
+            THREE_LOOSE_PATTERN,
+            THREE_LOOSE_CATCH,
+            "ymd",
+            options,
+        )
+        is None
+    )
+    # an impossible winner aborts the step, no fallback to the runner-up
+    assert (
+        search_pattern(
+            " 2018-13-27 x 2017-05-04 ",
+            THREE_LOOSE_PATTERN,
+            THREE_LOOSE_CATCH,
+            "ymd",
+            Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
+        )
+        is None
+    )
+    # the catch year group bounds years, even with an earlier min_date
+    options = Extractor(True, LATEST_POSSIBLE, datetime.datetime(1980, 1, 1), False)
+    assert search_page("<p>/1985/03/04/ x 1985-03-04 x</p>", options) is None
 
 
 def test_regex_parse():
@@ -1323,67 +1136,33 @@ def test_regex_parse():
     assert regex_parse("no year here: 3. Dezember") is None
     # overlap with previous year token
     assert regex_parse("Oktober 2020 September 2020") == datetime.datetime(2020, 9, 20)
-    assert (
-        custom_parse("January 12 1098", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    )
-    assert custom_parse("1998-01", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse("01-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse("13-1998", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert custom_parse("10.10.98", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse("12122004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert (
-        custom_parse("3/14/2016", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    )
-    assert custom_parse("20041212", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    assert custom_parse("1212-20-04", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert (
-        custom_parse("2004-12-12", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    )
-    assert custom_parse("33.20.2004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    assert (
-        custom_parse("12.12.2004", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is not None
-    )
-    assert custom_parse("2019 28 meh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
-    # regex-based matches
-    assert (
-        custom_parse("abcd 20041212 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        is not None
-    )
-    assert (
-        custom_parse("abcd 2004-2-12 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        is not None
-    )
-    assert (
-        custom_parse("abcd 2004-2 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        is not None
-    )
-    assert (
-        custom_parse(
-            "abcd 32. Januar 2020 efgh", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE
-        )
-        is None
-    )
-    # plausible but impossible dates
-    assert (
-        custom_parse("February 29 2008", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        == "2008-02-29"
-    )
-    assert (
-        custom_parse("February 30 2008", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE)
-        is None
-    )
-    assert (
-        custom_parse(
-            "XXTag, den 29. Februar 2008", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE
-        )
-        == "2008-02-29"
-    )
-    assert (
-        custom_parse(
-            "XXTag, den 30. Februar 2008", OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE
-        )
-        is None
-    )
+    for string, expected in (
+        ("January 12 1098", None),
+        ("01-1998", "1998-01-01"),
+        ("13-1998", None),
+        ("10.10.98", "1998-10-10"),
+        ("12122004", None),
+        ("3/14/2016", "2016-03-14"),
+        ("20041212", "2004-12-12"),
+        ("1212-20-04", None),
+        ("2004-12-12", "2004-12-12"),
+        ("33.20.2004", None),
+        ("12.12.2004", "2004-12-12"),
+        ("2019 28 meh", None),
+        # regex-based matches
+        ("abcd 20041212 efgh", "2004-12-12"),
+        ("abcd 2004-2-12 efgh", "2004-02-12"),
+        ("abcd 2004-2 efgh", "2004-02-01"),
+        ("abcd 32. Januar 2020 efgh", None),
+        # plausible but impossible dates
+        ("February 29 2008", "2008-02-29"),
+        ("February 30 2008", None),
+        ("XXTag, den 29. Februar 2008", "2008-02-29"),
+        ("XXTag, den 30. Februar 2008", None),
+    ):
+        assert ymd(custom_parse(string, MIN_DATE, LATEST_POSSIBLE)) == expected, string
+    # dateutil fills in the missing day from today
+    assert custom_parse("1998-01", MIN_DATE, LATEST_POSSIBLE) is not None
     # for Nones caused by newlines and duplicates
     en_full = [
         "January",
@@ -1509,47 +1288,27 @@ def test_month_names_match_dateparser():
 
 def test_external_date_parser():
     """test external date parser"""
-    assert (
-        external_date_parser("Wednesday, January 1st 2020", OUTPUTFORMAT)
-        == "2020-01-01"
-    )
-    assert external_date_parser("Random text with 2020", OUTPUTFORMAT) is None
-    # https://github.com/scrapinghub/dateparser/issues/333
-    assert external_date_parser("1 January 0001", "%d %B %Y") in (
-        "01 January 1",
-        "01 January 0001",
-    )
-    assert external_date_parser("1 January 1900", "%d %B %Y") == "01 January 1900"
+    for string, expected in (
+        ("Wednesday, January 1st 2020", datetime.datetime(2020, 1, 1)),
+        ("Random text with 2020", None),
+        # https://github.com/scrapinghub/dateparser/issues/333
+        ("1 January 0001", datetime.datetime(1, 1, 1)),
+        ("1 January 1900", datetime.datetime(1900, 1, 1)),
+        # https://github.com/scrapinghub/dateparser/issues/685
+        ("12345678912 days", None),
+        # https://github.com/scrapinghub/dateparser/issues/680
+        ("2.2250738585072011e-308", None),
+        ("⁰⁴⁵₀₁₂", None),
+    ):
+        assert external_date_parser(string) == expected, string
     # https://github.com/scrapinghub/dateparser/issues/406
-    assert (
-        external_date_parser("2018-04-12 17:20:03.12345678999a", OUTPUTFORMAT)
-        == "2018-04-12"
-    )
-    # https://github.com/scrapinghub/dateparser/issues/685
-    assert external_date_parser("12345678912 days", OUTPUTFORMAT) is None
+    assert ymd(external_date_parser("2018-04-12 17:20:03.12345678999a")) == "2018-04-12"
     # pure digit strings skip the external parser
     try_date_expr.cache_clear()
-    with patch("htmldate.extractors._external_date") as mock_parser:
-        assert (
-            try_date_expr("45025", OUTPUTFORMAT, True, MIN_DATE, LATEST_POSSIBLE)
-            is None
-        )
+    with patch("htmldate.extractors.external_date_parser") as mock_parser:
+        assert parse("45025") is None
         mock_parser.assert_not_called()
     assert get_external_parser() is get_external_parser()
-    # https://github.com/scrapinghub/dateparser/issues/680
-    assert external_date_parser("2.2250738585072011e-308", OUTPUTFORMAT) is None
-    assert external_date_parser("⁰⁴⁵₀₁₂", OUTPUTFORMAT) is None
-    # dateparser results in formats that do not parse back
-    for outputformat, expected in (
-        ("%Y-%m-%dT%H:%M:%S%z", "2019-03-05T00:00:00"),
-        ("%B %d", "March 05"),
-    ):
-        assert (
-            try_date_expr(
-                "5 de marzo de 2019", outputformat, True, MIN_DATE, LATEST_POSSIBLE
-            )
-            == expected
-        )
 
 
 def test_external_parser_gate():
@@ -1563,6 +1322,16 @@ def test_external_parser_gate():
         find_date(doc.format("<p>3 de mayo de 2019</p>"), extensive_search=True)
         == "2019-05-03"
     )
+    for outputformat, expected in (
+        ("%Y-%m-%dT%H:%M:%S%z", "2019-03-05T00:00:00"),
+        ("%B %d", "March 05"),
+    ):
+        assert (
+            find_date(
+                doc.format("<time>5 de marzo de 2019</time>"), outputformat=outputformat
+            )
+            == expected
+        )
     # independent of original_date
     time_elem = doc.format('<time class="updated" datetime="3 мая 2019">x</time>')
     for original in (False, True):
@@ -1591,7 +1360,7 @@ def test_external_parser_gate():
     )
     # letterless strings never sent
     try_date_expr.cache_clear()
-    with patch("htmldate.extractors._external_date") as mock_parser:
+    with patch("htmldate.extractors.external_date_parser") as mock_parser:
         assert (
             find_date(
                 doc.format('<p class="date">(66) 9 8436-0806</p>'),
@@ -1671,16 +1440,15 @@ def test_approximate_url():
 
 def test_search_pattern():
     """test pattern search in strings"""
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
     pattern = re.compile(r"\D([0-9]{4}[/.-][0-9]{2})\D")
     catch = re.compile(r"([0-9]{4})[/.-]([0-9]{2})")
-    yearpat = re.compile(r"^([12][0-9]{3})")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
             catch,
-            yearpat,
+            "ym",
             options,
         )
         is None
@@ -1690,7 +1458,7 @@ def test_search_pattern():
             "The date is 2002.02.15.",
             pattern,
             catch,
-            yearpat,
+            "ym",
             options,
         )
         is not None
@@ -1700,7 +1468,7 @@ def test_search_pattern():
             "http://www.url.net/index.html",
             pattern,
             catch,
-            yearpat,
+            "ym",
             options,
         )
         is None
@@ -1710,7 +1478,7 @@ def test_search_pattern():
             "http://www.url.net/2016/01/index.html",
             pattern,
             catch,
-            yearpat,
+            "ym",
             options,
         )
         is not None
@@ -1718,13 +1486,12 @@ def test_search_pattern():
     #
     pattern = re.compile(r"\D([0-9]{2}[/.-][0-9]{4})\D")
     catch = re.compile(r"([0-9]{2})[/.-]([0-9]{4})")
-    yearpat = re.compile(r"([12][0-9]{3})$")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
             catch,
-            yearpat,
+            "my",
             options,
         )
         is None
@@ -1734,7 +1501,7 @@ def test_search_pattern():
             "It happened on the 15.02.2002, the day when it all began.",
             pattern,
             catch,
-            yearpat,
+            "my",
             options,
         )
         is not None
@@ -1742,13 +1509,12 @@ def test_search_pattern():
     #
     pattern = re.compile(r"\D(2[01][0-9]{2})\D")
     catch = re.compile(r"(2[01][0-9]{2})")
-    yearpat = re.compile(r"^(2[01][0-9]{2})")
     assert (
         search_pattern(
             "It happened in the film 300.",
             pattern,
             catch,
-            yearpat,
+            "y",
             options,
         )
         is None
@@ -1758,7 +1524,7 @@ def test_search_pattern():
             "It happened in 2002.",
             pattern,
             catch,
-            yearpat,
+            "y",
             options,
         )
         is not None
@@ -1767,137 +1533,80 @@ def test_search_pattern():
 
 def test_search_normalized():
     # separator variants add up: 2 against 3 keeps the newer
-    assert (
-        search_normalized(
-            " 01.02.2020 x 01/02/2020 x 05.03.2019 x 05.03.2019 x 05.03.2019 ",
-            SELECT_YMD_PATTERN,
-            SELECT_YMD_YEAR,
-            partial(normalize_match, THREE_COMP_REGEX_A),
-            0,
-            OPTIONS,
+    assert search_pattern(
+        " 01.02.2020 x 01/02/2020 x 05.03.2019 x 05.03.2019 x 05.03.2019 ",
+        SELECT_YMD_PATTERN,
+        THREE_COMP_REGEX_A,
+        "dmy",
+        OPTIONS,
+    ) == datetime.datetime(2020, 2, 1)
+
+
+def test_search_page_keys():
+    for original, expected in ((False, (2019, 3, 5)), (True, (2020, 1, 1))):
+        options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, original)
+        # separator variants add up in all patterns: 2 against 3, runner-up wins
+        assert search_page(
+            "<p> 2019-03-05 x 2019/03/05 x 2020-01-01 x 2020-01-01 x 2020-01-01 </p>",
+            options,
+        ) == datetime.datetime(*expected)
+        # sorted by date, not by the preceding character
+        assert search_page("<p>/20190305/ x 20200101 x</p>", options) == (
+            datetime.datetime(2019, 3, 5) if original else datetime.datetime(2020, 1, 1)
         )
-        == "2020-02-01"
-    )
 
 
 def test_search_html():
     "Test the pattern search in raw HTML"
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    # tree input
-    assert (
-        search_page("<html><body><p>The date is 5/2010</p></body></html>", options)
-        == "2010-05-01"
-    )
-    assert (
-        search_page("<html><body><p>The date is 5.5.2010</p></body></html>", options)
-        == "2010-05-05"
-    )
-    assert (
-        search_page("<html><body><p>The date is 11/10/99</p></body></html>", options)
-        == "1999-10-11"
-    )
-    assert (
-        search_page("<html><body><p>The date is 3/3/11</p></body></html>", options)
-        == "2011-03-03"
-    )
-    assert (
-        search_page("<html><body><p>The date is 06.12.06</p></body></html>", options)
-        == "2006-12-06"
-    )
-    assert (
-        search_page(
-            "<html><body><p>The timestamp is 20140915D15:23H</p></body></html>", options
-        )
-        == "2014-09-15"
-    )
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, True, OUTPUTFORMAT)
-    assert (
-        search_page(
-            "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            options,
-        )
-        == "2003-11-24"
-    )
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
-    assert (
-        search_page(
-            "<html><body><p>It could be 2015-04-30 or 2003-11-24.</p></body></html>",
-            options,
-        )
-        == "2015-04-30"
-    )
-    assert (
-        search_page(
-            "<html><body><p>It could be 03/03/2077 or 03/03/2013.</p></body></html>",
-            options,
-        )
-        == "2013-03-03"
-    )
-    assert (
-        search_page(
-            "<html><body><p>It could not be 03/03/2077 or 03/03/1988.</p></body></html>",
-            options,
-        )
-        is None
-    )
-    assert (
-        search_page(
-            "<html><body><p>© The Web Association 2013.</p></body></html>", options
-        )
-        == "2013-01-01"
-    )
-    assert (
-        search_page("<html><body><p>Next © Copyright 2018</p></body></html>", options)
-        == "2018-01-01"
-    )
-    assert (
-        search_page("<html><body><p> © Company 2014-2019 </p></body></html>", options)
-        == "2019-01-01"
-    )
-    assert (
-        search_page(
-            "<html><body><p> &copy; Copyright 1999-2020 Asia Pacific Star. All rights reserved.</p></body></html>",
-            options,
-        )
-        == "2020-01-01"
-    )
-    assert (
-        search_page(
+    page = "<html><body><p>{}</p></body></html>"
+    for text, original, expected in (
+        ("The date is 5/2010", False, "2010-05-01"),
+        ("The date is 5.5.2010", False, "2010-05-05"),
+        ("The date is 11/10/99", False, "1999-10-11"),
+        ("The date is 3/3/11", False, "2011-03-03"),
+        ("The date is 06.12.06", False, "2006-12-06"),
+        ("The timestamp is 20140915D15:23H", False, "2014-09-15"),
+        # an impossible day falls through to the year-month pattern
+        ("Impossible: 2020-02-30.", False, "2020-02-01"),
+        ("It could be 2015-04-30 or 2003-11-24.", True, "2003-11-24"),
+        ("It could be 2015-04-30 or 2003-11-24.", False, "2015-04-30"),
+        ("It could be 03/03/2077 or 03/03/2013.", False, "2013-03-03"),
+        ("It could not be 03/03/2077 or 03/03/1988.", False, None),
+        ("© The Web Association 2013.", False, "2013-01-01"),
+        ("Next © Copyright 2018", False, "2018-01-01"),
+        (" © Company 2014-2019 ", False, "2019-01-01"),
+        (
+            " &copy; Copyright 1999-2020 Asia Pacific Star. All rights reserved.",
+            False,
+            "2020-01-01",
+        ),
+        # a plain YYYY/MM candidate (no copyright) resolves to the first of the month
+        ("2010/05", False, "2010-05-01"),
+    ):
+        options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, original)
+        assert ymd(search_page(page.format(text), options)) == expected, text
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
+    for htmlstring, expected in (
+        (
             '<html><head><link xmlns="http://www.w3.org/1999/xhtml"/></head></html>',
-            options,
-        )
-        is None
-    )
-    assert (
-        search_page(
+            None,
+        ),
+        (
             '<html><body><link href="//homepagedesigner.telekom.de/.cm4all/res/static/beng-editor/5.1.98/css/deploy.css"/></body></html>',
-            options,
-        )
-        is None
-    )
-    # a plain YYYY/MM candidate (no copyright) resolves to the first of the month
-    assert (
-        search_page("<html><body><p>2010/05</p></body></html>", options) == "2010-05-01"
-    )
-    # a YYYY-MM candidate older than the copyright year is skipped in favour of it
-    assert (
-        search_page(
+            None,
+        ),
+        # a YYYY-MM candidate older than the copyright year is skipped in favour of it
+        (
             "<html><body><footer>© 2021 Example.</footer><p>2018/05</p></body></html>",
-            options,
-        )
-        == "2021-01-01"
-    )
+            "2021-01-01",
+        ),
+    ):
+        assert ymd(search_page(htmlstring, options)) == expected, htmlstring
     # a custom (mid-year) minimum date rejects a same-year but earlier copyright date
     assert (
         search_page(
             "<html><body><footer>© 1995 Example Corp.</footer></body></html>",
-            Extractor(
-                True,
-                LATEST_POSSIBLE,
-                datetime.datetime(1995, 6, 1),
-                False,
-                OUTPUTFORMAT,
-            ),
+            Extractor(True, LATEST_POSSIBLE, datetime.datetime(1995, 6, 1), False),
         )
         is None
     )
@@ -1905,7 +1614,7 @@ def test_search_html():
 
 def test_copyright_redos():
     "A page repeating a copyright token with no year must not hang (ReDoS guard)."
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, OUTPUTFORMAT)
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
     # the unbounded \D* used to backtrack quadratically here (~10s at 8000 tokens)
     payload = "<html><body><footer>" + ("Copyright " * 8000) + "</footer></body></html>"
     start = time.perf_counter()
@@ -1914,7 +1623,9 @@ def test_copyright_redos():
     assert time.perf_counter() - start < 2.0
     # a genuine copyright year is still extracted unchanged
     assert (
-        search_page("<html><body><p>© 2021 Example Corp</p></body></html>", options)
+        ymd(
+            search_page("<html><body><p>© 2021 Example Corp</p></body></html>", options)
+        )
         == "2021-01-01"
     )
 
@@ -2017,7 +1728,9 @@ def test_idiosyncrasies():
     )
     # date-dense document: prefilter cap exhausted, full-scan fallback
     dense = "999.99.99 " * 1500
-    assert idiosyncrasies_search(dense + "updated: 2021.07.13", OPTIONS) == "2021-07-13"
+    assert idiosyncrasies_search(
+        dense + "updated: 2021.07.13", OPTIONS
+    ) == datetime.datetime(2021, 7, 13)
     assert idiosyncrasies_search(dense, OPTIONS) is None
 
 
@@ -2222,16 +1935,7 @@ def test_fetch_url_errors():
 
 def test_dependencies():
     "Test README examples for consistency"
-    assert (
-        try_date_expr(
-            "Fri | September 1 | 2017",
-            OUTPUTFORMAT,
-            True,
-            MIN_DATE,
-            LATEST_POSSIBLE,
-        )
-        == "2017-09-01"
-    )
+    assert parse("Fri | September 1 | 2017") == "2017-09-01"
 
 
 def test_deferred():

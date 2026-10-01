@@ -638,11 +638,12 @@ def test_approximate_date():
 
 def test_search_html():
     "Test the pattern search in raw HTML"
-    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False, "%d %B %Y")
-    # file input + output format
+    options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
     fileinput = load_mock_page("http://www.heimicke.de/chronik/zahlen-und-daten/")
     encoding = detect_encoding(fileinput)[0]
-    assert search_page(fileinput.decode(encoding), options) == "06 April 2019"
+    assert search_page(fileinput.decode(encoding), options) == datetime.datetime(
+        2019, 4, 6
+    )
 
 
 def test_readme_examples():

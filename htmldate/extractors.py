@@ -20,7 +20,7 @@ from lxml.html import HtmlElement
 # own
 from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
 from .utils import Extractor, remove_if_attached, trim_text
-from .validators import convert_date, correct_year, is_valid_date, validate_and_convert
+from .validators import correct_year, validate, validate_ymd
 
 if TYPE_CHECKING:  # pragma: no cover
     from dateparser import DateDataParser  # type: ignore[attr-defined]
@@ -130,10 +130,7 @@ MONTH_NUMBERS = {
 
 # gate for try_date_expr
 TEXT_DATE_PATTERN = re.compile(r"[.:,_/ -]")
-YEAR_OR_MONTH = re.compile(
-    rf"(?<!\d)\d{{4}}(?!\d)|\b(?:{'|'.join(re.escape(n) for t in MONTHS for n in t)})\b",
-    re.I,
-)
+YEAR_TOKEN = re.compile(r"(?<!\d)\d{4}(?!\d)")
 DAY_TOKEN = re.compile(r"(?<!\d)\d{1,2}(?!\d)")
 # shorter entries ("de", "I") are common words
 WORD = re.compile(r"[^\W\d_]{3,}")
@@ -155,10 +152,10 @@ MONTH_KEYS = (
 
 @lru_cache(maxsize=None)
 def month_words() -> frozenset[str]:
-    "Month names in all dateparser locales."
+    "Month names in all dateparser locales, plus MONTH_NUMBERS keys."
     from dateparser.languages.loader import default_loader
 
-    return frozenset(
+    return frozenset(MONTH_NUMBERS) | frozenset(
         _fold_month_name(word)
         for locale in default_loader.get_locales()
         for key in MONTH_KEYS
@@ -168,10 +165,10 @@ def month_words() -> frozenset[str]:
 
 
 def has_date_cue(string: str, min_date: datetime, max_date: datetime) -> bool:
-    "The first year or known month decides, else any dateparser month name."
-    match = YEAR_OR_MONTH.search(string)
+    "The first 4-digit year decides, else any dateparser month name."
+    match = YEAR_TOKEN.search(string)
     if match is not None:
-        return not match[0].isdigit() or min_date.year <= int(match[0]) <= max_date.year
+        return min_date.year <= int(match[0]) <= max_date.year
     return any(_fold_month_name(word) in month_words() for word in WORD.findall(string))
 
 
@@ -211,7 +208,7 @@ def discard_unwanted(tree: HtmlElement) -> HtmlElement:
 def extract_url_date(
     testurl: str | None,
     options: Extractor,
-) -> str | None:
+) -> datetime | None:
     """Extract the date out of an URL string complying with the Y-M-D format"""
     if testurl is not None:
         match = COMPLETE_URL.search(testurl)
@@ -219,9 +216,7 @@ def extract_url_date(
             LOGGER.debug("found date in URL: %s", match[0])
             try:
                 dateobject = datetime(int(match[1]), int(match[2]), int(match[3]))
-                return validate_and_convert(
-                    dateobject, options.format, earliest=options.min, latest=options.max
-                )
+                return validate(dateobject, options.min, options.max)
             except ValueError as err:
                 LOGGER.debug("conversion error: %s %s", match[0], err)
     return None
@@ -345,20 +340,18 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
 
 
 def custom_parse(
-    string: str, outputformat: str, min_date: datetime, max_date: datetime
-) -> str | None:
+    string: str, min_date: datetime, max_date: datetime
+) -> datetime | None:
     """Try to bypass the slow dateparser"""
     LOGGER.debug("custom parse test: %s", string)
     for candidate in _date_candidates(string):
-        result = validate_and_convert(
-            candidate, outputformat, earliest=min_date, latest=max_date
-        )
+        result = validate(candidate, min_date, max_date)
         if result is not None:
             return result
     return None
 
 
-def _external_date(string: str) -> datetime | None:
+def external_date_parser(string: str) -> datetime | None:
     "Parse the string with dateparser."
     LOGGER.debug("send to external parser: %s", string)
     try:
@@ -369,20 +362,13 @@ def _external_date(string: str) -> datetime | None:
         return None
 
 
-def external_date_parser(string: str, outputformat: str) -> str | None:
-    """Parse with dateparser and format, without date range check."""
-    target = _external_date(string)
-    return target.strftime(outputformat) if target else None
-
-
 @lru_cache(maxsize=CACHE_SIZE)
 def try_date_expr(
     string: str | None,
-    outputformat: str,
     extensive_search: bool,
     min_date: datetime,
     max_date: datetime,
-) -> str | None:
+) -> datetime | None:
     """Use a series of heuristics and rules to parse a potential date expression"""
     if not string:
         return None
@@ -399,7 +385,7 @@ def try_date_expr(
         return None
 
     # try to parse using the faster method
-    customresult = custom_parse(string, outputformat, min_date, max_date)
+    customresult = custom_parse(string, min_date, max_date)
     if customresult is not None:
         return customresult
 
@@ -411,25 +397,20 @@ def try_date_expr(
         and DAY_TOKEN.search(string)
         and has_date_cue(string, min_date, max_date)
     ):
-        # validate before formatting: not every format parses back
-        return validate_and_convert(
-            _external_date(string), outputformat, earliest=min_date, latest=max_date
-        )
+        return validate(external_date_parser(string), min_date, max_date)
 
     return None
 
 
-def try_date_expr_opts(string: str | None, options: Extractor) -> str | None:
-    "Uncached wrapper for try_date_expr: Extractor is identity-hashed, so caching it is useless."
-    return try_date_expr(
-        string, options.format, options.extensive, options.min, options.max
-    )
+def try_date_expr_opts(string: str | None, options: Extractor) -> datetime | None:
+    "Uncached wrapper for try_date_expr: the cache key leaves out original_date."
+    return try_date_expr(string, options.extensive, options.min, options.max)
 
 
 def img_search(
     tree: HtmlElement,
     options: Extractor,
-) -> str | None:
+) -> datetime | None:
     """Skim through image elements"""
     element = tree.find('.//meta[@property="og:image"][@content]')
     if element is not None:
@@ -440,39 +421,27 @@ def img_search(
     return None
 
 
-# strftime directives carrying time of day or time zone
-TIME_TZ_DIRECTIVES = ("%H", "%I", "%M", "%S", "%f", "%z", "%Z", "%p", "%X", "%c")
-
-
 def pattern_search(
     text: str,
     date_pattern: re.Pattern[str],
     options: Extractor,
-) -> str | None:
+) -> datetime | None:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
-    if not match or not is_valid_date(
-        match[1], "%Y-%m-%d", earliest=options.min, latest=options.max
-    ):
+    date = validate_ymd(match[1], options.min, options.max) if match else None
+    if match is None or date is None:
         return None
     LOGGER.debug("regex found: %s %s", date_pattern, match[0])
-    # carry time of day and time zone through when the output format needs them
-    # (group 1 is the date, the optional group 2 the time/tz suffix)
-    full = (
-        custom_parse(match[1] + match[2], options.format, options.min, options.max)
-        if match.lastindex
-        and match.lastindex >= 2
-        and match[2]
-        and any(directive in options.format for directive in TIME_TZ_DIRECTIVES)
-        else None
-    )
-    return full or convert_date(match[1], "%Y-%m-%d", options.format)
+    # group 2: optional time of day and time zone
+    if match[2]:
+        return custom_parse(match[1] + match[2], options.min, options.max) or date
+    return date
 
 
 def json_search(
     tree: HtmlElement,
     options: Extractor,
-) -> str | None:
+) -> datetime | None:
     """Look for JSON time patterns in JSON sections of the tree"""
     # determine pattern
     json_pattern = JSON_PUBLISHED if options.original else JSON_MODIFIED
@@ -491,7 +460,7 @@ def json_search(
 def idiosyncrasies_search(
     htmlstring: str,
     options: Extractor,
-) -> str | None:
+) -> datetime | None:
     """Look for author-written dates throughout the web page"""
     # probe ±60-char windows around numeric cores (enough: gap-runs are bounded),
     # then re-search unbounded so the result equals a full slow scan
@@ -513,9 +482,7 @@ def idiosyncrasies_search(
                 candidate = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
             else:  # len(parts[2]) in (2, 4):  # DD/MM/YY
                 candidate = _build_dmy(int(parts[0]), int(parts[1]), int(parts[2]))
-            return validate_and_convert(
-                candidate, options.format, earliest=options.min, latest=options.max
-            )
+            return validate(candidate, options.min, options.max)
         except (IndexError, ValueError):
             LOGGER.debug("cannot process idiosyncrasies: %s", match[0])
 
