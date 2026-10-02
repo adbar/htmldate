@@ -1,20 +1,15 @@
 ## Changelog
 
-## 1.x.x
-- breaking: CLI now defaults to extensive search, `-f/--fast` enables fast mode (previously inverted)
-- fix: parse month names regardless of case (e.g. uppercase Turkish), no more crash
-- fix: `itemprop` date cues in any attribute order
+## 1.11.0
+- performance: 2x faster extraction (#202)
+- breaking: CLI defaults to extensive search, `-f/--fast` enables fast mode (#193)
+- breaking: internal helpers changed, regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures, reference comparison with `datetime | None` instead of timestamps (#193, #203)
 - fix: keep time and time zone of regex matches (#194)
-- fix: `outputformat` applied to copyright years and to formats such as `%z`
-- fix: header fallback date kept when a later meta tag has none
-- fix: text search continues past impossible dates such as "31 June"
-- fix: same date with different separators counted together ("01.02.2020", "01/02/2020")
-- fix: unpadded dates such as "2020-1-15" accepted, now also in fast mode
-- maintenance: require dateparser >= 1.4.2 (#199)
-- performance: misc fixes in date extraction
-- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures changed
-- maintenance: `compare_reference`, `update_reference`, `compare_values` and `check_extracted_reference` use `datetime | None` instead of `int` timestamps
+- fix: more robust date parsing and selection, e.g. month names in any case, unpadded dates, mixed separators, impossible dates, `outputformat` for copyright years (#193, #203)
+- maintenance: code hardening and simplification (#191, #193), require dateparser >= 1.4.2 (#199)
+- maintenance: support Python 3.15
 - tests: full line coverage, leaner test suite
+- docs: wording fixes (#192)
 
 ## 1.10.0
 - maintenance: modernize code and packaging (#188)
