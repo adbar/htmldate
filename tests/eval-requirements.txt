@@ -1,16 +1,16 @@
 # package
-htmldate>=1.10.0
+htmldate>=1.11.0
 
 # alternatives
 articleDateExtractor==0.20
 date_guesser==2.1.4
-goose3==3.1.21
+goose3==3.1.22
 # newspaper4k succeeds the unmaintained newspaper3k. Extras = tokenizers the
 # corpus needs (via news-please): nltk, tinysegmenter (ja), jieba (zh).
 # Also requires NLTK data: python -m nltk.downloader punkt_tab stopwords
-newspaper4k[nlp,ja,zh]==0.9.5
+newspaper4k[nlp,ja,zh]==0.9.6
 news-please==1.6.16
 
 # helpers
 tabulate==0.10.0
-tqdm==4.67.3
+tqdm==4.70.1
