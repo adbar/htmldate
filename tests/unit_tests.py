@@ -24,7 +24,6 @@ from lxml import etree, html
 from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
     compare_reference,
-    compare_reference,
     date_candidates,
     examine_elements,
     examine_header,
