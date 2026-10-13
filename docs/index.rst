@@ -94,7 +94,7 @@ Features
 
 The output is thoroughly verified in terms of plausibility and adequateness. If a valid date has been found the library outputs a date string corresponding to either the last update or the original publishing statement (the default), in the desired format.
 
-Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support English, French, German, Indonesian and Turkish.
+Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support English, French, German, Indonesian, Polish and Turkish.
 
 
 Installation
