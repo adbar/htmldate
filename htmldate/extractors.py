@@ -78,6 +78,18 @@ YM_PATTERN = re.compile(
     rf"(?:\D|^)(?:(?P<year>{YEAR_RE})[\-/.](?P<month>{MONTH_RE})|"
     rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
+# Chinese/Japanese 年月日 and Korean 년월일, e.g. 2025年10月12日 and 2025년 10월 12일;
+# the day suffix is optional since trailing non-digits are cut from element text
+CJK_DAY_END = r"(?:\s?[日일]|(?!\d))"
+CJK_YMD_PATTERN = re.compile(
+    rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})\s?[月월]\s?"
+    rf"(?P<day>{DAY_RE}){CJK_DAY_END}"
+)
+# year and month only: no day may follow, so an invalid full date is not shortened
+CJK_YM_PATTERN = re.compile(
+    rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})(?:\s?[月월]|$)"
+    rf"(?!\s?{DAY_RE}{CJK_DAY_END})"
+)
 
 # any word from its start, MONTH_NUMBERS decides
 MONTH_WORD = r"(?<![^\W\d_])[^\W\d_]{3,}"
@@ -330,7 +342,25 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
 
-    # 4. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
+    # 4. Try the CJK year-month-day and year-month patterns
+    match = CJK_YMD_PATTERN.search(string)
+    if match:
+        try:
+            yield datetime(
+                int(match.group("year")),
+                int(match.group("month")),
+                int(match.group("day")),
+            )
+        except ValueError:
+            LOGGER.debug("CJK regex value error: %s", match[0])
+    match = CJK_YM_PATTERN.search(string)
+    if match:
+        try:
+            yield datetime(int(match.group("year")), int(match.group("month")), 1)
+        except ValueError:
+            LOGGER.debug("CJK Y-M value error: %s", match[0])
+
+    # 5. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
     match = YM_PATTERN.search(string)
     if match:
         try:
@@ -340,7 +370,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
 
-    # 5. Try the other regex pattern
+    # 6. Try the other regex pattern
     yield regex_parse(string)
 
 
