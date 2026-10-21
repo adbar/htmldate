@@ -1233,10 +1233,12 @@ def test_regex_parse():
         ("February 30 2008", None),
         ("XXTag, den 29. Februar 2008", "2008-02-29"),
         ("XXTag, den 30. Februar 2008", None),
+        # dateutil must not fill in missing parts from today
+        ("1998-01", "1998-01-01"),
+        ("1998 Mar", "1998-03-01"),
+        ("1998", "1998-01-01"),
     ):
         assert ymd(custom_parse(string, MIN_DATE, LATEST_POSSIBLE)) == expected, string
-    # dateutil fills in the missing day from today
-    assert custom_parse("1998-01", MIN_DATE, LATEST_POSSIBLE) is not None
     # for Nones caused by newlines and duplicates
     en_full = [
         "January",

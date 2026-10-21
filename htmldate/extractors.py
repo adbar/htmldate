@@ -68,6 +68,9 @@ MONTH_RE = "[0-1]?[0-9]"
 # keep the (?:...): interpolated bare, the "|" would split the enclosing group
 YEAR_RE = "(?:199[0-9]|20[0-3][0-9])"
 
+# missing parts must not come from today
+DATEUTIL_DEFAULT = datetime(1, 1, 1)
+
 # regex cache
 YMD_NO_SEP_PATTERN = re.compile(r"\b(\d{8})\b")
 YMD_PATTERN = re.compile(
@@ -293,7 +296,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
             except ValueError:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
-                    candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+                    candidate = dateutil_parse(string, default=DATEUTIL_DEFAULT)
                 except (OverflowError, TypeError, ValueError):
                     LOGGER.debug("dateutil parsing error: %s", string)
         yield candidate
