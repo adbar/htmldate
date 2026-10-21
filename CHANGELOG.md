@@ -1,5 +1,8 @@
 ## Changelog
 
+## 1.x.x
+- fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
+
 ## 1.11.0
 - performance: 2x faster extraction (#202)
 - breaking: CLI defaults to extensive search, `-f/--fast` enables fast mode (#193)
