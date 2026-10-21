@@ -42,8 +42,7 @@ DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
 
-# eq=False keeps identity-based hashing so instances stay usable as lru_cache keys
-@dataclass(slots=True, eq=False)
+@dataclass(slots=True)
 class Extractor:
     "Defines a class to store all extraction options."
 
@@ -51,7 +50,6 @@ class Extractor:
     max: datetime
     min: datetime
     original: bool
-    format: str
 
 
 def is_wrong_document(data: str | bytes | HtmlElement | None) -> bool:

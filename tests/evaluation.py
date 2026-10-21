@@ -8,7 +8,6 @@ import re
 
 from htmldate import find_date
 from htmldate.utils import decode_file
-from htmldate.validators import convert_date
 
 # Optional third-party libraries, only needed for the full benchmark
 # (i.e. comparison.py *without* --small). Guard the imports so the
@@ -93,7 +92,7 @@ def run_newsplease(htmlstring):
         article = NewsPlease.from_html(htmlstring, url=None, fetch_images=False)
         if article.date_publish is None:
             return None
-        return convert_date(article.date_publish, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+        return article.date_publish.strftime("%Y-%m-%d")
     except Exception as err:
         print("Exception:", err)
         return None
@@ -104,7 +103,7 @@ def run_articledateextractor(htmlstring):
     dateresult = extractArticlePublishedDate("", html=htmlstring)
     if dateresult is None:
         return None
-    return convert_date(dateresult, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+    return dateresult.strftime("%Y-%m-%d")
 
 
 def run_dateguesser(htmlstring):
@@ -112,7 +111,7 @@ def run_dateguesser(htmlstring):
     guess = guess_date(url="https://www.example.org/test/", html=htmlstring)
     if guess.date is None:
         return None
-    return convert_date(guess.date, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+    return guess.date.strftime("%Y-%m-%d")
 
 
 def run_goose(htmlstring):
