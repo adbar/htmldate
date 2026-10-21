@@ -32,6 +32,7 @@ from htmldate.core import (
     YYYYMM_PATTERN,
     date_candidates,
     examine_elements,
+    examine_header,
     examine_text,
     find_date,
     search_page,
@@ -870,6 +871,61 @@ def test_exact_date():
         find_date("<html><body>Wed, 19 Oct 2022 14:24:05 +0000</body></html>")
         == "2022-10-19"
     )
+
+
+def test_json_ld_over_header_reserve():
+    """A less reliable header date must not shadow an explicit JSON-LD date
+    (issue #195)."""
+    htmlstring = (
+        "<html><head>"
+        '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+        '<script type="application/ld+json">'
+        '{"@context":"https://schema.org","@type":"Article",'
+        '"datePublished":"2020-01-15T08:00:00+00:00",'
+        '"dateModified":"2023-05-20T12:00:00+00:00"}'
+        "</script></head><body><p>text</p></body></html>"
+    )
+    # the modification date is only a fallback here: JSON-LD has the original one
+    assert find_date(htmlstring, original_date=True) == "2020-01-15"
+    # the modification date is what was asked for, header result still wins
+    assert find_date(htmlstring, original_date=False) == "2023-05-20"
+
+    # without a JSON-LD alternative the header fallback is still used
+    assert (
+        find_date(
+            "<html><head>"
+            '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+            "</head><body><p>text</p></body></html>",
+            original_date=True,
+        )
+        == "2023-05-20"
+    )
+
+
+def test_examine_header():
+    """The examine_header() wrapper must return the header date, falling back
+    to the less reliable "reserve" date when nothing else was found."""
+    options = Extractor(False, LATEST_POSSIBLE, MIN_DATE, True)
+
+    # only a reserve date (modification date) is available: it is returned
+    tree = load_html(
+        "<html><head>"
+        '<meta property="article:modified_time" content="2023-05-20T12:00:00+00:00"/>'
+        "</head><body><p>text</p></body></html>"
+    )
+    assert examine_header(tree, options).date() == datetime.date(2023, 5, 20)
+
+    # a proper header date wins over the reserve mechanism
+    tree = load_html(
+        "<html><head>"
+        '<meta property="article:published_time" content="2020-01-15T08:00:00+00:00"/>'
+        "</head><body><p>text</p></body></html>"
+    )
+    assert examine_header(tree, options).date() == datetime.date(2020, 1, 15)
+
+    # no header dates at all
+    tree = load_html("<html><head></head><body><p>text</p></body></html>")
+    assert examine_header(tree, options) is None
 
 
 def test_free_text_timezone():

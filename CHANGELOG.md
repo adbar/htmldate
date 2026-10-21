@@ -10,6 +10,7 @@
 - fix: a rejected year no longer hides an adjacent date in page text patterns ("/1987/10/09/2019-02-15")
 - fix: an impossible date such as "2018-13-27" no longer hides the other candidates in page text patterns
 - fix: an out-of-range `data-utime` no longer hides valid dates in `abbr` elements
+- fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0
 - performance: 2x faster extraction (#202)
