@@ -46,17 +46,17 @@ The results below show that **date extraction is not a completely solved task** 
 
 
 ================================ ========= ========= ========= ========= =======
-1000 web pages containing identifiable dates (as of 2026-06-01 on Python 3.13)
+1000 web pages containing identifiable dates (as of 2026-10-01 on Python 3.13)
 --------------------------------------------------------------------------------
 Python Package                   Precision Recall    Accuracy  F-Score   Time
 ================================ ========= ========= ========= ========= =======
-articleDateExtractor 0.20        0.846     0.745     0.656     0.792     3x
-date_guesser 2.1.4               0.832     0.611     0.544     0.705     11x
-goose3 3.1.21                    **0.930** 0.568     0.545     0.706     14x
-htmldate[all] 1.10.0 (fast)      0.924     0.927     0.861     0.925     **1x**
-htmldate[all] 1.10.0 (extensive) 0.908     **0.993** **0.903** **0.949** 1.8x
-newspaper4k 0.9.5                0.912     0.728     0.680     0.810     2.5x
-news-please 1.6.16               0.845     0.777     0.680     0.810     29x
+articleDateExtractor 0.20        0.846     0.745     0.656     0.792     6.4x
+date_guesser 2.1.4               0.832     0.611     0.544     0.705     20x
+goose3 3.1.22                    **0.930** 0.569     0.546     0.706     26x
+htmldate[all] 1.11.0 (fast)      0.924     0.929     0.863     0.926     **1x**
+htmldate[all] 1.11.0 (extensive) 0.908     **0.993** **0.903** **0.949** 1.8x
+newspaper4k 0.9.6                0.912     0.728     0.680     0.810     4.3x
+news-please 1.6.16               0.845     0.778     0.681     0.810     52x
 ================================ ========= ========= ========= ========= =======
 
 This run uses a reviewed version of the ground-truth labels (publication-date corrections) and the maintained *newspaper4k* fork in place of the now-unmaintained *newspaper3k*.

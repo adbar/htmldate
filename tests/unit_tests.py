@@ -22,6 +22,14 @@ from lxml import etree, html
 
 from htmldate.cli import cli_examine, main, parse_args, process_args
 from htmldate.core import (
+    COPYRIGHT_PATTERN,
+    DATESTRINGS_PATTERN,
+    MMYYYY_PATTERN,
+    PAGE_PATTERNS,
+    SIMPLE_PATTERN,
+    SLASHES_PATTERN,
+    THREE_PATTERN,
+    YYYYMM_PATTERN,
     date_candidates,
     examine_elements,
     examine_text,
@@ -30,8 +38,6 @@ from htmldate.core import (
     search_pattern,
     select_candidate,
     SELECT_YMD_PATTERN,
-    THREE_COMP_REGEX_A,
-    THREE_LOOSE_CATCH,
     THREE_LOOSE_PATTERN,
 )
 from htmldate.extractors import (
@@ -166,6 +172,14 @@ def test_input():
             "<p>filler text</p></body></html>"
         )
         is None
+    )
+    # an out-of-range timestamp does not hide a valid one
+    assert (
+        find_date(
+            '<html><body><abbr data-utime="4102444800">x</abbr>'
+            '<abbr data-utime="1600000000">y</abbr></body></html>'
+        )
+        == "2020-09-13"
     )
     # data-utime resolved in original-date mode
     assert (
@@ -1080,7 +1094,6 @@ def test_candidate_selection():
         assert search_pattern(
             "  2116-12-23  2116-12-23  2116-12-23  2017-08-11  2017-08-11  ",
             THREE_LOOSE_PATTERN,
-            THREE_LOOSE_CATCH,
             "ymd",
             options,
         ) == datetime.datetime(2017, 8, 11)
@@ -1088,26 +1101,31 @@ def test_candidate_selection():
         search_pattern(
             " 2020-89-56 1901-89-56 ",
             THREE_LOOSE_PATTERN,
-            THREE_LOOSE_CATCH,
             "ymd",
             options,
         )
         is None
     )
-    # an impossible winner aborts the step, no fallback to the runner-up
-    assert (
-        search_pattern(
-            " 2018-13-27 x 2017-05-04 ",
-            THREE_LOOSE_PATTERN,
-            THREE_LOOSE_CATCH,
-            "ymd",
-            Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
-        )
-        is None
-    )
-    # the catch year group bounds years, even with an earlier min_date
+    # an impossible winner is dropped, the selection runs again
+    assert search_pattern(
+        " 2018-13-27 x 2017-05-04 ",
+        THREE_LOOSE_PATTERN,
+        "ymd",
+        Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
+    ) == datetime.datetime(2017, 5, 4)
+    # the reselection ignores all impossible dates, not only the winner
+    assert search_pattern(
+        " 2019-13-40  2019-06-01  2019-02-30 " + " 2018-01-01 " * 5,
+        THREE_LOOSE_PATTERN,
+        "ymd",
+        Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
+    ) == datetime.datetime(2018, 1, 1)
+    # the year group bounds years, even with an earlier min_date
     options = Extractor(True, LATEST_POSSIBLE, datetime.datetime(1980, 1, 1), False)
     assert search_page("<p>/1985/03/04/ x 1985-03-04 x</p>", options) is None
+    # a rejected year does not consume the separator of the next date
+    for text in ("<p>/1987/10/09/2019-02-15 x</p>", "<p>x 19870101 20190215 x</p>"):
+        assert search_page(text, OPTIONS) == datetime.datetime(2019, 2, 15)
 
 
 def test_regex_parse():
@@ -1441,13 +1459,11 @@ def test_approximate_url():
 def test_search_pattern():
     """test pattern search in strings"""
     options = Extractor(True, LATEST_POSSIBLE, MIN_DATE, False)
-    pattern = re.compile(r"\D([0-9]{4}[/.-][0-9]{2})\D")
-    catch = re.compile(r"([0-9]{4})[/.-]([0-9]{2})")
+    pattern = re.compile(r"\D([0-9]{4})[/.-]([0-9]{2})\D")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
-            catch,
             "ym",
             options,
         )
@@ -1457,7 +1473,6 @@ def test_search_pattern():
         search_pattern(
             "The date is 2002.02.15.",
             pattern,
-            catch,
             "ym",
             options,
         )
@@ -1467,7 +1482,6 @@ def test_search_pattern():
         search_pattern(
             "http://www.url.net/index.html",
             pattern,
-            catch,
             "ym",
             options,
         )
@@ -1477,20 +1491,17 @@ def test_search_pattern():
         search_pattern(
             "http://www.url.net/2016/01/index.html",
             pattern,
-            catch,
             "ym",
             options,
         )
         is not None
     )
     #
-    pattern = re.compile(r"\D([0-9]{2}[/.-][0-9]{4})\D")
-    catch = re.compile(r"([0-9]{2})[/.-]([0-9]{4})")
+    pattern = re.compile(r"\D([0-9]{2})[/.-]([0-9]{4})\D")
     assert (
         search_pattern(
             "It happened on the 202.E.19, the day when it all began.",
             pattern,
-            catch,
             "my",
             options,
         )
@@ -1500,7 +1511,6 @@ def test_search_pattern():
         search_pattern(
             "It happened on the 15.02.2002, the day when it all began.",
             pattern,
-            catch,
             "my",
             options,
         )
@@ -1508,12 +1518,10 @@ def test_search_pattern():
     )
     #
     pattern = re.compile(r"\D(2[01][0-9]{2})\D")
-    catch = re.compile(r"(2[01][0-9]{2})")
     assert (
         search_pattern(
             "It happened in the film 300.",
             pattern,
-            catch,
             "y",
             options,
         )
@@ -1523,23 +1531,36 @@ def test_search_pattern():
         search_pattern(
             "It happened in 2002.",
             pattern,
-            catch,
             "y",
             options,
         )
         is not None
     )
-
-
-def test_search_normalized():
     # separator variants add up: 2 against 3 keeps the newer
     assert search_pattern(
         " 01.02.2020 x 01/02/2020 x 05.03.2019 x 05.03.2019 x 05.03.2019 ",
         SELECT_YMD_PATTERN,
-        THREE_COMP_REGEX_A,
         "dmy",
         OPTIONS,
     ) == datetime.datetime(2020, 2, 1)
+    # the real patterns with their orders
+    orders = dict(PAGE_PATTERNS) | {COPYRIGHT_PATTERN: "y", SIMPLE_PATTERN: "y"}
+    for pattern, text, expected in (
+        (THREE_PATTERN, "/2019/03/05/", (2019, 3, 5)),
+        (THREE_LOOSE_PATTERN, " 2019.03.05 ", (2019, 3, 5)),
+        (SELECT_YMD_PATTERN, " 5/3/2019 ", (2019, 3, 5)),
+        (DATESTRINGS_PATTERN, " 20190305 ", (2019, 3, 5)),
+        (SLASHES_PATTERN, " 5/3/19 ", (2019, 3, 5)),
+        (SLASHES_PATTERN, " 05.03.98 ", (1998, 3, 5)),
+        (SLASHES_PATTERN, " 00.03.19 ", None),
+        (YYYYMM_PATTERN, " 2019/03 ", (2019, 3, 1)),
+        (MMYYYY_PATTERN, " 3/2019 ", (2019, 3, 1)),
+        (MMYYYY_PATTERN, " 13/2019 ", None),
+        (COPYRIGHT_PATTERN, "© 2019 ", (2019, 1, 1)),
+        (SIMPLE_PATTERN, " 2019 ", (2019, 1, 1)),
+    ):
+        result = search_pattern(text, pattern, orders[pattern], OPTIONS)
+        assert result == (datetime.datetime(*expected) if expected else None), text
 
 
 def test_search_page_keys():

@@ -1,22 +1,26 @@
 ## Changelog
 
 ## 1.x.x
-- breaking: CLI now defaults to extensive search, `-f/--fast` enables fast mode (previously inverted)
-- breaking: internal functions return `datetime | None`, only `find_date` applies `outputformat`, `is_valid_date` and `convert_date` removed
-- fix: parse month names regardless of case (e.g. uppercase Turkish), no more crash
-- fix: `itemprop` date cues in any attribute order
-- fix: keep time and time zone of regex matches (#194)
-- fix: `outputformat` applied to copyright years and to formats such as `%z`
-- fix: header fallback date kept when a later meta tag has none
-- fix: text search continues past impossible dates such as "31 June"
+- breaking: internal functions return `datetime | None`, only `find_date` applies `outputformat`
+- breaking: `try_date_expr`, `custom_parse` and `external_date_parser` lose the `outputformat` argument, `search_pattern` and `select_candidate` signatures changed
+- breaking: `Extractor` loses `format` and is no longer hashable
+- breaking: removed `validate_and_convert`, `is_valid_date`, `convert_date`, `compare_reference`, `update_reference`, `compare_values`, `check_extracted_reference`, `filter_ymd_candidate`, `plausible_year_filter`, `reset_validator_caches`, `search_normalized`, `normalize_match` and `normalize_two_comp`
 - fix: same date with different separators counted together in all page text patterns ("01.02.2020", "01/02/2020", "2020-02-01")
 - fix: 8-digit dates such as "20200201" sorted by date, not by the preceding character
-- fix: unpadded dates such as "2020-1-15" accepted, now also in fast mode
-- maintenance: require dateparser >= 1.4.2 (#199)
-- performance: misc fixes in date extraction
-- maintenance: simplify code, dedupe helpers, internal regex constants moved from `extractors` to `core`, `search_pattern` and `select_candidate` signatures changed, `search_normalized` and `plausible_year_filter` removed
-- maintenance: drop unused `backports-datetime-fromisoformat` from the `speed` extra
+- fix: a rejected year no longer hides an adjacent date in page text patterns ("/1987/10/09/2019-02-15")
+- fix: an impossible date such as "2018-13-27" no longer hides the other candidates in page text patterns
+- fix: an out-of-range `data-utime` no longer hides valid dates in `abbr` elements
+
+## 1.11.0
+- performance: 2x faster extraction (#202)
+- breaking: CLI defaults to extensive search, `-f/--fast` enables fast mode (#193)
+- breaking: internal helpers changed, regex constants moved from `extractors` to `core`, `filter_ymd_candidate` and `plausible_year_filter` signatures, reference comparison with `datetime | None` instead of timestamps (#193, #203)
+- fix: keep time and time zone of regex matches (#194)
+- fix: more robust date parsing and selection, e.g. month names in any case, unpadded dates, mixed separators, impossible dates, `outputformat` for copyright years (#193, #203)
+- maintenance: code hardening and simplification (#191, #193), require dateparser >= 1.4.2 (#199)
+- maintenance: support Python 3.15
 - tests: full line coverage, leaner test suite
+- docs: wording fixes (#192)
 
 ## 1.10.0
 - maintenance: modernize code and packaging (#188)

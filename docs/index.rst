@@ -13,7 +13,7 @@ Htmldate: Find the Publication Date of Web Pages
     :target: https://codecov.io/gh/adbar/htmldate
     :alt: Code Coverage
 
-.. image:: https://img.shields.io/pypi/dm/htmldate?color=informational
+.. image:: https://static.pepy.tech/badge/htmldate/month
     :target: https://pepy.tech/project/htmldate
     :alt: Downloads
 
