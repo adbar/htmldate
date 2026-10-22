@@ -1563,6 +1563,31 @@ def test_month_names_match_dateparser():
     assert not {k: v for k, v in MONTH_NUMBERS.items() if known.get(k, v) != v}
 
 
+def test_cjk_dates():
+    """Chinese, Japanese and Korean year-month-day separators"""
+    for text, expected in (
+        ("2025年10月12日", "2025-10-12"),
+        ("公開日: 2025年1月5日", "2025-01-05"),
+        ("发布时间：2025年10月12日 10:30", "2025-10-12"),
+        ("게시일: 2025년 10월 12일", "2025-10-12"),
+        ("2025년10월12일", "2025-10-12"),
+        ("2025年10月", "2025-10-01"),
+        ("2025년 10월", "2025-10-01"),
+        ("2025年10", "2025-10-01"),
+    ):
+        assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) == expected
+    for text in ("2025年13月12日", "2025年2月30日", "2025年13月", "2025年", "10月12日"):
+        assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    for tag in ('p class="date"', "time"):
+        for text, expected in (
+            ("公開日: 2025年10月12日", "2025-10-12"),
+            ("2025年10月", "2025-10-01"),
+        ):
+            doc = f"<html><body><{tag}>{text}</{tag.split()[0]}></body></html>"
+            assert find_date(doc, extensive_search=False) == expected
+            assert find_date(doc) == expected
+
+
 def test_external_date_parser():
     """test external date parser"""
     assert (
