@@ -522,7 +522,7 @@ def search_pattern(
     # separator and order variants count together
     normalized: Counter[str] = Counter()
     for item, count in Counter(pattern.findall(htmlstring)).items():
-        parts = [*filter(None, item), "1"] if order != "y" else [item, "1"]
+        parts = [item, "1"] if isinstance(item, str) else [*filter(None, item), "1"]
         year = correct_year(int(parts[y]))
         if options.min.year <= year <= options.max.year:
             normalized[f"{year}-{parts[m].zfill(2)}-{parts[d].zfill(2)}"] += count
