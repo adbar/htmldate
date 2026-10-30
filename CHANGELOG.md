@@ -1,6 +1,16 @@
 ## Changelog
 
 ## 1.x.x
+- breaking: internal functions return `datetime | None`, only `find_date` applies `outputformat`
+- breaking: `try_date_expr`, `custom_parse` and `external_date_parser` lose the `outputformat` argument, `search_pattern` and `select_candidate` signatures changed
+- breaking: `Extractor` loses `format` and is no longer hashable
+- breaking: removed `validate_and_convert`, `is_valid_date`, `convert_date`, `compare_reference`, `update_reference`, `compare_values`, `check_extracted_reference`, `filter_ymd_candidate`, `plausible_year_filter`, `reset_validator_caches`, `search_normalized`, `normalize_match` and `normalize_two_comp`
+- fix: same date with different separators counted together in all page text patterns ("01.02.2020", "01/02/2020", "2020-02-01")
+- fix: 8-digit dates such as "20200201" sorted by date, not by the preceding character
+- fix: a rejected year no longer hides an adjacent date in page text patterns ("/1987/10/09/2019-02-15")
+- fix: an impossible date such as "2018-13-27" no longer hides the other candidates in page text patterns
+- fix: an out-of-range `data-utime` no longer hides valid dates in `abbr` elements
+- fix: dates without a day such as "2025-10" no longer take the day from today's date
 - fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0
