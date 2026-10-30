@@ -188,7 +188,11 @@ def test_sanity():
     )
     assert tree.find('.//div[@id="wm-ipp"]') is None  # archive.org banner removed
     assert "AAA" in tree.text_content()  # real content kept
-    remove_if_attached(etree.Element("div"))  # detached: no-op
+    parent = html.fromstring("<div><p></p></div>")
+    child = parent[0]
+    remove_if_attached(child)
+    assert child.getparent() is None and len(parent) == 0
+    remove_if_attached(child)  # detached: no-op
     # reset caches
     old_values = try_date_expr.cache_info()
     is_valid_format("%Y")
@@ -595,8 +599,8 @@ def test_exact_date():
         # bug #54
         (
             BODY.format(bug54),
-            {"outputformat": "%Y-%m-%d %H:%m:%S"},
-            "2020-11-29 00:11:00",  # 00:11 unclear
+            {"outputformat": "%Y-%m-%d %H:%M:%S"},
+            "2020-11-29 00:00:00",
         ),
         (BODY.format(bug54), {"outputformat": "%Y-%m-%d"}, "2020-11-29"),
         # JSON-LD script block (json_search path)
@@ -1017,6 +1021,7 @@ def test_regex_parse():
         ("abcd 20041212 efgh", "2004-12-12"),
         ("abcd 2004-2-12 efgh", "2004-02-12"),
         ("abcd 2004-2 efgh", "2004-02-01"),
+        ("2020-13-01 x", None),  # impossible Y-M-D
         ("abcd 32. Januar 2020 efgh", None),
         # plausible but impossible dates
         ("February 29 2008", "2008-02-29"),

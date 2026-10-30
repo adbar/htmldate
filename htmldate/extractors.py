@@ -96,13 +96,11 @@ COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|
 
 # optional ISO-8601 time-of-day and time zone suffix (e.g. "T08:37:00+05:30")
 TIME_TZ_RE = r"[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?"
+# groups: date, time ("?" appended makes the time optional)
+YMD_TIME_RE = rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})"
 
-JSON_MODIFIED = re.compile(
-    rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
-)
-JSON_PUBLISHED = re.compile(
-    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
-)
+JSON_MODIFIED = re.compile(rf'"dateModified": ?"{YMD_TIME_RE}?', re.I)
+JSON_PUBLISHED = re.compile(rf'"datePublished": ?"{YMD_TIME_RE}?', re.I)
 
 # English, French, German, Indonesian and Turkish month names
 MONTHS = [
@@ -325,7 +323,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                     int(match.group("month2")),
                     int(match.group("year2")),
                 )
-        except ValueError:  # pragma: no cover
+        except ValueError:
             LOGGER.debug("regex value error: %s", match[0])
 
     # 4. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)

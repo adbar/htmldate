@@ -30,7 +30,7 @@ from .extractors import (
     DAY_RE,
     MONTH_RE,
     YEAR_RE,
-    TIME_TZ_RE,
+    YMD_TIME_RE,
 )
 from .settings import (
     CLEANING_LIST,
@@ -178,9 +178,9 @@ CLASS_ATTRS = {"date-published", "published", "time published"}
 
 NON_DIGITS_REGEX = re.compile(r"\D+$")
 
-TIMESTAMP_PATTERN = re.compile(rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})")
+TIMESTAMP_PATTERN = re.compile(YMD_TIME_RE)
 # same without the mandatory time: fast-mode last resort only, see find_date
-TIMESTAMP_LOOSE_PATTERN = re.compile(rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?")
+TIMESTAMP_LOOSE_PATTERN = re.compile(rf"{YMD_TIME_RE}?")
 
 # extensive search patterns, the groups are the date parts
 # bounded gap \D{0,99} (not \D*) avoids ReDoS
