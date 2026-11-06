@@ -1512,12 +1512,41 @@ def test_regex_parse():
         "Kas",
         "Ara",
     ]
+    # genitive in dates ("12 października"), nominative in month-first formats
+    pl_gen = [
+        "stycznia",
+        "lutego",
+        "marca",
+        "kwietnia",
+        "maja",
+        "czerwca",
+        "lipca",
+        "sierpnia",
+        "września",
+        "października",
+        "listopada",
+        "grudnia",
+    ]
+    pl_nom = [
+        "Styczeń",
+        "Luty",
+        "Marzec",
+        "Kwiecień",
+        "Maj",
+        "Czerwiec",
+        "Lipiec",
+        "Sierpień",
+        "Wrzesień",
+        "Październik",
+        "Listopad",
+        "Grudzień",
+    ]
     for month in en_full + en_abbr:
         assert regex_parse(f"{month} 1st, 1998") is not None, month
-    for month in de_full + tr_full + tr_abbr:
+    for month in de_full + tr_full + tr_abbr + pl_nom:
         assert regex_parse(f"{month} 1, 1998") is not None, month
     assert regex_parse("1. Okt. 1998") is not None
-    for month in en_full + en_abbr + de_full + tr_full + tr_abbr:
+    for month in en_full + en_abbr + de_full + tr_full + tr_abbr + pl_gen + pl_nom:
         assert regex_parse(f"1 {month} 1998") is not None, month
     # dotted/dotless i
     for month, mnum in [("MAYIS", 5), ("KASIM", 11), ("EKİM", 10), ("Mayis", 5)]:
@@ -1543,10 +1572,48 @@ def test_regex_parse():
     assert regex_parse("31 June 2020") is None
 
 
+def test_polish_dates():
+    "Polish dates: dateparser misses prefixed ones and fast mode never calls it."
+    for text, expected in (
+        ("Opublikowano: 12 października 2025", datetime.datetime(2025, 10, 12)),
+        ("3 marca 2024 r.", datetime.datetime(2024, 3, 3)),
+        ("1 maja 2023", datetime.datetime(2023, 5, 1)),
+        ("Data publikacji: 29 lutego 2024", datetime.datetime(2024, 2, 29)),
+        ("AKTUALIZACJA: 5 WRZEŚNIA 2024", datetime.datetime(2024, 9, 5)),
+        ("10 wrzesnia 2024", datetime.datetime(2024, 9, 10)),
+        ("12 pazdziernika 2025", datetime.datetime(2025, 10, 12)),
+        ("październik 12, 2025", datetime.datetime(2025, 10, 12)),
+        ("15 grudzień 2023", datetime.datetime(2023, 12, 15)),
+        # impossible dates, missing day or year as for other languages
+        ("31 lutego 2024", None),
+        ("29 lutego 2023", None),
+        ("12 października", None),
+        ("październik 2025", None),
+        # no three-letter abbreviations ("lip", "lis", "sie", "sty"): glued words
+        # match by suffix, so they would turn names into dates
+        ("Philip 5, 2020", None),
+        ("Minneapolis 5, 2020", None),
+        ("Rosie 5, 2020", None),
+        ("Dynasty 3, 2021", None),
+    ):
+        assert regex_parse(text) == expected, text
+    doc = '<html><body><p class="date">{}</p></body></html>'
+    for extensive in (True, False):
+        assert (
+            find_date(
+                doc.format("Opublikowano: 12 października 2025"),
+                extensive_search=extensive,
+            )
+            == "2025-10-12"
+        ), extensive
+    # abbreviations are left to dateparser
+    assert find_date(doc.format("12 paź 2025")) == "2025-10-12"
+
+
 def test_month_names_match_dateparser():
     "Every name in MONTHS is a dateparser month name with the same number."
     known = {}
-    for language in ("en", "de", "fr", "id", "tr"):
+    for language in ("en", "de", "fr", "id", "pl", "tr"):
         info = importlib.import_module(
             f"dateparser.data.date_translation_data.{language}"
         ).info
