@@ -59,6 +59,7 @@ from htmldate.meta import reset_caches
 from htmldate.settings import MIN_DATE
 from htmldate.utils import (
     Extractor,
+    clean_html,
     decode_file,
     detect_encoding,
     fetch_url,
@@ -193,6 +194,14 @@ def test_sanity():
     remove_if_attached(child)
     assert child.getparent() is None and len(parent) == 0
     remove_if_attached(child)  # detached: no-op
+    # nested matches do not stop the cleaning, tails are kept
+    tree = clean_html(
+        html.fromstring(
+            "<div><video><track></video>a<iframe></iframe>b<object><embed></object>c<svg></svg>d</div>"
+        ),
+        ["video", "track", "iframe", "object", "embed", "svg"],
+    )
+    assert len(tree) == 0 and tree.text == "abcd"
     # reset caches
     old_values = try_date_expr.cache_info()
     is_valid_format("%Y")
@@ -804,6 +813,19 @@ def test_fast_mode_bare_date():
     ):
         doc = f"<html><body>{snippet}<p>no dates in text</p></body></html>"
         assert find_date(doc, extensive_search=False) is None
+    # a control character around a script does not raise or drop text
+    for body in (
+        "<p>2020-05-05</p><script>x</script>\x05 text",
+        "<p>text</p><script>x</script>\x05 Published 2020-05-05",
+        "<p>t</p> Published 2020-05-05 <script>x</script>\x05",
+        "<div>Published 2020-05-05 <script>x</script>\x05</div>",
+        "<p>t</p><script>x</script>\x05<script>y</script>\x06 Published 2020-05-05 <style>z</style>\x07",
+        "<p>t</p>\x05<script>x</script> Published 2020-05-05",
+        "<div>\x05<script>x</script> Published 2020-05-05</div>",
+    ):
+        doc = f"<html><body>{body}</body></html>"
+        for ext in (True, False):
+            assert find_date(doc, extensive_search=ext) == "2020-05-05"
 
 
 def test_validate():

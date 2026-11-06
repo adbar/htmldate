@@ -11,6 +11,8 @@
 - fix: an impossible date such as "2018-13-27" no longer hides the other candidates in page text patterns
 - fix: an out-of-range `data-utime` no longer hides valid dates in `abbr` elements
 - fix: dates without a day such as "2025-10" no longer take the day from today's date
+- fix: control characters around a `script` or `style` element no longer raise a `ValueError` in fast mode
+- fix: nested elements such as `video > track` no longer stop the removal of unwanted elements
 - fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0

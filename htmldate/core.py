@@ -711,14 +711,7 @@ def date_from_tree(
     # (string/bytes/URL input) we own it and can clean it in place, avoiding a
     # costly deepcopy of the whole document
     pruning_tree = deepcopy(tree) if caller_tree else tree
-    try:
-        search_tree = discard_unwanted(clean_html(pruning_tree, CLEANING_LIST))
-    # rare LXML error: no NULL bytes or control characters
-    except ValueError:  # pragma: no cover
-        # pruning_tree, not tree: it is ours in both cases, and the fast-mode
-        # fallback below strips this tree in place
-        search_tree = pruning_tree
-        LOGGER.error("lxml cleaner error")
+    search_tree = discard_unwanted(clean_html(pruning_tree, CLEANING_LIST))
 
     result = (
         examine_elements(date_candidates(search_tree, extensive_search), options)

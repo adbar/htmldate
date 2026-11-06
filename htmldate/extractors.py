@@ -429,8 +429,10 @@ def pattern_search(
 ) -> datetime | None:
     "Look for date expressions using a regular expression on a string of text."
     match = date_pattern.search(text)
-    date = validate_ymd(match[1], options.min, options.max) if match else None
-    if match is None or date is None:
+    if not match:
+        return None
+    date = validate_ymd(match[1], options.min, options.max)
+    if date is None:
         return None
     LOGGER.debug("regex found: %s %s", date_pattern, match[0])
     # group 2: optional time of day and time zone
