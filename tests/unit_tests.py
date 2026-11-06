@@ -1515,21 +1515,30 @@ def test_cjk_dates():
         ("发布时间：2025年10月12日 10:30", "2025-10-12"),
         ("게시일: 2025년 10월 12일", "2025-10-12"),
         ("2025년10월12일", "2025-10-12"),
-        ("2025年10月", "2025-10-01"),
-        ("2025년 10월", "2025-10-01"),
-        ("2025年10", "2025-10-01"),
     ):
         assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) == expected
-    for text in ("2025年13月12日", "2025年2月30日", "2025年13月", "2025年", "10月12日"):
+    for text in (
+        "2025年13月12日",
+        "2025年2月30日",
+        "2025年13月",
+        "2025年",
+        "10月12日",
+        # calendar widgets and placeholders
+        "2026年10月",
+        "2019年12月XX日",
+    ):
         assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
     for tag in ('p class="date"', "time"):
-        for text, expected in (
-            ("公開日: 2025年10月12日", "2025-10-12"),
-            ("2025年10月", "2025-10-01"),
-        ):
-            doc = f"<html><body><{tag}>{text}</{tag.split()[0]}></body></html>"
-            assert find_date(doc, extensive_search=False) == expected
-            assert find_date(doc) == expected
+        doc = f"<html><body><{tag}>公開日: 2025年10月12日</{tag.split()[0]}></body></html>"
+        assert find_date(doc, extensive_search=False) == "2025-10-12"
+        assert find_date(doc) == "2025-10-12"
+    # a placeholder or an archive month does not beat the article date
+    for widget in (
+        '<span class="date">2019年12月XX日</span>',
+        '<ul class="archive"><li>2026年10月</li><li>2026年9月</li></ul>',
+    ):
+        doc = f"<html><body>{widget}<div>2025年10月12日</div></body></html>"
+        assert find_date(doc) == "2025-10-12"
 
 
 def test_external_date_parser():

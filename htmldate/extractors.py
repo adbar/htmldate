@@ -85,11 +85,6 @@ CJK_YMD_PATTERN = re.compile(
     rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})\s?[月월]\s?"
     rf"(?P<day>{DAY_RE}){CJK_DAY_END}"
 )
-# year and month only: no day may follow, so an invalid full date is not shortened
-CJK_YM_PATTERN = re.compile(
-    rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})(?:\s?[月월]|$)"
-    rf"(?!\s?{DAY_RE}{CJK_DAY_END})"
-)
 
 # any word from its start, MONTH_NUMBERS decides
 MONTH_WORD = r"(?<![^\W\d_])[^\W\d_]{3,}"
@@ -342,7 +337,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
 
-    # 4. Try the CJK year-month-day and year-month patterns
+    # 4. Try the CJK year-month-day pattern
     match = CJK_YMD_PATTERN.search(string)
     if match:
         try:
@@ -353,12 +348,6 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
             )
         except ValueError:
             LOGGER.debug("CJK regex value error: %s", match[0])
-    match = CJK_YM_PATTERN.search(string)
-    if match:
-        try:
-            yield datetime(int(match.group("year")), int(match.group("month")), 1)
-        except ValueError:
-            LOGGER.debug("CJK Y-M value error: %s", match[0])
 
     # 5. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
     match = YM_PATTERN.search(string)
