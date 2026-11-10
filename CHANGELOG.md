@@ -1,6 +1,7 @@
 ## Changelog
 
 ## 1.x.x
+- feature: Russian month names in text-based extraction (#156)
 - fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0

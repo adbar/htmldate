@@ -993,6 +993,17 @@ def test_fast_mode_bare_date():
         assert find_date(doc, extensive_search=False) is None
 
 
+def test_russian_month_names():
+    "Russian dates in text, as in issue #156."
+    for text, expected in (
+        ("30 Июля 2015", "2015-07-30"),
+        ("Опубликовано: 12 марта 2021", "2021-03-12"),
+    ):
+        doc = f'<html><body><div class="news-detail"><div class="date">{text}</div><p>Текст новости.</p></div></body></html>'
+        for extensive in (True, False):
+            assert find_date(doc, extensive_search=extensive) == expected, text
+
+
 def test_is_valid_date():
     """test internal date validation"""
 
@@ -1541,6 +1552,40 @@ def test_regex_parse():
         "Listopad",
         "Grudzień",
     ]
+    # nominative and genitive forms
+    ru_full = [
+        "январь",
+        "января",
+        "февраль",
+        "февраля",
+        "март",
+        "марта",
+        "апрель",
+        "апреля",
+        "май",
+        "мая",
+        "июнь",
+        "июня",
+        "июль",
+        "июля",
+        "август",
+        "августа",
+        "сентябрь",
+        "сентября",
+        "октябрь",
+        "октября",
+        "ноябрь",
+        "ноября",
+        "декабрь",
+        "декабря",
+    ]
+    for number, month in enumerate(ru_full, 2):
+        expected = datetime.datetime(1998, number // 2, 1)
+        assert regex_parse(f"1 {month} 1998") == expected, month
+        assert regex_parse(f"1 {month.upper()} 1998") == expected, month
+    assert regex_parse("Опубликовано: 12 марта 2021 г.") == datetime.datetime(
+        2021, 3, 12
+    )
     for month in en_full + en_abbr:
         assert regex_parse(f"{month} 1st, 1998") is not None, month
     for month in de_full + tr_full + tr_abbr + pl_nom:
@@ -1613,7 +1658,7 @@ def test_polish_dates():
 def test_month_names_match_dateparser():
     "Every name in MONTHS is a dateparser month name with the same number."
     known = {}
-    for language in ("en", "de", "fr", "id", "pl", "tr"):
+    for language in ("en", "de", "fr", "id", "pl", "ru", "tr"):
         info = importlib.import_module(
             f"dateparser.data.date_translation_data.{language}"
         ).info

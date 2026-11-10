@@ -108,7 +108,7 @@ JSON_PUBLISHED = re.compile(
     rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
 )
 
-# English, French, German, Indonesian, Polish and Turkish month names
+# English, French, German, Indonesian, Polish, Russian and Turkish month names
 MONTHS = [
     (
         "jan",
@@ -121,6 +121,8 @@ MONTHS = [
         "oca",
         "stycznia",
         "styczeń",
+        "январь",
+        "января",
     ),
     (
         "feb",
@@ -133,13 +135,70 @@ MONTHS = [
         "şub",
         "lutego",
         "luty",
+        "февраль",
+        "февраля",
     ),
-    ("mar", "mär", "märz", "march", "maret", "mart", "mars", "marca", "marzec"),
-    ("apr", "april", "avril", "nisan", "nis", "kwietnia", "kwiecień"),
-    ("may", "mai", "mei", "mayıs", "maja", "maj"),
-    ("jun", "juni", "june", "juin", "haziran", "haz", "czerwca", "czerwiec"),
-    ("jul", "juli", "july", "juillet", "temmuz", "tem", "lipca", "lipiec"),
-    ("aug", "august", "agustus", "ağustos", "ağu", "aout", "sierpnia", "sierpień"),
+    (
+        "mar",
+        "mär",
+        "märz",
+        "march",
+        "maret",
+        "mart",
+        "mars",
+        "marca",
+        "marzec",
+        "март",
+        "марта",
+    ),
+    (
+        "apr",
+        "april",
+        "avril",
+        "nisan",
+        "nis",
+        "kwietnia",
+        "kwiecień",
+        "апрель",
+        "апреля",
+    ),
+    ("may", "mai", "mei", "mayıs", "maja", "maj", "май", "мая"),
+    (
+        "jun",
+        "juni",
+        "june",
+        "juin",
+        "haziran",
+        "haz",
+        "czerwca",
+        "czerwiec",
+        "июнь",
+        "июня",
+    ),
+    (
+        "jul",
+        "juli",
+        "july",
+        "juillet",
+        "temmuz",
+        "tem",
+        "lipca",
+        "lipiec",
+        "июль",
+        "июля",
+    ),
+    (
+        "aug",
+        "august",
+        "agustus",
+        "ağustos",
+        "ağu",
+        "aout",
+        "sierpnia",
+        "sierpień",
+        "август",
+        "августа",
+    ),
     (
         "sep",
         "september",
@@ -149,6 +208,8 @@ MONTHS = [
         "września",
         "wrzesnia",
         "wrzesień",
+        "сентябрь",
+        "сентября",
     ),
     (
         "oct",
@@ -161,8 +222,20 @@ MONTHS = [
         "października",
         "pazdziernika",
         "październik",
+        "октябрь",
+        "октября",
     ),
-    ("nov", "november", "kasım", "kas", "novembre", "listopada", "listopad"),
+    (
+        "nov",
+        "november",
+        "kasım",
+        "kas",
+        "novembre",
+        "listopada",
+        "listopad",
+        "ноябрь",
+        "ноября",
+    ),
     (
         "dec",
         "dez",
@@ -174,6 +247,8 @@ MONTHS = [
         "ara",
         "grudnia",
         "grudzień",
+        "декабрь",
+        "декабря",
     ),
 ]
 
@@ -301,7 +376,7 @@ def _build_dmy(day: int, month: int, year: int) -> datetime:
 
 def regex_parse(string: str) -> datetime | None:
     """Try full-text parse for date elements using a series of regular expressions
-    with particular emphasis on English, French, German and Turkish"""
+    with particular emphasis on English, French, German, Russian and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
     pos = 0
