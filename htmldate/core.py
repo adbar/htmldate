@@ -273,13 +273,18 @@ def is_date_candidate(elem: HtmlElement) -> bool:
 
 
 def date_candidates(tree: HtmlElement, extensive_search: bool) -> list[HtmlElement]:
-    "Collect date-bearing elements."
+    "Collect date-bearing elements, leaving out navigation menus."
     elements = (
         tree.iterdescendants(Element)
         if extensive_search
         else tree.iterdescendants(*FAST_TAGS, *ALWAYS_TAGS)
     )
-    return [e for e in elements if e.tag in ALWAYS_TAGS or is_date_candidate(e)]
+    return [
+        e
+        for e in elements
+        if (e.tag in ALWAYS_TAGS or is_date_candidate(e))
+        and next(e.iterancestors("nav"), None) is None
+    ]
 
 
 def examine_elements(elements: list[HtmlElement], options: Extractor) -> str | None:
