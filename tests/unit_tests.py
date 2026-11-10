@@ -2365,3 +2365,44 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
+
+
+@pytest.mark.parametrize(
+    "timed",
+    [
+        '<script type="application/ld+json">'
+        '{"@type":"NewsArticle","datePublished":"2020-08-16T23:40:47Z"}</script>',
+        '<meta property="article:published_time" content="2020-08-16T23:40:47Z"/>',
+        '<meta itemprop="datePublished" content="2020-08-16T23:40:47Z"/>',
+    ],
+)
+def test_header_date_only_vs_timestamp(timed):
+    "A date without time of day must not hide a timestamp of the same day."
+    tzformat = "%Y-%m-%dT%H:%M:%S%z"
+    for dateonly in (
+        '<meta name="pdate" content="20200816"/>',
+        '<meta property="article:published_time" content="2020-08-16"/>',
+    ):
+        doc = f"<html><head>{dateonly}{timed}</head><body><p>text</p></body></html>"
+        for extensive in (True, False):
+            assert (
+                find_date(
+                    doc,
+                    outputformat=tzformat,
+                    original_date=True,
+                    extensive_search=extensive,
+                )
+                == "2020-08-16T23:40:47+0000"
+            )
+        assert find_date(doc, original_date=True) == "2020-08-16"
+        # never another day
+        doc = doc.replace("2020-08-16T23", "2020-08-17T01")
+        assert (
+            find_date(doc, outputformat=tzformat, original_date=True)
+            == "2020-08-16T00:00:00"
+        )
+        # no time to gain
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M %Z", original_date=True)
+            == "2020-08-16 00:00 "
+        )

@@ -9,7 +9,7 @@ import re
 from collections import Counter
 from collections.abc import Callable, Sized
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from functools import partial
 
 from lxml.etree import Element
@@ -33,6 +33,7 @@ from .extractors import (
     MONTH_RE,
     YEAR_RE,
     TIME_TZ_RE,
+    TIME_TZ_DIRECTIVES,
 )
 from .settings import (
     CLEANING_LIST,
@@ -295,6 +296,30 @@ def examine_elements(elements: list[HtmlElement], options: Extractor) -> str | N
     return None
 
 
+def parse_output(value: str, options: Extractor) -> datetime | None:
+    "Read a value back in the output format."
+    try:
+        return datetime.strptime(value, options.format)
+    except ValueError:
+        return None
+
+
+def lacks_time_of_day(value: str, options: Extractor) -> bool:
+    "The output format asks for the time of day and the value has none."
+    if not any(directive in options.format for directive in TIME_TZ_DIRECTIVES):
+        return False
+    parsed = parse_output(value, options)
+    return parsed is not None and parsed.tzinfo is None and parsed.time() == time()
+
+
+def adds_time_of_day(value: str | None, dateonly: str, options: Extractor) -> bool:
+    "The value has a time of day on the same day as the date-only value."
+    if value is None or lacks_time_of_day(value, options):
+        return False
+    parsed, day = parse_output(value, options), parse_output(dateonly, options)
+    return parsed is not None and day is not None and parsed.date() == day.date()
+
+
 def examine_header(
     tree: HtmlElement,
     options: Extractor,
@@ -338,6 +363,8 @@ def examine_header_dates(
 
     """
     headerdate, reserve = None, None
+    # a date without the requested time of day waits for one of the same day
+    dateonly = None
     tryfunc = partial(try_date_expr_opts, options=options)
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
@@ -423,9 +450,14 @@ def examine_header_dates(
                     reserve = attempt or reserve
         # exit loop
         if headerdate is not None:
-            break
+            if dateonly is None and lacks_time_of_day(headerdate, options):
+                dateonly, headerdate = headerdate, None
+            elif dateonly is None or adds_time_of_day(headerdate, dateonly, options):
+                break
+            else:
+                headerdate = None
     # return values
-    return headerdate, reserve
+    return headerdate or dateonly, reserve
 
 
 def select_candidate(
@@ -897,6 +929,10 @@ def find_date(
     # date when the original one was requested): only use it if JSON-LD, which
     # can carry the requested date explicitly, has nothing to offer
     header_result, header_reserve = examine_header_dates(tree, options)
+    if header_result is not None and lacks_time_of_day(header_result, options):
+        json_result = json_search(tree, options)
+        if adds_time_of_day(json_result, header_result, options):
+            header_result = json_result
     result = header_result or json_search(tree, options) or header_reserve
     if result is not None:
         return result
