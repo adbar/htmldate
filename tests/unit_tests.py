@@ -2365,3 +2365,46 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        '<div class="date">Published <time itemprop="datePublished" '
+        'datetime="2026-10-14T15:35:07+11:00">Oct 14, 2026</time></div>',
+        '<span class="posted-on"><time class="entry-date" '
+        'datetime="2026-10-14T15:35:07+11:00">14/10/2026</time></span>',
+    ],
+)
+def test_date_text_vs_time_datetime(body):
+    "A date in the text must not hide the time of day of a <time> of the same day."
+    tzformat = "%Y-%m-%dT%H:%M:%S%z"
+    doc = f"<html><body>{body}<p>text</p></body></html>"
+    for extensive in (True, False):
+        assert (
+            find_date(
+                doc,
+                outputformat=tzformat,
+                original_date=True,
+                extensive_search=extensive,
+            )
+            == "2026-10-14T15:35:07+1100"
+        )
+    assert find_date(doc, original_date=True) == "2026-10-14"
+    # never another day, nothing to gain from a <time> without time of day,
+    # nor from a <time> outside the element
+    for other in (
+        doc.replace('datetime="2026-10-14', 'datetime="2026-10-12'),
+        doc.replace("T15:35:07+11:00", ""),
+        '<html><body><span class="posted-on">14/10/2026</span><p>text</p>'
+        '<time datetime="2026-10-14T15:35:07+11:00">14 Oct</time></body></html>',
+    ):
+        assert (
+            find_date(other, outputformat=tzformat, original_date=True)
+            == "2026-10-14T00:00:00"
+        )
+    # no time to gain
+    assert (
+        find_date(doc, outputformat="%Y-%m-%d %H:%M %Z", original_date=True)
+        == "2026-10-14 00:00 "
+    )

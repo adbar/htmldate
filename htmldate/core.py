@@ -9,7 +9,7 @@ import re
 from collections import Counter
 from collections.abc import Callable, Sized
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from functools import partial
 
 from lxml.etree import Element
@@ -33,6 +33,7 @@ from .extractors import (
     MONTH_RE,
     YEAR_RE,
     TIME_TZ_RE,
+    TIME_TZ_DIRECTIVES,
 )
 from .settings import (
     CLEANING_LIST,
@@ -291,8 +292,43 @@ def examine_elements(elements: list[HtmlElement], options: Extractor) -> str | N
         for text in [elem.text_content(), elem.get("title", "")]:
             attempt = examine_text(text, options)
             if attempt:
-                return attempt
+                return add_element_time(elem, attempt, options)
     return None
+
+
+def add_element_time(elem: HtmlElement, dateonly: str, options: Extractor) -> str:
+    "The element's own <time datetime> may give the time of day of its text."
+    if lacks_time_of_day(dateonly, options):
+        timeelem = elem if elem.tag == "time" else elem.find(".//time[@datetime]")
+        if timeelem is not None:
+            attempt = try_date_expr_opts(timeelem.get("datetime"), options)
+            if attempt is not None and adds_time_of_day(attempt, dateonly, options):
+                return attempt
+    return dateonly
+
+
+def parse_output(value: str, options: Extractor) -> datetime | None:
+    "Read a value back in the output format."
+    try:
+        return datetime.strptime(value, options.format)
+    except ValueError:
+        return None
+
+
+def lacks_time_of_day(value: str, options: Extractor) -> bool:
+    "The output format asks for the time of day and the value has none."
+    if not any(directive in options.format for directive in TIME_TZ_DIRECTIVES):
+        return False
+    parsed = parse_output(value, options)
+    return parsed is not None and parsed.tzinfo is None and parsed.time() == time()
+
+
+def adds_time_of_day(value: str | None, dateonly: str, options: Extractor) -> bool:
+    "The value has a time of day on the same day as the date-only value."
+    if value is None or lacks_time_of_day(value, options):
+        return False
+    parsed, day = parse_output(value, options), parse_output(dateonly, options)
+    return parsed is not None and day is not None and parsed.date() == day.date()
 
 
 def examine_header(
