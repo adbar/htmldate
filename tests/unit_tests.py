@@ -2367,7 +2367,7 @@ def test_deferred():
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
 
 
-def test_date_candidates_outside_nav():
+def test_discard_nav_menus():
     "Dates of the stories listed in a navigation menu are not the page's date."
     menu = (
         '<header><nav><ul><li><a href="/other">Other story</a>'
@@ -2383,3 +2383,11 @@ def test_date_candidates_outside_nav():
     # a menu date alone is not taken
     doc = f"<html><body>{menu}<h1>Title</h1><p>text</p></body></html>"
     assert find_date(doc, extensive_search=False) is None
+    # nor a <time> element of the menu, read later in the search
+    menu = (
+        '<header><nav><ul><li><a href="/other">Other story</a>'
+        '<time datetime="2026-10-23T08:00:00">23 Oct</time></li></ul></nav></header>'
+    )
+    doc = f"<html><body>{menu}<h1>Title</h1><p>Published 2026-02-06</p></body></html>"
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
