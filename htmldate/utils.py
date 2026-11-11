@@ -18,6 +18,7 @@ except ImportError:
     cchardet_detect = None
 from charset_normalizer import from_bytes
 
+from lxml.etree import strip_elements
 from lxml.html import HtmlElement, HTMLParser, fromstring
 
 from .settings import MAX_FILE_SIZE
@@ -42,8 +43,7 @@ DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
 
 
-# eq=False keeps identity-based hashing so instances stay usable as lru_cache keys
-@dataclass(slots=True, eq=False)
+@dataclass(slots=True)
 class Extractor:
     "Defines a class to store all extraction options."
 
@@ -51,7 +51,6 @@ class Extractor:
     max: datetime
     min: datetime
     original: bool
-    format: str
 
 
 def is_wrong_document(data: str | bytes | HtmlElement | None) -> bool:
@@ -218,13 +217,8 @@ def remove_if_attached(element: HtmlElement) -> None:
 
 
 def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
-    "Delete selected elements."
-    for element in tree.iter(elemlist):
-        # drop_tree() keeps tail text (a date may follow a cleaned element)
-        try:
-            element.drop_tree()
-        except AttributeError:  # pragma: no cover
-            remove_if_attached(element)
+    "Delete selected elements, keeping their tail text."
+    strip_elements(tree, *elemlist, with_tail=False)
     return tree
 
 
