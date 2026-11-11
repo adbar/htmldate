@@ -993,6 +993,17 @@ def test_fast_mode_bare_date():
         assert find_date(doc, extensive_search=False) is None
 
 
+def test_russian_month_names():
+    "Russian dates in text, as in issue #156."
+    for text, expected in (
+        ("30 Июля 2015", "2015-07-30"),
+        ("Опубликовано: 12 марта 2021", "2021-03-12"),
+    ):
+        doc = f'<html><body><div class="news-detail"><div class="date">{text}</div><p>Текст новости.</p></div></body></html>'
+        for extensive in (True, False):
+            assert find_date(doc, extensive_search=extensive) == expected, text
+
+
 def test_is_valid_date():
     """test internal date validation"""
 
@@ -1541,6 +1552,40 @@ def test_regex_parse():
         "Listopad",
         "Grudzień",
     ]
+    # nominative and genitive forms
+    ru_full = [
+        "январь",
+        "января",
+        "февраль",
+        "февраля",
+        "март",
+        "марта",
+        "апрель",
+        "апреля",
+        "май",
+        "мая",
+        "июнь",
+        "июня",
+        "июль",
+        "июля",
+        "август",
+        "августа",
+        "сентябрь",
+        "сентября",
+        "октябрь",
+        "октября",
+        "ноябрь",
+        "ноября",
+        "декабрь",
+        "декабря",
+    ]
+    for number, month in enumerate(ru_full, 2):
+        expected = datetime.datetime(1998, number // 2, 1)
+        assert regex_parse(f"1 {month} 1998") == expected, month
+        assert regex_parse(f"1 {month.upper()} 1998") == expected, month
+    assert regex_parse("Опубликовано: 12 марта 2021 г.") == datetime.datetime(
+        2021, 3, 12
+    )
     for month in en_full + en_abbr:
         assert regex_parse(f"{month} 1st, 1998") is not None, month
     for month in de_full + tr_full + tr_abbr + pl_nom:
@@ -1613,7 +1658,7 @@ def test_polish_dates():
 def test_month_names_match_dateparser():
     "Every name in MONTHS is a dateparser month name with the same number."
     known = {}
-    for language in ("en", "de", "fr", "id", "pl", "tr"):
+    for language in ("en", "de", "fr", "id", "pl", "ru", "tr"):
         info = importlib.import_module(
             f"dateparser.data.date_translation_data.{language}"
         ).info
@@ -1628,6 +1673,40 @@ def test_month_names_match_dateparser():
     # unaccented "aout" is absent from dateparser's French data
     assert set(MONTH_NUMBERS) - set(known) <= {"aout"}
     assert not {k: v for k, v in MONTH_NUMBERS.items() if known.get(k, v) != v}
+
+
+def test_cjk_dates():
+    """Chinese, Japanese and Korean year-month-day separators"""
+    for text, expected in (
+        ("2025年10月12日", "2025-10-12"),
+        ("公開日: 2025年1月5日", "2025-01-05"),
+        ("发布时间：2025年10月12日 10:30", "2025-10-12"),
+        ("게시일: 2025년 10월 12일", "2025-10-12"),
+        ("2025년10월12일", "2025-10-12"),
+    ):
+        assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) == expected
+    for text in (
+        "2025年13月12日",
+        "2025年2月30日",
+        "2025年13月",
+        "2025年",
+        "10月12日",
+        # calendar widgets and placeholders
+        "2026年10月",
+        "2019年12月XX日",
+    ):
+        assert custom_parse(text, OUTPUTFORMAT, MIN_DATE, LATEST_POSSIBLE) is None
+    for tag in ('p class="date"', "time"):
+        doc = f"<html><body><{tag}>公開日: 2025年10月12日</{tag.split()[0]}></body></html>"
+        assert find_date(doc, extensive_search=False) == "2025-10-12"
+        assert find_date(doc) == "2025-10-12"
+    # a placeholder or an archive month does not beat the article date
+    for widget in (
+        '<span class="date">2019年12月XX日</span>',
+        '<ul class="archive"><li>2026年10月</li><li>2026年9月</li></ul>',
+    ):
+        doc = f"<html><body>{widget}<div>2025年10月12日</div></body></html>"
+        assert find_date(doc) == "2025-10-12"
 
 
 def test_external_date_parser():
@@ -2365,6 +2444,20 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
+
+
+@pytest.mark.parametrize(
+    "markup",
+    [
+        '<meta property="article:published_time" content="2025-09-30T17-54-24">',
+        '<time datetime="2025-09-30T17-54-24">30 Sep</time>',
+    ],
+)
+def test_dateutil_offset_out_of_range(markup):
+    "A time read as a UTC offset of a day or more is no date with a time zone."
+    doc = f"<html><head></head><body>{markup}<p>text</p></body></html>"
+    assert find_date(doc) == "2025-09-30"
+    assert find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z") == "2025-09-30T00:00:00"
 
 
 def test_discard_nav_menus():
