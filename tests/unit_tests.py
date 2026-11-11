@@ -2365,3 +2365,17 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
+
+
+@pytest.mark.parametrize(
+    "markup",
+    [
+        '<meta property="article:published_time" content="2025-09-30T17-54-24">',
+        '<time datetime="2025-09-30T17-54-24">30 Sep</time>',
+    ],
+)
+def test_dateutil_offset_out_of_range(markup):
+    "A time read as a UTC offset of a day or more is no date with a time zone."
+    doc = f"<html><head></head><body>{markup}<p>text</p></body></html>"
+    assert find_date(doc) == "2025-09-30"
+    assert find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z") == "2025-09-30T00:00:00"

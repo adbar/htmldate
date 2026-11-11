@@ -352,8 +352,11 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
                     candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+                    # "T17-54-24" gives an offset of -54 hours, which datetime refuses
+                    candidate.utcoffset()
                 except (OverflowError, TypeError, ValueError):
                     LOGGER.debug("dateutil parsing error: %s", string)
+                    candidate = None
         yield candidate
 
     # 2. Try YYYYMMDD, use regex
