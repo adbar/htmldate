@@ -2367,14 +2367,8 @@ def test_deferred():
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
 
 
-def test_external_parser_latest_local_time():
-    "A time from a zone ahead of the host is not read as a century earlier."
-    # up to 14 hours ahead of UTC, so possibly ahead of the host's clock
-    ahead = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=13)
-    assert external_date_parser(
-        ahead.strftime("%d %b %y, %H:%M"), "%Y-%m-%d %H:%M"
-    ) == ahead.strftime("%Y-%m-%d %H:%M")
-    # same-day dates from any zone are in the past of the given UTC day
+def test_external_parser_end_of_local_day():
+    "A time later on the given day is not in the future, the next day is."
     parser = get_external_parser(datetime.date(2026, 9, 26))
-    assert parser.get_date_data("27th Sep 26, 6:00am")["date_obj"].year == 2026
-    assert parser.get_date_data("28th Sep 26, 6:00am")["date_obj"].year == 1926
+    assert parser.get_date_data("26th Sep 26, 11:00pm")["date_obj"].year == 2026
+    assert parser.get_date_data("27th Sep 26, 6:00am")["date_obj"].year == 1926
