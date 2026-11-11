@@ -85,6 +85,13 @@ YM_PATTERN = re.compile(
     rf"(?:\D|^)(?:(?P<year>{YEAR_RE})[\-/.](?P<month>{MONTH_RE})|"
     rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
+# Chinese/Japanese 年月日 and Korean 년월일, e.g. 2025年10月12日 and 2025년 10월 12일;
+# the day suffix is optional since trailing non-digits are cut from element text
+CJK_DAY_END = r"(?:\s?[日일]|(?!\d))"
+CJK_YMD_PATTERN = re.compile(
+    rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})\s?[月월]\s?"
+    rf"(?P<day>{DAY_RE}){CJK_DAY_END}"
+)
 
 # any word from its start, MONTH_NUMBERS decides
 MONTH_WORD = r"(?<![^\W\d_])[^\W\d_]{3,}"
@@ -108,7 +115,7 @@ JSON_PUBLISHED = re.compile(
     rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
 )
 
-# English, French, German, Indonesian, Polish and Turkish month names
+# English, French, German, Indonesian, Polish, Russian and Turkish month names
 MONTHS = [
     (
         "jan",
@@ -121,6 +128,8 @@ MONTHS = [
         "oca",
         "stycznia",
         "styczeń",
+        "январь",
+        "января",
     ),
     (
         "feb",
@@ -133,13 +142,70 @@ MONTHS = [
         "şub",
         "lutego",
         "luty",
+        "февраль",
+        "февраля",
     ),
-    ("mar", "mär", "märz", "march", "maret", "mart", "mars", "marca", "marzec"),
-    ("apr", "april", "avril", "nisan", "nis", "kwietnia", "kwiecień"),
-    ("may", "mai", "mei", "mayıs", "maja", "maj"),
-    ("jun", "juni", "june", "juin", "haziran", "haz", "czerwca", "czerwiec"),
-    ("jul", "juli", "july", "juillet", "temmuz", "tem", "lipca", "lipiec"),
-    ("aug", "august", "agustus", "ağustos", "ağu", "aout", "sierpnia", "sierpień"),
+    (
+        "mar",
+        "mär",
+        "märz",
+        "march",
+        "maret",
+        "mart",
+        "mars",
+        "marca",
+        "marzec",
+        "март",
+        "марта",
+    ),
+    (
+        "apr",
+        "april",
+        "avril",
+        "nisan",
+        "nis",
+        "kwietnia",
+        "kwiecień",
+        "апрель",
+        "апреля",
+    ),
+    ("may", "mai", "mei", "mayıs", "maja", "maj", "май", "мая"),
+    (
+        "jun",
+        "juni",
+        "june",
+        "juin",
+        "haziran",
+        "haz",
+        "czerwca",
+        "czerwiec",
+        "июнь",
+        "июня",
+    ),
+    (
+        "jul",
+        "juli",
+        "july",
+        "juillet",
+        "temmuz",
+        "tem",
+        "lipca",
+        "lipiec",
+        "июль",
+        "июля",
+    ),
+    (
+        "aug",
+        "august",
+        "agustus",
+        "ağustos",
+        "ağu",
+        "aout",
+        "sierpnia",
+        "sierpień",
+        "август",
+        "августа",
+    ),
     (
         "sep",
         "september",
@@ -149,6 +215,8 @@ MONTHS = [
         "września",
         "wrzesnia",
         "wrzesień",
+        "сентябрь",
+        "сентября",
     ),
     (
         "oct",
@@ -161,8 +229,20 @@ MONTHS = [
         "października",
         "pazdziernika",
         "październik",
+        "октябрь",
+        "октября",
     ),
-    ("nov", "november", "kasım", "kas", "novembre", "listopada", "listopad"),
+    (
+        "nov",
+        "november",
+        "kasım",
+        "kas",
+        "novembre",
+        "listopada",
+        "listopad",
+        "ноябрь",
+        "ноября",
+    ),
     (
         "dec",
         "dez",
@@ -174,6 +254,8 @@ MONTHS = [
         "ara",
         "grudnia",
         "grudzień",
+        "декабрь",
+        "декабря",
     ),
 ]
 
@@ -301,7 +383,7 @@ def _build_dmy(day: int, month: int, year: int) -> datetime:
 
 def regex_parse(string: str) -> datetime | None:
     """Try full-text parse for date elements using a series of regular expressions
-    with particular emphasis on English, French, German and Turkish"""
+    with particular emphasis on English, French, German, Russian and Turkish"""
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
     pos = 0
@@ -359,8 +441,11 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
                     candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+                    # "T17-54-24" gives an offset of -54 hours, which datetime refuses
+                    candidate.utcoffset()
                 except (OverflowError, TypeError, ValueError):
                     LOGGER.debug("dateutil parsing error: %s", string)
+                    candidate = None
         yield candidate
 
     # 2. Try YYYYMMDD, use regex
@@ -390,7 +475,19 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:  # pragma: no cover
             LOGGER.debug("regex value error: %s", match[0])
 
-    # 4. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
+    # 4. Try the CJK year-month-day pattern
+    match = CJK_YMD_PATTERN.search(string)
+    if match:
+        try:
+            yield datetime(
+                int(match.group("year")),
+                int(match.group("month")),
+                int(match.group("day")),
+            )
+        except ValueError:
+            LOGGER.debug("CJK regex value error: %s", match[0])
+
+    # 5. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
     match = YM_PATTERN.search(string)
     if match:
         try:
@@ -400,7 +497,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
 
-    # 5. Try the other regex pattern
+    # 6. Try the other regex pattern
     yield regex_parse(string)
 
 
