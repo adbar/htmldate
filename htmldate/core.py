@@ -309,10 +309,13 @@ def add_element_time(elem: HtmlElement, dateonly: str, options: Extractor) -> st
 
 def parse_output(value: str, options: Extractor) -> datetime | None:
     "Read a value back in the output format."
-    try:
-        return datetime.strptime(value, options.format)
-    except ValueError:
-        return None
+    # %z is empty for a date without time zone, and strptime needs one before Python 3.15
+    for outputformat in (options.format, options.format.replace("%z", "")):
+        try:
+            return datetime.strptime(value, outputformat)
+        except ValueError:
+            pass
+    return None
 
 
 def lacks_time_of_day(value: str, options: Extractor) -> bool:
