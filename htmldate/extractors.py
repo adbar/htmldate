@@ -94,11 +94,12 @@ COMPLETE_URL = re.compile(rf"\D({YEAR_RE})[/_-]({MONTH_RE})[/_-]({DAY_RE})(?:\D|
 # optional ISO-8601 time-of-day and time zone suffix (e.g. "T08:37:00+05:30")
 TIME_TZ_RE = r"[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?"
 
+# date, ISO time of day if any, rest of the string value
 JSON_MODIFIED = re.compile(
-    rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
+    rf'"dateModified": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?([^"]*)"', re.I
 )
 JSON_PUBLISHED = re.compile(
-    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?', re.I
+    rf'"datePublished": ?"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})?([^"]*)"', re.I
 )
 
 # English, French, German, Indonesian, Polish and Turkish month names
@@ -333,6 +334,22 @@ def _parse_yyyymmdd(digits: str) -> datetime:
     return datetime(int(digits[:4]), int(digits[4:6]), int(digits[6:8]))
 
 
+def parse_timestamp(string: str) -> datetime | None:
+    "Read a whole date and time string: ISO 8601, else dateutil without fuzzy matching."
+    try:
+        return datetime.fromisoformat(string)
+    except ValueError:
+        LOGGER.debug("not an ISO date string: %s", string)
+    try:
+        candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
+        # "T17-54-24" gives an offset of -54 hours, which datetime refuses
+        candidate.utcoffset()
+    except (OverflowError, TypeError, ValueError):
+        LOGGER.debug("dateutil parsing error: %s", string)
+        return None
+    return candidate
+
+
 def _date_candidates(string: str) -> Iterator[datetime | None]:
     "Yield datetime candidates for custom_parse, in decreasing priority order."
     # 1. shortcut
@@ -346,17 +363,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 LOGGER.debug("8-digit error: %s", string[:8])
         # b. much faster than extensive parsing
         else:
-            try:
-                candidate = datetime.fromisoformat(string)
-            except ValueError:
-                LOGGER.debug("not an ISO date string: %s", string)
-                try:
-                    candidate = dateutil_parse(string, fuzzy=False)  # ignoretz=True
-                    # "T17-54-24" gives an offset of -54 hours, which datetime refuses
-                    candidate.utcoffset()
-                except (OverflowError, TypeError, ValueError):
-                    LOGGER.debug("dateutil parsing error: %s", string)
-                    candidate = None
+            candidate = parse_timestamp(string)
         yield candidate
 
     # 2. Try YYYYMMDD, use regex
@@ -514,14 +521,22 @@ def pattern_search(
     LOGGER.debug("regex found: %s %s", date_pattern, match[0])
     # carry time of day and time zone through when the output format needs them
     # (group 1 is the date, the optional group 2 the time/tz suffix)
-    full = (
-        custom_parse(match[1] + match[2], options.format, options.min, options.max)
-        if match.lastindex
-        and match.lastindex >= 2
-        and match[2]
-        and any(directive in options.format for directive in TIME_TZ_DIRECTIVES)
-        else None
-    )
+    if not any(directive in options.format for directive in TIME_TZ_DIRECTIVES):
+        return convert_date(match[1], "%Y-%m-%d", options.format)
+    full = None
+    # a JSON value goes on after the part TIME_TZ_RE knows (optional group 3),
+    # e.g. "2023-07-07 16:13:20 +0100": read it whole first
+    if match.lastindex == 3 and match[3]:
+        full = validate_and_convert(
+            parse_timestamp(match[1] + (match[2] or "") + match[3]),
+            options.format,
+            earliest=options.min,
+            latest=options.max,
+        )
+    if full is None and match.lastindex and match.lastindex >= 2 and match[2]:
+        full = custom_parse(
+            match[1] + match[2], options.format, options.min, options.max
+        )
     return full or convert_date(match[1], "%Y-%m-%d", options.format)
 
 
