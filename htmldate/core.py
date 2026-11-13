@@ -486,7 +486,7 @@ def examine_time_elements(
     elements = tree.findall(".//time")
     if has_plausible_candidates(elements):
         # scan all the tags and look for the newest one
-        found: list[datetime | None] = []
+        found: list[datetime] = []
         for elem in elements:
             datetime_attr = elem.get("datetime", "")
             # go for datetime
@@ -509,11 +509,13 @@ def examine_time_elements(
                         return attempt
                 else:
                     LOGGER.debug("time/datetime found: %s", datetime_attr)
-                    found.append(try_date_expr_opts(datetime_attr, options))
+                    if attempt := try_date_expr_opts(datetime_attr, options):
+                        found.append(attempt)
             # bare text in element
             elif elem.text is not None and len(elem.text) > 6:
                 LOGGER.debug("time/datetime found in text: %s", elem.text)
-                found.append(try_date_expr_opts(elem.text, options))
+                if attempt := try_date_expr_opts(elem.text, options):
+                    found.append(attempt)
         return pick(found, options)
     return None
 
@@ -555,17 +557,15 @@ def search_pattern(
         if options.min.year <= year <= options.max.year:
             normalized[f"{year}-{parts[m].zfill(2)}-{parts[d].zfill(2)}"] += count
     best = select_candidate(normalized, options)
-    if best and not validate_ymd(best, options.min, options.max):
-        # an impossible winner: select again among valid keys only
-        normalized = Counter(
-            {
-                k: n
-                for k, n in normalized.items()
-                if validate_ymd(k, options.min, options.max)
-            }
+    result = validate_ymd(best, options.min, options.max) if best else None
+    if best and result is None:
+        # an impossible or out-of-window winner: select again among valid keys only
+        dates = {k: validate_ymd(k, options.min, options.max) for k in normalized}
+        best = select_candidate(
+            Counter({k: n for k, n in normalized.items() if dates[k]}), options
         )
-        best = select_candidate(normalized, options)
-    return validate_ymd(best, options.min, options.max) if best else None
+        result = dates[best] if best else None
+    return result
 
 
 PAGE_PATTERNS = (
