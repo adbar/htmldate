@@ -1813,3 +1813,31 @@ def test_discard_site_headers():
         f"<html><body><header><h1>Title</h1>{byline}</header><p>text</p></body></html>",
     ):
         assert find_date(doc, extensive_search=False) == "2026-02-06"
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("2019-12-30T05:03-0500", "2019-12-30T05:03:00-0500"),
+        ("2019-12-30T05:03Z", "2019-12-30T05:03:00+0000"),
+        ("2019-12-30 05:03:07 +0100", "2019-12-30T05:03:07+0100"),
+        ("2019-12-30T05:03:07+05", "2019-12-30T05:03:07+0500"),
+        ("2019-12-30T05:03:07,123+01:00", "2019-12-30T05:03:07+0100"),
+        ("2019-12-30T05:03:07 GMT", "2019-12-30T05:03:07+0000"),
+        # not readable as a whole: the date and ISO time of day as before
+        ("2019-12-30 05:03:07Europe\\/Berlin", "2019-12-30T05:03:07"),
+    ],
+)
+def test_json_ld_whole_date_value(value, expected):
+    "The whole JSON-LD value is read, not only the part the time pattern knows."
+    for key, original in (("datePublished", True), ("dateModified", False)):
+        doc = (
+            '<html><head><script type="application/ld+json">'
+            f'{{"@type": "NewsArticle", "{key}": "{value}"}}'
+            "</script></head><body></body></html>"
+        )
+        assert (
+            find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z", original_date=original)
+            == expected
+        )
+        assert find_date(doc, original_date=original) == "2019-12-30"
