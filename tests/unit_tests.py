@@ -1822,9 +1822,9 @@ TZ_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
     "body",
     [
         '<div class="date">Published <time itemprop="datePublished" '
-        'datetime="2026-10-14T15:35:07+11:00">Oct 14, 2026</time></div>',
+        + 'datetime="2026-10-14T15:35:07+11:00">Oct 14, 2026</time></div>',
         '<span class="posted-on"><time class="entry-date" '
-        'datetime="2026-10-14T15:35:07+11:00">14/10/2026</time></span>',
+        + 'datetime="2026-10-14T15:35:07+11:00">14/10/2026</time></span>',
     ],
 )
 def test_date_text_vs_time_datetime(body):
@@ -1851,7 +1851,7 @@ def test_date_text_vs_time_datetime(body):
         doc.replace('datetime="2026-10-14', 'datetime="2026-10-12'),
         doc.replace("T15:35:07+11:00", ""),
         '<html><body><span class="posted-on">14/10/2026</span><p>text</p>'
-        '<time datetime="2026-10-14T15:35:07+11:00">14 Oct</time></body></html>',
+        + '<time datetime="2026-10-14T15:35:07+11:00">14 Oct</time></body></html>',
     ):
         assert (
             find_date(other, outputformat=TZ_FORMAT, original_date=True)
@@ -1863,7 +1863,7 @@ def test_date_text_vs_time_datetime(body):
     "timed",
     [
         '<script type="application/ld+json">'
-        '{"@type":"NewsArticle","datePublished":"2020-08-16T23:40:47Z"}</script>',
+        + '{"@type":"NewsArticle","datePublished":"2020-08-16T23:40:47Z"}</script>',
         '<meta property="article:published_time" content="2020-08-16T23:40:47Z"/>',
         '<meta itemprop="datePublished" content="2020-08-16T23:40:47Z"/>',
     ],
