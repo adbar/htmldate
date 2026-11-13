@@ -15,6 +15,7 @@
 - fix: dates without a day such as "2025-10" no longer take the day from today's date
 - fix: control characters around a `script` or `style` element no longer raise a `ValueError` in fast mode
 - fix: nested elements such as `video > track` no longer stop the removal of unwanted elements
+- feature: Russian month names in text-based extraction (#156)
 - fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0

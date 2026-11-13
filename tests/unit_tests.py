@@ -828,6 +828,17 @@ def test_fast_mode_bare_date():
             assert find_date(doc, extensive_search=ext) == "2020-05-05"
 
 
+def test_russian_month_names():
+    "Russian dates in text, as in issue #156."
+    for text, expected in (
+        ("30 Июля 2015", "2015-07-30"),
+        ("Опубликовано: 12 марта 2021", "2021-03-12"),
+    ):
+        doc = f'<html><body><div class="news-detail"><div class="date">{text}</div><p>Текст новости.</p></div></body></html>'
+        for extensive in (True, False):
+            assert find_date(doc, extensive_search=extensive) == expected, text
+
+
 def test_validate():
     """test internal date validation"""
 
@@ -1098,12 +1109,24 @@ def test_regex_parse():
     de_full = "Januar Jänner Februar Feber März April Mai Juni Juli August September Oktober November Dezember".split()
     tr_full = "Ocak Şubat Mart Nisan Mayıs Haziran Temmuz Ağustos Eylül Ekim Kasım Aralık".split()
     tr_abbr = "Oca Şub Mar Nis May Haz Tem Ağu Eyl Eki Kas Ara".split()
+    # genitive in dates ("12 października"), nominative in month-first formats
+    pl_gen = "stycznia lutego marca kwietnia maja czerwca lipca sierpnia września października listopada grudnia".split()
+    pl_nom = "Styczeń Luty Marzec Kwiecień Maj Czerwiec Lipiec Sierpień Wrzesień Październik Listopad Grudzień".split()
+    # nominative and genitive forms
+    ru_full = "январь января февраль февраля март марта апрель апреля май мая июнь июня июль июля август августа сентябрь сентября октябрь октября ноябрь ноября декабрь декабря".split()
+    for number, month in enumerate(ru_full, 2):
+        expected = datetime.datetime(1998, number // 2, 1)
+        assert regex_parse(f"1 {month} 1998") == expected, month
+        assert regex_parse(f"1 {month.upper()} 1998") == expected, month
+    assert regex_parse("Опубликовано: 12 марта 2021 г.") == datetime.datetime(
+        2021, 3, 12
+    )
     for month in en_full + en_abbr:
         assert regex_parse(f"{month} 1st, 1998") is not None, month
-    for month in de_full + tr_full + tr_abbr:
+    for month in de_full + tr_full + tr_abbr + pl_nom:
         assert regex_parse(f"{month} 1, 1998") is not None, month
     assert regex_parse("1. Okt. 1998") is not None
-    for month in en_full + en_abbr + de_full + tr_full + tr_abbr:
+    for month in en_full + en_abbr + de_full + tr_full + tr_abbr + pl_gen + pl_nom:
         assert regex_parse(f"1 {month} 1998") is not None, month
     # dotted/dotless i
     for month, mnum in [("MAYIS", 5), ("KASIM", 11), ("EKİM", 10), ("Mayis", 5)]:
@@ -1129,10 +1152,48 @@ def test_regex_parse():
     assert regex_parse("31 June 2020") is None
 
 
+def test_polish_dates():
+    "Polish dates: dateparser misses prefixed ones and fast mode never calls it."
+    for text, expected in (
+        ("Opublikowano: 12 października 2025", datetime.datetime(2025, 10, 12)),
+        ("3 marca 2024 r.", datetime.datetime(2024, 3, 3)),
+        ("1 maja 2023", datetime.datetime(2023, 5, 1)),
+        ("Data publikacji: 29 lutego 2024", datetime.datetime(2024, 2, 29)),
+        ("AKTUALIZACJA: 5 WRZEŚNIA 2024", datetime.datetime(2024, 9, 5)),
+        ("10 wrzesnia 2024", datetime.datetime(2024, 9, 10)),
+        ("12 pazdziernika 2025", datetime.datetime(2025, 10, 12)),
+        ("październik 12, 2025", datetime.datetime(2025, 10, 12)),
+        ("15 grudzień 2023", datetime.datetime(2023, 12, 15)),
+        # impossible dates, missing day or year as for other languages
+        ("31 lutego 2024", None),
+        ("29 lutego 2023", None),
+        ("12 października", None),
+        ("październik 2025", None),
+        # no three-letter abbreviations ("lip", "lis", "sie", "sty"): glued words
+        # match by suffix, so they would turn names into dates
+        ("Philip 5, 2020", None),
+        ("Minneapolis 5, 2020", None),
+        ("Rosie 5, 2020", None),
+        ("Dynasty 3, 2021", None),
+    ):
+        assert regex_parse(text) == expected, text
+    doc = '<html><body><p class="date">{}</p></body></html>'
+    for extensive in (True, False):
+        assert (
+            find_date(
+                doc.format("Opublikowano: 12 października 2025"),
+                extensive_search=extensive,
+            )
+            == "2025-10-12"
+        ), extensive
+    # abbreviations are left to dateparser
+    assert find_date(doc.format("12 paź 2025")) == "2025-10-12"
+
+
 def test_month_names_match_dateparser():
     "Every name in MONTHS is a dateparser month name with the same number."
     known = {}
-    for language in ("en", "de", "fr", "id", "tr"):
+    for language in ("en", "de", "fr", "id", "pl", "ru", "tr"):
         info = importlib.import_module(
             f"dateparser.data.date_translation_data.{language}"
         ).info
@@ -1147,6 +1208,42 @@ def test_month_names_match_dateparser():
     # unaccented "aout" is absent from dateparser's French data
     assert set(MONTH_NUMBERS) - set(known) <= {"aout"}
     assert not {k: v for k, v in MONTH_NUMBERS.items() if known.get(k, v) != v}
+
+
+def test_cjk_dates():
+    """Chinese, Japanese and Korean year-month-day separators"""
+    for text, expected in (
+        ("2025年10月12日", "2025-10-12"),
+        ("公開日: 2025年1月5日", "2025-01-05"),
+        ("发布时间：2025年10月12日 10:30", "2025-10-12"),
+        ("게시일: 2025년 10월 12일", "2025-10-12"),
+        ("2025년10월12일", "2025-10-12"),
+    ):
+        assert ymd(custom_parse(text, MIN_DATE, LATEST_POSSIBLE)) == expected
+    for text in (
+        "2025年13月12日",
+        "2025年2月30日",
+        "2025年13月",
+        "2025年",
+        "10月12日",
+        # calendar widgets and placeholders
+        "2026年10月",
+        "2019年12月XX日",
+        # an impossible full date is not read as its month
+        "2025年2月30日 2025/02",
+    ):
+        assert custom_parse(text, MIN_DATE, LATEST_POSSIBLE) is None
+    for tag in ('p class="date"', "time"):
+        doc = f"<html><body><{tag}>公開日: 2025年10月12日</{tag.split()[0]}></body></html>"
+        assert find_date(doc, extensive_search=False) == "2025-10-12"
+        assert find_date(doc) == "2025-10-12"
+    # a placeholder or an archive month does not beat the article date
+    for widget in (
+        '<span class="date">2019年12月XX日</span>',
+        '<ul class="archive"><li>2026年10月</li><li>2026年9月</li></ul>',
+    ):
+        doc = f"<html><body>{widget}<div>2025年10月12日</div></body></html>"
+        assert find_date(doc) == "2025-10-12"
 
 
 def test_external_date_parser():
@@ -1649,3 +1746,70 @@ def test_deferred():
     </head><body></body></html>"""
     assert find_date(htmlstring, deferred_url_extractor=True) == "2017-09-01"
     assert find_date(htmlstring, deferred_url_extractor=False) == "2017-08-30"
+
+
+@pytest.mark.parametrize(
+    "markup",
+    [
+        '<meta property="article:published_time" content="2025-09-30T17-54-24">',
+        '<time datetime="2025-09-30T17-54-24">30 Sep</time>',
+    ],
+)
+def test_dateutil_offset_out_of_range(markup):
+    "A time read as a UTC offset of a day or more is no date with a time zone."
+    doc = f"<html><head></head><body>{markup}<p>text</p></body></html>"
+    assert find_date(doc) == "2025-09-30"
+    assert find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z") == "2025-09-30T00:00:00"
+
+
+def test_external_parser_end_of_local_day():
+    "A time later on the given day is not in the future, the next day is."
+    parser = get_external_parser(datetime.date(2026, 9, 26))
+    assert parser.get_date_data("26th Sep 26, 11:00pm")["date_obj"].year == 2026
+    assert parser.get_date_data("27th Sep 26, 6:00am")["date_obj"].year == 1926
+
+
+def test_discard_nav_menus():
+    "Dates of the stories listed in a navigation menu are not the page's date."
+    menu = (
+        '<header><nav><ul><li><a href="/other">Other story</a>'
+        '<span class="date">23 October 2026</span></li></ul></nav></header>'
+    )
+    doc = (
+        f"<html><body>{menu}<h1>Title</h1>"
+        '<div class="article-byline"><span class="date">6 February 2026</span></div>'
+        "<p>text</p></body></html>"
+    )
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+    # a menu date alone is not taken
+    doc = f"<html><body>{menu}<h1>Title</h1><p>text</p></body></html>"
+    assert find_date(doc, extensive_search=False) is None
+    # nor a <time> element of the menu, read later in the search
+    menu = (
+        '<header><nav><ul><li><a href="/other">Other story</a>'
+        '<time datetime="2026-10-23T08:00:00">23 Oct</time></li></ul></nav></header>'
+    )
+    doc = f"<html><body>{menu}<h1>Title</h1><p>Published 2026-02-06</p></body></html>"
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+
+
+def test_discard_site_headers():
+    "A site header with today's date outside <main> is not the page's date."
+    site = (
+        '<header class="site-header"><a href="/">Home</a>'
+        '<span class="date">23 October 2026</span></header>'
+    )
+    byline = (
+        '<div class="article-byline"><span class="date">6 February 2026</span></div>'
+    )
+    doc = f"<html><body>{site}<main><h1>Title</h1>{byline}<p>text</p></main></body></html>"
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+    # the header of the post itself and a header holding the page title stay
+    for doc in (
+        f"<html><body><article><header>{byline}</header><p>text</p></article></body></html>",
+        f"<html><body><header><h1>Title</h1>{byline}</header><p>text</p></body></html>",
+    ):
+        assert find_date(doc, extensive_search=False) == "2026-02-06"

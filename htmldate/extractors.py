@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections.abc import Iterator
-from datetime import datetime
+from datetime import date, datetime, time
 from functools import lru_cache
 from itertools import islice
 from typing import TYPE_CHECKING
@@ -28,11 +28,12 @@ if TYPE_CHECKING:  # pragma: no cover
 LOGGER = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=None)
-def get_external_parser() -> "DateDataParser":
-    "Lazy import, unused in fast mode."
+@lru_cache(maxsize=2)
+def get_external_parser(today: date | None = None) -> "DateDataParser":
+    "Lazy import, unused in fast mode, dates preferred from before the end of the day."
     from dateparser import DateDataParser  # type: ignore[attr-defined]
 
+    today = today or date.today()
     return DateDataParser(
         languages=None,
         locales=None,
@@ -45,6 +46,7 @@ def get_external_parser() -> "DateDataParser":
             ],
             "PREFER_DATES_FROM": "past",
             "PREFER_LOCALE_DATE_ORDER": True,
+            "RELATIVE_BASE": datetime.combine(today, time.max),
             "RETURN_AS_TIMEZONE_AWARE": False,
             "STRICT_PARSING": True,
         },
@@ -57,8 +59,12 @@ FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
 # discard parts of the webpage
-# archive.org banner inserts
-DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
+# archive.org banner inserts, navigation menus outside footers (dates of other pages),
+# site headers (today's date, recent stories) but not the header of the page's own post
+DISCARD_EXPRESSIONS = XPath(
+    './/div[@id="wm-ipp-base" or @id="wm-ipp"]|.//nav[not(ancestor::footer)]'
+    "|.//header[not(ancestor::article or ancestor::main or ancestor::footer)][not(.//h1)]"
+)
 # not discarded for consistency (see above):
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
@@ -81,6 +87,13 @@ YM_PATTERN = re.compile(
     rf"(?:\D|^)(?:(?P<year>{YEAR_RE})[\-/.](?P<month>{MONTH_RE})|"
     rf"(?P<month2>{MONTH_RE})[\-/.](?P<year2>{YEAR_RE}))(?:\D|$)"
 )
+# Chinese/Japanese 年月日 and Korean 년월일, e.g. 2025年10月12日 and 2025년 10월 12일;
+# the day suffix is optional since trailing non-digits are cut from element text
+CJK_DAY_END = r"(?:\s?[日일]|(?!\d))"
+CJK_YMD_PATTERN = re.compile(
+    rf"(?:\D|^)(?P<year>{YEAR_RE})\s?[年년]\s?(?P<month>{MONTH_RE})\s?[月월]\s?"
+    rf"(?P<day>{DAY_RE}){CJK_DAY_END}"
+)
 
 # any word from its start, MONTH_NUMBERS decides
 MONTH_WORD = r"(?<![^\W\d_])[^\W\d_]{3,}"
@@ -102,20 +115,148 @@ YMD_TIME_RE = rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})"
 JSON_MODIFIED = re.compile(rf'"dateModified": ?"{YMD_TIME_RE}?', re.I)
 JSON_PUBLISHED = re.compile(rf'"datePublished": ?"{YMD_TIME_RE}?', re.I)
 
-# English, French, German, Indonesian and Turkish month names
+# English, French, German, Indonesian, Polish, Russian and Turkish month names
 MONTHS = [
-    ("jan", "januar", "jänner", "january", "januari", "janvier", "ocak", "oca"),
-    ("feb", "februar", "feber", "february", "februari", "février", "şubat", "şub"),
-    ("mar", "mär", "märz", "march", "maret", "mart", "mars"),
-    ("apr", "april", "avril", "nisan", "nis"),
-    ("may", "mai", "mei", "mayıs"),
-    ("jun", "juni", "june", "juin", "haziran", "haz"),
-    ("jul", "juli", "july", "juillet", "temmuz", "tem"),
-    ("aug", "august", "agustus", "ağustos", "ağu", "aout"),
-    ("sep", "september", "septembre", "eylül", "eyl"),
-    ("oct", "oktober", "october", "octobre", "okt", "ekim", "eki"),
-    ("nov", "november", "kasım", "kas", "novembre"),
-    ("dec", "dez", "dezember", "december", "desember", "décembre", "aralık", "ara"),
+    (
+        "jan",
+        "januar",
+        "jänner",
+        "january",
+        "januari",
+        "janvier",
+        "ocak",
+        "oca",
+        "stycznia",
+        "styczeń",
+        "январь",
+        "января",
+    ),
+    (
+        "feb",
+        "februar",
+        "feber",
+        "february",
+        "februari",
+        "février",
+        "şubat",
+        "şub",
+        "lutego",
+        "luty",
+        "февраль",
+        "февраля",
+    ),
+    (
+        "mar",
+        "mär",
+        "märz",
+        "march",
+        "maret",
+        "mart",
+        "mars",
+        "marca",
+        "marzec",
+        "март",
+        "марта",
+    ),
+    (
+        "apr",
+        "april",
+        "avril",
+        "nisan",
+        "nis",
+        "kwietnia",
+        "kwiecień",
+        "апрель",
+        "апреля",
+    ),
+    ("may", "mai", "mei", "mayıs", "maja", "maj", "май", "мая"),
+    (
+        "jun",
+        "juni",
+        "june",
+        "juin",
+        "haziran",
+        "haz",
+        "czerwca",
+        "czerwiec",
+        "июнь",
+        "июня",
+    ),
+    (
+        "jul",
+        "juli",
+        "july",
+        "juillet",
+        "temmuz",
+        "tem",
+        "lipca",
+        "lipiec",
+        "июль",
+        "июля",
+    ),
+    (
+        "aug",
+        "august",
+        "agustus",
+        "ağustos",
+        "ağu",
+        "aout",
+        "sierpnia",
+        "sierpień",
+        "август",
+        "августа",
+    ),
+    (
+        "sep",
+        "september",
+        "septembre",
+        "eylül",
+        "eyl",
+        "września",
+        "wrzesnia",
+        "wrzesień",
+        "сентябрь",
+        "сентября",
+    ),
+    (
+        "oct",
+        "oktober",
+        "october",
+        "octobre",
+        "okt",
+        "ekim",
+        "eki",
+        "października",
+        "pazdziernika",
+        "październik",
+        "октябрь",
+        "октября",
+    ),
+    (
+        "nov",
+        "november",
+        "kasım",
+        "kas",
+        "novembre",
+        "listopada",
+        "listopad",
+        "ноябрь",
+        "ноября",
+    ),
+    (
+        "dec",
+        "dez",
+        "dezember",
+        "december",
+        "desember",
+        "décembre",
+        "aralık",
+        "ara",
+        "grudnia",
+        "grudzień",
+        "декабрь",
+        "декабря",
+    ),
 ]
 
 
@@ -237,7 +378,7 @@ def _build_dmy(day: int, month: int, year: int) -> datetime:
 
 def regex_parse(string: str) -> datetime | None:
     """Try full-text parse for date elements using a series of regular expressions
-    with particular emphasis on English, French, German and Turkish"""
+    with particular emphasis on the languages in MONTHS"""
     # https://github.com/vi3k6i5/flashtext ?
     # multilingual day-month-year + American English patterns
     pos = 0
@@ -305,8 +446,11 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
                     candidate = dateutil_parse(string, default=DATEUTIL_DEFAULT)
+                    # "T17-54-24" gives an offset of -54 hours, which datetime refuses
+                    candidate.utcoffset()
                 except (OverflowError, TypeError, ValueError):
                     LOGGER.debug("dateutil parsing error: %s", string)
+                    candidate = None
         yield candidate
 
     # 2. Try YYYYMMDD, use regex
@@ -335,8 +479,21 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 )
         except ValueError:
             LOGGER.debug("regex value error: %s", match[0])
-    # 4. Try the Y-M and M-Y patterns, not as a fallback for a full date
-    elif match := YM_PATTERN.search(string):
+
+    # 4. Try the CJK year-month-day pattern
+    cjk_match = CJK_YMD_PATTERN.search(string)
+    if cjk_match:
+        try:
+            yield datetime(
+                int(cjk_match.group("year")),
+                int(cjk_match.group("month")),
+                int(cjk_match.group("day")),
+            )
+        except ValueError:
+            LOGGER.debug("CJK regex value error: %s", cjk_match[0])
+
+    # 5. Try the Y-M and M-Y patterns, not as a fallback for a full date
+    if not (match or cjk_match) and (match := YM_PATTERN.search(string)):
         try:
             year = match.group("year") or match.group("year2")
             month = match.group("month") or match.group("month2")
@@ -344,7 +501,7 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         except ValueError:
             LOGGER.debug("Y-M value error: %s", match[0])
 
-    # 5. Try the other regex pattern
+    # 6. Try the other regex pattern
     yield regex_parse(string)
 
 
@@ -364,7 +521,7 @@ def external_date_parser(string: str) -> datetime | None:
     "Parse the string with dateparser."
     LOGGER.debug("send to external parser: %s", string)
     try:
-        return get_external_parser().get_date_data(string)["date_obj"]
+        return get_external_parser(date.today()).get_date_data(string)["date_obj"]
     # 2 types of errors possible
     except (OverflowError, ValueError) as err:  # pragma: no cover
         LOGGER.error("external parser error: %s %s", string, err)
