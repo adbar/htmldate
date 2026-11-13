@@ -8,11 +8,14 @@
 - fix: same date with different separators counted together in all page text patterns ("01.02.2020", "01/02/2020", "2020-02-01")
 - fix: 8-digit dates such as "20200201" sorted by date, not by the preceding character
 - fix: a rejected year no longer hides an adjacent date in page text patterns ("/1987/10/09/2019-02-15")
-- fix: an impossible date such as "2018-13-27" no longer hides the other candidates in page text patterns
+- fix: an impossible or out-of-range date such as "2018-13-27" no longer hides the other candidates in page text patterns
+- fix: a `min_date` in year 1 no longer raises a `ValueError`
+- fix: a full date that is impossible ("31.02.2020") or after `max_date` is no longer read as the first day of its month in metadata and elements (still the case in the page text search)
 - fix: an out-of-range `data-utime` no longer hides valid dates in `abbr` elements
 - fix: dates without a day such as "2025-10" no longer take the day from today's date
 - fix: control characters around a `script` or `style` element no longer raise a `ValueError` in fast mode
 - fix: nested elements such as `video > track` no longer stop the removal of unwanted elements
+- feature: Russian month names in text-based extraction (#156)
 - fix: prefer JSON-LD dates over less reliable header fallbacks (#195)
 
 ## 1.11.0

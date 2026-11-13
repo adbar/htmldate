@@ -24,8 +24,8 @@ def validate(
         return None
     try:
         valid = earliest.timestamp() <= dateobject.timestamp() <= latest.timestamp()
-    # Windows: no timestamps for naive dates before 1970
-    except OSError:
+    # no timestamps for naive dates before 1970 (Windows) or in year 1
+    except (OSError, ValueError):
         valid = (
             earliest.replace(tzinfo=None)
             <= dateobject.replace(tzinfo=None)
@@ -83,10 +83,9 @@ def pick(dates: Iterable[datetime | None], options: Extractor) -> datetime | Non
     found = [d for d in dates if d is not None]
     if not found:
         return None
-    best = (min if options.original else max)(
+    return (min if options.original else max)(
         found, key=lambda d: d.replace(tzinfo=None)
     )
-    return validate(best, options.min, options.max)
 
 
 def check_date_input(date_object: datetime | str | None, default: datetime) -> datetime:
