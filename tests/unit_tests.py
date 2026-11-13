@@ -1813,3 +1813,86 @@ def test_discard_site_headers():
         f"<html><body><header><h1>Title</h1>{byline}</header><p>text</p></body></html>",
     ):
         assert find_date(doc, extensive_search=False) == "2026-02-06"
+
+
+TZ_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        '<div class="date">Published <time itemprop="datePublished" '
+        + 'datetime="2026-10-14T15:35:07+11:00">Oct 14, 2026</time></div>',
+        '<span class="posted-on"><time class="entry-date" '
+        + 'datetime="2026-10-14T15:35:07+11:00">14/10/2026</time></span>',
+    ],
+)
+def test_date_text_vs_time_datetime(body):
+    "A date in the text must not hide the time of day of a <time> of the same day."
+    doc = f"<html><body>{body}<p>text</p></body></html>"
+    for extensive in (True, False):
+        assert (
+            find_date(
+                doc,
+                outputformat=TZ_FORMAT,
+                original_date=True,
+                extensive_search=extensive,
+            )
+            == "2026-10-14T15:35:07+1100"
+        )
+    assert find_date(doc, original_date=True) == "2026-10-14"
+    assert (
+        find_date(doc, outputformat="%Y-%m-%d %H:%M %Z", original_date=True)
+        == "2026-10-14 15:35 UTC+11:00"
+    )
+    # never another day, nothing to gain from a <time> without time of day,
+    # nor from a <time> outside the element
+    for other in (
+        doc.replace('datetime="2026-10-14', 'datetime="2026-10-12'),
+        doc.replace("T15:35:07+11:00", ""),
+        '<html><body><span class="posted-on">14/10/2026</span><p>text</p>'
+        + '<time datetime="2026-10-14T15:35:07+11:00">14 Oct</time></body></html>',
+    ):
+        assert (
+            find_date(other, outputformat=TZ_FORMAT, original_date=True)
+            == "2026-10-14T00:00:00"
+        )
+
+
+@pytest.mark.parametrize(
+    "timed",
+    [
+        '<script type="application/ld+json">'
+        + '{"@type":"NewsArticle","datePublished":"2020-08-16T23:40:47Z"}</script>',
+        '<meta property="article:published_time" content="2020-08-16T23:40:47Z"/>',
+        '<meta itemprop="datePublished" content="2020-08-16T23:40:47Z"/>',
+    ],
+)
+def test_header_date_only_vs_timestamp(timed):
+    "A date without time of day must not hide a timestamp of the same day."
+    for dateonly in (
+        '<meta name="pdate" content="20200816"/>',
+        '<meta property="article:published_time" content="2020-08-16"/>',
+    ):
+        doc = f"<html><head>{dateonly}{timed}</head><body><p>text</p></body></html>"
+        for extensive in (True, False):
+            assert (
+                find_date(
+                    doc,
+                    outputformat=TZ_FORMAT,
+                    original_date=True,
+                    extensive_search=extensive,
+                )
+                == "2020-08-16T23:40:47+0000"
+            )
+        assert find_date(doc, original_date=True) == "2020-08-16"
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M %Z", original_date=True)
+            == "2020-08-16 23:40 UTC"
+        )
+        # never another day
+        doc = doc.replace("2020-08-16T23", "2020-08-17T01")
+        assert (
+            find_date(doc, outputformat=TZ_FORMAT, original_date=True)
+            == "2020-08-16T00:00:00"
+        )
