@@ -2460,6 +2460,13 @@ def test_dateutil_offset_out_of_range(markup):
     assert find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z") == "2025-09-30T00:00:00"
 
 
+def test_external_parser_end_of_local_day():
+    "A time later on the given day is not in the future, the next day is."
+    parser = get_external_parser(datetime.date(2026, 9, 26))
+    assert parser.get_date_data("26th Sep 26, 11:00pm")["date_obj"].year == 2026
+    assert parser.get_date_data("27th Sep 26, 6:00am")["date_obj"].year == 1926
+
+
 def test_discard_nav_menus():
     "Dates of the stories listed in a navigation menu are not the page's date."
     menu = (

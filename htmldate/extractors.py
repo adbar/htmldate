@@ -7,7 +7,7 @@ import logging
 import re
 
 from collections.abc import Iterator
-from datetime import datetime
+from datetime import date, datetime, time
 from functools import lru_cache
 from itertools import islice
 from typing import TYPE_CHECKING
@@ -28,11 +28,17 @@ if TYPE_CHECKING:  # pragma: no cover
 LOGGER = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=None)
-def get_external_parser() -> "DateDataParser":
-    "Lazy import, unused in fast mode."
+@lru_cache(maxsize=2)
+def get_external_parser(today: date | None = None) -> "DateDataParser":
+    """Lazy import, unused in fast mode.
+
+    Dates are preferred from the past of the end of the given local day, like the
+    default max_date: a time later today is not in the future, so a two-digit year
+    is not set back a century.
+    """
     from dateparser import DateDataParser  # type: ignore[attr-defined]
 
+    today = today or date.today()
     return DateDataParser(
         languages=None,
         locales=None,
@@ -45,6 +51,7 @@ def get_external_parser() -> "DateDataParser":
             ],
             "PREFER_DATES_FROM": "past",
             "PREFER_LOCALE_DATE_ORDER": True,
+            "RELATIVE_BASE": datetime.combine(today, time.max),
             "RETURN_AS_TIMEZONE_AWARE": False,
             "STRICT_PARSING": True,
         },
@@ -516,7 +523,7 @@ def _external_date(string: str) -> datetime | None:
     "Parse the string with dateparser."
     LOGGER.debug("send to external parser: %s", string)
     try:
-        return get_external_parser().get_date_data(string)["date_obj"]
+        return get_external_parser(date.today()).get_date_data(string)["date_obj"]
     # 2 types of errors possible
     except (OverflowError, ValueError) as err:  # pragma: no cover
         LOGGER.error("external parser error: %s %s", string, err)
