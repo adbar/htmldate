@@ -64,8 +64,12 @@ FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
 # discard parts of the webpage
-# archive.org banner inserts
-DISCARD_EXPRESSIONS = XPath('.//div[@id="wm-ipp-base" or @id="wm-ipp"]')
+# archive.org banner inserts, navigation menus outside footers (dates of other pages),
+# site headers (today's date, recent stories) but not the header of the page's own post
+DISCARD_EXPRESSIONS = XPath(
+    './/div[@id="wm-ipp-base" or @id="wm-ipp"]|.//nav[not(ancestor::footer)]'
+    "|.//header[not(ancestor::article or ancestor::main or ancestor::footer)][not(.//h1)]"
+)
 # not discarded for consistency (see above):
 # .//footer
 # .//*[(self::div or self::section)][@id="footer" or @class="footer"]
