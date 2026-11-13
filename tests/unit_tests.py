@@ -2458,3 +2458,49 @@ def test_dateutil_offset_out_of_range(markup):
     doc = f"<html><head></head><body>{markup}<p>text</p></body></html>"
     assert find_date(doc) == "2025-09-30"
     assert find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z") == "2025-09-30T00:00:00"
+
+
+def test_discard_nav_menus():
+    "Dates of the stories listed in a navigation menu are not the page's date."
+    menu = (
+        '<header><nav><ul><li><a href="/other">Other story</a>'
+        '<span class="date">23 October 2026</span></li></ul></nav></header>'
+    )
+    doc = (
+        f"<html><body>{menu}<h1>Title</h1>"
+        '<div class="article-byline"><span class="date">6 February 2026</span></div>'
+        "<p>text</p></body></html>"
+    )
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+    # a menu date alone is not taken
+    doc = f"<html><body>{menu}<h1>Title</h1><p>text</p></body></html>"
+    assert find_date(doc, extensive_search=False) is None
+    # nor a <time> element of the menu, read later in the search
+    menu = (
+        '<header><nav><ul><li><a href="/other">Other story</a>'
+        '<time datetime="2026-10-23T08:00:00">23 Oct</time></li></ul></nav></header>'
+    )
+    doc = f"<html><body>{menu}<h1>Title</h1><p>Published 2026-02-06</p></body></html>"
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+
+
+def test_discard_site_headers():
+    "A site header with today's date outside <main> is not the page's date."
+    site = (
+        '<header class="site-header"><a href="/">Home</a>'
+        '<span class="date">23 October 2026</span></header>'
+    )
+    byline = (
+        '<div class="article-byline"><span class="date">6 February 2026</span></div>'
+    )
+    doc = f"<html><body>{site}<main><h1>Title</h1>{byline}<p>text</p></main></body></html>"
+    for extensive in (True, False):
+        assert find_date(doc, extensive_search=extensive) == "2026-02-06"
+    # the header of the post itself and a header holding the page title stay
+    for doc in (
+        f"<html><body><article><header>{byline}</header><p>text</p></article></body></html>",
+        f"<html><body><header><h1>Title</h1>{byline}</header><p>text</p></body></html>",
+    ):
+        assert find_date(doc, extensive_search=False) == "2026-02-06"
