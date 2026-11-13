@@ -276,6 +276,14 @@ def _parse_yyyymmdd(digits: str) -> datetime:
     return datetime(int(digits[:4]), int(digits[4:6]), int(digits[6:8]))
 
 
+# Python 3.10: fromisoformat reads "+00:00" but not "Z" or "+0000"
+ISO_OFFSET_PATTERN = re.compile(r"(:\d\d(?:\.\d+)?)(?:Z|([+-]\d\d)(\d\d))$")
+
+
+def _iso_offset(match: re.Match[str]) -> str:
+    return f"{match[1]}{match[2]}:{match[3]}" if match[2] else f"{match[1]}+00:00"
+
+
 def _date_candidates(string: str) -> Iterator[datetime | None]:
     "Yield datetime candidates for custom_parse, in decreasing priority order."
     # 1. shortcut
@@ -290,7 +298,9 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
         # b. much faster than extensive parsing
         else:
             try:
-                candidate = datetime.fromisoformat(string)
+                candidate = datetime.fromisoformat(
+                    ISO_OFFSET_PATTERN.sub(_iso_offset, string)
+                )
             except ValueError:
                 LOGGER.debug("not an ISO date string: %s", string)
                 try:
@@ -325,10 +335,8 @@ def _date_candidates(string: str) -> Iterator[datetime | None]:
                 )
         except ValueError:
             LOGGER.debug("regex value error: %s", match[0])
-
-    # 4. Try the Y-M and M-Y patterns (one alternative matches; other groups are None)
-    match = YM_PATTERN.search(string)
-    if match:
+    # 4. Try the Y-M and M-Y patterns, not as a fallback for a full date
+    elif match := YM_PATTERN.search(string):
         try:
             year = match.group("year") or match.group("year2")
             month = match.group("month") or match.group("month2")

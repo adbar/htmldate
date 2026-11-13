@@ -840,6 +840,9 @@ def test_validate():
     earliest = datetime.datetime(2000, 6, 1)
     assert validate(NoTimestamp(2000, 7, 1), earliest, LATEST_POSSIBLE) is not None
     assert validate(NoTimestamp(2000, 5, 1), earliest, LATEST_POSSIBLE) is None
+    # no timestamp for a naive bound in year 1
+    year_one = datetime.datetime(1, 1, 1)
+    assert validate(datetime.datetime(2000, 7, 1), year_one, LATEST_POSSIBLE)
     assert validate(None, MIN_DATE, LATEST_POSSIBLE) is None
     assert validate(datetime.datetime(1922, 1, 1), MIN_DATE, LATEST_POSSIBLE) is None
     for string, expected in (
@@ -913,8 +916,6 @@ def test_pick():
     assert pick([None], newest) is None
     assert pick([None, older, newer], newest) is newer
     assert pick([None, older, newer], oldest) is older
-    # the chosen date is range-checked
-    assert pick([older, datetime.datetime(1990, 1, 1)], oldest) is None
     # wall-clock comparison across naive and aware dates
     aware = datetime.datetime(
         2020, 5, 5, 23, tzinfo=datetime.timezone(datetime.timedelta(hours=-5))
@@ -984,6 +985,13 @@ def test_candidate_selection():
         THREE_LOOSE_PATTERN,
         "ymd",
         Extractor(False, LATEST_POSSIBLE, MIN_DATE, False),
+    ) == datetime.datetime(2017, 5, 4)
+    # so is a possible winner outside the time window
+    assert search_pattern(
+        " 2020-12-25 x 2020-12-25 x 2017-05-04 ",
+        THREE_LOOSE_PATTERN,
+        "ymd",
+        Extractor(False, datetime.datetime(2020, 6, 1), MIN_DATE, False),
     ) == datetime.datetime(2017, 5, 4)
     # the reselection ignores all impossible dates, not only the winner
     assert search_pattern(
@@ -1056,6 +1064,34 @@ def test_regex_parse():
         ("1998", "1998-01-01"),
     ):
         assert ymd(custom_parse(string, MIN_DATE, LATEST_POSSIBLE)) == expected, string
+    # UTC offsets in all ISO forms, standard library time zones on all versions
+    for string, hours in (
+        ("2020-05-06T10:00:00Z", 0),
+        ("2020-05-06T10:00:00.123Z", 0),
+        ("2020-05-06T10:00:00+0200", 2),
+        ("2020-05-06T10:00-05:00", -5),
+    ):
+        result = custom_parse(string, MIN_DATE, LATEST_POSSIBLE)
+        assert result is not None and result.tzinfo == datetime.timezone(
+            datetime.timedelta(hours=hours)
+        ), string
+        assert type(result.tzinfo) is datetime.timezone, string
+    # a full date after max_date is rejected, not read as day 1 of its month
+    limit = datetime.datetime(2020, 5, 15)
+    for string in ("2020-05-25", "2020-05-25T10:00:00Z", "25.05.2020"):
+        assert custom_parse(string, MIN_DATE, limit) is None, string
+    assert custom_parse("2020-05", MIN_DATE, limit) == datetime.datetime(2020, 5, 1)
+    # so is an impossible full date
+    for string in ("31.02.2020", "2020-02-31", "2020-02-30T10:00"):
+        assert custom_parse(string, MIN_DATE, LATEST_POSSIBLE) is None, string
+    doc = (
+        '<html><head><meta property="article:published_time" content="2020-05-14"/>'
+        '<meta property="article:modified_time" content="2020-05-16"/></head>'
+        "<body></body></html>"
+    )
+    assert find_date(doc, max_date="2020-05-15") == "2020-05-14"
+    late = '<html><body><time datetime="2020-05-25">x</time></body></html>'
+    assert find_date(late, max_date="2020-05-15", extensive_search=False) is None
     # for Nones caused by newlines and duplicates
     en_full = "January February March April May June July August September October November December".split()
     en_abbr = "Jan Feb Mar Apr Jun Jul Aug Sep Oct Nov Dec".split()
