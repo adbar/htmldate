@@ -9,7 +9,7 @@ import re
 from collections import Counter
 from collections.abc import Sized
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from functools import partial
 
 from lxml.etree import Element
@@ -269,8 +269,29 @@ def examine_elements(
         for text in [elem.text_content(), elem.get("title", "")]:
             attempt = examine_text(text, options)
             if attempt:
-                return attempt
+                return add_element_time(elem, attempt, options)
     return None
+
+
+def has_time(value: datetime) -> bool:
+    "More than a calendar day: a time of day or a time zone."
+    return value.tzinfo is not None or value.time() != time.min
+
+
+def same_day_with_time(value: datetime, day: datetime) -> bool:
+    "The value gives a time of day on the same day."
+    return has_time(value) and value.date() == day.date()
+
+
+def add_element_time(elem: HtmlElement, day: datetime, options: Extractor) -> datetime:
+    "The element's own <time datetime> may give the time of day of its text."
+    if not has_time(day):
+        timeelem = elem if elem.tag == "time" else elem.find(".//time[@datetime]")
+        if timeelem is not None:
+            attempt = try_date_expr_opts(timeelem.get("datetime"), options)
+            if attempt is not None and same_day_with_time(attempt, day):
+                return attempt
+    return day
 
 
 def examine_header(
@@ -316,6 +337,8 @@ def examine_header_dates(
 
     """
     headerdate, reserve = None, None
+    # a date without time of day waits for a timestamp of the same day
+    dateonly = None
     tryfunc = partial(try_date_expr_opts, options=options)
     # loop through all meta elements
     for elem in tree.iterfind(".//meta"):
@@ -397,9 +420,14 @@ def examine_header_dates(
                     reserve = attempt or reserve
         # exit loop
         if headerdate is not None:
-            break
+            if dateonly is None and not has_time(headerdate):
+                dateonly, headerdate = headerdate, None
+            elif dateonly is None or same_day_with_time(headerdate, dateonly):
+                break
+            else:
+                headerdate = None
     # return values
-    return headerdate, reserve
+    return headerdate or dateonly, reserve
 
 
 def examine_abbr_elements(
@@ -690,6 +718,10 @@ def date_from_tree(
     # date when the original one was requested): only use it if JSON-LD, which
     # can carry the requested date explicitly, has nothing to offer
     header_result, header_reserve = examine_header_dates(tree, options)
+    if header_result is not None and not has_time(header_result):
+        json_result = json_search(tree, options)
+        if json_result is not None and same_day_with_time(json_result, header_result):
+            header_result = json_result
     result = header_result or json_search(tree, options) or header_reserve
     if result is not None:
         return result
