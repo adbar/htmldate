@@ -21,7 +21,7 @@ from charset_normalizer import from_bytes
 from lxml.etree import strip_elements
 from lxml.html import HtmlElement, HTMLParser, fromstring
 
-from .settings import MAX_FILE_SIZE
+from .settings import MAX_FILE_SIZE, MAX_SEGMENT_LEN
 
 LOGGER = logging.getLogger(__name__)
 
@@ -41,6 +41,10 @@ HTML_PARSER = HTMLParser(
 
 DOCTYPE_TAG = re.compile("^< ?! ?DOCTYPE.+?/ ?>", re.I)
 FAULTY_HTML = re.compile(r"(<html.*?)\s*/>", re.I)
+# a cut inside a date or time token, followed by a digit, e.g. "1|5", "7-|1" or "5|.0"
+TOKEN_CHARS = re.compile(r"(?:[^\W_]|[./:-])[./:-]?\d")
+# characters outside of tokens and ISO date/time separators
+TOKEN_BREAK = re.compile(r"[^\w./:-]|_|(?<=\d)T(?=\d)")
 
 
 @dataclass(slots=True)
@@ -225,3 +229,15 @@ def clean_html(tree: HtmlElement, elemlist: list[str]) -> HtmlElement:
 def trim_text(string: str) -> str:
     "Remove superfluous space and normalize remaining space."
     return " ".join(string.split())
+
+
+def cut_segment(text: str, limit: int = MAX_SEGMENT_LEN) -> str:
+    "Shorten text to the limit without cutting through a date or other token."
+    if len(text) <= limit or not TOKEN_CHARS.match(text, limit - 1):
+        return text[:limit]
+    # drop the partial token instead of parsing half a date,
+    # keep a full date if only its time part is cut
+    # (+2: a "T" at the limit needs to see the digit after it)
+    breaks = TOKEN_BREAK.finditer(text, 0, limit + 2)
+    idx = max((m.start() for m in breaks if m.start() <= limit), default=0)
+    return text[:idx]
