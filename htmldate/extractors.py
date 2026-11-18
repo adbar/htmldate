@@ -113,8 +113,8 @@ TIME_TZ_RE = r"[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:?[0-
 YMD_TIME_RE = rf"({YEAR_RE}-{MONTH_RE}-{DAY_RE})({TIME_TZ_RE})"
 
 # groups: date, ISO time of day if any, rest of the string value
-JSON_MODIFIED = re.compile(rf'"dateModified": ?"{YMD_TIME_RE}?([^"]*)"', re.I)
-JSON_PUBLISHED = re.compile(rf'"datePublished": ?"{YMD_TIME_RE}?([^"]*)"', re.I)
+JSON_MODIFIED = re.compile(rf'"dateModified": ?"{YMD_TIME_RE}?([^"]*)', re.I)
+JSON_PUBLISHED = re.compile(rf'"datePublished": ?"{YMD_TIME_RE}?([^"]*)', re.I)
 
 # English, French, German, Indonesian, Polish, Russian and Turkish month names
 MONTHS = [

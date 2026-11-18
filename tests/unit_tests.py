@@ -47,6 +47,7 @@ from htmldate.extractors import (
     external_date_parser,
     get_external_parser,
     idiosyncrasies_search,
+    json_search,
     regex_parse,
     try_date_expr,
     FAST_PREPEND,
@@ -2000,3 +2001,14 @@ def test_json_ld_whole_date_value(value, expected):
             == expected
         )
         assert find_date(doc, original_date=original) == "2019-12-30"
+
+
+def test_json_ld_unclosed_date_value():
+    "A JSON-LD date value without its closing quote is still read."
+    rest = "lorem ipsum dolor sit amet " * 4000
+    tree = html.fromstring(
+        '<html><head><script type="application/ld+json">'
+        f'{{"@type": "NewsArticle", "datePublished": "2019-12-30T05:03:07 {rest}'
+        "</script></head><body></body></html>"
+    )
+    assert json_search(tree, OPTIONS) == datetime.datetime(2019, 12, 30, 5, 3, 7)
