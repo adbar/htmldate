@@ -18,7 +18,7 @@ from lxml.etree import XPath
 from lxml.html import HtmlElement
 
 # own
-from .settings import CACHE_SIZE
+from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
 from .utils import Extractor, cut_segment, remove_if_attached, trim_text
 from .validators import correct_year, validate, validate_ymd
 
@@ -57,6 +57,45 @@ FAST_TAGS = ("div", "h2", "h3", "h4", "li", "p", "span", "time", "ul")
 # further tests needed: b, em, font, i, strong
 FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
+
+# the short line right before or after the headline (dateline, byline), not script or
+# style text: the element holding the text out of inline markup, measured whole, or the
+# text's own element when that one also holds a headline (a header with the h1 in it)
+INLINE_TAGS = (
+    "a",
+    "abbr",
+    "b",
+    "cite",
+    "em",
+    "i",
+    "mark",
+    "small",
+    "span",
+    "strong",
+    "sub",
+    "sup",
+    "time",
+    "u",
+)
+BLOCK_ANCESTOR = (
+    "ancestor::*[not(" + " or ".join(f"self::{t}" for t in INLINE_TAGS) + ")][1]"
+)
+HEADLINE_TEXT = (
+    "::text()[normalize-space()][not(ancestor::script or ancestor::style)][1]"
+)
+SHORT = f"[string-length(normalize-space()) < {MAX_SEGMENT_LEN}]"
+HEADLINE_LINES = (
+    f"{HEADLINE_TEXT}/{BLOCK_ANCESTOR}[not(.//h1)]{SHORT}",
+    f"{HEADLINE_TEXT}[{BLOCK_ANCESTOR}[.//h1]]/parent::*{SHORT}",
+)
+# only the first headlines: preceding:: and following:: walk the whole page
+HEADLINE_NEIGHBOURS = XPath(
+    "|".join(
+        f"(.//h1)[position() <= 10]/{axis}{line}"
+        for axis in ("preceding", "following")
+        for line in HEADLINE_LINES
+    )
+)
 
 # discard parts of the webpage
 # archive.org banner inserts, navigation menus outside footers (dates of other pages),

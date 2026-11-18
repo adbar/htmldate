@@ -98,6 +98,7 @@ MOCK_PAGES = {
     "https://www.adac.de/rund-ums-fahrzeug/tests/kindersicherheit/kindersitztest-2018/": "adac.de.kindersitztest.html",
     "http://web.archive.org/web/20210916140120/https://www.kath.ch/die-insel-der-klosterzoeglinge/": "archive.org.kath.ch.html",
     "https://www.mozilla.org/en-US/security/advisories/mfsa2024-17/": "mozilla.org.mfsa2024-17.html",
+    "https://www.ausleisure.com.au/news/club-car-and-pga-of-australia-renew-partnership": "ausleisure.com.au-club-car.html",
 }
 
 
@@ -497,7 +498,7 @@ def test_exact_date():
             ),
             extensive_search=False,
         )
-    ) is None
+    ) == "2019-12-02"
     assert (
         find_date(
             load_mock_page(
@@ -536,6 +537,11 @@ def test_exact_date():
         )
         == "2021-07-13"
     )
+
+    # dateline right before the headline, related stories further down
+    url = "https://www.ausleisure.com.au/news/club-car-and-pga-of-australia-renew-partnership"
+    assert find_date(load_mock_page(url), extensive_search=False) == "2026-10-19"
+    assert find_date(load_mock_page(url), extensive_search=True) == "2026-10-19"
 
 
 def test_approximate_date():
