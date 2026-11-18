@@ -1896,3 +1896,21 @@ def test_header_date_only_vs_timestamp(timed):
             find_date(doc, outputformat=TZ_FORMAT, original_date=True)
             == "2020-08-16T00:00:00"
         )
+
+
+def test_headline_dateline():
+    "A short line right before or after the headline gives the date of the page."
+    related = '<a href="/other"><div>April 6th, 2025</div></a>'
+    for markup in (
+        "<div>October 19th, 2025</div><h1>Title</h1>",
+        "<h1>Title</h1><p>19 October 2025 | News</p>",
+    ):
+        doc = f"<html><body><main>{markup}<p>text</p>{related}</main></body></html>"
+        for extensive in (True, False):
+            assert find_date(doc, extensive_search=extensive) == "2025-10-19"
+    # not the first sentence of the text
+    doc = (
+        "<html><body><h1>Title</h1><p>On March 11, 2020, the World Health "
+        "Organization declared a pandemic.</p></body></html>"
+    )
+    assert find_date(doc, extensive_search=False) is None

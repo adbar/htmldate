@@ -58,6 +58,15 @@ FAST_TAGS = ("div", "h2", "h3", "h4", "li", "p", "span", "time", "ul")
 FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
+# page title, headline and the short line right before or after it (dateline, byline)
+HEADLINE_LINE = (
+    "::text()[normalize-space()][1]"
+    f"[string-length(normalize-space()) < {MAX_SEGMENT_LEN}]/.."
+)
+HEADLINE_EXPRESSIONS = XPath(
+    f".//title|.//h1|.//h1/preceding{HEADLINE_LINE}|.//h1/following{HEADLINE_LINE}"
+)
+
 # discard parts of the webpage
 # archive.org banner inserts, navigation menus outside footers (dates of other pages),
 # site headers (today's date, recent stories) but not the header of the page's own post
