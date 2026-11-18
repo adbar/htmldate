@@ -39,7 +39,7 @@ from .settings import (
     MAX_SEGMENT_LEN,
     MIN_SEGMENT_LEN,
 )
-from .utils import Extractor, clean_html, load_html, trim_text
+from .utils import Extractor, clean_html, cut_segment, load_html, trim_text
 from .validators import (
     correct_year,
     get_min_date,
@@ -208,7 +208,7 @@ def examine_text(
     text = trim_text(text)
     if len(text) <= MIN_SEGMENT_LEN:
         return None
-    text = NON_DIGITS_REGEX.sub("", text[:MAX_SEGMENT_LEN])
+    text = NON_DIGITS_REGEX.sub("", cut_segment(text))
     return try_date_expr_opts(text, options)
 
 

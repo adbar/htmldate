@@ -19,7 +19,7 @@ from lxml.html import HtmlElement
 
 # own
 from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
-from .utils import Extractor, remove_if_attached, trim_text
+from .utils import Extractor, cut_segment, remove_if_attached, trim_text
 from .validators import correct_year, validate, validate_ymd
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -549,7 +549,7 @@ def try_date_expr(
         return None
 
     # trim
-    string = trim_text(string)[:MAX_SEGMENT_LEN]
+    string = cut_segment(trim_text(string))
 
     # formal constraint: 4 to 18 digits
     if not string or not 4 <= sum(map(str.isdigit, string)) <= 18:
