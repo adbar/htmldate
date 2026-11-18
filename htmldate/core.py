@@ -27,7 +27,7 @@ from .extractors import (
     try_date_expr_opts,
     FAST_TAGS,
     FREE_TEXT_EXPRESSIONS,
-    HEADLINE_EXPRESSIONS,
+    HEADLINE_NEIGHBOURS,
     DAY_RE,
     MONTH_RE,
     YEAR_RE,
@@ -748,7 +748,7 @@ def date_from_tree(
 
     result = (
         examine_elements(date_candidates(search_tree, extensive_search), options)
-        or examine_elements(HEADLINE_EXPRESSIONS(search_tree), options)
+        or examine_elements(search_tree.xpath(".//title|.//h1"), options)
         or examine_time_elements(search_tree, options)
     )
     if result is not None:
@@ -763,6 +763,7 @@ def date_from_tree(
         pattern_search(htmlstring, TIMESTAMP_PATTERN, options)
         or img_search(search_tree, options)
         or idiosyncrasies_search(htmlstring, options)
+        or examine_elements(HEADLINE_NEIGHBOURS(search_tree), options)
     )
     if result is not None:
         return result

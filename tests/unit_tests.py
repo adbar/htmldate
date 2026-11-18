@@ -1990,3 +1990,26 @@ def test_headline_dateline():
         "Organization declared a pandemic.</p></body></html>"
     )
     assert find_date(doc, extensive_search=False) is None
+
+
+def test_headline_dateline_after_timestamps():
+    "A full timestamp elsewhere on the page wins over the date-only line next to the headline."
+    doc = (
+        "<html><body><main><div>October 19th, 2025</div><h1>Title</h1><p>text</p>"
+        "<p>Posted 2025-10-19 10:30:00</p></main></body></html>"
+    )
+    for extensive in (True, False):
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M", extensive_search=extensive)
+            == "2025-10-19 10:30"
+        )
+
+
+def test_headline_dateline_many_headlines():
+    "A dated title is still read on a page with many headlines."
+    headlines = "<h1>Headline</h1><p>Some text here</p>" * 600
+    doc = (
+        "<html><head><title>Storm hits coast, 19 October 2025</title></head>"
+        f"<body>{headlines}</body></html>"
+    )
+    assert find_date(doc, extensive_search=False) == "2025-10-19"

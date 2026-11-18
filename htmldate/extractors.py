@@ -58,13 +58,15 @@ FAST_TAGS = ("div", "h2", "h3", "h4", "li", "p", "span", "time", "ul")
 FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
-# page title, headline and the short line right before or after it (dateline, byline)
+# the short line right before or after the headline (dateline, byline), not script or
+# style text; only the first headlines, preceding:: and following:: walk the whole page
 HEADLINE_LINE = (
-    "::text()[normalize-space()][1]"
+    "::text()[normalize-space()][not(ancestor::script or ancestor::style)][1]"
     f"[string-length(normalize-space()) < {MAX_SEGMENT_LEN}]/.."
 )
-HEADLINE_EXPRESSIONS = XPath(
-    f".//title|.//h1|.//h1/preceding{HEADLINE_LINE}|.//h1/following{HEADLINE_LINE}"
+HEADLINE_NEIGHBOURS = XPath(
+    f"(.//h1)[position() <= 10]/preceding{HEADLINE_LINE}"
+    f"|(.//h1)[position() <= 10]/following{HEADLINE_LINE}"
 )
 
 # discard parts of the webpage
