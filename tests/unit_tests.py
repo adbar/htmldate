@@ -47,6 +47,7 @@ from htmldate.extractors import (
     external_date_parser,
     get_external_parser,
     idiosyncrasies_search,
+    json_search,
     regex_parse,
     try_date_expr,
     FAST_PREPEND,
@@ -1972,3 +1973,42 @@ def test_segment_cut_keeps_date(text, expected, extensive):
 def test_segment_cut_try_date_expr(text, expected):
     "The segment parser never reads a date cut at the maximum segment length."
     assert try_date_expr(text, False, MIN_DATE, LATEST_POSSIBLE) == expected
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("2019-12-30T05:03-0500", "2019-12-30T05:03:00-0500"),
+        ("2019-12-30T05:03Z", "2019-12-30T05:03:00+0000"),
+        ("2019-12-30 05:03:07 +0100", "2019-12-30T05:03:07+0100"),
+        ("2019-12-30T05:03:07+05", "2019-12-30T05:03:07+0500"),
+        ("2019-12-30T05:03:07,123+01:00", "2019-12-30T05:03:07+0100"),
+        ("2019-12-30T05:03:07 GMT", "2019-12-30T05:03:07+0000"),
+        # not readable as a whole: the date and ISO time of day as before
+        ("2019-12-30 05:03:07Europe\\/Berlin", "2019-12-30T05:03:07"),
+    ],
+)
+def test_json_ld_whole_date_value(value, expected):
+    "The whole JSON-LD value is read, not only the part the time pattern knows."
+    for key, original in (("datePublished", True), ("dateModified", False)):
+        doc = (
+            '<html><head><script type="application/ld+json">'
+            f'{{"@type": "NewsArticle", "{key}": "{value}"}}'
+            "</script></head><body></body></html>"
+        )
+        assert (
+            find_date(doc, outputformat="%Y-%m-%dT%H:%M:%S%z", original_date=original)
+            == expected
+        )
+        assert find_date(doc, original_date=original) == "2019-12-30"
+
+
+def test_json_ld_unclosed_date_value():
+    "A JSON-LD date value without its closing quote is still read."
+    rest = "lorem ipsum dolor sit amet " * 4000
+    tree = html.fromstring(
+        '<html><head><script type="application/ld+json">'
+        f'{{"@type": "NewsArticle", "datePublished": "2019-12-30T05:03:07 {rest}'
+        "</script></head><body></body></html>"
+    )
+    assert json_search(tree, OPTIONS) == datetime.datetime(2019, 12, 30, 5, 3, 7)
