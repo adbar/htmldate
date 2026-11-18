@@ -1980,6 +1980,11 @@ def test_headline_dateline():
     for markup in (
         "<div>October 19th, 2025</div><h1>Title</h1>",
         "<h1>Title</h1><p>19 October 2025 | News</p>",
+        # the year in inline markup belongs to the same line
+        "<div>October 19th, <span>2025</span></div><h1>Title</h1>",
+        "<h1>Title</h1><p>19 October <span>2025</span></p>",
+        # a header holding the h1: the date's own element is the line
+        "<header><a>Home</a> › <span>19.10.25</span> <h1>Title</h1></header>",
     ):
         doc = f"<html><body><main>{markup}<p>text</p>{related}</main></body></html>"
         for extensive in (True, False):
@@ -1988,6 +1993,12 @@ def test_headline_dateline():
     doc = (
         "<html><body><h1>Title</h1><p>On March 11, 2020, the World Health "
         "Organization declared a pandemic.</p></body></html>"
+    )
+    assert find_date(doc, extensive_search=False) is None
+    # the whole line is measured, not only its text up to inline markup
+    doc = (
+        "<html><body><h1>Title</h1><p>On March 11, 2020, <em>the World Health "
+        "Organization</em> declared a pandemic.</p></body></html>"
     )
     assert find_date(doc, extensive_search=False) is None
 
