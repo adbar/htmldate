@@ -1899,6 +1899,82 @@ def test_header_date_only_vs_timestamp(timed):
 
 
 @pytest.mark.parametrize(
+    "text, expected",
+    [
+        # the 52 character cut falls inside the day: "2019-07-1|5"
+        ("Written by Jane Doe, senior correspondent, 2019-07-15", "2019-07-15"),
+        # same, with a timestamp following the date
+        (
+            "Written by Jane Doe, senior correspondent, 2019-07-15T10:00:00",
+            "2019-07-15",
+        ),
+        # the cut falls right before the day: "2019-07-|15"
+        ("Written by Jane Doe, senior correspondents, 2019-07-15", "2019-07-15"),
+        # short control text, no cut
+        ("Published 2019-07-15", "2019-07-15"),
+        # text without spaces, the cut falls inside the words after the date
+        (
+            "发布时间：2019年7月15日来源新华社记者报道今日我国多个地区迎来"
+            + "新一轮降雨天气过程气象部门提醒公众注意出行安全",
+            "2019-07-15",
+        ),
+    ],
+)
+@pytest.mark.parametrize("extensive", [False, True])
+def test_segment_cut_keeps_date(text, expected, extensive):
+    "A date straddling the maximum segment length is not truncated."
+    doc = f'<html><body><div class="date">{text}</div></body></html>'
+    assert find_date(doc, extensive_search=extensive) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        # half a date is discarded, not read as "2019-07-1"
+        ("Written by Jane Doe, senior correspondent, 2019-07-15", None),
+        ("Written by Jane Doe, senior correspondents, 2019-07-15", None),
+        # the cut falls inside the time, the full date is kept
+        (
+            "Written by Jane Doe, senior editor, 2019-07-15T10:00:00+02:00",
+            datetime.datetime(2019, 7, 15),
+        ),
+        (
+            "Written by Jane Doe, senior editors, 2019-07-15T10:00:00+02:00",
+            datetime.datetime(2019, 7, 15),
+        ),
+        # the cut falls right before or after the date/time separator
+        (
+            "Written by Jane Doe, the senior editors, 2019-07-15T10:00:00",
+            datetime.datetime(2019, 7, 15),
+        ),
+        (
+            "Written by Jane Doe, senior correspondent 2019-07-15T10:00:00",
+            datetime.datetime(2019, 7, 15),
+        ),
+        # the date ends right at the cut, followed by punctuation
+        (
+            "Written by Jane Doe, senior correspondent 2019-07-15, updated",
+            datetime.datetime(2019, 7, 15),
+        ),
+        (
+            "Written by Jane Doe, senior correspondent 2019-07-15. Updated",
+            datetime.datetime(2019, 7, 15),
+        ),
+        # the cut falls inside the second date of a range
+        (
+            "Written by Jane Doe, senior editor 2019-07-15–2019-07-16",
+            datetime.datetime(2019, 7, 15),
+        ),
+        # no break before the cut date, it is not read as "2019-07-1"
+        ("x" * 43 + "2019-07-15", None),
+    ],
+)
+def test_segment_cut_try_date_expr(text, expected):
+    "The segment parser never reads a date cut at the maximum segment length."
+    assert try_date_expr(text, False, MIN_DATE, LATEST_POSSIBLE) == expected
+
+
+@pytest.mark.parametrize(
     "value,expected",
     [
         ("2019-12-30T05:03-0500", "2019-12-30T05:03:00-0500"),
