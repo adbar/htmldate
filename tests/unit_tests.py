@@ -1920,10 +1920,11 @@ def test_header_date_only_vs_timestamp(timed):
         ),
     ],
 )
-def test_segment_cut_keeps_date(text, expected):
+@pytest.mark.parametrize("extensive", [False, True])
+def test_segment_cut_keeps_date(text, expected, extensive):
     "A date straddling the maximum segment length is not truncated."
     doc = f'<html><body><div class="date">{text}</div></body></html>'
-    assert find_date(doc, extensive_search=False) == expected
+    assert find_date(doc, extensive_search=extensive) == expected
 
 
 @pytest.mark.parametrize(
@@ -1964,6 +1965,8 @@ def test_segment_cut_keeps_date(text, expected):
             "Written by Jane Doe, senior editor 2019-07-15–2019-07-16",
             datetime.datetime(2019, 7, 15),
         ),
+        # no break before the cut date, it is not read as "2019-07-1"
+        ("x" * 43 + "2019-07-15", None),
     ],
 )
 def test_segment_cut_try_date_expr(text, expected):

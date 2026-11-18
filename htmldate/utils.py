@@ -239,5 +239,5 @@ def cut_segment(text: str, limit: int = MAX_SEGMENT_LEN) -> str:
     # keep a full date if only its time part is cut
     # (+2: a "T" at the limit needs to see the digit after it)
     breaks = TOKEN_BREAK.finditer(text, 0, limit + 2)
-    idx = max((m.start() for m in breaks if m.start() <= limit), default=-1)
-    return text[:idx] if idx > 0 else text[:limit]
+    idx = max((m.start() for m in breaks if m.start() <= limit), default=0)
+    return text[:idx]
