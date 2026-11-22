@@ -48,6 +48,7 @@ from htmldate.extractors import (
     get_external_parser,
     idiosyncrasies_search,
     json_search,
+    parse_timestamp,
     regex_parse,
     try_date_expr,
     FAST_PREPEND,
@@ -2003,23 +2004,16 @@ def test_json_ld_whole_date_value(value, expected):
         assert find_date(doc, original_date=original) == "2019-12-30"
 
 
-def test_json_ld_unclosed_date_value(monkeypatch):
+def test_json_ld_unclosed_date_value():
     "A JSON-LD date value without its closing quote is still read, its long rest is not parsed."
-    import htmldate.extractors
-
-    parsed = []
-    original = htmldate.extractors.parse_timestamp
-    monkeypatch.setattr(
-        htmldate.extractors,
-        "parse_timestamp",
-        lambda value: parsed.append(value) or original(value),
-    )
     rest = "lorem ipsum dolor sit amet " * 4000
     tree = html.fromstring(
         '<html><head><script type="application/ld+json">'
         f'{{"@type": "NewsArticle", "datePublished": "2019-12-30T05:03:07 {rest}'
         "</script></head><body></body></html>"
     )
-    assert json_search(tree, OPTIONS) == datetime.datetime(2019, 12, 30, 5, 3, 7)
+    with patch("htmldate.extractors.parse_timestamp", wraps=parse_timestamp) as parser:
+        assert json_search(tree, OPTIONS) == datetime.datetime(2019, 12, 30, 5, 3, 7)
     # the date and its time are parsed, never the long rest
+    parsed = [call.args[0] for call in parser.call_args_list]
     assert parsed and all("lorem" not in value for value in parsed)
