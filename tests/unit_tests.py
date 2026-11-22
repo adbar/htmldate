@@ -1985,6 +1985,14 @@ def test_headline_dateline():
         "<h1>Title</h1><p>19 October <span>2025</span></p>",
         # a header holding the h1: the date's own element is the line
         "<header><a>Home</a> › <span>19.10.25</span> <h1>Title</h1></header>",
+        # a short date in a row with a long sibling
+        (
+            "<h1>Title</h1><section><em>📅 October 19, 2025</em> <em>🔖 Politics, Economy, "
+            "Elections, Parliament, Government, Budget, Taxes, Health, Education, "
+            "Housing, Climate, Energy, Transport, Defence</em></section>"
+        ),
+        # a date glued to the next inline text
+        "<h1>Title</h1><section><b>19.10.2025</b><b>175 Min.</b></section>",
     ):
         doc = f"<html><body><main>{markup}<p>text</p>{related}</main></body></html>"
         for extensive in (True, False):

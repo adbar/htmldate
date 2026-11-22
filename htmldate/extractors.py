@@ -59,8 +59,8 @@ FAST_PREPEND = ".//*[" + " or ".join(f"self::{t}" for t in FAST_TAGS) + "]"
 FREE_TEXT_EXPRESSIONS = XPath(FAST_PREPEND + "/text()")
 
 # the short line right before or after the headline (dateline, byline), not script or
-# style text: the element holding the text out of inline markup, measured whole, or the
-# text's own element when that one also holds a headline (a header with the h1 in it)
+# style text: the element holding the text out of inline markup, measured whole, and the
+# text's own element, alone short in a long row or glued to the next inline text
 INLINE_TAGS = (
     "a",
     "abbr",
@@ -80,13 +80,13 @@ INLINE_TAGS = (
 BLOCK_ANCESTOR = (
     "ancestor::*[not(" + " or ".join(f"self::{t}" for t in INLINE_TAGS) + ")][1]"
 )
-HEADLINE_TEXT = (
-    "::text()[normalize-space()][not(ancestor::script or ancestor::style)][1]"
-)
+# script and style text sits directly in its element: parent:: is enough, and ancestor::
+# would be tested on every text node of the page before [1]
+HEADLINE_TEXT = "::text()[normalize-space()][not(parent::script or parent::style)][1]"
 SHORT = f"[string-length(normalize-space()) < {MAX_SEGMENT_LEN}]"
 HEADLINE_LINES = (
     f"{HEADLINE_TEXT}/{BLOCK_ANCESTOR}[not(.//h1)]{SHORT}",
-    f"{HEADLINE_TEXT}[{BLOCK_ANCESTOR}[.//h1]]/parent::*{SHORT}",
+    f"{HEADLINE_TEXT}/parent::*{SHORT}",
 )
 # only the first headlines: preceding:: and following:: walk the whole page
 HEADLINE_NEIGHBOURS = XPath(
