@@ -2011,6 +2011,27 @@ def test_headline_dateline():
     assert find_date(doc, extensive_search=False) is None
 
 
+@pytest.mark.parametrize(
+    "line",
+    [
+        "<li>发布时间：<span>2026-09-22 04:07</span></li>",
+        "<li>发布时间：2026-09-22 04:07</li>",
+        "<p>Published <span>2026-09-22 04:07</span></p>",
+    ],
+)
+def test_headline_dateline_time(line):
+    "A line next to the headline with a label before its date keeps the time of day."
+    doc = (
+        f"<html><body><main><h1>Title</h1><ul>{line}</ul>"
+        "<p>Some text of the story here.</p></main></body></html>"
+    )
+    for extensive in (True, False):
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M", extensive_search=extensive)
+            == "2026-09-22 04:07"
+        )
+
+
 def test_headline_dateline_after_timestamps():
     "A full timestamp elsewhere on the page wins over the date-only line next to the headline."
     doc = (

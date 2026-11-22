@@ -295,6 +295,35 @@ def add_element_time(elem: HtmlElement, day: datetime, options: Extractor) -> da
     return day
 
 
+# where a date can start inside a line, after its label ("发布时间：", "Published")
+DATE_START = re.compile(r"\d")
+
+
+def examine_headline_neighbours(
+    tree: HtmlElement, options: Extractor
+) -> datetime | None:
+    """The date of the short line next to the headline. Read whole, a line with a
+    label gives the day only: its own parts may give the time of day of that day,
+    e.g. <li>发布时间：<span>2026-09-22 04:07</span></li>."""
+    lines = HEADLINE_NEIGHBOURS(tree)
+    if not has_plausible_candidates(lines):
+        return None
+    for line in lines:
+        day = examine_elements([line], options)
+        if day is None:
+            continue
+        if not has_time(day):
+            for piece in line.itertext():
+                start = DATE_START.search(piece)
+                if start is None:
+                    continue
+                attempt = try_date_expr_opts(piece[start.start() :].strip(), options)
+                if attempt is not None and same_day_with_time(attempt, day):
+                    return attempt
+        return day
+    return None
+
+
 def examine_header(
     tree: HtmlElement,
     options: Extractor,
@@ -763,7 +792,7 @@ def date_from_tree(
         pattern_search(htmlstring, TIMESTAMP_PATTERN, options)
         or img_search(search_tree, options)
         or idiosyncrasies_search(htmlstring, options)
-        or examine_elements(HEADLINE_NEIGHBOURS(search_tree), options)
+        or examine_headline_neighbours(search_tree, options)
     )
     if result is not None:
         return result
