@@ -1972,3 +1972,84 @@ def test_segment_cut_keeps_date(text, expected, extensive):
 def test_segment_cut_try_date_expr(text, expected):
     "The segment parser never reads a date cut at the maximum segment length."
     assert try_date_expr(text, False, MIN_DATE, LATEST_POSSIBLE) == expected
+
+
+def test_headline_dateline():
+    "A short line right before or after the headline gives the date of the page."
+    related = '<a href="/other"><div>April 6th, 2025</div></a>'
+    for markup in (
+        "<div>October 19th, 2025</div><h1>Title</h1>",
+        "<h1>Title</h1><p>19 October 2025 | News</p>",
+        # the year in inline markup belongs to the same line
+        "<div>October 19th, <span>2025</span></div><h1>Title</h1>",
+        "<h1>Title</h1><p>19 October <span>2025</span></p>",
+        # a header holding the h1: the date's own element is the line
+        "<header><a>Home</a> › <span>19.10.25</span> <h1>Title</h1></header>",
+        # a short date in a row with a long sibling
+        (
+            "<h1>Title</h1><section><em>📅 October 19, 2025</em> <em>🔖 Politics, Economy, "
+            "Elections, Parliament, Government, Budget, Taxes, Health, Education, "
+            "Housing, Climate, Energy, Transport, Defence</em></section>"
+        ),
+        # a date glued to the next inline text
+        "<h1>Title</h1><section><b>19.10.2025</b><b>175 Min.</b></section>",
+    ):
+        doc = f"<html><body><main>{markup}<p>text</p>{related}</main></body></html>"
+        for extensive in (True, False):
+            assert find_date(doc, extensive_search=extensive) == "2025-10-19"
+    # not the first sentence of the text
+    doc = (
+        "<html><body><h1>Title</h1><p>On March 11, 2020, the World Health "
+        "Organization declared a pandemic.</p></body></html>"
+    )
+    assert find_date(doc, extensive_search=False) is None
+    # the whole line is measured, not only its text up to inline markup
+    doc = (
+        "<html><body><h1>Title</h1><p>On March 11, 2020, <em>the World Health "
+        "Organization</em> declared a pandemic.</p></body></html>"
+    )
+    assert find_date(doc, extensive_search=False) is None
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "<li>发布时间：<span>2026-09-22 04:07</span></li>",
+        "<li>发布时间：2026-09-22 04:07</li>",
+        "<p>Published <span>2026-09-22 04:07</span></p>",
+    ],
+)
+def test_headline_dateline_time(line):
+    "A line next to the headline with a label before its date keeps the time of day."
+    doc = (
+        f"<html><body><main><h1>Title</h1><ul>{line}</ul>"
+        "<p>Some text of the story here.</p></main></body></html>"
+    )
+    for extensive in (True, False):
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M", extensive_search=extensive)
+            == "2026-09-22 04:07"
+        )
+
+
+def test_headline_dateline_after_timestamps():
+    "A full timestamp elsewhere on the page wins over the date-only line next to the headline."
+    doc = (
+        "<html><body><main><div>October 19th, 2025</div><h1>Title</h1><p>text</p>"
+        "<p>Posted 2025-10-19 10:30:00</p></main></body></html>"
+    )
+    for extensive in (True, False):
+        assert (
+            find_date(doc, outputformat="%Y-%m-%d %H:%M", extensive_search=extensive)
+            == "2025-10-19 10:30"
+        )
+
+
+def test_headline_dateline_many_headlines():
+    "A dated title is still read on a page with many headlines."
+    headlines = "<h1>Headline</h1><p>Some text here</p>" * 600
+    doc = (
+        "<html><head><title>Storm hits coast, 19 October 2025</title></head>"
+        f"<body>{headlines}</body></html>"
+    )
+    assert find_date(doc, extensive_search=False) == "2025-10-19"
