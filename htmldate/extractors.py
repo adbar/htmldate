@@ -18,7 +18,7 @@ from lxml.etree import XPath
 from lxml.html import HtmlElement
 
 # own
-from .settings import CACHE_SIZE
+from .settings import CACHE_SIZE, MAX_SEGMENT_LEN
 from .utils import Extractor, cut_segment, remove_if_attached, trim_text
 from .validators import correct_year, validate, validate_ymd
 
@@ -606,8 +606,9 @@ def pattern_search(
         return None
     LOGGER.debug("regex found: %s %s", date_pattern, match[0])
     # group 3 (JSON): the value goes on after the part TIME_TZ_RE knows,
-    # e.g. "2023-07-07 16:13:20 +0100": read it whole first
-    if match.lastindex == 3 and match[3]:
+    # e.g. "2023-07-07 16:13:20 +0100": read it whole first, when the rest is
+    # short (a long or unclosed value would keep the parser busy for seconds)
+    if match.lastindex == 3 and 0 < len(match[3]) < MAX_SEGMENT_LEN:
         whole = parse_timestamp(match[1] + (match[2] or "") + match[3])
         if whole is not None and validate(whole, options.min, options.max):
             return whole
