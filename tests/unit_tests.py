@@ -150,6 +150,13 @@ def test_input():
     assert find_date("<" * 100) is None
     assert find_date("<html></html>", verbose=True) is None
     assert find_date("<html><body>\u0008this\xdf\n\u001f+\uffff</body></html>") is None
+    htmldoc = '<html><body><svg></svg><span class="entry-date">July 12th, 2016</span></body></html>'
+    assert find_date(htmldoc.encode("utf-8")) == "2016-07-12"
+    # a tree given by the caller is not cleaned in place
+    mytree = html.fromstring(htmldoc)
+    before = etree.tostring(mytree)
+    assert find_date(mytree) == "2016-07-12"
+    assert etree.tostring(mytree) == before
 
     # min and max date output
     assert get_min_date("2020-02-20").date() == datetime.date(2020, 2, 20)

@@ -46,6 +46,7 @@ MOCK_PAGES = {
     "https://www.austria.info/": "austria.info.html",
     "https://www.befifty.de/home/2017/7/12/unter-uns-montauk": "befifty.montauk.html",
     "https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa": "beltz.de.didakta.html",
+    "https://www.bfs.de/SharedDocs/Pressemitteilungen/BfS/DE/2022/001.html": "bfs.de.pressemitteilung-2022-001.html",
     "https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673": "channelpartner.de.berufe.html",
     "https://www.creativecommons.at/faircoin-hackathon": "creativecommons.at.faircoin.html",
     "https://www.deutschland.de/en": "deutschland.de.en.html",
@@ -53,6 +54,7 @@ MOCK_PAGES = {
     "https://www.facebook.com/visitaustria/": "facebook.com.visitaustria.html",
     "https://www.gnu.org/licenses/gpl-3.0.en.html": "gnu.org.gpl.html",
     "https://www.goodform.ch/blog/schattiges_plaetzchen": "goodform.ch.blog.html",
+    "https://www.gov.uk/government/publications/open-standards-principles": "gov.uk.open-standards-principles.html",
     "https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529": "horizont.net.html",
     "https://www.intel.com/content/www/us/en/legal/terms-of-use.html": "intel.com.tos.html",
     "https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/": "pferde.projekte.de.html",
@@ -708,6 +710,21 @@ def test_readme_examples():
         )
         == "2018-06-28"
     )
+    govuk = load_mock_page(
+        "https://www.gov.uk/government/publications/open-standards-principles"
+    )
+    assert find_date(govuk) == "2018-04-05"
+    assert find_date(govuk, original_date=True) == "2013-04-09"
+    assert find_date(govuk, outputformat="%d %B %Y") == "05 April 2018"
+    assert (
+        find_date(govuk, outputformat="%Y-%m-%dT%H:%M:%S%z")
+        == "2018-04-05T10:46:37+0100"
+    )
+    bfs = load_mock_page(
+        "https://www.bfs.de/SharedDocs/Pressemitteilungen/BfS/DE/2022/001.html"
+    )
+    assert find_date(bfs) == "2022-01-25"
+    assert find_date(bfs, extensive_search=False) is None
     precise_date_html = """
         <!doctype html> <html lang="en-CA" class="no-js"> <head> <link rel="canonical" href="https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/"/> <meta property="article:published_time" content="2022-10-20T18:45:00+00:00"/><meta property="article:modified_time" content="2022-10-20T18:35:08+00:00"/> <script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#webpage","url":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/","name":"3 Stable Stocks I'd Buy if the Market Tanks Further | The Motley Fool Canada","isPartOf":{"@id":"https://www.fool.ca/#website"},"datePublished":"2022-10-20T18:45:00+00:00","dateModified":"2022-10-20T18:35:08+00:00","description":"Dividend aristocrats contain stable stocks that any investor should consider, but these three offer the best chance at future growth as well.","breadcrumb":{"@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#breadcrumb"},"inLanguage":"en-CA"},{"@type":"NewsArticle","@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#article","isPartOf":{"@id":"https://www.fool.ca/2022/10/20/3-stable-stocks-id-buy-if-the-market-tanks-further/#webpage"},"author":{"@id":"https://www.fool.ca/#/schema/person/e0d452bd1e82135f310295e7dc650aca"},"headline":"3 Stable Stocks I&#8217;d Buy if the Market Tanks Further","datePublished":"2022-10-20T18:45:00+00:00","dateModified":"2022-10-20T18:35:08+00:00"}]}</script> </head> <body class="post-template-default single single-post postid-1378278 single-format-standard mega-menu-main-menu-2020 mega-menu-footer-2020" data-has-main-nav="true"> <span class="posted-on">Published <time class="entry-date published" datetime="2022-10-20T14:45:00-04:00">October 20, 2:45 pm EDT</time></span> </body> </html>
     """

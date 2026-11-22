@@ -1,3 +1,4 @@
 # version required
 sphinx>=9.1.0
+shibuya>=2026.7.12
 # htmldate itself is installed from the repo root (see .readthedocs.yaml)
