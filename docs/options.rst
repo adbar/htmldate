@@ -52,7 +52,8 @@ Overview
 Input
 -----
 
-``find_date`` accepts an HTML document as a string or as bytes, an already parsed LXML tree, or a URL.
+``find_date`` accepts an HTML document as a string or as bytes, an element parsed with ``lxml.html`` (``HtmlElement``), or a URL.
+An ``ElementTree`` from ``lxml.html.parse()`` needs ``.getroot()`` first.
 A string starting with ``http`` and without spaces is treated as a URL and downloaded.
 
 .. code-block:: python
@@ -99,7 +100,8 @@ The fast mode skips this step: it outputs fewer dates but they are more often co
 
 Both modes read dates in markup.
 In date elements, both recognize month names in English, French, German, Indonesian, Polish, Russian and Turkish, as well as year-month-day forms in Chinese, Japanese and Korean.
-Only the extensive mode reads dates in the running text.
+In running text, the fast mode only reads ISO dates such as ``2021-03-15`` and labelled dates such as ``Published on 15.03.2021``.
+The extensive mode also reads unlabelled forms such as ``15.03.2021`` and month names there.
 It also uses `dateparser <https://github.com/scrapinghub/dateparser>`_ and thus recognizes further languages such as Spanish, Italian, Dutch or Portuguese.
 
 
@@ -142,7 +144,7 @@ Date bounds
 -----------
 
 Dates outside of the range defined by ``min_date`` and ``max_date`` are discarded.
-Both take a ``datetime`` object or a string in ISO 8601 format.
+Both take a ``datetime`` object or a date string in ``YYYY-MM-DD`` format.
 By default, dates before 1995 and after the end of the current day are ignored.
 
 .. code-block:: python
@@ -158,7 +160,8 @@ On the command-line, use ``--mindate`` and ``--maxdate`` with dates in ``YYYY-MM
 URL
 ---
 
-A complete date in the URL (year, month and day) is used first, it is often reliable and much faster to extract.
+A complete date in the URL (year, month and day) is used first.
+It is often reliable and much faster to extract.
 If the ``url`` parameter is not set, the canonical link of the page (``<link rel="canonical">``) is used if present.
 
 .. code-block:: python
@@ -185,14 +188,15 @@ It raises a ``ValueError`` if a URL given as input cannot be downloaded, and a `
     ...     result = None  # download failed
 
 On the command-line, nothing is written to standard output if no date is found, errors go to standard error.
-In batch mode, the result is written as ``None`` on the line of the URL.
+If the URL given with ``-u`` cannot be downloaded, the exit status is 1.
+In batch mode, the result is written as ``None`` on the line of the URL, also for a failed download, and processing continues.
 
 
 Logging
 -------
 
 ``verbose=True`` calls ``logging.basicConfig`` with the ``DEBUG`` level to show each step of the extraction.
-In an application with its own logging configuration, raise the level of the ``htmldate`` logger only:
+In an application with its own logging configuration, set only the ``htmldate`` logger to ``DEBUG``:
 
 .. code-block:: python
 
@@ -216,7 +220,8 @@ In long-running processes, clearing them from time to time releases memory:
 Settings
 --------
 
-The values in ``settings.py`` are read when the package is imported, assigning new values afterwards has no effect.
+The values in ``settings.py`` are read when the package is imported.
+Assigning new values afterwards has no effect.
 They are listed here for reference.
 Use ``min_date`` and ``max_date`` to change the date range.
 
@@ -237,4 +242,4 @@ From a clone of the repository:
     $ pip install -e ".[dev]"
     $ pytest
 
-To run the evaluation, see the `evaluation page <evaluation.html>`_.
+To run the evaluation, see the :doc:`evaluation page <evaluation>`.

@@ -21,7 +21,7 @@ Institutional users
 - `Media Cloud platform <https://mediacloud.org>`_ for media analysis through its `metadata-lib <https://github.com/mediacloud/metadata-lib>`_ package
 - Google Research's `FinanceHarness <https://github.com/google-research/google-research/tree/master/finance_harness>`_ which dates every article of its corpus to enforce point-in-time access
 - The National Library of Norway's `maalfrid_toolkit <https://github.com/NationalLibraryOfNorway/maalfrid_toolkit>`_ which dates crawled public sector documents for the Målfrid project on Bokmål and Nynorsk usage
-- The Internet Archive's `sandcrawler <https://github.com/internetarchive/sandcrawler>`_ which crawls and processes the scholarly web for the `Fatcat catalog <https://fatcat.wiki/>`_ of research publications
+- The Internet Archive's `sandcrawler <https://github.com/internetarchive/sandcrawler>`_ which crawls and processes the scholarly web for the Fatcat catalog of research publications
 - `SciencesPo médialab <https://medialab.sciencespo.fr>`_ through its `Minet <https://github.com/medialab/minet>`_ webmining package
 
 

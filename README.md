@@ -66,8 +66,8 @@ Htmldate examines markup and text, from the most to the least reliable
 sources, and stops at the first valid date:
 
 1.  **URL**: a complete date in the URL or in the canonical link.
-2.  **Header markup**: `meta` and `link` elements, including [Open Graph
-    protocol](http://ogp.me/) attributes, then JSON-LD structured data.
+2.  **Header markup**: `meta` elements, including [Open Graph
+    protocol](https://ogp.me/) attributes, then JSON-LD structured data.
 3.  **Document structure**: `abbr` and `time` elements, elements whose
     attributes suggest a date (e.g. `entry-date`), titles.
 4.  **Patterns in the code**: timestamps, image file names and
@@ -101,7 +101,7 @@ with Python 3.10 upwards. It can notably be installed with `pip` (`pip3`
 where applicable) from the PyPI package repository:
 
 -   `pip install htmldate`
--   (optionally) `pip install htmldate[speed]`
+-   (optionally) `pip install "htmldate[speed]"`
 
 The last version to support Python 3.6 and 3.7 is `htmldate==1.8.1`; for
 Python 3.8 and 3.9 use the `1.9.x` series.

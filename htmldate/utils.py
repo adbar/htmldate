@@ -161,7 +161,7 @@ def fromstring_bytes(htmlobject: str) -> HtmlElement | None:
 
 def load_html(htmlobject: bytes | str | HtmlElement) -> HtmlElement | None:
     """Load object given as input and validate its type
-    (accepted: lxml.html tree, bytestring and string)
+    (accepted: ``lxml.html.HtmlElement``, bytes, string or URL string)
     """
     # use tree directly
     if isinstance(htmlobject, HtmlElement):

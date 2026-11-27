@@ -86,7 +86,7 @@ How it works
 ``htmldate`` examines markup and text, from the most to the least reliable sources, and stops at the first valid date:
 
 1. **URL**: a complete date in the URL, given with the ``url`` parameter or found in the canonical link
-2. **Header markup**: ``meta`` and ``link`` elements, including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies, then JSON-LD structured data
+2. **Header markup**: ``meta`` elements, including `Open Graph protocol <https://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies, then JSON-LD structured data
 3. **Document structure**: ``abbr`` elements, elements whose class, id or itemprop suggest a date (e.g. ``entry-date`` or ``byline``), the title and ``h1`` headings, then ``time`` elements
 4. **Patterns in the code**: timestamps, dates in image file names and CMS-specific expressions
 5. **Text**: in ``extensive`` mode, all text segments are parsed and a disambiguation algorithm determines the most probable date, with copyright and year mentions as a last resort. The ``fast`` mode only accepts a year-month-day date at this stage
@@ -96,7 +96,7 @@ The library outputs either the last update (the default) or the original publica
 
 Markup-based extraction is multilingual by nature.
 Text-based refinements support English, French, German, Indonesian, Polish, Russian, Turkish and Chinese, Japanese and Korean dates in year-month-day order.
-The extensive mode covers further languages with `dateparser <https://github.com/scrapinghub/dateparser>`_, see the `options page <options.html>`_.
+The extensive mode covers further languages with `dateparser <https://github.com/scrapinghub/dateparser>`_, see the :doc:`options page <options>`.
 
 
 Installation
@@ -105,22 +105,24 @@ Installation
 Main package
 ~~~~~~~~~~~~
 
-This Python package is tested on Linux, macOS and Windows systems, it is compatible with Python 3.10 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip``:
+This Python package is tested on Linux, macOS and Windows systems. It is compatible with Python 3.10 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip``:
 
 .. code-block:: bash
 
     $ pip install htmldate
     $ pip install --upgrade htmldate # to make sure you have the latest version
-    $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
+    $ pip install git+https://github.com/adbar/htmldate.git # latest available code
 
 
 The last version to support Python 3.6 and 3.7 is ``htmldate==1.8.1``; for Python 3.8 and 3.9 use the ``1.9.x`` series.
+
+The changes in each version are listed in the `changelog <https://github.com/adbar/htmldate/blob/master/CHANGELOG.md>`_.
 
 
 Optional
 ~~~~~~~~
 
-The ``speed`` extra adds ``faust-cchardet`` for faster encoding detection and Brotli support for compressed downloads. They may not work on all platforms and have thus been singled out although installation is recommended:
+The ``speed`` extra adds ``faust-cchardet`` for faster encoding detection. It may not work on all platforms and has thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
@@ -133,7 +135,7 @@ With Python
 -----------
 
 ``find_date`` is the only function needed, see the examples above.
-The `options page <options.html>`_ describes every parameter with examples, and the `core functions page <corefunctions.html>`_ documents the function itself.
+The :doc:`options page <options>` describes every parameter with examples, and the :doc:`core functions page <corefunctions>` documents the function itself.
 
 
 On the command-line
@@ -159,15 +161,15 @@ For usage instructions see ``htmldate -h``:
     options:
       -h, --help            show this help message and exit
       -f, --fast            fast mode: disable extensive search
-      -i INPUTFILE, --inputfile INPUTFILE
+      -i, --inputfile INPUTFILE
                             name of input file for batch processing (similar to
                             wget -i)
       --original            original date prioritized
-      -min MINDATE, --mindate MINDATE
+      -min, --mindate MINDATE
                             earliest acceptable date (ISO 8601 YMD)
-      -max MAXDATE, --maxdate MAXDATE
+      -max, --maxdate MAXDATE
                             latest acceptable date (ISO 8601 YMD)
-      -u URL, --URL URL     custom URL download
+      -u, --URL URL         custom URL download
       -v, --verbose         increase output verbosity
       --version             show version information and exit
 
@@ -178,7 +180,7 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 
     $ htmldate --fast -i list-of-urls.txt
     https://www.gov.uk/government/publications/open-standards-principles	2018-04-05
-    https://example.org/page-without-date	None
+    https://httpbun.com/html	None
 
 
 License
@@ -243,7 +245,7 @@ Known caveats
 ~~~~~~~~~~~~~
 
 The granularity may not always match the desired output format.
-If only the year or the month could be found and the chosen format requires a day, the result is padded to the first day of the year or month: ``2017`` becomes ``2017-01-01``.
+If only the year or the month could be found and the chosen format requires a day, the result is padded to the first day of the year or month, see the :doc:`options page <options>`.
 
 Besides, there are pages for which no date can be found, ever:
 
@@ -259,7 +261,7 @@ If the date is nowhere to be found, it might be worth considering `carbon dating
 .. toctree::
    :maxdepth: 2
 
+   options
    corefunctions
    evaluation
-   options
    used-by

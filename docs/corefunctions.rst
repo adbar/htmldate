@@ -7,7 +7,7 @@ Main function
 
 .. autofunction:: htmldate.core.find_date
 
-See the `options page <options.html>`_ for examples of each parameter.
+See the :doc:`options page <options>` for examples of each parameter.
 
 
 Internal functions
@@ -15,11 +15,15 @@ Internal functions
 
 These functions are not part of the public interface and may change between versions.
 They return a ``datetime`` or ``None``: only ``find_date`` applies the output format.
-Most of them take the extraction options as an ``Extractor`` object.
+``examine_header``, ``search_page`` and ``extract_url_date`` take the extraction options as an ``Extractor`` object.
 
 .. autoclass:: htmldate.utils.Extractor
 
 .. autofunction:: htmldate.core.examine_header
+
+``examine_header`` reads meta elements only, without JSON-LD.
+``find_date`` also checks JSON-LD before falling back to less reliable header dates such as the copyright year.
+The two functions can therefore return a different date or time for the same page.
 
 .. autofunction:: htmldate.core.search_page
 

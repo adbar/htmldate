@@ -1,6 +1,6 @@
 # pylint:disable-msg=E0611,I1101
 """Module bundling all functions needed to determine the date of HTML strings
-or LXML trees.
+or LXML HTML elements.
 """
 
 import logging
@@ -628,7 +628,7 @@ def find_date(
     Extract dates from HTML documents using markup analysis and text patterns
 
     :param htmlobject:
-        HTML document as string or bytes, parsed LXML tree, or URL string
+        HTML document as string or bytes, ``lxml.html.HtmlElement``, or URL string
         (detected automatically and downloaded)
     :param extensive_search:
         Activate pattern-based opportunistic text search
