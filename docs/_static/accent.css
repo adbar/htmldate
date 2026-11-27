@@ -1,0 +1,4 @@
+/* accent text shade, readable in light and dark mode */
+html[data-accent-color] {
+  --sy-c-link: var(--accent-11);
+}

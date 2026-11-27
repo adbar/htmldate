@@ -147,9 +147,19 @@ def test_input():
     # find_date logic
     with pytest.raises(TypeError):
         assert find_date(None) is None
+    # an ElementTree needs .getroot() first
+    with pytest.raises(TypeError):
+        find_date(html.parse(io.StringIO("<html><body>x</body></html>")))
     assert find_date("<" * 100) is None
     assert find_date("<html></html>", verbose=True) is None
     assert find_date("<html><body>\u0008this\xdf\n\u001f+\uffff</body></html>") is None
+    htmldoc = '<html><body><svg></svg><span class="entry-date">July 12th, 2016</span></body></html>'
+    assert find_date(htmldoc.encode("utf-8")) == "2016-07-12"
+    # a tree given by the caller is not cleaned in place
+    mytree = html.fromstring(htmldoc)
+    before = etree.tostring(mytree)
+    assert find_date(mytree) == "2016-07-12"
+    assert etree.tostring(mytree) == before
 
     # min and max date output
     assert get_min_date("2020-02-20").date() == datetime.date(2020, 2, 20)
@@ -1649,8 +1659,10 @@ def test_cli():
 
     # failed download
     with patch("htmldate.cli.fetch_url", return_value=None):
-        with pytest.raises(SystemExit):
+        # a string code exits with status 1
+        with pytest.raises(SystemExit) as err:
             process_args(parse_args(["-u", "https://example.org", "-v"]))
+        assert err.value.code == "No data for URL: https://example.org\n"
         with pytest.raises(SystemExit):
             with patch.object(sys, "argv", ["", "-u", "https://example.org"]):
                 main()
@@ -1663,6 +1675,12 @@ def test_cli():
         assert len(f.getvalue()) == 0
         args.URL = None
         args.inputfile = os.path.join(TEST_DIR, "testlist.txt")
+        f = io.StringIO()
+        with redirect_stdout(f):
+            process_args(args)
+    assert f.getvalue() == "https://httpbun.com/html\tNone\n"
+    # failed download in batch mode
+    with patch("htmldate.cli.fetch_url", return_value=None):
         f = io.StringIO()
         with redirect_stdout(f):
             process_args(args)

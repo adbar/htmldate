@@ -27,13 +27,6 @@ Htmldate: Find the Publication Date of Web Pages
 
 |
 
-.. image:: htmldate-logo.png
-    :alt: Htmldate Logo
-    :align: center
-    :width: 60%
-
-|
-
 Find **original and updated publication dates** of any web page.
 It is often not possible to do it using just the URL or the server response.
 
@@ -49,8 +42,8 @@ In a nutshell
 
 |
 
-.. image:: htmldate-demo.gif
-    :alt: Demo as GIF image
+.. image:: htmldate-demo.png
+    :alt: Demo: htmldate in Python and on the command-line
     :align: center
     :width: 80%
     :target: https://htmldate.readthedocs.org/
@@ -62,15 +55,19 @@ With Python:
 .. code-block:: python
 
     >>> from htmldate import find_date
-    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    '2016-12-23'
+    >>> find_date('https://www.gov.uk/government/publications/open-standards-principles')
+    '2018-04-05' # may change
+    >>> find_date('https://www.gov.uk/government/publications/open-standards-principles', original_date=True)
+    '2013-04-09'
 
 On the command-line:
 
 .. code-block:: bash
 
-    $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
-    '2016-12-23'
+    $ htmldate -u https://www.gov.uk/government/publications/open-standards-principles
+    2018-04-05
+    $ htmldate --original -u https://www.gov.uk/government/publications/open-standards-principles
+    2013-04-09
 
 
 Features
@@ -83,18 +80,23 @@ Features
 -  Compatible with Python 3.10 and later
 
 
-``htmldate`` can examine markup and text. It provides the following ways to date an HTML document:
+How it works
+~~~~~~~~~~~~
 
-1. **Markup in header**: Common patterns are used to identify relevant elements (e.g. ``link`` and ``meta`` elements) including `Open Graph protocol <http://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies
-2. **HTML code**: The whole document is then searched for structural markers: ``abbr`` or ``time`` elements and a series of attributes (e.g. ``postmetadata``)
-3. **Bare HTML content**: Heuristics are run on text and markup:
+``htmldate`` examines markup and text, from the most to the least reliable sources, and stops at the first valid date:
 
-  - in ``fast`` mode the HTML page is cleaned and precise patterns are targeted
-  - in ``extensive`` mode all potential dates are collected and a disambiguation algorithm determines the most probable one
+1. **URL**: a complete date in the URL, given with the ``url`` parameter or found in the canonical link
+2. **Header markup**: ``meta`` elements, including `Open Graph protocol <https://ogp.me/>`_ attributes and a large number of CMS idiosyncrasies, then JSON-LD structured data
+3. **Document structure**: ``abbr`` elements, elements whose class, id or itemprop suggest a date (e.g. ``entry-date`` or ``byline``), the title and ``h1`` headings, then ``time`` elements
+4. **Patterns in the code**: timestamps, dates in image file names and CMS-specific expressions
+5. **Text**: in ``extensive`` mode, all text segments are parsed and a disambiguation algorithm determines the most probable date, with copyright and year mentions as a last resort. The ``fast`` mode only accepts a year-month-day date at this stage
 
-The output is thoroughly verified in terms of plausibility and adequateness. If a valid date has been found the library outputs a date string corresponding to either the last update or the original publishing statement (the default), in the desired format.
+Each date is checked for plausibility, within the bounds set by ``min_date`` and ``max_date``.
+The library outputs either the last update (the default) or the original publication date, in the desired format.
 
-Markup-based extraction is multilingual by nature, text-based refinements for better coverage currently support English, French, German, Indonesian, Polish, Russian and Turkish.
+Markup-based extraction is multilingual by nature.
+Text-based refinements support English, French, German, Indonesian, Polish, Russian, Turkish and Chinese, Japanese and Korean dates in year-month-day order.
+The extensive mode covers further languages with `dateparser <https://github.com/scrapinghub/dateparser>`_, see the :doc:`options page <options>`.
 
 
 Installation
@@ -103,94 +105,37 @@ Installation
 Main package
 ~~~~~~~~~~~~
 
-This Python package is tested on Linux, macOS and Windows systems; it is compatible with Python 3.10 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip`` or ``pipenv``:
+This Python package is tested on Linux, macOS and Windows systems. It is compatible with Python 3.10 upwards. It is available on the package repository `PyPI <https://pypi.org/>`_ and can notably be installed with ``pip``:
 
 .. code-block:: bash
 
     $ pip install htmldate
     $ pip install --upgrade htmldate # to make sure you have the latest version
-    $ pip install git+https://github.com/adbar/htmldate.git # latest available code (see build status above)
+    $ pip install git+https://github.com/adbar/htmldate.git # latest available code
 
 
 The last version to support Python 3.6 and 3.7 is ``htmldate==1.8.1``; for Python 3.8 and 3.9 use the ``1.9.x`` series.
+
+The changes in each version are listed in the `changelog <https://github.com/adbar/htmldate/blob/master/CHANGELOG.md>`_.
 
 
 Optional
 ~~~~~~~~
 
-The additional library ``cchardet`` (or its fork ``faust-cchardet``) can be installed for better execution speed. They may not work on all platforms and have thus been singled out although installation is recommended:
+The ``speed`` extra adds ``faust-cchardet`` for faster encoding detection. It may not work on all platforms and has thus been singled out although installation is recommended:
 
 .. code-block:: bash
 
-    $ pip install htmldate[speed] # install with additional functionality
+    $ pip install "htmldate[speed]"
 
-You can also install or update the packages separately, *htmldate* will detect which ones are present on your system and opt for the best available combination.
-
-*For infos on dependency management of Python packages see* `this discussion thread <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe>`_.
+The original ``cchardet`` package is also detected if it is installed.
 
 
 With Python
 -----------
 
-``find_date``
-~~~~~~~~~~~~~
-
-In case the web page features easily readable metadata in the header, the extraction is straightforward. A more advanced analysis of the document structure is sometimes needed:
-
-.. code-block:: python
-
-    >>> from htmldate import find_date
-    >>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
-    # DEBUG analyzing: <h2 class="date-header"><span>Friday, December 23, 2016</span></h2>
-    # DEBUG result: 2016-12-23
-    '2016-12-23'
-
-``htmldate`` can resort to a guess based on a complete screening of the document (``extensive_search`` parameter) which can be deactivated:
-
-.. code-block:: python
-
-    >>> find_date('https://creativecommons.org/about/')
-    '2017-08-11' # may change
-    >>> find_date('https://creativecommons.org/about/', extensive_search=False)
-    >>>
-
-Already parsed HTML (that is a LXML tree object):
-
-.. code-block:: python
-
-    # simple HTML document as string
-    >>> htmldoc = '<html><body><span class="entry-date">July 12th, 2016</span></body></html>'
-    >>> find_date(htmldoc)
-    '2016-07-12'
-    # parsed LXML tree
-    >>> from lxml import html
-    >>> mytree = html.fromstring('<html><body><span class="entry-date">July 12th, 2016</span></body></html>')
-    >>> find_date(mytree)
-    '2016-07-12'
-
-
-Output format
-~~~~~~~~~~~~~
-
-Change the output to a format known to Python's ``datetime`` module, the default being ``%Y-%m-%d``:
-
-.. code-block:: python
-
-    >>> find_date('https://www.gnu.org/licenses/gpl-3.0.en.html', outputformat='%d %B %Y')
-    '18 November 2016'  # may change
-
-
-Original vs. updated dates
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Although the time delta between original publication and "last modified" info is usually a matter of hours or days, it can be useful to prioritize the **original publication date**:
-
-.. code-block:: python
-
-    >>> find_date('https://netzpolitik.org/2016/die-cider-connection-abmahnungen-gegen-nutzer-von-creative-commons-bildern/', original_date=True)  # modified behavior
-    '2016-06-23' # may change
-
-For more information see `options page <options.html>`_.
+``find_date`` is the only function needed, see the examples above.
+The :doc:`options page <options>` describes every parameter with examples, and the :doc:`core functions page <corefunctions>` documents the function itself.
 
 
 On the command-line
@@ -200,30 +145,33 @@ A command-line interface is included:
 
 .. code-block:: bash
 
-    $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
-    '2016-12-23'
-    $ wget -qO- "http://blog.python.org/2016/12/python-360-is-now-available.html" | htmldate
-    '2016-12-23'
+    $ htmldate -u https://blog.python.org/2016/12/python-360-is-now-available
+    2016-12-23
+    $ wget -qO- "https://blog.python.org/2016/12/python-360-is-now-available" | htmldate
+    2016-12-23
 
 For usage instructions see ``htmldate -h``:
 
 .. code-block:: bash
 
     $ htmldate --help
-    htmldate [-h] [-f] [-i INPUTFILE] [--original] [-min MINDATE] [-max MAXDATE] [-u URL] [-v] [--version]
-    optional arguments:
-        -h, --help            show this help message and exit
-        -f, --fast            fast mode: disable extensive search
-        -i INPUTFILE, --inputfile INPUTFILE
-                              name of input file for batch processing (similar to wget -i)
-        --original            original date prioritized
-        -min MINDATE, --mindate MINDATE
-                              earliest acceptable date (ISO 8601 YMD)
-        -max MAXDATE, --maxdate MAXDATE
-                              latest acceptable date (ISO 8601 YMD)
-        -u URL, --URL URL     custom URL download
-        -v, --verbose         increase output verbosity
-        --version             show version information and exit
+    usage: htmldate [-h] [-f] [-i INPUTFILE] [--original] [-min MINDATE]
+                    [-max MAXDATE] [-u URL] [-v] [--version]
+
+    options:
+      -h, --help            show this help message and exit
+      -f, --fast            fast mode: disable extensive search
+      -i, --inputfile INPUTFILE
+                            name of input file for batch processing (similar to
+                            wget -i)
+      --original            original date prioritized
+      -min, --mindate MINDATE
+                            earliest acceptable date (ISO 8601 YMD)
+      -max, --maxdate MAXDATE
+                            latest acceptable date (ISO 8601 YMD)
+      -u, --URL URL         custom URL download
+      -v, --verbose         increase output verbosity
+      --version             show version information and exit
 
 
 The batch mode ``-i`` takes one URL per line as input and returns one result per line in tab-separated format:
@@ -231,6 +179,8 @@ The batch mode ``-i`` takes one URL per line as input and returns one result per
 .. code-block:: bash
 
     $ htmldate --fast -i list-of-urls.txt
+    https://www.gov.uk/government/publications/open-standards-principles	2018-04-05
+    https://httpbun.com/html	None
 
 
 License
@@ -294,14 +244,15 @@ Going further
 Known caveats
 ~~~~~~~~~~~~~
 
-The granularity may not always match the desired output format. If only information about the year could be found and the chosen date format requires to output a month and a day, the result is 'padded' to be located at the middle of the year, in that case the 1st of January.
+The granularity may not always match the desired output format.
+If only the year or the month could be found and the chosen format requires a day, the result is padded to the first day of the year or month, see the :doc:`options page <options>`.
 
 Besides, there are pages for which no date can be found, ever:
 
 .. code-block:: python
 
-    >>> r = requests.get('https://example.com')
-    >>> htmldate.find_date(r.text)
+    >>> from htmldate import find_date
+    >>> find_date('https://example.com')
     >>>
 
 If the date is nowhere to be found, it might be worth considering `carbon dating <https://github.com/oduwsdl/CarbonDate>`_ the web page, however this is computationally expensive. In addition, `datefinder <https://github.com/akoumjian/datefinder>`_ features pattern-based date extraction for texts written in English.
@@ -310,15 +261,7 @@ If the date is nowhere to be found, it might be worth considering `carbon dating
 .. toctree::
    :maxdepth: 2
 
+   options
    corefunctions
    evaluation
-   options
    used-by
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

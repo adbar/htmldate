@@ -46,6 +46,7 @@ MOCK_PAGES = {
     "https://www.austria.info/": "austria.info.html",
     "https://www.befifty.de/home/2017/7/12/unter-uns-montauk": "befifty.montauk.html",
     "https://www.beltz.de/fachmedien/paedagogik/didacta_2019_in_koeln_19_23_februar/beltz_veranstaltungen_didacta_2016/veranstaltung.html?tx_news_pi1%5Bnews%5D=14392&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail&cHash=10b1a32fb5b2b05360bdac257b01c8fa": "beltz.de.didakta.html",
+    "https://www.bfs.de/SharedDocs/Pressemitteilungen/BfS/DE/2022/001.html": "bfs.de.pressemitteilung-2022-001.html",
     "https://www.channelpartner.de/a/sieben-berufe-die-zukunft-haben,3050673": "channelpartner.de.berufe.html",
     "https://www.creativecommons.at/faircoin-hackathon": "creativecommons.at.faircoin.html",
     "https://www.deutschland.de/en": "deutschland.de.en.html",
@@ -53,6 +54,7 @@ MOCK_PAGES = {
     "https://www.facebook.com/visitaustria/": "facebook.com.visitaustria.html",
     "https://www.gnu.org/licenses/gpl-3.0.en.html": "gnu.org.gpl.html",
     "https://www.goodform.ch/blog/schattiges_plaetzchen": "goodform.ch.blog.html",
+    "https://www.gov.uk/government/publications/open-standards-principles": "gov.uk.open-standards-principles.html",
     "https://www.horizont.net/marketing/kommentare/influencer-marketing-was-sich-nach-dem-vreni-frost-urteil-aendert-und-aendern-muss-172529": "horizont.net.html",
     "https://www.intel.com/content/www/us/en/legal/terms-of-use.html": "intel.com.tos.html",
     "https://www.pferde-fuer-unsere-kinder.de/unsere-projekte/": "pferde.projekte.de.html",
@@ -726,6 +728,25 @@ def test_readme_examples():
         )
         == "2022-10-20T00:00:00"
     )
+
+
+def test_readme_mock_pages():
+    "Test README examples from cached pages, without network"
+    govuk = load_mock_page(
+        "https://www.gov.uk/government/publications/open-standards-principles"
+    )
+    assert find_date(govuk) == "2018-04-05"
+    assert find_date(govuk, original_date=True) == "2013-04-09"
+    assert find_date(govuk, outputformat="%d %B %Y") == "05 April 2018"
+    assert (
+        find_date(govuk, outputformat="%Y-%m-%dT%H:%M:%S%z")
+        == "2018-04-05T10:46:37+0100"
+    )
+    bfs = load_mock_page(
+        "https://www.bfs.de/SharedDocs/Pressemitteilungen/BfS/DE/2022/001.html"
+    )
+    assert find_date(bfs) == "2022-01-25"
+    assert find_date(bfs, extensive_search=False) is None
 
 
 def test_dependencies():

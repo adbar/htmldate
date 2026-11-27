@@ -27,7 +27,7 @@ The package is used in production on millions of documents and integrated into
 
 <br/>
 
-<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.gif" alt="Demo as GIF image" align="center" width="80%"/>
+<img src="https://raw.githubusercontent.com/adbar/htmldate/master/docs/htmldate-demo.png" alt="Demo: htmldate in Python and on the command-line" align="center" width="80%"/>
 
 <br/>
 
@@ -35,15 +35,19 @@ The package is used in production on millions of documents and integrated into
 
 ``` python
 >>> from htmldate import find_date
->>> find_date('http://blog.python.org/2016/12/python-360-is-now-available.html')
-'2016-12-23'
+>>> find_date('https://www.gov.uk/government/publications/open-standards-principles')
+'2018-04-05'
+>>> find_date('https://www.gov.uk/government/publications/open-standards-principles', original_date=True)
+'2013-04-09'
 ```
 
 ### On the command-line
 
 ``` bash
-$ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
-'2016-12-23'
+$ htmldate -u https://www.gov.uk/government/publications/open-standards-principles
+2018-04-05
+$ htmldate --original -u https://www.gov.uk/government/publications/open-standards-principles
+2013-04-09
 ```
 
 ## Features
@@ -58,20 +62,18 @@ $ htmldate -u http://blog.python.org/2016/12/python-360-is-now-available.html
 
 ### How it works
 
-Htmldate operates by sifting through HTML markup and if necessary text
-elements. It features the following heuristics:
+Htmldate examines markup and text, from the most to the least reliable
+sources, and stops at the first valid date:
 
-1.  **Markup in header**: Common patterns are used to identify relevant
-    elements (e.g. `link` and `meta` elements) including [Open Graph
-    protocol](http://ogp.me/) attributes.
-2.  **HTML code**: The whole document is searched for structural markers
-    like `abbr` or `time` elements and a series of attributes (e.g.
-    `postmetadata`).
-3.  **Bare HTML content**: Heuristics are run on text and markup:
-    -   In `fast` mode the HTML page is cleaned and precise patterns are
-        targeted.
-    -   In `extensive` mode all potential dates are collected and a
-        disambiguation algorithm determines the best one.
+1.  **URL**: a complete date in the URL or in the canonical link.
+2.  **Header markup**: `meta` elements, including [Open Graph
+    protocol](https://ogp.me/) attributes, then JSON-LD structured data.
+3.  **Document structure**: `abbr` and `time` elements, elements whose
+    attributes suggest a date (e.g. `entry-date`), titles.
+4.  **Patterns in the code**: timestamps, image file names and
+    CMS-specific expressions.
+5.  **Text**: in `extensive` mode all potential dates are collected and
+    a disambiguation algorithm determines the best one.
 
 Finally, the output is validated and converted to the chosen format.
 
@@ -99,7 +101,7 @@ with Python 3.10 upwards. It can notably be installed with `pip` (`pip3`
 where applicable) from the PyPI package repository:
 
 -   `pip install htmldate`
--   (optionally) `pip install htmldate[speed]`
+-   (optionally) `pip install "htmldate[speed]"`
 
 The last version to support Python 3.6 and 3.7 is `htmldate==1.8.1`; for
 Python 3.8 and 3.9 use the `1.9.x` series.

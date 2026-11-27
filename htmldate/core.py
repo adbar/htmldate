@@ -1,6 +1,6 @@
 # pylint:disable-msg=E0611,I1101
 """Module bundling all functions needed to determine the date of HTML strings
-or LXML trees.
+or LXML HTML elements.
 """
 
 import logging
@@ -303,10 +303,8 @@ def examine_header(
 
     :param tree:
         LXML parsed tree object
-    :type tree: LXML tree
     :param options:
         Options for extraction
-    :type options: Extractor
     :return: Returns a valid date as a datetime, or None
 
     """
@@ -328,10 +326,8 @@ def examine_header_dates(
 
     :param tree:
         LXML parsed tree object
-    :type tree: LXML tree
     :param options:
         Options for extraction
-    :type options: Extractor
     :return: Returns a tuple of the matching date and the reserve date, as
         datetimes or None
 
@@ -588,10 +584,8 @@ def search_page(htmlstring: str, options: Extractor) -> datetime | None:
     :param htmlstring:
         The HTML document in string format, potentially cleaned and stripped to
         the core (much faster)
-    :type htmlstring: string
     :param options:
         Define extraction options
-    :type options: Extractor
     :return: Returns a valid date as a datetime, or None
 
     """
@@ -634,38 +628,34 @@ def find_date(
     Extract dates from HTML documents using markup analysis and text patterns
 
     :param htmlobject:
-        Two possibilities: 1. HTML document (e.g. body of HTTP request or .html-file) in text string
-        form or LXML parsed tree or 2. URL string (gets detected automatically)
-    :type htmlobject: string or lxml tree
+        HTML document as string or bytes, ``lxml.html.HtmlElement``, or URL string
+        (detected automatically and downloaded)
     :param extensive_search:
         Activate pattern-based opportunistic text search
-    :type extensive_search: boolean
     :param original_date:
         Look for original date (e.g. publication date) instead of most recent
         one (e.g. last modified, updated time)
-    :type original_date: boolean
     :param outputformat:
         Provide a valid datetime format for the returned string
         (see datetime.strftime())
-    :type outputformat: string
     :param url:
         Provide an URL manually for pattern-searching in URL
-        (in some cases much faster)
-    :type url: string
+        (in some cases much faster), defaults to the canonical link if present
     :param verbose:
         Set verbosity level for debugging
-    :type verbose: boolean
     :param min_date:
-        Set the earliest acceptable date manually (ISO 8601 YMD format)
-    :type min_date: datetime, string
+        Set the earliest acceptable date (ISO 8601 YMD format),
+        defaults to 1995-01-01
     :param max_date:
-        Set the latest acceptable date manually (ISO 8601 YMD format)
-    :type max_date: datetime, string
+        Set the latest acceptable date (ISO 8601 YMD format),
+        defaults to the end of the current day
     :param deferred_url_extractor:
         Use url extractor as backup only to prioritize full expressions,
         e.g. of the type `%Y-%m-%d %H:%M:%S`
-    :type deferred_url_extractor: boolean
     :return: Returns a valid date expression as a string, or None
+        (also for an invalid output format)
+    :raises ValueError: if a URL given as input cannot be downloaded
+    :raises TypeError: if the input type is not supported
     """
 
     # init
